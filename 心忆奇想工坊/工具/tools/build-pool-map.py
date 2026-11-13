@@ -1364,7 +1364,7 @@ def main():
         vp = os.path.join(src, ver_dir)
         if not virtual_is_dir(vp) or ver_dir.startswith("卡池艺术字"):
             continue
-        # 版本目录名不统一：多数是 `2.10·金羽的裁决`，2.11 是用户手放的
+        # 版本目录名不统一：多数是 `2.10·金羽的裁决`
         # `2.11时光缝合的扉页`（没有间隔号）
         # 版本页分组、版本内 seq、前端排序全跟着出错
         vm = re.match(r"([\d.]+)[·\s]*(.+)$", ver_dir)
@@ -1387,7 +1387,6 @@ def main():
             # 套装目录
             # 三星散件不是「套装」：它是全池通用的散件池，由 pool-map.stars3 单独处理
             # source 里 1.0 常驻池新增了这个目录，若不排除会变成第 9 个空套装（star=0、无部件）
-            # ：`深海回响` 是阁级素材目录（深忆奖励图），同理要排除 ——
             # 不排除会被当成第 3 个套装，让每个池的 sets 数从 2 变 3
             skip = {"卡池横幅", "深忆奖励", "深海回响", "妆容展示", "三星散件"}
             set_dirs = sorted(
@@ -1562,7 +1561,6 @@ def main():
             "sets": sets,
             "decor": banner_decor(decor, sets),
             "assets": {
-                # 2.11 没有卡池横幅 / 深忆奖励素材（前端已兜底）；背景与缩略图见 EXTRA_POOLS 配置
                 "thumbnail": cfg.get("thumbnail"),
                 "bg": cfg.get("bg"),
                 "bgClean": cfg.get("bgClean"),

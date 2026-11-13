@@ -277,7 +277,7 @@ function fieldHtml(f) {
     } else if (f.type === 'customSets') {
       opts = (S.options.customSets || []).map((s) => [s.name, `${s.name} · ${s.star}★ · ${s.pool}`])
     } else opts = optionsOf(f)
-    // sets 类型（如故事要挂哪一套）必须用户自己选，不能默认第一项
+    // sets 类型（如故事要挂哪一套）必须显式选择，不能默认第一项
     // 版本下拉默认**最新版本**（列表已按版本号升序）
     // 「要修改的阁 / 套装」不自动选：它一选中就要回填整张表单
     let auto = ''
@@ -1250,7 +1250,6 @@ window.addEventListener('drop', async (e) => {
   await handleDrop(e.dataTransfer, null)
 })
 
-/* ── 拖进来的是文件夹（Electron 壳能拿到绝对路径时走「粘贴路径」链路，这套只是兜底）── 浏览器给的文件夹是无扩展名、size 0 的条目，所以用 `webkitGetAsEntry` 读出整棵树： 整套导入先落到 `.inbox` 再按「粘贴路径」同一条流程扫描，其它任务拆成文件 + 相对路径照常上传 */
 function readEntryFile(entry) {
   return new Promise((res) => entry.file((f) => res(f), () => res(null)))
 }

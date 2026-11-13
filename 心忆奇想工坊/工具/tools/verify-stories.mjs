@@ -70,7 +70,6 @@ const afterClick = await p.evaluate(() => ({
 }))
 ok(!afterClick.hasTitle, '未集齐时点击不显示正文')
 ok((afterClick.toast || '').includes('集齐'), `点击提示集齐套装（"${afterClick.toast}"）`)
-// ：故事总数会随新版本增长（116 → 120 篇），别再写死数字 —— 只校验格式与「未解锁不改数」
 ok(/^故事 \(0\/\d+\)$/.test(afterClick.label || ''), `未解锁不改变计数（"${afterClick.label}"）`)
 
 /* ── 4. 伊赞之土分区（篇数随版本增长，按标签自校验） */

@@ -1,4 +1,3 @@
-/* 自动生成，勿手改 —— python tools/gen-museum-hits.py 来源：素材/博物图鉴/主界面/拆分/<区域>-<交互项>.png 的 alpha 轮廓 坐标已换算到 1920×1080；供 MuseumView 的 clip-path: polygon() 使用 */
 export type Pt = [number, number]
 export type MuseumHitKey = 'clothes' | 'story' | 'reading' | 'search'
 

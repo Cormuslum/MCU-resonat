@@ -12,7 +12,6 @@ interface VerItem {
   desc: string
 }
 
-/** 兜底版本表（manifest 未加载 / 无 `ui.ver.versions` 时用）；权威来源是 `素材/信息表/版本表.csv` → `manifest.ui.ver.versions` */
 const FALLBACK_VERSIONS: VerItem[] = [
   { v: '1.0', name: '探索季', desc: '与伙伴一同踏上旅途，走向未知的远方，寻找奇迹诞生的地方。' },
   { v: '1.1', name: '流星季', desc: '听闻在流星雨降临的时候，许下的愿望会被赐予幸运的祝福。' },

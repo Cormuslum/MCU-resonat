@@ -30,7 +30,6 @@ export interface SaveData {
     skipAnim: boolean
     /** 主音量 0~1 */
     volume: number
-    /** 是否播放 BGM（由「背景音」滑杆是否 >0 派生，见 SettingsView.onBgmVol） */
     bgm: boolean
     /** 背景音音量 0~1（音量·2） */
     bgmVol: number

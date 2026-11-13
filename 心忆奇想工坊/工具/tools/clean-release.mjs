@@ -148,7 +148,6 @@ for (const p of legacy) {
   }
 }
 
-// ：`故事/` `套装库/` `阅读物/` 不再随包 ——
 // 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里
 // 这三个目录在发行版只当「增量补丁」
 for (const d of ['故事', '套装库', '阅读物']) {

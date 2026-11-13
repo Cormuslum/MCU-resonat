@@ -48,7 +48,7 @@ const PIPELINE_OUTPUTS = [
   path.join(ROOT, 'src', 'data', 'readings.ts'),
 ]
 
-/** 直转模式（发行版专用）：不落 `素材/`，用户选的外部文件经 `--overrides` / `NIKKI_OVERRIDES` 直接转进 `public/assets` */
+/** 直转模式（发行版专用）：不落 `素材/`，外部文件经 `--overrides` / `NIKKI_OVERRIDES` 直接转进 `public/assets` */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 /** 本次写入的重定向表落地位置（管线跑完就删，不留痕） */
 const OVERRIDES_FILE = path.join(HERE, '.passthrough.json')
@@ -197,7 +197,7 @@ async function apiCleanTemp(req, res) {
 function cleanStagedTree(root, log) {
   if (!root || !isInInbox(root)) return
   try {
-    // root 是「用户拖进来的那个文件夹」，它外面还套着一层 `<stamp>-<job>-tree`
+    // root 是拖进来的那个文件夹，它外面还套着一层 `<stamp>-<job>-tree`
     // 那是我们造的壳，一并删掉
     const shell = path.dirname(root)
     fs.rmSync(root, { recursive: true, force: true })

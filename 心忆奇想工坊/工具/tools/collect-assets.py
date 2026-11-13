@@ -226,7 +226,7 @@ def mask_webp(src, dst, force=False):
 
 
 # 部件图标文件名 → 图鉴 / 「恭喜获得」用的部件名
-# 常规池的文件名就是部件名（`金涛浪涌.png`）；2.11 用户给的一批带部位前缀
+# 常规池的文件名就是部件名（`金涛浪涌.png`）
 # （`发型-愿景回旋.png`、`饰品·发饰-飘曳星辉.png`），而前端按部件名匹配图标
 # （MuseumClothes 的 `i.name === p.name`），不剥前缀会整排图标对不上
 SLOT_PREFIXES = ("发型", "外套", "连衣裙", "袜子", "鞋子", "饰品")
@@ -758,7 +758,6 @@ UI_ASSETS = [
     # ---------- 主页
     ("主页/主页面素材/bg1.png",                        "ui/home/bg.webp", 84),    # 用户自己设计的主页底图 + 游戏官方 LOGO
     ("主页/主页面素材/主页背景底图.png",               "ui/home/bg-main.webp", 88),
-    # 站名艺术字： 换成「心忆共鸣」（预处理见 tools/prep-home.py）
     ("主页/工程产出/logo.png",                         "ui/home/logo.webp", 94),
     # ：横版「无限暖暖」LOGO 回退（与竖版「心忆共鸣」并存）
     ("主页/工程产出/logo-center.png",                  "ui/home/logo-center.webp", 94),
@@ -805,7 +804,7 @@ UI_ASSETS = [
     (f"{U}/Common/Textures/T_UI__collocation_btn_skip_h.png",      "ui/egg/skip-h.webp", 94),
 
     # ---------- 心忆奇想工坊（更新程序）顶栏图标
-    # 用户指定：帮助 = Rule / Rule_h，重新读取 = physical_reset_s / _h
+    # 帮助 = Rule / Rule_h，重新读取 = physical_reset_s / _h
     # 左上角 = ps5_update_n，关闭 = TopHUDbtn_back_n
     (f"{U}/Common/Textures/T_UI_btn_common_icon_Rule.png",         "ui/updater/rule-n.webp", 94),
     (f"{U}/Common/Textures/T_UI_btn_common_icon_Rule_h.png",       "ui/updater/rule-h.webp", 94),
@@ -1798,7 +1797,7 @@ def main():
     # 001 常驻池还有 `_name_03/_04`
     # 编号的含义**不是星级**，而是「该池套装按 5★ 在前、同级按 manifest 顺序」的序号：
     # 001 有 8 套却只有 4 张（4 个 5★ 各一张，4★ 没有专属）；030 两张 = 5★ 一张 + 4★ 一张
-    # 同目录里还混着两类**必须排除**的东西（ 用户报 043 铭牌错，就是第一类）：
+    # 同目录里还混着两类**必须排除**的东西：
     # - 套装图标
     #   - 特效图：文件名带 `_effect_`
     # 过滤按尺寸
@@ -1844,7 +1843,6 @@ def main():
             entry = {}
             for key, (_, src) in picked.items():
                 fname = f"{d}.webp" if key == "any" else f"{d}-{key}.webp"
-                # ：从 `ui/banner/name/` 挪到 `banners/name/` —— 它本来就属于
                 # 「按阁的素材」（和 banners/thumb、banners/bg、banners/title 同一族）
                 # 放在 ui/banner 下是和界面通用件混在一起了
                 out_rel = f"banners/name/{fname}"
@@ -1901,7 +1899,6 @@ def main():
 
     for ver, num in VERSION_CARDS:
         # 0.1「祈愿星」/ 0.2「魂灵生」是工坊自建版本，官方没有对应编号的卡图
-        # 用户手动放了正确的 `card/0.2.webp`、`big/0.2.webp`
         # 会把它们冲掉
         card_dst = os.path.join(OUT, f"ui/ver/card/{ver}.webp")
         src_card = _card_src("T_UI_Friends_Card_img", num)
@@ -2278,7 +2275,6 @@ def main():
                 for k in ("ver", "banner", "almanac", "codex", "gloria", "home")
                 if exists(f"ui/home/sys-{k}.webp")
             },
-            # ：`textures` / `crystals` / 四张 deco 已移除 —— 主页的水晶导航
             # 在就换成了 `navSys` 系统图标，这几组 .vue 里零引用
             "deco": {
                 k: f"ui/home/deco-{k}.webp"
@@ -2320,7 +2316,6 @@ def main():
             # 服装阁背景兜底：该阁没给背景图、或背景/动态背景加载失败时用它
             # 不再留黑块
             "fallbackBg": "ui/ver/bg.webp" if exists("ui/ver/bg.webp") else None,
-            # ：`thumbs`（6 张通用缩略图）已删除 —— 列表全部按阁取
             # `banners/thumb/<编号>.webp`，这 6 张只在「该阁连背景都没有」时轮播
             # 现在那种情况改用统一的兜底图（`fallbackBg`）
         },

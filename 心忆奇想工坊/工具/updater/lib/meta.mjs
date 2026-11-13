@@ -161,7 +161,6 @@ export function nextFreeGacha() {
   throw new Error('服装阁编号已用尽（500~9999 全占）')
 }
 
-/** 新增 / 更新一座服装阁的索引；这里不写 `seq` —— 由 `tools/build-pool-map.py` 的 `assign_seq` 算 */
 export function upsertPool(name, cfg) {
   const idx = readPoolIndex()
   const prev = idx[name] || {}

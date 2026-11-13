@@ -1,5 +1,4 @@
 <script setup lang="ts">
-/** 玄学运势（书桌场景 + 卷轴弹窗）：规格见 `素材/玄学运势/玄学运势-详细设定.md`，坐标以 pxdesk 为准。弹窗没有退出键；过往无限向前、今日仅当天、未来 5 天 */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'

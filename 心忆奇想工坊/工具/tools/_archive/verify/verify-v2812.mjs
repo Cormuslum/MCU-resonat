@@ -98,8 +98,6 @@ head('【一、数据：套装的首发版本必须自洽】')
   ok(bad.length === 0, 'K3 首发版本号都在版本表里', bad.length ? bad.slice(0, 3).join('；') : `${known.size} 个版本`)
 }
 
-// 4. 套装序列.csv 里「来源阁名 = 某个阁」的初始行，`首发` 必须以那个阁的版本开头
-//    （这条正是 0.1 那次错的形态：来源=心愿栖金蕊，首发却写 1.0探索季）
 {
   const bannerByName = new Map(manifest.banners.map((b) => [b.name, b]))
   const txt = fs.readFileSync(path.join(ROOT, '素材/信息表/套装序列.csv'), 'utf8').replace(/^\uFEFF/, '')

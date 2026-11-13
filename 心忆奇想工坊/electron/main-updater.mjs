@@ -143,7 +143,7 @@ function spawnServer(L, port) {
   // 成品写到**模拟器**的 public（不是工坊自己）
   // 转进工坊目录，模拟器那边的图反而永远不变
   if (L.targetRoot) env.NIKKI_OUT_DIR = path.join(L.targetRoot, 'public', 'assets')
-  // 发行版不落 `素材/`：用户选的图直接从原位置转进 public
+  // 发行版不落 `素材/`：外部图直接从原位置转进 public
   if (L.distMode) env.NIKKI_DIST_MODE = '1'
   // 基线模式：发行版不随包发 `数据/{故事,套装库,阅读物}`（成品已在模拟器里），这三个目录只当增量补丁
   // 少了 `NIKKI_JSON_BASELINE` 管线会把 stories.json 写成空数组

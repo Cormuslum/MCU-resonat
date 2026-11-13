@@ -161,7 +161,6 @@ export function setMount(id, { enabled, interfaces } = {}) {
 
 /* ────────────────────────────── zip 打包 / 解包 ────────────────────────────── */
 
-/** 打包成 zip（交给 python 的 zipfile —— 项目本来就依赖 python 管线，不为这一个功能引入 npm 依赖） */
 export function packZip(dir, outZip) {
   fs.mkdirSync(path.dirname(outZip), { recursive: true })
   const py = [

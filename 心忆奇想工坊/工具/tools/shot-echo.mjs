@@ -1,4 +1,3 @@
-/** 深海回响界面截图（开发期巡检，不打包）：`node tools/shot-echo.mjs [pulls]` —— `pulls` 可选，先模拟抽卡推到该累计抽数再截图 */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
