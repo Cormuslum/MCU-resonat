@@ -10,10 +10,7 @@ function parseCardName(fileName: string): { slot: string; part: string } {
   return { slot: base.slice(0, i), part: base.slice(i + 1) }
 }
 
-/**
- * 卡片图是否对应某个部件名。
- * 焕新/进化阶段会带后缀（`饰品·颈饰-心灵对话·薄暮`），所以不能只做全等比较。
- */
+/** 卡片图是否对应某个部件名 */
 function cardMatches(fileName: string, partName: string): boolean {
   const p = parseCardName(fileName).part
   return p === partName || p.startsWith(partName + '·')
@@ -28,10 +25,7 @@ export function expandSet(set: SetInfo): Part[] {
     assets.stages.find((s) => s.stage.startsWith('初始')) ??
     assets.stages[0]
 
-/**
-     * 少数图标名是英文（如 `Whispered Wishes` / `Embracing Vines`），
-     * 对应的是「整体」卡片（`整体-初始`），这类图标按顺序领一张「整体」卡片。
-     */
+/** 少数图标名是英文（如 `Whispered Wishes` / `Embracing Vines`）， 对应的是「整体」卡片（`整体-初始`），这类图标按顺序领一张「整体」卡片 */
   const overallPool = (stage?: { cards: Array<{ name: string; src: string }> }) =>
     (stage?.cards ?? []).filter((c) => parseCardName(c.name).slot === '整体')
 
@@ -58,9 +52,7 @@ export function expandSet(set: SetInfo): Part[] {
   // 属性表按部件名索引（3★ 散件没有属性表，全字段留空）
   const infoByName = new Map((set.parts ?? []).map((p) => [p.name, p]))
 
-  /**
-   * 图标是英文名的部件（`Whispered Wishes` / `Embracing Vines`），按「两边各自未匹配的集合」顺序一对一配中文名。
-   */
+  /** 图标是英文名的部件（`Whispered Wishes` / `Embracing Vines`），按「两边各自未匹配的集合」顺序一对一配中文名 */
   const yamlNames = new Set((set.parts ?? []).map((p) => p.name))
   const iconNames = new Set(assets.icons.map((i) => i.name))
   const orphanIcons = assets.icons.filter((i) => !yamlNames.has(i.name)).map((i) => i.name)
@@ -74,10 +66,7 @@ export function expandSet(set: SetInfo): Part[] {
     const orphan = overallByIcon.get(icon.name)
     const cnName = infoByName.get(icon.name)?.name
 
-/**
-       * 选卡顺序：按图标名找同名卡 → 英文图标**先用中文属性名找**
-       * （`饰品·颈饰-心灵对话` / `饰品·臂饰-银蔓依偎`）→ 都没有才退回「整体」图。
-       */
+/** 选卡顺序：按图标名找同名卡 → 英文图标**先用中文属性名找** （`饰品·颈饰-心灵对话` / `饰品·臂饰-银蔓依偎`）→ 都没有才退回「整体」图 */
     let card = initial?.cards.find((c) => cardMatches(c.name, icon.name))
     if (!card && cnName) card = initial?.cards.find((c) => cardMatches(c.name, cnName))
     if (!card && orphan) card = { name: orphan.name, src: orphan.src }
@@ -148,10 +137,7 @@ export function buildPool(banner: BannerInfo, stars3: Star3Info[]): PoolParts {
     pool[star].push(...parts)
   }
 
-  /**
-   * 3★ 通用散件：素材是 520×724 的人物试穿图（没有透明底单品图）。
-   * 文案 / 五维 / 标签 来自 `三星散件清单.yaml`（经 pool-map → manifest 透传）。
-   */
+  /** 3★ 通用散件 */
   pool['3'] = stars3.map((s) => {
     // 文件名形如 `鞋子-与时间赛跑`，但 YAML 里 名称/部位 更权威
     const parsed = parseCardName(s.name)

@@ -19,7 +19,6 @@ p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.tex
 
 await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 await p.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))
-// ⚠ 只改 hash 属同文档跳转，路由首帧可能把地址覆盖回 #/ → 过一页 about:blank 强制整页重载
 await p.goto('about:blank')
 
 /* ── 1. 主界面「故事图鉴」入口 */
@@ -75,8 +74,6 @@ ok((afterClick.toast || '').includes('集齐'), `点击提示集齐套装（"${a
 ok(/^故事 \(0\/\d+\)$/.test(afterClick.label || ''), `未解锁不改变计数（"${afterClick.label}"）`)
 
 /* ── 4. 伊赞之土分区（篇数随版本增长，按标签自校验） */
-// ⚠ 按**文字**找栏位，不按下标： 在左端插入了「奇迹传说」，
-//    原来的 nth(1) 已经从伊赞之土变成了心愿原野（会拿错分区还"通过"）
 await p.locator('.rd-tab', { hasText: '伊赞之土' }).first().click()
 await p.waitForTimeout(800)
 const yz = await p.evaluate(() => ({

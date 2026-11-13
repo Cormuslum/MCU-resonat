@@ -1,7 +1,4 @@
-/**
- * 运行时加载 `public/assets/data/*.json`。
- * 同一个文件只请求一次（模块级缓存），并发调用共享同一个 Promise。
- */
+/** 运行时加载 `public/assets/data/*.json`。同一个文件只请求一次（模块级缓存），并发调用共享同一个 Promise */
 const cache = new Map<string, Promise<unknown>>()
 
 export function loadAssetJson<T>(name: string): Promise<T[]> {

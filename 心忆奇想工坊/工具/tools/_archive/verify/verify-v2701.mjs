@@ -1,8 +1,4 @@
-/**
- * 验收 —— 用户 2026-11-03 提的 8 项（图鉴未获得态 / 套装获得页装饰 / 第二套 / 跳过全部 / 彩蛋补充 / 版本徽记）
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2701.mjs`
- */
+/** 验收 */
 import { chromium } from 'playwright-core'
 import { mkdirSync, readFileSync } from 'node:fs'
 
@@ -83,7 +79,7 @@ await page.waitForTimeout(450)
   check('A2 阅读物：未解锁条目 → 提示文字显示', v.text)
 }
 
-// A3 双击解锁一本，再点另一本未解锁（用户报的回归点）
+// A3 双击解锁一本，再点另一本未解锁
 await page.locator('.rd-row').nth(0).click()
 await page.waitForTimeout(120)
 await page.locator('.rd-row').nth(0).click()
@@ -167,7 +163,7 @@ await page.waitForTimeout(600)
   check('B2 纹样装饰存在（ornClothes3）', !!b.orn && /orn-clothes-3/.test(b.orn.src || ''), b.orn?.src)
   check('B3 柔光不透明度 0.36', !!b.light && near(b.light.op, 0.36, 0.005), `op=${b.light?.op}`)
   check('B4 纹样不透明度 0.42', !!b.orn && near(b.orn.op, 0.42, 0.005), `op=${b.orn?.op}`)
-  // pxdesk：页面 (1100.1,159.9) 150×132 / (1125.5,170.1) 117×100
+  // pxdesk
   check(
     'B5 柔光坐标/尺寸与 pxdesk 一致',
     !!b.light && near(b.light.x, 1100, 2) && near(b.light.y, 160, 2) && near(b.light.w, 150, 2) && near(b.light.h, 132, 2),

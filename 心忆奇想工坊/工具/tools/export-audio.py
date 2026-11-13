@@ -276,7 +276,7 @@ def label_for(ev, resolve):
         suffix = ""
         if tail in ("Long", "Short"):
             suffix = "（长）" if tail == "Long" else "（短）"
-        # 事件名里的版本号不可靠（`1_1` 其实是面板序号，不是 1.1），
+        # 事件名里的版本号不可靠（`1_1` 其实是面板序号，不是 1.1）
         # 能反查到卡池时一律以 套装信息表 的版本为准
         ver = banner["version"] if banner else parse_version(ev)
         if banner:

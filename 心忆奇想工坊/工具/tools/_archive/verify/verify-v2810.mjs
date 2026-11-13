@@ -1,14 +1,4 @@
-/**
- * 验收：工坊批量/导入能力 + 铭牌与缩略图修复。
- *
- * A. 铭牌：`plateIdx` 正确（5★ 在前），且不合法编号不会串到别的阁
- * B. 缩略图：缺缩略图的阁用自己的背景，不借别的阁的图
- * C. 工坊接口：扫「整理好的文件夹」能认出层级；素材分类正确（半身像/图标/进化/故事）
- * D. 工坊任务：整套导入 + 大版本图标 + 半身像/进化/故事槽位都在
- * E. 同名上传：一批同名文件不会互相覆盖
- *
- * 依赖：模拟器 dev server（5178）+ 更新工坊（5199）都在跑。
- */
+/** 验收：工坊批量/导入能力 + 铭牌与缩略图修复 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -121,9 +111,6 @@ console.log('\n【C. 整套导入：扫描与分类】')
     ok('认出 大版本 / 版本 / 服装阁', !!plan.majors.length && !!ver && !!pool,
       `${plan.majors[0].major} ${plan.majors[0].name} / ${ver?.v} ${ver?.name} / ${pool?.name}`)
 
-    /* ⚠ 期望值一律**从磁盘现算**，不写死「2 套 / 8 张 / 3 篇」。
-       `素材/示例` 是用户随时会增删替换的样本目录（2026-11-05 就整批换过），
-       写死数字的代价是「样本一换，验收全红，看着像产品坏了」。 */
     const setDirs = lsDirs(pool?.dir ?? '').filter((n) => /^S\d{2,}$/i.test(n))
     ok('套装数与目录数一致', pool?.sets.length === setDirs.length,
       `扫描 ${pool?.sets.length} / 目录 ${setDirs.length}（${setDirs.join(' ')}）`)
@@ -161,7 +148,6 @@ console.log('\n【C. 整套导入：扫描与分类】')
     ok('套装认出 半身像 / 图标 / 进化等阶',
       first?.busts.length === cnt('半身像') && first?.icons.length === cnt('图标') && first?.evos.length === cnt('进化等阶'),
       `${first?.id} 半身像 ${first?.busts.length}/${cnt('半身像')} 图标 ${first?.icons.length}/${cnt('图标')} 进化 ${first?.evos.length}/${cnt('进化等阶')}`)
-    // ⚠ 这里要用 lsAll：yaml / md 不是图片，`lsFiles`（只收图片）会把它们滤掉
     const hasYaml = lsAll(setDir).some((n) => /^属性-.*\.ya?ml$/i.test(n))
     const hasStory = lsAll(setDir).some((n) => /^故事-.*\.md$/i.test(n))
     ok('套装认出 属性 yaml / 故事 md',
@@ -287,8 +273,8 @@ console.log('\n【F. 模拟器（0.1 版本）】')
     title: document.querySelector('.title-art')?.getAttribute('src') || '',
     video: !!document.querySelector('video.bg-video'),
   }))
-  // ：背景目录 `bg-clean/` 改名为 `bg/`，源图直接是 2560×1440 的 jpg，
-  // 所以宽度断言用 >=1920（不再要求正好 1920）。
+  // ：背景目录 `bg-clean/` 改名为 `bg/`，源图直接是 2560×1440 的 jpg
+  // 所以宽度断言用 >=1920（不再要求正好 1920）
   ok('无动态背景的阁退回静态底图且已加载',
     scene.bg.endsWith('/bg/001.webp') && scene.bgW >= 1920 && !scene.video,
     `${scene.bg} (${scene.bgW}px) video=${scene.video}`)

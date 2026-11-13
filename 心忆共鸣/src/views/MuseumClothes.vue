@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 博物图鉴 · 服装图鉴子界面。
- * 版式以 `素材/博物图鉴/子界面-服装图鉴界面/服装界面-图片工程.pxdesk` 为准（画布 1400×788 → ×1.37143 换算到 1920）。
- */
+/** 博物图鉴 · 服装图鉴子界面 */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -18,12 +15,8 @@ const router = useRouter()
 const route = useRoute()
 const ui = computed(() => store.manifest?.ui)
 
-/**
- * 大版本图标：优先 `ui.ver.majorIcons[大版本号]`，否则取内置 `ui.ver.tower[大版本号-1]`。
- * 都没有时返回空串，模板据此不渲染 `<img>`。
- */
+/** 大版本图标：优先 `ui.ver.majorIcons[大版本号]`，否则取内置 `ui.ver.tower[大版本号-1]`。都没有时返回空串，模板据此不渲染 `<img>` */
 function majorIconOf(majorId: string): string {
-  // ⚠ 这里的 `ui` 是 manifest 顶层的 ui，`tower` / `majorIcons` 都在它下面的 `ver` 里
   const ver = ui.value?.ver
   const own = ver?.majorIcons?.[majorId]
   if (own) return own
@@ -62,9 +55,7 @@ interface SuitRow {
   version: string
 }
 
-/**
- * 套装行 = 阁 × 套装；分组依据是阁所在的版本，同一套会在自建阁 / 复刻阁里各出现一次。
- */
+/** 套装行 = 阁 × 套装；分组依据是阁所在的版本，同一套会在自建阁 / 复刻阁里各出现一次 */
 const SUITS = computed<SuitRow[]>(() => {
   const seen = new Set<string>()
   const out: SuitRow[] = []
@@ -80,9 +71,7 @@ const SUITS = computed<SuitRow[]>(() => {
   return out
 })
 
-/**
- * 同一套可能出现在多座阁里 → 搜索/深链只认一条，优先落在首发版本那座阁。
- */
+/** 同一套可能出现在多座阁里 → 搜索/深链只认一条，优先落在首发版本那座阁 */
 function canonicalRow(name: string): SuitRow | undefined {
   const rows = SUITS.value.filter((r) => r.set.name === name)
   if (!rows.length) return undefined
@@ -102,9 +91,7 @@ function partGot(setId: string, p: MzPart) {
 }
 
 /* ══════════════════════════════════════════ 赛季栏 */
-/**
- * 赛季栏的版本列表：从服装阁数据派生，不读 `ui.ver.cards` 的键；缺卡时露出底板 + 版本号 + 版本名。
- */
+/** 赛季栏的版本列表：从服装阁数据派生，不读 `ui.ver.cards` 的键；缺卡时露出底板 + 版本号 + 版本名 */
 const VER_LIST = computed(() => {
   const set = new Set<string>()
   for (const b of store.manifest?.banners ?? []) set.add(b.version)
@@ -120,10 +107,7 @@ function inVersion(v: string, target: string) {
   return v.startsWith(target) && !/^\d/.test(v.slice(target.length))
 }
 
-/**
- * 每个版本的套装总数 / 已集齐套数 —— 缩略图黑白→彩色按这个比例从左往右恢复。
- * 判定走 store.setDone（全库 5★/4★ 部件的完成度）。
- */
+/** 每个版本的套装总数 / 已集齐套数 —— 缩略图黑白→彩色按这个比例从左往右恢复。判定走 store.setDone（全库 5★/4★ 部件的完成度） */
 function versionProgress(v: string): number {
   const list = SUITS.value.filter((r) => inVersion(r.version, v))
   if (!list.length) return 0
@@ -132,8 +116,7 @@ function versionProgress(v: string): number {
   return done / list.length
 }
 
-/** 彩色层的软边蒙版：已集齐比例 p% 的左侧为彩色、右侧为黑白，交接处 8% 柔和过渡。
- *  p=0 → 全部黑白；p=100 → 全部彩色（避免「一套都没集齐却露彩色」） */
+/** 彩色层的软边蒙版：已集齐比例 p% 的左侧为彩色、右侧为黑白，交接处 8% 柔和过渡。p=0 → 全部黑白；p=100 → 全部彩色（避免「一套都没集齐却露彩色」） */
 function softMask(v: string): string {
   const p = versionProgress(v) * 100
   if (p <= 0) return 'linear-gradient(to right, transparent 0%, transparent 100%)'
@@ -145,9 +128,7 @@ function softMask(v: string): string {
 
 const version = ref('')
 
-/**
- * 大版本 id → 名称：以 manifest 的 `ui.ver.versions[].majorName` 为准，内置表只作兜底。
- */
+/** 大版本 id → 名称：以 manifest 的 `ui.ver.versions[].majorName` 为准，内置表只作兜底 */
 const FALLBACK_MAJOR_LABEL: Record<string, string> = { '1': '心愿原野', '2': '伊赞之土' }
 const MAJOR_LABEL = computed<Record<string, string>>(() => {
   const out: Record<string, string> = { ...FALLBACK_MAJOR_LABEL }
@@ -179,9 +160,7 @@ function isMajorOpen(k: string) {
   return openMajor.value === k
 }
 
-/**
- * 版本号 → 版本名：以 manifest 的 `ui.ver.versions` 为准，内置表只兜底。
- */
+/** 版本号 → 版本名：以 manifest 的 `ui.ver.versions` 为准，内置表只兜底 */
 const FALLBACK_VER_NAME: Record<string, string> = {
   '1.0': '探索季', '1.1': '流星季', '1.2': '花焰季', '1.3': '传说季', '1.4': '妄想季',
   '1.5': '泡泡季', '1.6': '天真季', '1.7': '蓝泪季', '1.8': '丹青季', '1.9': '音乐季',
@@ -233,10 +212,7 @@ const curLocked = computed(() => (cur.value ? suitLocked(cur.value) : true))
 const partSel = ref(-1) // -1 = 未选部件 → 显示「套装整体」
 const selPart = computed<MzPart | null>(() => (partSel.value >= 0 ? curParts.value[partSel.value] ?? null : null))
 
-/**
- * 部件对应的试穿图（stages[0] 里 `类型-部件名`）：先按部件名后缀精确匹配，
- * 再按部件 slot（= 卡片名前缀）兜底。slot 在全部套装里无重复，可作 1:1 键。
- */
+/** 部件对应的试穿图（stages[0] 里 `类型-部件名`）：先按部件名后缀精确匹配， 再按部件 slot（= 卡片名前缀）兜底。slot 在全部套装里无重复，可作 1:1 键 */
 function partCard(p: MzPart): string | undefined {
   const stage = cur.value?.set.assets.stages?.[0]
   if (!stage) return undefined
@@ -248,8 +224,7 @@ function partCard(p: MzPart): string | undefined {
   const bySlot = cards.find((c) => c.name.startsWith(slot + '-') && !c.name.startsWith('整体'))
   return bySlot?.src
 }
-/** 当前展示的是否为半身像（部件试穿图 520×724，整体立绘 448×656，比例不同）。
- *  匹配不到试穿图时会回退到整体立绘，此时不能套用半身像比例。 */
+/** 当前展示的是否为半身像（比例不同）。匹配不到试穿图时会回退到整体立绘，此时不能套用半身像比例 */
 const isHalf = computed(() => !!(selPart.value && partCard(selPart.value)))
 /** 展示图：选部件 → 该部件试穿图；否则 → 套装整体立绘 */
 const showImg = computed(() => {
@@ -274,9 +249,7 @@ const showDesc = computed(() => {
 /** 名称：选部件 → 该部件名；再点同一个部件回退 → 套装名（与文案同步切换） */
 const curName = computed(() => (selPart.value ? selPart.value.name : cur.value?.set.name ?? ''))
 
-/** 五维雷达：
- *   - 未选部件（partSel === -1）→ 该套装所有部件五维之和；
- *   - 选中某个具体部件 → 该部件自己的五维。 */
+/** 五维雷达： - 未选部件（partSel === -1）→ 该套装所有部件五维之和； - 选中某个具体部件 → 该部件自己的五维 */
 const DIMS = ['典雅', '清新', '甜美', '性感', '帅气'] as const
 const radar = computed(() => {
   const src = selPart.value ? [selPart.value] : curParts.value
@@ -337,7 +310,7 @@ function labelOfIdx(name: string): string {
 const SET_VISIBLE = 3
 const SET_W = 347
 const SET_H = 109
-/** 套装格子间隔 2px：SET_PITCH = SET_W + 2，显示区 = 3 格 + 2 个 2px 间隔 */
+/** 套装格子间隔 2px */
 const SET_PITCH = SET_W + 2
 const setShift = ref(0)
 const setMax = computed(() => Math.max(0, suitsOfVersion.value.length - SET_VISIBLE))
@@ -346,9 +319,7 @@ function setWheel(e: WheelEvent) {
   if (setMax.value <= 0) return
   setShift.value = Math.min(setMax.value, Math.max(0, setShift.value + (e.deltaY > 0 ? 1 : -1)))
 }
-/**
- * 拖动翻页：不要用 `setPointerCapture`（会吃掉按钮 click）；window 上挂 move/up，位移超 5px 才算拖动。
- */
+/** 拖动翻页 */
 let setPressed = false
 let setMoved = false
 let setX0 = 0
@@ -480,17 +451,17 @@ watch(
 const L = {
   back: { x: 27, y: 14, w: 137, h: 137 },
   sets: { x: 280, y: 33.5, w: SET_W, h: SET_H },
-  /** 立绘容器 `T_UI_Collage_free_02`（pxdesk 层 2） */
+  /** 立绘容器 `T_UI_Collage_free_02` */
   collage: { x: 301.2, y: 198.5, w: 290.9, h: 434 },
   petals: { x: 190.7, y: 96.3, w: 217.7, h: 329.1 },
   info: { x: 654.3, y: 176, w: 946.1, h: 661.1 },
   plog: { x: 494.5, y: 668.2, w: 137.1, h: 137.1 },
   parts: { x: 601.7, y: 935, w: 5 * PART_PITCH, h: 137 },
-  /** 赛季栏下边界：屏幕底部上方 50px */
+  /** 赛季栏下边界 */
   vers: { x: 1662.2, y: 12, w: 257.8, h: 1018 },
   /** 放大镜热区（点开搜索弹窗）：以 (250,820) 为圆心、半径 100 的圆形点击区域 */
   search: { x: 150, y: 720, w: 200, h: 200 },
-  /** 装饰（服装界面-图片工程2：画布 1400×788 → ×1.37143 换算到 1920） */
+  /** 装饰（服装界面-图片工程2 */
   decor: { x: 1050.3, y: 203.5, w: 514.6, h: 613.6, opacity: 0.3 },
 }
 
@@ -703,13 +674,13 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- ============ 立绘容器 `T_UI_Collage_free_02` + 立绘 ============ -->
-    <!-- 立绘/半身像置于容器框之下（先渲染 → 被框遮住，只在窗口处透出） -->
+    <!-- 立绘/半身像置于容器框之下（先渲染 → 被框遮住） -->
     <div class="cl-show" :class="{ locked: curLocked }" :style="{ left: L.collage.x + 'px', top: L.collage.y + 'px', width: L.collage.w + 'px', height: L.collage.h + 'px' }">
       <img class="sh-bg" :src="asset(ui.museum.clothes.showBg)" :style="{ filter: bgFilter }" alt="" draggable="false" />
       <img v-if="showImg" class="sh-img" :class="{ half: isHalf }" :src="asset(showImg)" alt="" draggable="false" />
       <img class="sh-frame" :src="asset(ui.museum.clothes.collage)" alt="" draggable="false" />
     </div>
-    <!-- 花瓣装饰（pxdesk 层 0） -->
+    <!-- 花瓣装饰 -->
     <img
       class="cl-petals"
       :src="asset(ui.museum.clothes.petals)"
@@ -858,7 +829,7 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 
-/* ---------- 返回键 ---------- */
+/* 返回键 */
 .cl-back {
   position: absolute;
   padding: 0;
@@ -879,7 +850,7 @@ onBeforeUnmount(() => {
 .cl-back:hover .bn { opacity: 0; }
 .cl-back:hover .bh { opacity: 1; }
 
-/* ---------- 套装选择栏 ---------- */
+/* 套装选择栏 */
 .cl-sets {
   position: absolute;
   overflow: hidden;
@@ -909,7 +880,7 @@ onBeforeUnmount(() => {
   object-fit: fill;
   max-width: none;
 }
-/* 高亮：外边缘柔和蓝光呼吸。用 ::after 叠在按钮内容之上 */
+/* 高亮 */
 .cl-set::after {
   content: '';
   position: absolute;
@@ -920,13 +891,13 @@ onBeforeUnmount(() => {
 }
 .cl-set:not(.locked):hover,
 .cl-set.on { z-index: 2; }
-/* 选中常亮（不再挂 animation） */
+/* 选中常亮 */
 .cl-set.on::after {
   opacity: .9;
   box-shadow: inset 0 0 0 3px rgba(178,222,255,1),
               inset 0 0 12px rgba(178,222,255,.7);
 }
-/* 悬停呼吸（动画优先，覆盖常亮） */
+/* 悬停呼吸 */
 .cl-set:not(.locked):hover::after {
   animation: setBlueBreath 0.4s ease-in-out infinite;
 }
@@ -960,7 +931,7 @@ onBeforeUnmount(() => {
 }
 .cl-set.locked .st-name { color: #7b736a; }
 
-/* ---------- 赛季栏 ---------- */
+/* 赛季栏 */
 .cl-vers {
   position: absolute;
   overflow-y: auto;
@@ -968,9 +939,9 @@ onBeforeUnmount(() => {
   scrollbar-width: none;
 }
 .cl-vers::-webkit-scrollbar { width: 0; }
-/* 大版本按钮（option 素材 + 地标图标 + 居中名称），与「版本界面」同款 */
+/* 大版本按钮 */
 .cl-vgroup { margin: 0 0 2px; }
-/* 与版本页一致，展开小版本后大版本按钮钉在列表顶部不滚走 */
+/* 与版本页一致 */
 .cl-vmajor {
   position: sticky;
   top: 0;
@@ -983,8 +954,7 @@ onBeforeUnmount(() => {
   background: none;
   cursor: var(--nk-cursor, auto), pointer;
 }
-/* 大版本底板：option 素材 437×132，实体（alpha>128）=(15,16)-(421,116) = 406×100。
-   img 尺寸与偏移按「实体 = 小版本实体 241.4×63.4、居中对齐」反算。 */
+/* 大版本底板 */
 .vm-bg {
   position: absolute;
   left: -0.2px;
@@ -1052,7 +1022,7 @@ onBeforeUnmount(() => {
   filter: drop-shadow(0 2px 5px rgba(20, 40, 60, 0.28));
 }
 .cl-vminor.active .vn-bg { filter: drop-shadow(0 0 8px rgba(255, 226, 160, 0.75)); }
-/* 缩略图：底黑白 + 彩色层按集齐进度蒙版 */
+/* 缩略图 */
 .vn-thumb {
   position: absolute;
   left: 6px;
@@ -1117,12 +1087,12 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-/* ---------- 展示区（立绘容器 T_UI_Collage_free_02） ---------- */
+/* 展示区 */
 .cl-show {
   position: absolute;
   pointer-events: none;
 }
-/* 立绘背景图：置于立绘之下、被框遮住只在窗口透出 */
+/* 立绘背景图 */
 .sh-bg {
   position: absolute;
   inset: 0;
@@ -1132,7 +1102,7 @@ onBeforeUnmount(() => {
   max-width: none;
   pointer-events: none;
 }
-/* 容器铺满，立绘缩进到框内留白区 */
+/* 容器铺满 */
 .sh-frame {
   position: absolute;
   inset: 0;
@@ -1143,7 +1113,7 @@ onBeforeUnmount(() => {
 }
 .sh-img {
   position: absolute;
-  /* 贴合 T_UI_Collage_free_02 的透明窗口（素材内窗口 bbox：x 2.99%~97.92% / y 1.25%~98.12%） */
+  /* 贴合 T_UI_Collage_free_ */
   left: 2.99%;
   top: 0.25%;
   width: 94.93%;
@@ -1152,18 +1122,18 @@ onBeforeUnmount(() => {
   max-width: none;
   filter: drop-shadow(0 8px 18px rgba(60, 40, 20, 0.35));
 }
-/* 半身像（部件试穿图 520×724）与整体立绘（448×656）比例不同，单独用 cover 充满窗口 */
+/* 半身像 */
 .sh-img.half {
   object-fit: cover;
 }
-/* 未获得套装：立绘与容器背景一起压灰 */
+/* 未获得套装 */
 .cl-show.locked .sh-img { filter: grayscale(1) brightness(0.72) opacity(0.55); }
-/* 未获得套装：容器背景也一起变灰 */
+/* 未获得套装 */
 .cl-show.locked .sh-bg { filter: grayscale(1) brightness(0.66) !important; }
-/* 套装卡底板同理：未获得时整块（含标签底板）压成灰 */
+/* 套装卡底板同理 */
 .cl-set.locked .st-bg { filter: grayscale(1) brightness(0.8); }
 
-/* 放大镜热区：不做悬停高亮 */
+/* 放大镜热区 */
 .cl-search {
   position: absolute;
   padding: 0;
@@ -1180,7 +1150,7 @@ onBeforeUnmount(() => {
   clip: rect(0 0 0 0);
 }
 
-/* ---------- 信息栏 ---------- */
+/* 信息栏 */
 .cl-info {
   position: absolute;
   padding: 0;
@@ -1219,7 +1189,7 @@ onBeforeUnmount(() => {
   min-width: 0;
   overflow: hidden;
 }
-/* 名称跑马灯：超宽时两份副本无缝左移 */
+/* 名称跑马灯 */
 .in-name {
   margin: 0;
   font-family: 'NikkiYaHei', 'NikkiBodyBold', sans-serif;
@@ -1240,7 +1210,7 @@ onBeforeUnmount(() => {
   flex: none;
   margin-top: 8px;
 }
-/* 星级 60px；素材四周透明通道 L9/R10（86 宽），负边距抵消留白 */
+/* 星级 */
 .in-stars img {
   width: 60px;
   height: 60px;
@@ -1257,7 +1227,7 @@ onBeforeUnmount(() => {
   font-size: 22px;
   color: #7a5a2c;
 }
-/* 标签胶囊：与共鸣页套装弹窗同一套素材（ui.detail.labels） */
+/* 标签胶囊 */
 .in-tag {
   display: inline-flex;
   align-items: center;
@@ -1318,7 +1288,6 @@ onBeforeUnmount(() => {
   color: #5a452a;
 }
 
-/* ---------- 故事跳转 ---------- */
 .cl-plog {
   position: absolute;
   padding: 0;
@@ -1339,7 +1308,7 @@ onBeforeUnmount(() => {
   50% { filter: drop-shadow(0 0 9px rgba(241, 243, 129, 1)) drop-shadow(0 0 22px rgba(241, 243, 129, 0.95)); }
 }
 
-/* ---------- 部件栏 ---------- */
+/* 部件栏 */
 .cl-parts {
   position: absolute;
   overflow: hidden;
@@ -1382,10 +1351,10 @@ onBeforeUnmount(() => {
   object-fit: contain;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
-/* 未获得：图标**和底板**一起置灰 */
+/* 未获得 */
 .cl-part:not(.got) .pt-ico { filter: grayscale(0.7) brightness(0.6) opacity(0.5); }
 .cl-part:not(.got) .pt-bg { filter: grayscale(1) brightness(0.62) opacity(0.75); }
-/* 高亮框：外扩 3px 抵消素材四周 3px 透明留白，使蓝框与部件容器等大；仅切换显隐 */
+/* 高亮框 */
 .pt-hi {
   inset: -3px;
   width: calc(100% + 6px);
@@ -1412,22 +1381,22 @@ onBeforeUnmount(() => {
   margin-right: -2.3px;
   filter: drop-shadow(0 0 4px rgba(255, 226, 158, 0.9));
 }
-/* 未获得：星级与部件/底板一起置灰 */
+/* 未获得 */
 .cl-part:not(.got) .pt-stars { filter: grayscale(1) brightness(0.7) opacity(0.5); }
-/* 搜索弹窗样式在 `src/components/SearchPopup.vue`（`.sp-*`） */
-/* ---------- 装饰层（服装界面-图片工程2 图层 1） ---------- */
+/* 搜索弹窗样式在 `src/components/SearchPopup.vue` */
+/* 装饰层 */
 .cl-decor {
   position: absolute;
   object-fit: fill;
   max-width: none;
   pointer-events: none;
   user-select: none;
-  /* 信息栏羊皮纸不透明，装饰需叠在其上（0.3 不透明度的稀疏金色纹样） */
+  /* 信息栏羊皮纸不透明 */
   z-index: 5;
 }
 
-/* ---------- 五维雷达：容器 / 悬停热区 / 数值 ---------- */
-/* 容器 T_UI_Collage_f_1，50% 不透明，作为雷达底盘装饰 */
+/* 五维雷达 */
+/* 容器 T_UI_Collage_f_ */
 .rd-frame {
   position: absolute;
   inset: 0;
@@ -1438,13 +1407,13 @@ onBeforeUnmount(() => {
   opacity: 0.5;
   pointer-events: none;
 }
-/* 每个尖角的透明热区：仅用于悬停捕获，不显示 */
+/* 每个尖角的透明热区 */
 .rd-hot {
   fill: rgba(214, 162, 92, 0);
   pointer-events: all;
   cursor: var(--nk-cursor, auto), pointer;
 }
-/* 悬停该角时显示的纯文字数值（无容器） */
+/* 悬停该角时显示的纯文字数值 */
 .rd-val {
   font-family: 'NikkiYaHei', 'NikkiBodyBold', sans-serif;
   font-size: 22px;

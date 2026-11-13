@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * 共鸣页 —— 右上货币栏 / 服装阁艺术字 / 深海回响入口 / 共鸣按钮，左上退出 / 缩略图 / 套装卡片。
- */
+/** 共鸣页 —— 右上货币栏 / 服装阁艺术字 / 深海回响入口 / 共鸣按钮，左上退出 / 缩略图 / 套装卡片 */
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -33,9 +31,7 @@ const detailTab = ref<'prob' | 'history'>('prob')
 /** 抽取记录只留最近 50 条 */
 const RECENT_MAX = 50
 
-/**
- * 当前服装阁的最近 50 条抽取记录（倒序），按池过滤，存于 `save.history`。
- */
+/** 当前服装阁的最近 50 条抽取记录（倒序），按池过滤，存于 `save.history` */
 const recentPulls = computed(() => {
   const bid = store.bannerId
   const h = store.save?.history ?? []
@@ -54,9 +50,9 @@ const recentPulls = computed(() => {
     })
 })
 
-/* ────────── 抽取记录分页（v1.3.06） ────────── */
+/* ────────── 抽取记录分页 ────────── */
 
-/** 单页条数（用户指定 10） */
+/** 单页条数 */
 const PAGE_SIZE = 10
 /** 当前页（0 起） */
 const page = ref(0)
@@ -106,7 +102,7 @@ const p4 = computed(() => store.pity.p4)
 const hard5 = computed(() => rules.value?.pity['5'].hard ?? 20)
 const hard4 = computed(() => rules.value?.pity['4'].hard ?? 10)
 const soft5 = computed(() => rules.value?.pity['5'].softStart ?? 18)
-/** 4★ 软保底起点：只有纯 4★ 池有（实机第 4 抽 20.15%），主池为 0 = 不显示 */
+/** 4★ 软保底起点 */
 const soft4 = computed(() => rules.value?.pity['4'].softStart ?? 0)
 const remain5 = computed(() => Math.max(0, hard5.value - p5.value))
 const inSoft = computed(() => p5.value >= soft5.value)
@@ -114,18 +110,14 @@ const p5Pct = computed(() => Math.min(100, (p5.value / hard5.value) * 100))
 const p4Pct = computed(() => Math.min(100, (p4.value / hard4.value) * 100))
 const softPct = computed(() => (soft5.value / hard5.value) * 100)
 
-/**
- * 本池套装（星级降序）；`plateIdx` = 该套装在本池的序号（1 起，5★ 在前，同级保持 manifest 顺序）。
- */
+/** 本池套装（星级降序）；`plateIdx` = 该套装在本池的序号（1 起，5★ 在前，同级保持 manifest 顺序） */
 const sets = computed(() =>
   [...(banner.value?.sets ?? [])]
     .sort((a, b) => b.star - a.star)
     .map((st, i) => ({ ...st, plateIdx: i + 1 })),
 )
 
-/**
- * 左下角套名横幅：本池全部套装横向排列，同屏最多 3 套，其余滚轮 / 拖动查看。
- */
+/** 左下角套名横幅：本池全部套装横向排列，同屏最多 3 套，其余滚轮 / 拖动查看 */
 const bannerPlates = computed(() => sets.value)
 
 /* ---- 套名横幅横向滚动：滚轮 + 拖动（拖动后不触发点击） ---- */
@@ -147,7 +139,7 @@ function onPlatesDown(e: PointerEvent) {
   if (!el) return
   dragging = true
   dragMoved = false
-  // v1.6.02：记**设计坐标**，不然高分辨率下拖拽会跑得更快
+  // 记**设计坐标**，不然高分辨率下拖拽会跑得更快
   dragStartX = toDesignX(e.clientX)
   dragStartLeft = el.scrollLeft
 }
@@ -165,9 +157,7 @@ function onPlatesUp() {
   dragging = false
 }
 
-/**
- * 套装详情 → 服装图鉴对应位置（图鉴支持 `?name=` 定位），并把来源压进 ESC 返回栈。
- */
+/** 套装详情 → 服装图鉴对应位置（图鉴支持 `?name=` 定位），并把来源压进 ESC 返回栈 */
 function jumpToClothes() {
   const st = showDetail.value
   if (!st) return
@@ -215,9 +205,7 @@ const ui = computed(() => store.manifest?.ui)
 /* ---------------------------------------------------- 背景：动态 PV / 静态底图 */
 /** 服装阁动态背景（官网 PV 转的 webm，manifest.assets.bgVideo，没有就退回静态） */
 const bgVideo = computed(() => store.banner?.assets.bgVideo ?? null)
-/**
- * 静态底图（按池）：默认池用 2560×1440 的 `bg076`（中心裁切 75%），其余用 1920×1080 的 `bgClean`。
- */
+/** 静态底图（按池） */
 const isDefaultPool = computed(() => store.bannerId === 'banner-076')
 const bgStill = computed(() => {
   if (isDefaultPool.value && ui.value?.banner.bg076) return ui.value.banner.bg076
@@ -235,9 +223,7 @@ const bgVideoEl = ref<HTMLVideoElement | null>(null)
 /** 当前这条 bgVideo 加载失败过（切阁时重置；失败过的路径不该反复重试） */
 const bgVideoBroken = ref(false)
 
-/**
- * 实际播放的视频：本级正常就播本级，加载失败过就落静态、不再重试。
- */
+/** 实际播放的视频：本级正常就播本级，加载失败过就落静态、不再重试 */
 const activeVideo = computed(() => (bgVideoBroken.value ? null : bgVideo.value))
 
 /** 本阁静态背景加载失败过（切阁时重置） */
@@ -254,9 +240,7 @@ function onStillError() {
   bgStillBroken.value = true
 }
 
-/**
- * 动态背景加载失败的兜底链：本阁静态底图 → 统一兜底背景（`ui/ver/bg.webp`）→ `.bg-none` 渐变。
- */
+/** 动态背景加载失败的兜底链：本阁静态底图 → 统一兜底背景（`ui/ver/bg.webp`）→ `.bg-none` 渐变 */
 function onBgVideoError() {
   bgVideoBroken.value = true
   bgMode.value = 'still'
@@ -278,9 +262,7 @@ function toggleBg() {
 /* ---------------------------------------------------- 服装阁列表滚动 */
 const poolListEl = ref<HTMLElement | null>(null)
 
-/**
- * 上下临界区虚化：到顶不虚化顶部、到底不虚化底部，内容不足一屏时两端都不虚化。
- */
+/** 上下临界区虚化：到顶不虚化顶部、到底不虚化底部，内容不足一屏时两端都不虚化 */
 const poolAtTop = ref(true)
 const poolAtBottom = ref(false)
 const POOL_FADE_TOP = 24
@@ -313,10 +295,7 @@ function onPoolWheel(e: WheelEvent) {
   el.scrollTop += e.deltaY
 }
 
-/**
- * 把当前服装阁滚进列表可视区（v2.5.07：列表 80 项，一屏只放得下 5~6 个）。
- * 只在「切换服装阁 / 首次挂载」时滚，用户自己滚动不会被拽回。
- */
+/** 把当前服装阁滚进列表可视区 */
 async function scrollSelectedIntoView() {
   await nextTick()
   const el = poolListEl.value
@@ -363,13 +342,11 @@ interface PoolEntry {
   bg: string | null
 }
 
-/**
- * 服装阁列表 = 当前版本的服装阁 + 常驻池（永远最后一个），来自 `store.visiblePools`。
- */
+/** 服装阁列表 = 当前版本的服装阁 + 常驻池（永远最后一个），来自 `store.visiblePools` */
 const POOLS = computed<PoolEntry[]>(() =>
   (store.visiblePools ?? [])
     .map((b) => {
-      // 阁型：standard / limited / collab 走内置图标与文案；
+      // 阁型：standard / limited / collab 走内置图标与文案
       // 其它任何值（工坊里自定义的阁型）统一归 visiblePools 的 `typeLabel`
       const t = String(b.type ?? 'limited')
       const known = t === 'standard' || t === 'limited' || t === 'collab'
@@ -385,19 +362,15 @@ const POOLS = computed<PoolEntry[]>(() =>
     }),
 )
 
-/**
- * 是否「素材已收录」：manifest 里有这个 banner 即可（缺背景由 `.bg-none` 渐变兜底）。
- */
+/** 是否「素材已收录」：manifest 里有这个 banner 即可（缺背景由 `.bg-none` 渐变兜底） */
 function isReal(p: PoolEntry): boolean {
   return !!store.manifest?.banners.some((x) => x.id === p.id)
 }
 
-/** 统一兜底背景（v1.9.06）：没给背景 / 图或视频损坏时都落到这张 */
+/** 统一兜底背景：没给背景 / 图或视频损坏时都落到这张 */
 const fallbackBg = computed(() => ui.value?.banner.fallbackBg ?? '')
 
-/**
- * 列表缩略图：本阁缩略图 → 本阁背景 → 统一兜底图。
- */
+/** 列表缩略图：本阁缩略图 → 本阁背景 → 统一兜底图 */
 function thumbOf(p: PoolEntry): string {
   return p.thumb || p.bg || fallbackBg.value || ''
 }
@@ -417,16 +390,12 @@ function tagOf(t: PoolEntry['type']): string {
   return t === 'collab' ? b.tagCollab : t === 'standard' ? b.tagStandard : b.tagLimited
 }
 
-/**
- * 当前服装阁编号（001~999 官方 / 1000~9999 自定义），必须整串匹配 `^\d{3,4}$`，不合法返回空串。
- */
+/** 当前服装阁编号（001~999 官方 / 1000~9999 自定义），必须整串匹配 `^\d{3,4}$`，不合法返回空串 */
 const gachaNo = computed(() => {
   const k = String(banner.value?.gachaKey ?? '').trim()
   return /^\d{3,4}$/.test(k) ? k : ''
 })
-/**
- * 套名横幅底板：按该套装在本池的序号取专属铭牌，其次整池一张 `_name.png`，最后通用粉 / 紫底板。
- */
+/** 套名横幅底板：按该套装在本池的序号取专属铭牌，其次整池一张 `_name.png`，最后通用粉 / 紫底板 */
 function plateOf(st: SetInfo & { plateIdx?: number }): string {
   const b = ui.value?.banner
   if (!b) return ''
@@ -442,13 +411,9 @@ function tagText(p: PoolEntry): string {
   return p.type === 'collab' ? '联动限定' : p.type === 'limited' ? '限定' : '常驻'
 }
 
-/**
- * 列表放大：缩略图 242×110 → 273×126（transform-origin 横轴 20%），只用 transform、不改盒子尺寸。
- */
+/** 列表放大 */
 
-/**
- * 选中项 = 当前 bannerId 在列表里的位置，跟随 `store.bannerId`。
- */
+/** 选中项 = 当前 bannerId 在列表里的位置，跟随 `store.bannerId` */
 const selectedIdx = ref(0)
 watch(
   () => [store.bannerId, POOLS.value.length] as const,
@@ -482,9 +447,9 @@ function selectPool(i: number) {
   play('thumb-select', { volume: 0.6 })
   if (store.bannerId !== p.id) {
     store.selectBanner(p.id)
-    // 每座阁有自己的「进入界面」音：进页时播过一次（音量 1.0），
-    // 在缩略图栏**切到另一座**时再播一次（音量 0.7，用户口径）。
-    // 点当前这座不重复播 —— 那是「没切换」，只有选中框在动。
+    // 每座阁有自己的「进入界面」音：进页时播过一次（音量 1.0）
+    // 在缩略图栏**切到另一座**时再播一次（音量 0.7）
+    // 点当前这座不重复播 —— 那是「没切换」，只有选中框在动
     playBannerEnter(p.id, 0.7)
     // 新阁重新评估背景：上一座阁坏掉的视频/背景图不代表这一座也坏
     bgVideoBroken.value = false
@@ -523,9 +488,7 @@ function currencyIcon(name: string): string {
 
 /* ---------------------------------------------------- 动作 */
 
-/**
- * 退出共鸣页：`?from=versions` 退回版本页，其余入口回上级。
- */
+/** 退出共鸣页：`?from=versions` 退回版本页，其余入口回上级 */
 function leave() {
   clearHops()
   play('back-select', { volume: 0.8 })
@@ -538,10 +501,7 @@ function openEcho() {
   showEcho.value = true
 }
 
-/**
- * ESC 退出（v1.2.02 补全二级界面统一的「按 ESC 返回」）。
- * 有弹层时先关弹层，避免一次 ESC 连页面一起退掉。
- */
+/** ESC 退出。有弹层时先关弹层，避免一次 ESC 连页面一起退掉 */
 function onKey(e: KeyboardEvent) {
   if (e.key !== 'Escape') return
   /* 层级从高到低逐层退：套装详情弹窗最先关 */
@@ -639,10 +599,7 @@ function stageIcon(name: string, on = false): string {
   return list[stageIconIdx(name)] ?? list[0] ?? ''
 }
 
-/**
- * 形态是否已解锁：5★ 集齐→初始 / 焕新、180 抽→一进、230 抽→二进、集齐第二套→满进；
- * 4★ 集齐→焕新、集齐第二套→进化。每层都要在上一层已解锁的前提下。
- */
+/** 形态是否已解锁：5★ 集齐→初始 / 焕新、180 抽→一进、230 抽→二进、集齐第二套→满进； 4★ 集齐→焕新、集齐第二套→进化。每层都要在上一层已解锁的前提下 */
 function stageUnlocked(name: string, st: SetInfo | null = showDetail.value): boolean {
   if (!st) return false
   const pr = setProgress(st)
@@ -682,9 +639,7 @@ function labelOf(tag: string): string {
   return ui.value?.popup?.labels?.[k] ?? ui.value?.popup?.label ?? ''
 }
 
-/**
- * 进化形态缩略图：按 manifest 里的真实 stage 名取 `整体-<形态>` 卡。
- */
+/** 进化形态缩略图：按 manifest 里的真实 stage 名取 `整体-<形态>` 卡 */
 const formThumbs = computed(() => {
   const s = showDetail.value
   if (!s) return []
@@ -738,12 +693,9 @@ onMounted(() => {
   // 开发期直出套装详情：/#/banner?set=蒙尘之罪（生产构建里这段会被摇掉）
   // manifest 是异步加载的，onMounted 时 sets 可能还是空的 → 用 watch 等它到齐
   if (import.meta.env.DEV) {
-    // ⚠ 是 hash 路由，query 在 # 后面，window.location.search 永远是空的 → 必须走 route.query
     const q = route.query.set
     const want = typeof q === 'string' ? q : ''
     if (want) {
-      // ⚠ 不能用 `const stop = watch(...)` 再在回调里 stop()：immediate 会同步执行回调，
-      // 那时 stop 还没赋值 → ReferenceError。用一个 flag 更稳。
       let done = false
       watch(sets, (list) => {
         if (done) return
@@ -820,11 +772,11 @@ onUnmounted(() => {
           @click="selectPool(i)">
           <img class="pi-img" :src="asset(thumbOf(p))" :alt="p.name" draggable="false"
             @error="onThumbError" />
-          <!-- 每个缩略图下方都有金线装饰（解包 bg_list_line，236×48，金线在最底部） -->
+          <!-- 每个缩略图下方都有金线装饰（解包 bg_list_line，金线在最底部） -->
           <img v-if="ui?.banner" class="pi-line" :src="asset(ui.banner.listLine)" alt="" draggable="false" />
-          <!-- 悬停/选中：镂空方框（解包 bg_list_line_h，268×148），比缩略图大 1px -->
+          <!-- 悬停/选中 -->
           <img v-if="ui?.banner" class="pi-frame" :src="asset(ui.banner.cardFrame)" alt="" draggable="false" />
-          <!-- 类型标签：方框左上角与缩略图左上角重合（素材本身有 6/11px 内边距，用负偏移抵消） -->
+          <!-- 类型标签 -->
           <img v-if="ui?.banner" class="pi-tag" :src="asset(tagOf(p.type))" alt="" draggable="false" />
           <span class="pi-tag-txt">{{ tagText(p) }}</span>
           <span class="pi-name">{{ p.name }}</span>
@@ -918,7 +870,7 @@ onUnmounted(() => {
         <div class="pp-body">
           <div class="pp-head">
             <h4>{{ detailTab === 'prob' ? '共鸣概率' : '抽取记录' }}</h4>
-            <!-- 抽取记录分页（v1.3.06）：样式沿用玄学的圆钮，底色改淡蓝 -->
+            <!-- 抽取记录分页：样式沿用玄学的圆钮，底色改淡蓝 -->
             <div v-if="detailTab === 'history' && pageCount > 1" class="hp-pager">
               <button class="hp-pg" :disabled="page <= 0" title="上一页" @click="turnPage(-1)">‹</button>
               <span class="hp-num num">{{ page + 1 }} <i>/</i> {{ pageCount }}</span>
@@ -1050,8 +1002,7 @@ onUnmounted(() => {
 
           <!-- 左：属性插画 + 立绘 + 初始等级图标 -->
           <img v-if="ui?.popup" class="sh-artbg" :src="asset(ui?.popup.art[attrKey])" alt="" draggable="false" />
-          <!-- v1.5.05：立绘按各套装的画幅不同（448×656 / 520×724 …），直接放会顶出照片框。
-               外面套一层「照片框同尺寸 + overflow:hidden」的容器，超出部分裁掉。 -->
+          <!-- 立绘按各套装的画幅不同，直接放会顶出照片框。外面套一层「照片框同尺寸 + overflow:hidden」的容器，超出部分裁掉 -->
           <div class="sh-hero-box">
             <img class="sh-hero" :class="{ s4: showDetail.star === 4 }"
               :src="asset(showDetail.assets.portrait)" :alt="showDetail.name" draggable="false" />
@@ -1095,7 +1046,7 @@ onUnmounted(() => {
               :title="`${f.setName || f.name}${stageUnlocked(f.name) ? '' : '（未解锁）'}`"
               @click="formIdx = i + 1; play('paper-flip', { volume: 0.45 })">
               <img v-if="ui?.popup" class="sh-form-card" :src="asset(ui.popup.formCard)" alt="" draggable="false" />
-              <!-- v1.5.05：形态缩略图也按卡片画框裁切，避免宽画幅的袖摆顶到卡片外 -->
+              <!-- 形态缩略图也按卡片画框裁切，避免宽画幅的袖摆顶到卡片外 -->
               <span class="sh-form-clip">
                 <img class="sh-form-pic" :src="asset(f.src)" :alt="f.name" loading="lazy" draggable="false" />
               </span>
@@ -1123,9 +1074,7 @@ onUnmounted(() => {
   </div>
 </template>
 <style scoped>
-/*
- * 共鸣页（2.10 实机版式）：1920×1080 设计坐标系，坐标取自 布局坐标/服装阁界面 的 pxdesk 标注框（画布 1400×787 → 1918 时 ×1.37）。
- */
+/* 共鸣页 */
 .banner {
   position: absolute;
   inset: 0;
@@ -1134,8 +1083,7 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-/* 背景：静态原图 2560×1440，「缩放 0.75」= 只取画面**中心 75%**（中心 1920×1080），1:1 铺满。
-   **不做任何调色**——之前加的 brightness(1.2) 已回退。 */
+/* 背景 */
 .bg-wrap {
   position: absolute;
   inset: 0;
@@ -1145,17 +1093,14 @@ onUnmounted(() => {
   position: absolute;
   display: block;
 }
-/* 2560×1440 居中裁到 1920×1080：left = -(2560-1920)/2 = -320，top = -(1440-1080)/2 = -180 */
 .bg-still {
   left: -320px;
   top: -180px;
   width: 2560px;
   height: 1440px;
-  /* ⚠ 全局 img{max-width:100%} 会把 2560 夹回 1920（高度还是 1440）→ 既没裁到中心又横向压扁 */
   max-width: none;
   object-fit: fill;
 }
-/* 动态 PV 本身就是 1920×1080，不需要再裁 */
 .bg-video {
   left: 0;
   top: 0;
@@ -1163,7 +1108,7 @@ onUnmounted(() => {
   height: 1080px;
   object-fit: fill;
 }
-/* 无背景素材的池（2.11「雪落颂愿时」）：雪夜紫调渐变，配色贴该池 title 的粉紫+薄荷 */
+/* 无背景素材的池 */
 .bg-none {
   left: 0;
   top: 0;
@@ -1174,7 +1119,7 @@ onUnmounted(() => {
     radial-gradient(900px 620px at 20% 80%, rgba(176, 216, 236, 0.26), transparent 60%),
     linear-gradient(155deg, #262738 0%, #393850 38%, #554e6c 66%, #7b7290 100%);
 }
-/* 压暗：左侧给列表留底、顶部给货币栏留底、底部给按钮留底 */
+/* 压暗 */
 .bg-scrim {
   position: absolute;
   inset: 0;
@@ -1185,8 +1130,7 @@ onUnmounted(() => {
     linear-gradient(0deg, rgba(8, 6, 12, 0.62) 0%, transparent 24%);
 }
 
-/* 退出键：实机 95×96 原尺寸，**不缩小**。
-   素材 back-n 的圆在 19..76（圆心 47.5,47.5），实机圆心 (68.5,49) → 盒子落在 (21,2)。 */
+/* 退出键 */
 .back-btn {
   position: absolute;
   left: 21px;
@@ -1212,7 +1156,7 @@ onUnmounted(() => {
 .back-btn:hover { filter: drop-shadow(0 0 12px rgba(255, 214, 140, 0.55)); }
 .back-btn:hover .bb-h { opacity: 1; }
 
-/* 页签「共鸣」：实机墨迹 118..185 × 25..60 */
+/* 页签「共鸣」 */
 .page-title {
   position: absolute;
   left: 118px;
@@ -1229,10 +1173,7 @@ onUnmounted(() => {
   z-index: 20;
 }
 
-/* 货币栏 1325,23 546×50
-   容器 = social_performance_bg 60% 不透明 + 底部金线（btn_long_details_n）
-   ⚠ 素材是**两端带圆角的胶囊**（alpha 在左右各 28px 内渐隐），直接拉伸会把两头拉变形，
-   所以用 border-image 九宫格：左右各 28px 按原尺寸画，只拉伸中间那段。 */
+/* 货币栏 */
 .wallet {
   position: absolute;
   left: 1331px;
@@ -1260,17 +1201,13 @@ onUnmounted(() => {
   opacity: 0.6;
   pointer-events: none;
 }
-/* 金线：素材 624×100，金线在 y 59..78、x 22..563。
-   要「离货币栏 2px」→ 金线顶部落在 52，故 top = 52 - 59×1.009 ≈ -7.5 */
+/* 金线 */
 .w-line {
   position: absolute;
   left: -22.2px;
-  /* 素材亮线只有 y 77..78 两行（其余是极淡的光晕），换算到绝对坐标：
-     盒子顶 = 23 + top，亮线顶 = 盒子顶 + 77.8 → 要让亮线落在栏底(73) + 7px，top = -20.8 */
   top: -20.8px;
   width: 629.8px;
   height: 101px;
-  /* ⚠ 又是全局 img{max-width:100%}：630 被夹成 546 → 亮线整体左移 18px，看着就不对称 */
   max-width: none;
   object-fit: fill;
   pointer-events: none;
@@ -1320,13 +1257,9 @@ onUnmounted(() => {
   background: rgba(255, 255, 255, 0.16);
 }
 
-/* 服装阁列表 41,123：**可滚动**，上下临界区虚化（范围放大 3 倍 → 24px / 102px）
-   ⚠ 容器实际开到 290 宽，左侧内边距 14px → 缩略图视觉左边 44（与实机一致） */
+/* 服装阁列表 */
 .pool-list {
   position: absolute;
-  /*
-   * 容器 x 14..336、y 99..812，容纳放大态缩略图（273×126，origin 20% 50%）；缩略图本身仍在 x=44 / y=123。
-   */
   left: 14px;
   top: 99px;
   width: 322px;
@@ -1337,7 +1270,6 @@ onUnmounted(() => {
   z-index: 15;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  /* 临界区虚化改由 JS 动态给（滚到顶/底就不再虚化，否则首末服装阁永远看不清） */
 }
 .pool-list::-webkit-scrollbar { width: 0; height: 0; display: none; }
 .pool-inner {
@@ -1346,7 +1278,7 @@ onUnmounted(() => {
   gap: 12px;
   padding-bottom: 24px;
 }
-/* 未放大：242×110（实机 x 44..285） */
+/* 未放大 */
 .pool-item {
   position: relative;
   flex: 0 0 auto;
@@ -1356,8 +1288,7 @@ onUnmounted(() => {
   border: 0;
   background: none;
   cursor: var(--nk-cursor, auto), pointer;
-  /* 放大：273/242 = 1.128 宽、126/110 = 1.145 高；
-     原点横轴 20% → 左边只外扩 6px、右边外扩 27px，与实机完全一致 */
+  /* 放大 */
   transform-origin: 20% 50%;
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 1;
@@ -1374,7 +1305,7 @@ onUnmounted(() => {
   object-fit: cover;
   border-radius: 2px;
 }
-/* 每个缩略图下方都有金线装饰（bg_list_line 236×48，金线在素材最底部） */
+/* 每个缩略图下方都有金线装饰 */
 .pi-line {
   position: absolute;
   left: 0;
@@ -1384,20 +1315,13 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* 悬停 / 选中：镂空方框（bg_list_line_h 268×148），**比缩略图上下左右各外扩 1px**。
-   ⚠ img 是替换元素，只写 inset 不写 width/height 会退回素材本身的 268×148 比例，
-   必须显式 calc(100% + 2px)，否则高度会算成 153 而不是 128。 */
+/* 悬停 / 选中 */
 .pi-frame {
   position: absolute;
-  /* 父级 scale(1.1281,1.1455) 会把 1px 也放大成 1.13px，
-     所以这里要先把 1px 除回未缩放的 0.886/0.873 —— 屏幕上才是精确的 1px */
-  /* 素材 268×148，画线内容在 4..262 × 4..143（258×139），线画在盒子内侧。
-     在「按内容反推」的盒子上再整体放大 4px（用户要求：不重新反推，直接加大）。 */
   left: -13.67px;
   top: -13.08px;
   width: 267.3px;
   height: 131.9px;
-  /* ⚠ 全局 img{max-width:100%} 会把 244px 夹回 242，边框就比缩略图小了 */
   max-width: none;
   object-fit: fill;
   opacity: 0;
@@ -1405,7 +1329,7 @@ onUnmounted(() => {
   transition: opacity 0.18s ease;
 }
 .pool-item.big .pi-frame { opacity: 1; }
-/* 未放大的整体压暗一点，放大的原色 */
+/* 未放大的整体压暗一点 */
 .pool-item::after {
   content: '';
   position: absolute;
@@ -1416,9 +1340,7 @@ onUnmounted(() => {
   transition: background 0.2s ease;
 }
 .pool-item.big::after { background: none; }
-/* 类型标签：**内容框左上角与缩略图左上角重合**
-   素材 168×60，实际内容在 6..150 × 11..49（144×38）。
-   等比缩到 0.75 → 内容 108×28.5，落在 (4.5, 8.25)，所以盒子要往左上各推这么多。 */
+/* 类型标签 */
 .pi-tag {
   position: absolute;
   left: -8.2px;
@@ -1444,7 +1366,7 @@ onUnmounted(() => {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
   pointer-events: none;
 }
-/* 服装阁名：缩略图左下角，离左边缘 4px、下边缘 2px */
+/* 服装阁名 */
 .pi-name {
   position: absolute;
   left: 5px;
@@ -1463,13 +1385,10 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* 服装阁名称艺术字：实机墨迹 1507..1856 × 120..265，按墨迹反推盒子 */
+/* 服装阁名称艺术字 */
 .title-art {
   position: absolute;
   left: 1484px;
-  /* 垂直居中于「货币栏下划线（≈80）」与「抽取说明（top 289）」之间：
-     区间高 209、盒子高 214 → top = 80 + (209-214)/2 = 77.5。
-     素材的透明边已在收集阶段居中（center_alpha_webp），所以盒子居中 = 视觉居中。 */
   top: 77.5px;
   width: 418px;
   height: 214px;
@@ -1481,7 +1400,7 @@ onUnmounted(() => {
 .title-text {
   position: absolute;
   left: 1507px;
-  /* 与 .title-art 同一条视觉中线（区间 80~289 的中心 ≈184.5；62px 字号块高约 40 → 150 起会偏下 5px） */
+  /* 与 .title-art 同一条视觉中线 */
   top: 145px;
   margin: 0;
   font-family: 'NikkiYaHei', 'NikkiBody', sans-serif;
@@ -1493,7 +1412,7 @@ onUnmounted(() => {
   z-index: 12;
 }
 
-/* 抽取说明：标注 1479,298，实机再往右 5、往上 4 */
+/* 抽取说明 */
 .rule-text {
   position: absolute;
   left: 1504px;
@@ -1509,14 +1428,11 @@ onUnmounted(() => {
   z-index: 12;
 }
 
-/* 深海回响活动签（实机量测：圆环 606..694、星星 694..712、标题 718..744、提示 748..770）
-   整块以 x≈1817 居中 → 盒子 1732,606 170×164
-   顺序：圆环(礼盒) → 5 星 → 「深海回响」→「xx次后可领取」，星与字紧贴，整体贴住圆环 */
+/* 深海回响活动签 */
 .wish-card {
   position: absolute;
   left: 1738px;
-  /* 抽取提示盒底 = 289 + 32 = 321，再 +20 = 341 是圆环内容顶；
-     圆环内容比卡片盒顶低 3px，所以卡片 top = 338 */
+  /* 抽取提示盒底 */
   top: 338px;
   width: 170px;
   height: 164px;
@@ -1526,9 +1442,7 @@ onUnmounted(() => {
   cursor: var(--nk-cursor, auto), pointer;
   z-index: 15;
 }
-/* 圆环素材 152×168，实际内容 21..144 × 24..140（123×116）。
-   要让它显示成 88×83，等比缩 0.715 → 盒子 108.8×120，内容落在 (15,17.2)。
-   目标位置：内容左上角 = 卡片 (41,0) → 盒子 left 26、top -17.2 */
+/* 圆环素材 */
 .wc-ring, .wc-ring-h {
   position: absolute;
   left: 26px;
@@ -1540,8 +1454,7 @@ onUnmounted(() => {
 }
 .wc-ring-h { opacity: 0; }
 .wish-card:hover .wc-ring-h { opacity: 1; }
-/* 礼盒图标（Flowing Spectrum Selectable 256×256，内容 18..230 × 40..228），
-   显示成 58×58 落在圆环中心 (56,12.5) → 盒子 left 51、top 1.6 */
+/* 礼盒图标 */
 .wc-gift {
   position: absolute;
   left: 51px;
@@ -1601,7 +1514,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* 共鸣按钮：两张图已按 alpha 裁到实体（302×72 / 303×71），宽度统一 296、高度自适应。 */
+/* 共鸣按钮 */
 .pull-btn {
   position: absolute;
   top: 987px; /* 下边缘留 22px：1080 - 22 - 71 */
@@ -1628,7 +1541,7 @@ onUnmounted(() => {
 .pull-btn:hover { filter: drop-shadow(0 0 22px rgba(255, 214, 140, 0.55)) brightness(1.08); }
 .pull-btn:active img { transform: scale(0.985); }
 
-/* 本服装阁服装收集进度（3★30 + 4★8 + 5★10 = 48），压在「共鸣详情」框正上方 */
+/* 本服装阁服装收集进度 */
 .collect-progress {
   position: absolute;
   left: 18px;
@@ -1643,8 +1556,7 @@ onUnmounted(() => {
   z-index: 19;
   pointer-events: none;
 }
-/* 共鸣详情：容器用解包 golden_edge（280×84，内容 251×57 居中）
-   位置：左下角横排，离屏幕左/下边缘各 18px，与切换键间隔 15px */
+/* 共鸣详情 */
 .detail-btn {
   position: absolute;
   left: 18px;
@@ -1657,22 +1569,19 @@ onUnmounted(() => {
   cursor: var(--nk-cursor, auto), pointer;
   z-index: 18;
 }
-/* 金框素材 280×84，实际内容（胶囊）14..265 × 10..67 → 251×57。
-   要显示成 187×45，等比缩 0.745 → 盒子 208.6×62.6，内容落在 (10.4,7.45) */
+/* 金框素材 */
 .db-bg {
   position: absolute;
   left: -10.4px;
   top: -7.4px;
   width: 208.6px;
   height: 62.6px;
-  /* ⚠ 全局 img{max-width:100%} 会把它夹到按钮宽 187 → 金框被横向压扁，
-     视觉上文字就偏右了（v1.2.01 用户反馈）。必须显式放开。 */
   max-width: none;
   object-fit: fill;
   pointer-events: none;
   transition: filter 0.16s ease;
 }
-/* 文字居中基准 = 金框**内容矩形**（0..187 × 0.05..42.5），不是按钮盒子（187×45） */
+/* 文字居中基准 = 金框**内容矩形 */
 .db-txt {
   position: absolute;
   left: 0;
@@ -1703,7 +1612,7 @@ onUnmounted(() => {
   box-shadow: 0 0 8px rgba(255, 90, 90, 0.9);
 }
 
-/* 视频 / 静态背景切换键：紧挨「共鸣详情」右侧，间隔 3px（18+187+3 = 208），行内垂直居中 */
+/* 视频 / 静态背景切换键 */
 .switch-btn {
   position: absolute;
   left: 208px;
@@ -1728,11 +1637,10 @@ onUnmounted(() => {
 .switch-btn:hover .sw-h { opacity: 1; }
 .switch-btn:hover { filter: drop-shadow(0 0 14px rgba(255, 214, 140, 0.6)); }
 
-/* 套名横幅：素材 332×96、可见底板约 251×55；牌可见 227×49 → 盒子 300×86，容器宽 920 = 同屏 3 套。 */
+/* 套名横幅 */
 .set-banners {
   position: absolute;
   left: 276px;
-  /* 牌可见底 ≈ 948 + 68 = 1016，与左侧「共鸣详情」按钮同一水平带 */
   top: 946px;
   width: 920px;
   height: 112px;
@@ -1762,7 +1670,7 @@ onUnmounted(() => {
   transition: filter 0.16s ease;
 }
 .set-banner:hover { filter: drop-shadow(0 0 12px rgba(255, 214, 140, 0.6)) brightness(1.08); }
-/* ⚠ 必须写死宽度：`width:auto` + 全局 img{max-width:100%} 会跟按钮互相依赖，宽度塌成 0 */
+/* 必须写死宽度 */
 .sb-plate {
   display: block;
   width: 300px;
@@ -1772,7 +1680,7 @@ onUnmounted(() => {
 }
 .sb-name {
   position: absolute;
-  /* v1.4.03：用户要求文字整体右移 20px（原 44） */
+  /* 用户要求文字整体右移 */
   left: 64px;
   top: 0;
   height: 86px;
@@ -1788,9 +1696,8 @@ onUnmounted(() => {
 }
 .sb-stars {
   position: absolute;
-  /* 对齐名称牌可见区的左缘（盒子左透明边约 40px） */
+  /* 对齐名称牌可见区的左缘 */
   left: 40px;
-  /* 牌可见底 ≈ 18 + 49 = 67，星从 72 起，留 5px 视觉间隙 */
   top: 72px;
   display: flex;
   pointer-events: none;
@@ -1800,7 +1707,7 @@ onUnmounted(() => {
   height: 32.4px;
   max-width: none;
   object-fit: contain;
-  /* 间距取原来 −24 的一半 */
+  /* 间距取原来 − */
   margin-right: -12px;
   filter: drop-shadow(0 0 6px rgba(255, 214, 150, 0.8));
 }
@@ -1827,7 +1734,7 @@ onUnmounted(() => {
  * 共鸣详情弹窗：美术全部走解包素材
  *   bg_01 836×512 羊皮纸 / bg_01_line、bg_04_line 内框金线 / bg_03_line 1072×720 外圈金线（缩到 900×604）
  * ============================================================ */
-/* 遮罩：游戏里的窗口都压一层暗底，否则羊皮纸边缘会跟场景糊在一起 */
+/* 遮罩 */
 .prob-mask {
   position: absolute;
   inset: 0;
@@ -1850,23 +1757,17 @@ onUnmounted(() => {
 .pw-outer, .pw-bg, .pw-line4, .pw-line1 {
   position: absolute;
   object-fit: fill;
-  /* ⚠ 全局 img{max-width:100%} 会把 904px 的外框夹成 836px、把 839px 的 04_line 夹成 836px
-     → 右边短一截，看上去就是"左右不对称"。必须显式放开。 */
   max-width: none;
   pointer-events: none;
 }
-/* 外圈：1072×720 → 900×604（保持 1.489 比例），比纸面四周各大 32/46px */
-/* ⚠ 三张线框素材的**内容都不在画布正中**，直接 inset:0 会左右不对称。
-   下面每个盒子都是「按内容 bbox 反推、让内容矩形正好居中在面板上」算出来的：
-     04_line 内容 1..833 × 0..511（画布 836×512）→ 目标 836×512
-     01_line 内容 9..821 × 2..503（画布 836×512）→ 目标 800×476
-     03_line 内容 0..1066 × 3..719（画布 1072×720）→ 目标 900×604 */
+/* 外圈 */
+/* 三张线框素材的**内容都不在画布正中 */
 .pw-outer { left: -32px; top: -48.5px; width: 904px; height: 606.5px; }
 .pw-bg { inset: 0; width: 100%; height: 100%; }
 .pw-line4 { left: -1px; top: 0; width: 839px; height: 512px; }
 .pw-line1 { left: 9.1px; top: 16.1px; width: 822.6px; height: 485.5px; }
 
-/* 内容区：落在纸面的亮部里（纸面暗角 40px，再留出内框 18px） */
+/* 内容区 */
 .pp-body {
   position: absolute;
   left: 62px;
@@ -1925,7 +1826,7 @@ onUnmounted(() => {
   box-shadow: 0 0 6px rgba(180, 130, 40, 0.6);
 }
 
-/* ────────── 抽取记录（v1.3.04） ────────── */
+/* ────────── 抽取记录 ────────── */
 .ph-list {
   flex: 1 1 auto;
   margin: 0;
@@ -1950,7 +1851,7 @@ onUnmounted(() => {
 .ph-item.s5 { background: linear-gradient(90deg, rgba(255, 226, 150, 0.4), rgba(255, 226, 150, 0) 78%); }
 .ph-item.s4 { background: linear-gradient(90deg, rgba(198, 178, 255, 0.34), rgba(198, 178, 255, 0) 72%); }
 
-/* 抽取记录分页：36px 圆钮 + ‹ › 字符，淡蓝底，与羊皮纸 / 暖金区分。 */
+/* 抽取记录分页 */
 .hp-pager {
   display: flex;
   align-items: center;
@@ -1984,7 +1885,7 @@ onUnmounted(() => {
     0 3px 8px rgba(62, 96, 136, 0.28);
 }
 .hp-pg:disabled {
-  /* 别压得太狠：第一页时左键几乎是白纸，太淡就看不出「这里有个键」 */
+  /* 别压得太狠 */
   opacity: 0.45;
   color: rgba(61, 99, 137, 0.55);
   cursor: default;
@@ -2008,7 +1909,7 @@ onUnmounted(() => {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-/* 星级：16 → 19px，外面套暖棕凹槽、每颗星叠深棕描边，保证压在浅色羊皮纸上可读。 */
+/* 星级 */
 .ph-stars {
   flex: 0 0 auto;
   display: flex;
@@ -2041,7 +1942,7 @@ onUnmounted(() => {
   color: rgba(110, 82, 40, 0.6);
 }
 
-/* 左右切换键：与彩蛋弹窗同一套 74×74 圆钮，左键水平翻转 */
+/* 左右切换键 */
 .pn {
   position: absolute;
   top: 50%;
@@ -2118,7 +2019,7 @@ onUnmounted(() => {
 .pop-enter-active, .pop-leave-active { transition: opacity 0.18s ease, transform 0.18s ease; }
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(10px); }
 
-/* ---------- 套装详情弹层：画布 1400×820，坐标与 pxdesk 标注 1:1 对应，素材按 pxdesk 反查 ---------- */
+/* 套装详情弹层 */
 .sheet-mask {
   position: absolute;
   inset: 0;
@@ -2139,7 +2040,7 @@ onUnmounted(() => {
 
 /* 底 */
 .sh-bg {
-  /* pxdesk 里 1892×1108 正好等比缩到 1400×820，可见底板落在 74..1317 */
+  /* pxdesk 里 */
   left: 0; top: 0;
   width: 1400px; height: 820px;
   object-fit: fill;
@@ -2153,18 +2054,15 @@ onUnmounted(() => {
 .sh-ribbon {
   top: 68px; height: 76px;
   object-fit: fill; opacity: 0.9;
-  /* 实机这两条装饰是朝下的，pxdesk 里贴反了 → 上下翻转 */
   transform: scaleY(-1);
 }
 .sh-ribbon-l { left: 88px; width: 461px; }
 .sh-ribbon-r { left: 890px; width: 425px; }
 .sh-glow { left: 500px; top: -9px; width: 429px; height: 237px; object-fit: fill; opacity: 0.55; }
-/* 名字底：九宫格拉伸 —— 两头（圆角 + 星饰）保持原尺寸，只拉中间那段 */
+/* 名字底 */
 .sh-namebox {
   position: absolute;
   left: 714px; top: 52px;
-  /* 宽度 = 文字宽 + 两侧留白；留白要大于九宫格两头的 36px，
-     否则文字会顶到圆角星饰上 —— 长套名靠这里把中间段撑开 */
   min-width: 340px; height: 150px;
   max-width: 640px;
   transform: translateX(-50%);
@@ -2185,7 +2083,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .sh-np-base { opacity: 0.92; }
-/* 常驻高光（pxdesk 第 20 层），screen 叠亮 */
+/* 常驻高光 */
 .sh-np-glow { mix-blend-mode: screen; opacity: 0.55; }
 .sh-stars {
   position: absolute;
@@ -2217,7 +2115,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* 左：属性插画 + 立绘 */
+/* 左 */
 .sh-artbg {
   left: 124px; top: 183px;
   width: 311px; height: 502px;
@@ -2225,7 +2123,7 @@ onUnmounted(() => {
   border-radius: 10px;
   opacity: 0.95;
 }
-/* 立绘裁切框：与照片框（.sh-artbg）同尺寸同圆角，超出的一律隐藏（v1.5.05） */
+/* 立绘裁切框 */
 .sh-hero-box {
   position: absolute;
   left: 124px; top: 183px;
@@ -2236,7 +2134,7 @@ onUnmounted(() => {
   pointer-events: none;
 }
 .sh-hero {
-  /* 坐标系相对裁切框：原先是 left 81（框在 124）→ 偏移 -43 */
+  /* 坐标系相对裁切框 */
   left: -43px; top: 0;
   width: 352px; height: 500px;
   object-fit: cover;
@@ -2249,11 +2147,11 @@ onUnmounted(() => {
 .sh-stage { object-fit: contain; pointer-events: none; }
 .sh-stage-hero { left: 81px; top: 183px; width: 70px; height: 70px; }
 
-/* 中：方框 + 部件格 */
+/* 中 */
 .sh-slotframe { left: 446px; top: 171px; width: 269px; height: 268px; object-fit: fill; }
-/* 方框里的白色圆角板（pxdesk 第 38 层），压淡一点让粉色底透出来 */
+/* 方框里的白色圆角板 */
 .sh-slotbg { left: 444px; top: 170px; width: 273px; height: 273px; object-fit: fill; opacity: 0.55; }
-/* 中央：圆形套装收集进度（半径 86，描边 5） */
+/* 中央 */
 .sh-ring {
   position: absolute;
   left: 480px; top: 205px;
@@ -2284,7 +2182,7 @@ onUnmounted(() => {
   text-shadow: 0 2px 10px rgba(120, 50, 60, 0.55);
 }
 
-/* 右：紫纸 + 属性胶囊 + 文案 */
+/* 右 */
 .sh-paper { left: 729px; top: 154px; width: 577px; height: 331px; object-fit: fill; }
 .sh-labels {
   position: absolute;
@@ -2307,7 +2205,7 @@ onUnmounted(() => {
   color: #6a4a3a;
 }
 .sh-label.main b { color: #b03a5a; }
-/* 跳转服装图鉴：贴在三个属性胶囊右侧（纸面右上角），与胶囊同高 */
+/* 跳转服装图鉴 */
 .sh-jump {
   position: absolute;
   left: 1160px; top: 176px;
@@ -2339,7 +2237,7 @@ onUnmounted(() => {
   margin: 0;
   padding-right: 6px;
   overflow-y: auto;
-  /* 实机是仿宋；Windows 用「仿宋」，其他平台退回宋体/衬线 */
+  /* 实机是仿宋；Windows 用「仿宋」 */
   font-family: 'FangSong', '仿宋', 'STFangsong', 'FZFangSong-Z02', 'Noto Serif SC', serif;
   font-size: 30px;
   line-height: 1.25;
@@ -2369,7 +2267,7 @@ onUnmounted(() => {
   object-fit: fill;
   opacity: 0.9;
 }
-/* 形态缩略图裁切框：卡片画框本体（.sh-form-card 的 14,6,151,244） */
+/* 形态缩略图裁切框 */
 .sh-form-clip {
   position: absolute;
   left: 14px; top: 6px;
@@ -2380,7 +2278,7 @@ onUnmounted(() => {
 }
 .sh-form-pic {
   position: absolute;
-  /* 相对裁切框的偏移：原先是 left/top 0（框在 14,6） */
+  /* 相对裁切框的偏移 */
   left: -14px; top: -6px;
   width: 164px; height: 240px;
   object-fit: cover;
@@ -2390,7 +2288,7 @@ onUnmounted(() => {
   filter: brightness(0.86) saturate(0.95);
 }
 .sh-form:hover .sh-form-pic { transform: translateY(-3px); filter: brightness(1) saturate(1.05); }
-/* 悬停高光：pxdesk 第 04 层（金色方框）拉伸到整张卡 */
+/* 悬停高光 */
 .sh-form-glow {
   left: 0; top: 0;
   width: 164px; height: 244px;
@@ -2405,12 +2303,10 @@ onUnmounted(() => {
 .sh-form.on .sh-form-pic {
   filter: brightness(1.05) saturate(1.08);
 }
-/* 选中描边移到裁切框上：画在图上的 box-shadow 会被 overflow:hidden 裁掉 */
+/* 选中描边移到裁切框上 */
 .sh-form.on .sh-form-clip {
   box-shadow: 0 0 0 2px rgba(var(--attr), 0.85), 0 10px 22px rgba(0, 0, 0, 0.4);
 }
-/* 素材 112×112，图案在 15..95（四周 15px 透明边）。
-   整个盒子（含透明边）与卡片左上角重合 → 不溢出容器。 */
 .sh-stage-form { left: 0; top: 0; width: 62px; height: 62px; }
 .sh-form-nm {
   position: absolute;
@@ -2427,13 +2323,11 @@ onUnmounted(() => {
 
 /* 底部装饰 */
 .sh-band {
-  /* 左右边缘与背景底板（100..1317）对齐，pxdesk 里的 104 是手工误差 */
+  /* 左右边缘与背景底板 */
   left: 100px; top: 630px;
   width: 1220px; height: 91px;
   object-fit: fill; opacity: 0.9;
-  /*
-   * 底部装饰带压在立绘与形态卡之上：z-index 4（与 .sh-forms 同层、DOM 在后），仍低于 .sh-line / .sh-diamond。
-   */
+  /* 底部装饰带压在立绘与形态卡之上 */
   z-index: 4;
 }
 .sh-line { top: 736px; height: 14px; object-fit: fill; opacity: 0.85; z-index: 5; }
@@ -2442,7 +2336,7 @@ onUnmounted(() => {
 .sh-diamond { left: 608px; top: 724px; width: 188px; height: 41px; object-fit: fill; z-index: 5; }
 
 /* 关闭键 */
-/* 关闭键：解包 96×96（圆钮内容 15..78），hover 换 _h 版本 */
+/* 关闭键 */
 .sheet-x {
   position: absolute;
   top: 12px; right: 14px;

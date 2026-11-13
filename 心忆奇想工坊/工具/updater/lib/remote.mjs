@@ -1,8 +1,4 @@
-/**
- * 远端适配器：DLC 包的上传 / 下载 / 列包，三种远端同一套接口 —— local（本地目录，网盘同步盘也行）、
- * http（通用端点）、git（push / pull 分发）。配置在 `updater/remote.json`：
- * `{ active, remotes: { local{dir}, http{base,token}, git{repo,branch,dir} } }`；git 远端需已关联仓库（`git remote -v` 非空）。
- */
+/** 远端适配器：DLC 包的上传 / 下载 / 列包，三种远端同一套接口 —— local（本地目录，网盘同步盘也行）、 http（通用端点）、git（push / pull 分发） */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -97,10 +93,7 @@ export function gitInfo() {
 
 /* ────────────────────────────── 打包 ────────────────────────────── */
 
-/**
- * 把源包打成 zip。
- * 包目录里只留「该发的」：dlc.json + data/ + assets/。
- */
+/** 把源包打成 zip。包目录里只留「该发的」：dlc.json + data/ + assets/ */
 export function pack(id) {
   const dir = srcDir(id)
   if (!exists(dir)) throw new Error('源包不存在：' + id)
@@ -170,10 +163,7 @@ export async function upload(type, id, cfg = readConfig()) {
 
 /* ────────────────────────────── 列出远端可下载的包 ────────────────────────────── */
 
-/**
- * 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`）——
- * 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json`。
- */
+/** 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`）—— 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json` */
 export async function listRemote(type, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
   if (type === 'local') {
@@ -248,9 +238,7 @@ function readZipEntry(zip, entry) {
 
 /* ────────────────────────────── 下载 ────────────────────────────── */
 
-/**
- * 从远端下载一个包并装进运行区：zip → 临时目录 → 校验 dlc.json → 装进 `public/dlc/<id>/`，校验不过整个丢弃。
- */
+/** 从远端下载一个包并装进运行区：zip → 临时目录 → 校验 dlc.json → 装进 `public/dlc/<id>/`，校验不过整个丢弃 */
 export async function download(type, id, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
   const tmp = path.join(TOOL_ROOT, 'updater', '.inbox', `dlc-${Date.now()}`)
@@ -306,10 +294,7 @@ export async function download(type, id, cfg = readConfig()) {
 
 /* ────────────────────────────── 分享链接 ────────────────────────────── */
 
-/**
- * 生成一个「别人能拿到的」引用。
- * 本地远端给文件路径；HTTP 远端给下载 URL；git 远端给仓库地址 + 路径。
- */
+/** 生成一个「别人能拿到的」引用。本地远端给文件路径；HTTP 远端给下载 URL；git 远端给仓库地址 + 路径 */
 export function shareRef(type, id, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
   if (type === 'local') return r.dir ? `${r.dir}\\${id}.dlc.zip` : ''

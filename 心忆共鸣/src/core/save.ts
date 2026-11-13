@@ -1,7 +1,4 @@
-/**
- * 存档：localStorage
- * 道具与货币无限，不记数量；只记保底进度、图鉴、里程碑领取、抽卡历史。
- */
+/** 存档：localStorage 道具与货币无限，不记数量；只记保底进度、图鉴、里程碑领取、抽卡历史 */
 import type { BgmScene, PityState } from '@/types'
 
 const KEY = 'nikki-resonance-save-v1'
@@ -37,9 +34,7 @@ export interface SaveData {
     bgm: boolean
     /** 背景音音量 0~1（音量·2） */
     bgmVol: number
-    /**
-     * 各界面背景音 0~1；最终电平 = 基准 × bgmVol × bgmScene[场景] × volume（主音量），缺省按 1。
-     */
+    /** 各界面背景音 0~1；最终电平 = 基准 × bgmVol × bgmScene[场景] × volume（主音量），缺省按 1 */
     bgmScene: Partial<Record<BgmScene, number>>
     /** UI 音效音量 0~1（音量·3） */
     uiVol: number
@@ -51,7 +46,7 @@ export interface SaveData {
     skipOpening: boolean
     /** 跳过抽卡演出：点抽卡直接结算，不进单抽/十连界面（演出·5） */
     skipGacha: boolean
-    /** 欧皇模式：5★/4★ 概率 ×3（快捷·3） */
+    /** 欧皇模式 */
     lucky: boolean
   }
 }
@@ -104,9 +99,7 @@ const PER_BANNER = 200
 /** 全存档流水硬上限（localStorage 兜底） */
 const HISTORY_CAP = 4000
 
-/**
- * 逐池裁剪抽卡流水。每个池的记录只会被**本池**的新记录淘汰；截完再按时间重排回去。
- */
+/** 逐池裁剪抽卡流水。每个池的记录只会被**本池**的新记录淘汰；截完再按时间重排回去 */
 function trimHistory(list: SaveData['history']): SaveData['history'] {
   if (list.length <= PER_BANNER) return list
   const byBanner = new Map<string, SaveData['history']>()
@@ -134,9 +127,7 @@ export function writeSave(data: SaveData): void {
 
 /* ────────────────────────────── 存档备份（导出 / 导入） ────────────────────────────── */
 
-/**
- * 导出文件的**外壳**：`app` / `kind` / `schema` 用于识别「这不是存档」以及判断是否需要迁移。
- */
+/** 导出文件的**外壳**：`app` / `kind` / `schema` 用于识别「这不是存档」以及判断是否需要迁移 */
 export interface SaveFile {
   app: 'nikki-resonance'
   kind: 'save'
@@ -149,7 +140,7 @@ export interface SaveFile {
 
 export const SAVE_APP = 'nikki-resonance'
 
-/** 把存档包成可下载的文本（带缩进，方便用户自己打开看一眼） */
+/** 把存档包成可下载的文本（带缩进） */
 export function toSaveFileText(data: SaveData): string {
   const file: SaveFile = {
     app: SAVE_APP,
@@ -161,9 +152,7 @@ export function toSaveFileText(data: SaveData): string {
   return JSON.stringify(file, null, 2)
 }
 
-/**
- * 解析导入的文本；接受带外壳的（本程序导出的）和裸 `SaveData`（手工拼的）两种写法。
- */
+/** 解析导入的文本；接受带外壳的（本程序导出的）和裸 `SaveData`（手工拼的）两种写法 */
 export function parseSaveFileText(text: string): { ok: true; data: SaveData } | { ok: false; error: string } {
   let raw: unknown
   try {

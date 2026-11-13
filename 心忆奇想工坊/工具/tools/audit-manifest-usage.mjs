@@ -1,8 +1,4 @@
-/**
- * 找出 manifest 里前端**零引用**的素材键（死分支）：`node tools/audit-manifest-usage.mjs [--json]`。
- * 做法（TypeScript 编译器 API，不能用正则 —— 前端到处是别名）：解析 .vue / .ts 认出「别名 → manifest 子路径」，
- * 把属性访问链按别名展开成完整路径再对照 manifest；动态下标（`x[k]`）保守地把整组标成「在用」。
- */
+/** 找出 manifest 里前端**零引用**的素材键（死分支）：`node tools/audit-manifest-usage.mjs [--json]` */
 import fs from 'node:fs'
 import path from 'node:path'
 import ts from 'typescript'
@@ -26,9 +22,7 @@ function scriptOf(text) {
   return m ? m[1] : ''
 }
 
-/**
- * Vue 模板里的表达式 —— 模板才是 `ui.*` 引用的大头，只扫 `<script>` 会把一堆在用的素材误判成死分支。
- */
+/** Vue 模板里的表达式 —— 模板才是 `ui.*` 引用的大头，只扫 `<script>` 会把一堆在用的素材误判成死分支 */
 function templateExprs(text) {
   const tpl = text.match(/<template[^>]*>([\s\S]*)<\/template>/i)
   if (!tpl) return []
@@ -42,10 +36,7 @@ function templateExprs(text) {
   return out
 }
 
-/**
- * 抽出一条属性访问链的标识符数组：`ui?.bgMain` 的 `ui` 落在 expression 上、`ui.value?.banner` 的 `.value` 会把链劈成两段，
- * 所以先摊平成标识符序列，再把尾部别名挪到最前面，`.value` 这类解包键单独剔除。
- */
+/** 抽出一条属性访问链的标识符数组：`ui?.bgMain` 的 `ui` 落在 expression 上、`ui.value?.banner` 的 `.value` 会把链劈成两段， 所以先摊平成标识符序列，再把尾部别名挪到最前面，`.value` 这类解包键单独剔除 */
 const UNWRAP = new Set(['value'])
 
 function chainOf(node) {
@@ -77,10 +68,7 @@ function chainOf(node) {
   return chain
 }
 
-/**
- * 算出一条属性访问链的 manifest 子路径：`chain` 从最外层到最内层（如 ['ui','deco','starlight']），`aliases` = 别名表；
- * 返回不含开头 'ui.' 的路径，认不出来返回 null。
- */
+/** 算出一条属性访问链的 manifest 子路径：`chain` 从最外层到最内层（如 ['ui','deco','starlight']），`aliases` = 别名表； 返回不含开头 'ui.' 的路径，认不出来返回 null */
 function chainToPath(chain, aliases) {
   if (!chain.length) return null
   const head = chain[0]
@@ -91,8 +79,7 @@ function chainToPath(chain, aliases) {
     return rest.length ? (base ? base + '.' + rest.join('.') : rest.join('.')) : base
   }
   // ② 直接挂在 manifest 上：store.manifest?.ui?.cursor → 'cursor'
-  //    ⚠ 这里链首是 `store` 不是 `ui` —— 只判 head==='ui' 会漏掉整条
-  //    「不经 computed 直接读 store.manifest」写法，App.vue 的光标就是这么取的。
+  // 「不经 computed 直接读 store.manifest」写法，App.vue 的光标就是这么取的
   const manIdx = chain.indexOf('manifest')
   if (manIdx >= 0) {
     const uiIdx = chain.indexOf('ui', manIdx)
@@ -103,9 +90,7 @@ function chainToPath(chain, aliases) {
   return null
 }
 
-/**
- * 剥掉 `?? null` / `|| undefined` 这类包裹，露出真正的取值表达式（否则箭头函数体里的别名解析不出来）。
- */
+/** 剥掉 `?? null` / `|| undefined` 这类包裹，露出真正的取值表达式（否则箭头函数体里的别名解析不出来） */
 function unwrapInit(node) {
   let cur = node
   for (let i = 0; i < 6 && cur; i++) {
@@ -121,10 +106,7 @@ function unwrapInit(node) {
   return cur
 }
 
-/**
- * 收集「别名 → manifest 子路径」的绑定：直接取 manifest / 从别的别名派生 / 从局部变量派生；
- * 后两种依赖先解析出来的别名，所以迭代到不动点为止。
- */
+/** 收集「别名 → manifest 子路径」的绑定：直接取 manifest / 从别的别名派生 / 从局部变量派生； 后两种依赖先解析出来的别名，所以迭代到不动点为止 */
 function aliasesIn(code, file) {
   const sf = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true)
   const aliases = {}
@@ -227,7 +209,6 @@ for (const f of walk(SRC)) {
   const text = fs.readFileSync(f, 'utf8')
   let aliases = {}
   if (f.endsWith('.vue')) {
-    // ⚠ 别名定义在 <script> 里，但**用**它的是 <template> —— 必须先收别名再解析模板
     const s = scriptOf(text)
     if (s.trim()) aliases = aliasesIn(s, f)
     const snippets = [s, ...templateExprs(text)]

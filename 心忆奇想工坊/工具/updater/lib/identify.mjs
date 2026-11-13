@@ -1,7 +1,4 @@
-/**
- * 素材识别：拖进来的文件属于哪一类、建议归档到哪。**只做建议，不做决定** ——
- * 「这是哪个套装」「哪个池」必须由表单字段提供。
- */
+/** 素材识别：拖进来的文件属于哪一类、建议归档到哪。**只做建议，不做决定** —— 「这是哪个套装」「哪个池」必须由表单字段提供 */
 import path from 'node:path'
 import { imageSize } from './util.mjs'
 
@@ -19,8 +16,8 @@ export const KINDS = {
   milestone: { label: '深海回响奖励图', group: '服装阁', hint: '文件名形如「120抽-XXX.png」（20~100 抽全池共用一张）' },
   setPortrait: { label: '套装立绘', group: '套装', hint: '448×656 竖图' },
   setBust: { label: '部件试穿图（半身像）', group: '套装', hint: '520×724（2 倍图也行），文件名 = 部位-部件名' },
-  // 「立绘 / 整体图 / 进化立绘」在素材侧已合并成同一类（OV），
-  // 三个 kind 都指向「整体图（OV）」这一个槽位，识别时按文件名区分阶段。
+  // 「立绘 / 整体图 / 进化立绘」在素材侧已合并成同一类（OV）
+  // 三个 kind 都指向「整体图（OV）」这一个槽位，识别时按文件名区分阶段
   setCardEvo: { label: '整体图（OV）', group: '套装', hint: '整体-初始/焕新/一进/二进/满进.png' },
   awaken: { label: '进化立绘（并入整体图）', group: '套装', hint: '进化LV1~n.png → 折算成焕新/一进/二进/满进' },
   partIcon: { label: '部件图标', group: '套装', hint: '256×256，文件名 = 部件名' },
@@ -58,7 +55,7 @@ function classify(f) {
   // 动态背景：视频文件（webm / mp4）
   if (/\.(webm|mp4)$/i.test(ext)) return hit('bannerVideo', 'high', '视频文件 = 服装阁动态背景')
 
-  // 进入音：音频文件。给 mid 而不是 high —— 也可能是别处的音效，允许手动改回去。
+  // 进入音：音频文件。给 mid 而不是 high —— 也可能是别处的音效，允许手动改回去
   if (/\.(mp3|ogg|wav|m4a|flac)$/i.test(ext)) return hit('bannerEnter', 'mid', '音频文件 = 服装阁进入音')
 
   if (/\.ya?ml$/i.test(ext)) return hit('suitYaml', 'high', 'YAML = 套装数据（属性 + 文案）')
@@ -108,9 +105,7 @@ function classify(f) {
   return hit('unknown', 'low', `${w || '?'}×${h || '?'} 未匹配已知规格`)
 }
 
-/**
- * 识别一个磁盘文件：`file` 绝对路径 / `displayName` 展示名 / `relPath` 相对路径（判半身像、图标、进化等阶用）。
- */
+/** 识别一个磁盘文件：`file` 绝对路径 / `displayName` 展示名 / `relPath` 相对路径（判半身像、图标、进化等阶用） */
 export function inspectFile(file, displayName, relPath) {
   const size = imageSize(file)
   const name = displayName || path.basename(file)

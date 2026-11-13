@@ -1,8 +1,5 @@
 ﻿<script setup lang="ts">
-/**
- * 博物图鉴 · 阅读物图鉴子界面。
- * 布局坐标由 `src/data/readings-layout.ts` 提供（`tools/gen-readings-layout.py` 从 pxdesk 工程生成，勿手改）。
- */
+/** 博物图鉴 · 阅读物图鉴子界面 */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -125,14 +122,10 @@ function pick(r: ReadingEntry) {
   play('points-slide', { volume: 0.5 })
 }
 
-/**
- * 正文滚动容器。
- */
+/** 正文滚动容器 */
 const bodyWrap = ref<HTMLElement | null>(null)
 
-/**
- * 切换阅读物 → 正文回到第一行（正文容器是同一个 DOM 节点）。
- */
+/** 切换阅读物 → 正文回到第一行（正文容器是同一个 DOM 节点） */
 watch(selId, () => {
   nextTick(() => {
     if (bodyWrap.value) bodyWrap.value.scrollTop = 0
@@ -299,9 +292,7 @@ const emptyStickerStyle = computed<Record<string, string>>(() => rdLayout(L.valu
 /** 当前是否有选中条目（= 纸面展示正文，而非空态） */
 const hasSelection = computed(() => !!selEntry())
 
-/**
- * 没有深链、也没手动选过时，自动停在第一条已解锁条目上。
- */
+/** 没有深链、也没手动选过时，自动停在第一条已解锁条目上 */
 function autoPick() {
   if (selId.value) return
   const first = regionReadings.value.find((r) => unlocked(r))

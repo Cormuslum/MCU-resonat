@@ -1,8 +1,4 @@
-/**
- * 准备「工坊运行时」：自带 Python + Pillow + ffmpeg 的便携目录（`node tools/pack-runtime.mjs`，`--force` 重新组装）。
- * 产物 `electron/runtime/python/`（python.exe + PIL + ffmpeg.exe，约 133MB）；Pillow / ffmpeg 搬本机已有安装，
- * Python 用官方 embeddable zip，全部不联网装包。
- */
+/** 准备「工坊运行时」：自带 Python + Pillow + ffmpeg 的便携目录（`node tools/pack-runtime.mjs`，`--force` 重新组装） */
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'

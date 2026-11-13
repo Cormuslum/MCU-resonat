@@ -1,7 +1,4 @@
-/**
- * 「辉煌心光」四个交互区的命中框（1920×1080 设计坐标，**自动生成，勿手改**）：
- * 由 `tools/prep-gloria.py` 按图标 alpha 实体框各边外扩 16px 得出。
- */
+/** 「辉煌心光」四个交互区的命中框（**自动生成，勿手改**）： 由 `tools/prep-gloria.py` 按图标 alpha 实体框各边外扩 16px 得出 */
 export type GloriaKey = 'stage' | 'volume' | 'quick' | 'save'
 
 export interface GloriaHot {

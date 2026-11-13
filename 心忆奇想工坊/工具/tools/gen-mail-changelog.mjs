@@ -1,8 +1,4 @@
-/**
- * 把 `CHANGELOG.md` 最近三次更新抽成主页信封弹窗用的运行时 JSON（只取版本号 / 日期 / 标题 / 最多 5 条要点）。
- * 产物 `public/assets/data/mail-changelog.json`，模拟器运行时 fetch —— 改完刷新页面即生效（发行版没有 vite，改不了 .ts）。
- * 用法：`node tools/gen-mail-changelog.mjs`，已挂到 `prebuild`。
- */
+/** 把 `CHANGELOG.md` 最近三次更新抽成主页信封弹窗用的运行时 JSON（只取版本号 / 日期 / 标题 / 最多 5 条要点）。用法：`node tools/gen-mail-changelog.mjs`，已挂到 `prebuild` */
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'

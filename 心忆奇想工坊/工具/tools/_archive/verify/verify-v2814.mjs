@@ -1,19 +1,4 @@
-/**
- * 验收 · 服装图鉴改按「阁所在版本」分组 + 故事图鉴加「奇迹传说」栏
- *
- * 用户的两条要求：
- * ① 服装图鉴改成按**阁所在版本**分组（0.1 祈愿星 / 0.2 魂灵生 是工坊自建阁，
- * 游戏里没有这两个版本，阁里放的是可免费获取的套装）——以前按「套装首发版本」
- * 分组，自建阁那两版在图鉴里是空的，套装还会被算到 1.0/1.5 那些正式版本里。
- * ② 故事图鉴顶部的大版本切换栏加「奇迹传说」按钮（图鉴主界面 / 阅读物图鉴不动）。
- *
- * 覆盖：
- * 一、服装图鉴分组（数据 + 页面）
- * 二、故事图鉴三分区（栏位几何 / 切栏 / 深链 / 解锁正文）
- * 三、阅读物图鉴不受影响（仍两栏）
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2814.mjs`
- */
+/** 验收 · 服装图鉴改按「阁所在版本」分组 + 故事图鉴加「奇迹传 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -142,7 +127,7 @@ for (const v of CUSTOM) {
       `页面 ${have.length} / 期望 ${want.length}${miss.length ? `（缺 ${miss.join('、')}）` : ''}`)
   }
 
-  // 0.1 那两套「首发就是 0.1」的套装必须在里面（用户报障的主角）
+  // 0.1 那两套「首发就是 0.1」的套装必须在里面
   {
     const home = setsOfVersion('0.1').filter((s) => String(s.firstVersion || '').startsWith('0.1')).map((s) => s.name)
     const have = got['0.1'] ?? []
@@ -151,8 +136,8 @@ for (const v of CUSTOM) {
   }
 
   // 分组口径的关键差异：套装出现在**哪座阁**，就归到那座阁的版本 ——
-  // 不再按「首发版本」归类（星之海首发 1.5 泡泡季，但它的阁在 0.1 心轮曳星河里，
-  // 按旧口径会跑到 1.5 去，1.5 那一版又没有它）。
+  // 不再按「首发版本」归类（星之海首发 1.5 泡泡季，但它的阁在 0.1 心轮曳星河里
+  // 按旧口径会跑到 1.5 去，1.5 那一版又没有它）
   {
     const s0 = setsOfVersion('0.1').find((s) => {
       const num = (String(s.firstVersion || '').match(/^\d+\.\d+/) || [''])[0]
@@ -229,7 +214,7 @@ const MIRACLE = STORIES.filter((s) => s.major === 0)
       tabs.map((t) => t.t).join(' → '))
   }
   {
-    // 整组居中：首栏左边距应与末栏右边距对称（±2px）
+    // 整组居中
     const l = tabs[0].x
     const r = 1920 - (tabs[tabs.length - 1].x + tabs[tabs.length - 1].w)
     ok(Math.abs(l - r) <= 2, 'S3 三栏整组水平居中', `左 ${l.toFixed(1)} / 右 ${r.toFixed(1)}`)

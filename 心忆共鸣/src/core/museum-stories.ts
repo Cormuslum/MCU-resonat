@@ -1,6 +1,3 @@
-/**
- * 故事图鉴内容（内置 + DLC）：内置部分运行时加载 `public/assets/data/stories.json`。
- */
 import { reactive } from 'vue'
 import type { StoryEntry } from '@/data/stories'
 import { addStoryNames } from './museum-names'

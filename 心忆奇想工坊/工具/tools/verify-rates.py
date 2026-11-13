@@ -266,7 +266,7 @@ def main():
         print(f"  纯 4★ 精确 {'PASS' if good else 'FAIL'}  "
               f"(|{ep4*100:.3f}% - {want*100:.2f}%| = {abs(ep4-want)*100:.4f}pp ≤ 0.05pp)")
 
-    # 4★ 间隔形状：实机 1~9 抽恒 3.4%、第 10 抽 94.5%、11 抽 98.5%
+    # 4★ 间隔形状
     lo = min(shape4[k] for k in range(1, 10))
     hi = max(shape4[k] for k in range(1, 10))
     good = 0.030 <= lo and hi <= 0.039

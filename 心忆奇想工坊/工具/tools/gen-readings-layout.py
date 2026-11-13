@@ -17,9 +17,8 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import resolve_file  # noqa: E402
 
-# 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`。
-# ⚠ pxdesk 工程文件（图片工程-*.pxdesk）只在 `原始素材/` 里，`素材/` 下只有渲染好的 png，
-#    所以逐文件 resolve，命中新结构就用新结构，否则回落原始素材。
+# 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`
+# 所以逐文件 resolve，命中新结构就用新结构，否则回落原始素材
 BASE_REL = os.path.join("界面", "博物图鉴", "子界面-故事&阅读物 图鉴（两个子界面，但素材相同）")
 OUT = os.path.join(SIM, "src", "data", "readings-layout.ts")
 SX = 1920 / 1400
@@ -76,7 +75,7 @@ def main():
     wish = load("图片工程-心愿原野.pxdesk", WISH_MAP)
     yizan = load("图片工程-伊赞之土.pxdesk", YIZAN_MAP)
 
-    # 行高：心愿原野两条 tabLine 的间距（比 selBox 高度更可靠，selBox 两区域有 2.6px 差异）
+    # 行高
     row_h = round(wish["tabLine2"]["y"] - wish["tabLine1"]["y"], 1)
 
     src = f'''/* AUTO-GENERATED —— python tools/gen-readings-layout.py，勿手改。

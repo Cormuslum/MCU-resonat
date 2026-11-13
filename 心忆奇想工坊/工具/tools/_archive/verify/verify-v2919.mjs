@@ -1,19 +1,4 @@
-/**
- * 验收：0.1「繁星织梦」/ 0.2「繁花映愿」两座自建阁接入
- *
- * 背景：用户把两个阁目录（各 1 套 4★ 套装 + 背景图 / 缩略图 / 艺术字 / 深海回响）
- * 放进 `素材/服装阁/`，本次补齐「进管线」缺的三样东西：
- * ① `素材/套装库/{S0177,S0348}.yaml`（从 `原始素材/套装库·全/` 取全量字段，改来源阁/首发）
- * ② `素材/信息表/卡池索引.json` 的两行登记（gachaKey **1207 / 1208**、version）
- * —— 把编号从 1002/1003 改成 1207/1208，seq 也改由管线自动算
- * ③ `套装序列.csv` 的「首发」去掉多余的间隔号（原写 `0.1·祈愿星`）
- * 之后重跑 build-pool-map → collect-assets → gen-stories。
- *
- * 校验：A manifest 数据 / B 阁列表与缩略图 / C 进入阁后的背景与纯 4★ 规则 / D 图鉴与故事 / E 报错
- *
- * 依赖：`npm run up`（5178 + 5199）。
- * 跑法：node tools/verify-v2919.mjs
- */
+/** 验收：0.1「繁星织梦」/ 0.2「繁花映愿」两座自建阁接入 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -75,8 +60,6 @@ const setTotal = M.banners.reduce((a, b) => a + (b.sets || []).length, 0)
 ok('D2 套装总数 134', setTotal === 134, String(setTotal))
 
 /* ═════════════════ 浏览器 ═════════════════ */
-/* ⚠ 服装阁页**只列当前版本**的池（POOLS 跟着 store.selectedVersion 走），
-   所以每个阁都要用一个把 selectedVersion 预先写成它所属版本的存档再进页面。 */
 const browser = await chromium.launch({
   executablePath: CHROME,
   headless: true,

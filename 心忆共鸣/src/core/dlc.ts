@@ -1,13 +1,8 @@
-/**
- * DLC 运行时：启动时读入已挂载的包（`public/dlc/<id>/`），按接口合并进模拟器的数据。
- * 包内资源 URL 以 `/` 开头（如 `/dlc/<id>/assets/sets/S0438/portrait.webp`），`store.asset()` 原样返回。
- */
+/** DLC 运行时：启动时读入已挂载的包（`public/dlc/<id>/`），按接口合并进模拟器的数据 */
 import { ref } from 'vue'
 import type { BannerInfo, Manifest, SetInfo } from '@/types'
 import type { ReadingEntry } from '@/data/readings'
 import type { StoryEntry } from '@/data/stories'
-/* ⚠ 故意**不**静态 import 故事 / 阅读物正文：只有真的装了带故事/阅读物的 DLC、
-   且该接口被挂载时，才在下面 applyDlcToManifest 里按需动态取一次。 */
 import {
   DLC_INTERFACES,
   DLC_INTERFACE_IDS,
@@ -53,10 +48,7 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   }
 }
 
-/**
- * 读取运行区索引与各包清单 / 数据。
- * 单个包加载失败（缺文件、清单坏了）不影响其它包。
- */
+/** 读取运行区索引与各包清单 / 数据。单个包加载失败（缺文件、清单坏了）不影响其它包 */
 export async function loadDlc(): Promise<DlcRuntime[]> {
   const out: DlcRuntime[] = []
   dlcPackages.value = out
@@ -118,19 +110,14 @@ export async function loadDlc(): Promise<DlcRuntime[]> {
   return out
 }
 
-/**
- * 把已挂载的包合并进内置 manifest：同 id 的服装阁 / 套装跳过并记一条提示，找不到目标池时跳过。
- */
+/** 把已挂载的包合并进内置 manifest：同 id 的服装阁 / 套装跳过并记一条提示，找不到目标池时跳过 */
 export async function applyDlcToManifest(manifest: Manifest, pkgs: DlcRuntime[]): Promise<void> {
   /* 懒加载图鉴正文：故事与阅读物**分开取** */
   let storyMod: typeof import('./museum-stories') | null = null
   let readingMod: typeof import('./museum-readings') | null = null
   const needStories = async () => (storyMod ??= await import('./museum-stories'))
   const needReadings = async () => (readingMod ??= await import('./museum-readings'))
-  /**
-   * 一个接口的数据文件统一是**数组**（工坊一次可多选打包）；
-   * 也兼容老包里这三个接口写的是单对象。
-   */
+  /** 一个接口的数据文件统一是**数组**（工坊一次可多选打包）； 也兼容老包里这三个接口写的是单对象 */
   const asArray = <T>(d: unknown): T[] => (Array.isArray(d) ? (d as T[]) : d ? [d as T] : [])
   for (const pkg of pkgs) {
     for (const id of pkg.mounted) {

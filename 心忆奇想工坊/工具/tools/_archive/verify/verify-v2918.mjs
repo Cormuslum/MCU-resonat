@@ -1,18 +1,4 @@
-/**
- * 验收：固定文案抽成 `文案.json`
- *
- * 覆盖：
- * A 文案.json 结构（键齐、正文条数够）
- * B 工坊顶栏（5199）：标题 / 副标题 / 5 个按钮的 title+alt / 页面 title
- * C 工坊帮助弹窗：条数可增删、`**粗体**` 渲染成 <b>、按钮文字
- * D 模拟器信封（5178）：欢迎语气 kicker（小字）/ 标题 / 4 段正文 / 落款
- * E 两处都无 JS 报错
- *
- * 只校验「页面上的字 == 文案.json 里的字」，不校验措辞本身 —— 措辞要改就改 json。
- *
- * 依赖：`npm run up`（5178 + 5199 都在跑）。
- * 跑法：node tools/verify-v2918.mjs
- */
+/** 验收：固定文案抽成 `文案.json` */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'

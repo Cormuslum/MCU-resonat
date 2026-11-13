@@ -1,16 +1,4 @@
-/**
- * 验收：抽卡概率（主池 5★ 软保底 + 纯 4★ 池）
- *
- * 数值口径来自实机公共统计（`布局坐标/抽卡记录统计/`，7043 人 / 1245 万抽）：
- * · 主池 5★：1~17 抽 1.60%，第 18 抽 36.66%、19 抽 71.63%，20 抽必出
- * · 纯 4★ 池：1~3 抽 10.21%，第 4 抽 20.15%，5 抽必出（综合 24.96%）
- *
- * 这里只校验「前端把 manifest 的规则正确映射成实际概率」这一段 ——
- * 马尔可夫链的精确解由 `python tools/verify-rates.py` 负责。
- *
- * 依赖：模拟器 dev server（5178）在跑。
- * 跑法：node tools/verify-v2915.mjs
- */
+/** 验收 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'

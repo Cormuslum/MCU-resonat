@@ -45,11 +45,11 @@ ITEMS = [
     ("nav-banner", os.path.join(TEX, "XHSY", "T_UI_XHSY_icon_star1.png"), 236, 243),
     ("nav-gloria", os.path.join(TEX, "Shell", "T_UI_NTASK_img_stars2.png"), 336, 268),
     ("logo", os.path.join(SRC, "主页", "LOGO-心忆共鸣 .png"), 313, 460),
-    # ：回退「无限暖暖」横版 LOGO（原 1032×696 → 显示 460×310，居中偏上），与竖版并存
+    # ：回退「无限暖暖」横版 LOGO（居中偏上），与竖版并存
     ("logo-center", os.path.join(SRC, "主页", "主页面素材", "T_UI_img_LOGO1.png"), 460, 310),
 ]
 
-# 系统图标（100×100 画布，内容约 83×80）：动态背景右缘竖排入口 + 左侧栏图标**共用同一批**
+# 系统图标：动态背景右缘竖排入口 + 左侧栏图标**共用同一批**
 SYSICON = os.path.join(SRC, "朋友分享素材", "UI", "Common", "Textures", "SystemIcon")
 SYS = [
     ("sys-ver", "T_UI_pear_icon_app_resonance.png", "版本"),

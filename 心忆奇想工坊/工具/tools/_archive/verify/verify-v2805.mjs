@@ -1,10 +1,4 @@
-/**
- * 验收：高分辨率适配。
- *
- * A. 布局缩放正确（各种视口下 .design 铺满 / 正确 letterbox）
- * B. 指针位移换算正确（拖拽在 4K 下不再跑得快 2 倍）
- * C. 各页面无 JS 报错
- */
+/** 验收：高分辨率适配 */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -122,13 +116,7 @@ for (const sz of SIZES) {
 /* ══════════════ C. 拖拽在 4K 下不再跑得快 ══════════════ */
 console.log('\n【C. 拖拽位移比（4K vs 1080p）】')
 {
-  /**
-   * 用共鸣页的「套名横幅」（.set-banners）做真实拖拽：
-   *   BannerView.onPlatesMove 直接改 scrollLeft，拖完读 scrollLeft 变化。
-   *
-   * 期望：指针在屏幕上移 N 物理像素 → 内容移 N/scale 设计像素。
-   * 修复前：4K 下内容移 N 设计像素（跑得快 2 倍）。
-   */
+  /** 用共鸣页的「套名横幅」（.set-banners）做真实拖拽： BannerView.onPlatesMove 直接改 scrollLeft，拖完读 scrollLeft 变化。期望：指针在屏幕上移 N 物理像素 → 内容移 N/scale 设计像素。修复前：4K 下内容移 N 设计像素（跑得快 2 倍） */
   // 遥远之海（banner-001）有 8 套 → 套名横幅一定横排溢出
   const POOL = 'banner-001'
 
@@ -174,8 +162,7 @@ console.log('\n【C. 拖拽位移比（4K vs 1080p）】')
         clientX: x0 - 200, clientY: y0, bubbles: true, pointerId: 1,
       }))
 
-      // ⚠ scrollLeft 是**设计坐标**（CSS px）—— transform: scale 不改变元素自己的
-      // 布局坐标系，所以它已经是设计 px 了，不能再除以 scale。
+      // 布局坐标系，所以它已经是设计 px 了，不能再除以 scale
       const movedDesign = Math.abs(el.scrollLeft - before)
       const scale = Math.min(innerWidth / 1920, innerHeight / 1080)
       return {
@@ -240,8 +227,8 @@ for (const [w, h, tag] of [[1920, 1080, '1080p'], [2560, 1440, '1440p'], [3840, 
     homeOk.err || `按钮 ${homeOk.box}`)
 
   // 左边缘唤出侧边导航
-  // 起**主页不显示侧边栏**（信封入口搬到了左上角，左缘感应区会让位），
-  // 所以这里改成两条：主页左缘**不该**冒出来；换到二级页面左缘**仍然**能唤出。
+  // 起**主页不显示侧边栏**（信封入口搬到了左上角，左缘感应区会让位）
+  // 所以这里改成两条：主页左缘**不该**冒出来；换到二级页面左缘**仍然**能唤出
   await page.mouse.move(6, Math.round(h / 2))
   await page.waitForTimeout(500)
   const railOnHome = await page.evaluate(() => document.querySelectorAll('.rail').length)

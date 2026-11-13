@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 玄学运势（书桌场景 + 卷轴弹窗）：规格见 `素材/玄学运势/玄学运势-详细设定.md`，坐标以 pxdesk 为准。
- * 弹窗没有退出键；过往无限向前、今日仅当天、未来 5 天。
- */
+/** 玄学运势（书桌场景 + 卷轴弹窗）：规格见 `素材/玄学运势/玄学运势-详细设定.md`，坐标以 pxdesk 为准。弹窗没有退出键；过往无限向前、今日仅当天、未来 5 天 */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -29,9 +26,7 @@ function asset(p: string | null | undefined) {
 
 const PAPER_X = 105
 const PAPER_Y = 46
-/**
- * 展开态轴杆顶边 = 纸面顶边（轴杆高已与纸面等高，AXLE_H = PAPER_H = 956，见 `almanac-geo.ts`）。
- */
+/** 展开态轴杆顶边 = 纸面顶边（轴杆高已与纸面等高，AXLE_H = PAPER_H = 956，见 `almanac-geo.ts`） */
 const ROD_Y_OPEN = PAPER_Y
 /** 收起态轴杆垂直居中 */
 const ROD_Y_COLLAPSED = Math.round((1080 - AXLE_H) / 2)
@@ -85,10 +80,7 @@ const axleSrc = computed(() => asset(R.value?.axle?.[variant.value]))
 
 /* ══════════════════════════════════════════════ 卷轴几何（progress 驱动） */
 
-/**
- * 轴杆左边缘 x。展开态左杆中心 = PAPER_X、右杆中心 = PAPER_X + PAPER_W；
- * 收起态两杆紧贴（左杆 left = 0，右杆 left = w）。
- */
+/** 轴杆左边缘 x */
 const rodLX = computed(() => (PAPER_X - axleW.value / 2) * progress.value)
 const rodRX = computed(() => axleW.value + (PAPER_X + PAPER_W - axleW.value / 2 - axleW.value) * progress.value)
 
@@ -116,9 +108,7 @@ const rodRStyle = computed(() => ({
 }))
 const sheetInnerStyle = computed(() => ({ width: PAPER_W + 'px', height: PAPER_H + 'px' }))
 
-/**
- * 闭合态纸面必须完全藏在两根轴杆之后：用 clip-path 把超出部分随 progress 线性收掉。
- */
+/** 闭合态纸面必须完全藏在两根轴杆之后：用 clip-path 把超出部分随 progress 线性收掉 */
 const sheetClip = computed(() => {
   const k = 1 - progress.value
   const top = Math.max(0, ROD_Y_COLLAPSED - PAPER_Y) * k
@@ -209,7 +199,7 @@ function backToIdle() {
   play('paper-book', { volume: 0.7 })
 }
 
-/* ---- 拖动（双向，阈值 50%，反拖到底回待机） ---- */
+/* ---- 拖动（双向，反拖到底回待机） ---- */
 
 let dragStartX = 0
 let dragStartT = 0
@@ -219,7 +209,7 @@ let lastDragAt = 0
 function onPointerDown(e: PointerEvent) {
   if (state.value === 'idle' || showBirth.value) return
   // 纸面上自带 click 的元素必须直接放行：
-  // 一旦在这里 setPointerCapture，click 会被重定向到 sheet 上，元素就点不动了。
+  // 一旦在这里 setPointerCapture，click 会被重定向到 sheet 上，元素就点不动了
   if ((e.target as HTMLElement).closest('button, .bm-card')) return
   dragging.value = true
   dragMoved = false
@@ -544,9 +534,7 @@ function clearBirthInfo() {
   if (state.value === 'open') startWriting()
 }
 
-/**
- * 「不填写，直接进入」：这里必须也落一次「已问过」标记。
- */
+/** 「不填写，直接进入」：这里必须也落一次「已问过」标记 */
 function skipBirth() {
   if (!profile.value.birth) {
     profile.value = { ...profile.value, asked: true }
@@ -575,9 +563,7 @@ function onKey(e: KeyboardEvent) {
   else goBack()
 }
 
-/**
- * 卷轴一进去就抑制侧边栏；回待机 / 离开页面时恢复。
- */
+/** 卷轴一进去就抑制侧边栏；回待机 / 离开页面时恢复 */
 watch(state, (s) => setRailSuppressed(s !== 'idle'), { immediate: true })
 
 onMounted(() => {
@@ -1081,7 +1067,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   animation: goldBreath 1.4s ease-in-out infinite alternate;
 }
 
-/* 标题（艺术字「玄运」） */
+/* 标题 */
 .sc-title {
   position: absolute;
   left: 296px;
@@ -1126,11 +1112,11 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
 }
 .sheet,
 .axle {
-  /* 常驻过渡：展开/收起由 progress 改 left/width/top/clip-path 驱动 */
+  /* 常驻过渡 */
   transition: left 600ms cubic-bezier(0.2, 0.8, 0.2, 1), width 600ms cubic-bezier(0.2, 0.8, 0.2, 1),
     top 600ms cubic-bezier(0.2, 0.8, 0.2, 1), clip-path 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-/* 拖动时手动跟手，不能有过渡 */
+/* 拖动时手动跟手 */
 .scroll.drag .sheet,
 .scroll.drag .axle {
   transition: none;
@@ -1170,7 +1156,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   cursor: ew-resize;
 }
 
-/* 收起态空白双击区：避开左侧两根轴杆，其余整屏可双击退出 */
+/* 收起态空白双击区 */
 .alm-blank {
   position: absolute;
   left: 120px;
@@ -1323,7 +1309,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   background: linear-gradient(90deg, transparent, rgba(120, 90, 55, 0.42) 10%, rgba(120, 90, 55, 0.42) 90%, transparent);
 }
 
-/* ---- 三列：等高，内容在列内均分 ---- */
+/* 三列 */
 .col {
   position: absolute;
   top: 200px;
@@ -1398,7 +1384,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   border-color: rgba(150, 110, 60, 0.7);
 }
 
-/* ---- 卦象 ---- */
+/* 卦象 */
 .gua {
   display: flex;
   gap: 18px;
@@ -1505,7 +1491,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   color: #a8926f;
 }
 
-/* ---- 八字 ---- */
+/* 八字 */
 .pz {
   display: flex;
   gap: 8px;
@@ -1604,7 +1590,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   box-shadow: 0 2px 10px rgba(150, 110, 60, 0.25);
 }
 
-/* ---- 宜忌 ---- */
+/* 宜忌 */
 .bl-hd {
   display: flex;
   align-items: center;
@@ -1685,7 +1671,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   flex: 0 0 15px;
 }
 
-/* 冲煞：独立成条，与幸运项之间用虚线分隔 */
+/* 冲煞 */
 .chong {
   display: flex;
   align-items: baseline;
@@ -1704,7 +1690,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   letter-spacing: 0.5px;
 }
 
-/* ---- 总评 / 签文 / 提点 ---- */
+/* 总评 / 签文 / 提点 */
 .vc-hd {
   display: flex;
   align-items: center;
@@ -1752,7 +1738,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   width: 100%;
 }
 
-/* ---- 十二时辰 ---- */
+/* 十二时辰 */
 .hours {
   position: absolute;
   left: 64px;
@@ -1796,7 +1782,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   line-height: 1.5;
 }
 
-/* ---- 羽毛笔 ---- */
+/* 羽毛笔 */
 .quill {
   position: absolute;
   height: 108px;
@@ -1814,7 +1800,7 @@ const hourDot = (luck: string) => LUCK_COLOR[luck] ?? '#888'
   opacity: 1;
 }
 
-/* ---- 书签（默认背面，点击翻面） ---- */
+/* 书签 */
 .bm {
   position: absolute;
   left: 1476px;

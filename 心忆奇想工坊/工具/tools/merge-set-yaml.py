@@ -281,8 +281,7 @@ def verify(data, texts, partyaml):
             problems.append(f"{name}: 3★ 部件数 {len(data['部件'])} ≠ txt 部位数 {want_slots}")
 
     # 3. 整体文案不该和部件文案串位
-    #    ⚠ 官方数据本身就有「套装整体文案 == 连衣裙文案」的情况（星之海就是），
-    #    所以只在**多个**部件文案同时等于整体文案时才判为串位。
+    # 所以只在**多个**部件文案同时等于整体文案时才判为串位
     if data.get("整体文案"):
         same = [p for p in data["部件"] if (p.get("文案") or "").strip() == data["整体文案"].strip()]
         if len(same) >= 2:
@@ -400,13 +399,12 @@ def main():
         return 0
 
     # 写盘：素材库/<套装ID>.yaml（平铺，纯编号）
-    # ⚠ 文件名必须是**纯编号**（S0001.yaml），套装名只留在 YAML 内部字段里。
     out = args.out
     os.makedirs(out, exist_ok=True)
 
     # 目标目录不是默认的「素材/套装库」时**不清空**（如归档目录：清空会删掉
-    # 用户自己补的文件）。只有默认目录才「先清后写」——
-    # 否则旧结构（ 的 `<ID_套装名>/套装.yaml` 子目录）与过期文件会残留。
+    # 用户自己补的文件）
+    # 否则旧结构（的 `<ID_套装名>/套装.yaml` 子目录）与过期文件会残留
     is_default_out = os.path.abspath(out) == os.path.abspath(os.path.join(ASSET, "套装库"))
     if is_default_out:
         for entry in os.listdir(out):

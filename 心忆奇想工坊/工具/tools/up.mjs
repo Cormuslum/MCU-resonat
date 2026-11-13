@@ -1,8 +1,4 @@
-/**
- * 一条命令起两个常驻服务（`npm run up`）：模拟器 5178 + 更新工坊 5199，关终端或 Ctrl+C 时一起退。
- * 端口被占时先探一下、直接说清楚怎么清，不静默失败；模拟器是守护重启（谁杀的再拉起来），
- * 并在 `.dev-guard.json` 写下「守护在位」，工坊读它决定要不要自己 spawn。
- */
+/** 一条命令起两个常驻服务（`npm run up`）：模拟器 5178 + 更新工坊 5199，关终端或 Ctrl+C 时一起退 */
 import { spawn } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -39,7 +35,7 @@ const SERVICES = [
     name: '模拟器',
     port: 5178,
     // 用 process.execPath（就是当前 node）而不是 PATH 里的 'node' —— 后者在
-    // 某些精简环境里找不到，会报 spawn node ENOENT。
+    // 某些精简环境里找不到，会报 spawn node ENOENT
     cmd: process.execPath,
     args: [VITE_BIN, '--port', '5178', '--strictPort', '--host', '127.0.0.1'],
     cwd: SIM_ROOT,
@@ -71,10 +67,7 @@ if (busy.length) {
 const running = new Map()
 let shuttingDown = false
 
-/**
- * 写下 / 抹掉「守护在位」标记（`.dev-guard.json`，工坊的 restartDevServer 读它）：
- * 有标记 → 等这边重启；没标记 → 自己拉。按 pid 判定而非只看文件存在，避免旧文件让工坊永远等。
- */
+/** 写下 / 抹掉「守护在位」标记（`.dev-guard.json`，工坊的 restartDevServer 读它）： 有标记 → 等这边重启；没标记 → 自己拉。按 pid 判定而非只看文件存在，避免旧文件让工坊永远等 */
 function writeGuard() {
   try {
     fs.writeFileSync(GUARD_FILE, JSON.stringify({

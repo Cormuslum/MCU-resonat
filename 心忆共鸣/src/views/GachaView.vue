@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * 抽卡演出页：动画屏（RPs-1 / RPm-10，出 5★ 用 _Y）→ 十连结果 → 单抽详情 → 套装获得。
- */
+/** 抽卡演出页：动画屏（RPs-1 / RPm-10，出 5★ 用 _Y）→ 十连结果 → 单抽详情 → 套装获得 */
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -31,9 +29,7 @@ const gold = computed(() => results.value.some((r) => r.rarity === 5))
 /** 当前查看的卡片索引（单抽详情 / 十连点开） */
 const cur = ref(0)
 
-/**
- * 揭示序列：每抽到套装的新部件，就在该件详情后插入一次套装页（徽章 1/N … N/N），重复件不插。
- */
+/** 揭示序列：每抽到套装的新部件，就在该件详情后插入一次套装页（徽章 1/N … N/N），重复件不插 */
 type SeqStep =
   | { kind: 'detail'; idx: number; forced?: boolean }
   | { kind: 'suit'; setId: string; count: number; total: number; second?: boolean }
@@ -46,9 +42,7 @@ const ownedBefore = ref<Map<string, number>>(new Map())
 const dupBefore = ref<Map<string, number>>(new Map())
 /** 当前套装页展示的内容（徽章数取这里，不是实时图鉴） */
 const suitView = ref<{ setId: string; count: number; total: number; second?: boolean } | null>(null)
-/**
- * 「跳过全部」已经按过一次：按过之后按钮消失，剩下只走强制项。
- */
+/** 「跳过全部」已经按过一次：按过之后按钮消失，剩下只走强制项 */
 const revealSkipping = ref(false)
 
 /** 视频与音频句柄（跳过时淡出） */
@@ -69,9 +63,7 @@ function asset(p: string | null | undefined) {
 
 /* ---------------------------------------------------- 属性 → 面板/标签 */
 
-/**
- * 五维 → 属性面板索引（board-1..4）：甜美 1 / 清新 2 / 典雅 3 / 性感 4 / 帅气 4。
- */
+/** 五维 → 属性面板索引（board-1..4）：甜美 1 / 清新 2 / 典雅 3 / 性感 4 / 帅气 4 */
 const BOARD_BY_STAT: Record<string, number> = {
   典雅: 2,
   清新: 1,
@@ -79,10 +71,7 @@ const BOARD_BY_STAT: Record<string, number> = {
   帅气: 3,
   性感: 3,
 }
-/**
- * 五维 → 属性标签长条索引（tag-1..5，165×47）。
- * 甜美 tag-1 粉 / 典雅 tag-2 金 / 清新 tag-3 绿 / 性感 tag-4 紫 / 帅气 tag-5 蓝
- */
+/** 五维 → 属性标签长条索引（tag-1..5） */
 const TAG_BY_STAT: Record<string, number> = {
   甜美: 0,
   典雅: 1,
@@ -109,10 +98,7 @@ function tagOf(stat: string): string {
   return list[idx] ?? list[0] ?? ''
 }
 
-/**
- * 风格标签底图（label01~10，168×56 的浅色药丸，差别只在描边色调）。
- * 已确认 `制服 → label09`；其余标签按名字哈希取稳定序号。
- */
+/** 风格标签底图（label01~10） */
 const STYLE_LABEL: Record<string, number> = { 制服: 9 }
 function labelOfIdx(name: string): string {
   const list = ui.value?.detail.labels ?? []
@@ -138,24 +124,20 @@ const styleTags = computed<string[]>(() => {
 })
 
 /** 卡牌框：3★ 金 / 4★ 紫 / 5★ 粉拱 */
-/**
- * 立绘区（相对卡框左上，pxdesk 实测）：立绘裁在这里，卡框画在其上 → 不会溢出容器。
- */
+/** 立绘区（相对卡框左上）：立绘裁在这里，卡框画在其上 → 不会溢出容器 */
 const PHOTO_RECT: Record<number, [number, number, number, number]> = {
   3: [29.9, 32.4, 213, 312.8],
   4: [31.2, 33.5, 211.3, 307],
   5: [32.4, 34.6, 209.6, 301.2],
 }
-/** 星级区 / 名牌（相对卡框）：星级区 (37.9,299.9) 199.7×39.9，名牌 (28.6,346.5) 215.7×45.3 */
+/** 星级区 / 名牌（相对卡框） */
 const STARS_TOP = 299.9
 const NAME_RECT: [number, number, number, number] = [28.6, 346.5, 215.7, 45.3]
 function photoStyle(rarity: number | string): Record<string, string> {
   const [l, t, w, h] = PHOTO_RECT[frameIdx(rarity) + 3]
   return { left: l + 'px', top: t + 'px', width: w + 'px', height: h + 'px' }
 }
-/**
- * 重复件赠送的材料：3★ → 0003 ×10；4★ → 0004 ×4；5★ → 0004 ×10
- */
+/** 重复件赠送的材料 */
 function matOf(rarity: number | string): { icon: string | undefined; n: number } {
   const idx = frameIdx(rarity)
   if (idx === 0) return { icon: ui.value?.result.mat3, n: 10 }
@@ -163,7 +145,7 @@ function matOf(rarity: number | string): { icon: string | undefined; n: number }
   return { icon: ui.value?.result.mat4, n: 10 }
 }
 
-/** 星级 / 名牌的卡内绝对盒子（pxdesk：星级区 199.7×39.9 @y299.9；名牌 215.7×45.3 @y346.5） */
+/** 星级 / 名牌的卡内绝对盒子 */
 function starsStyle(): Record<string, string> {
   return { left: '37.9px', top: STARS_TOP + 'px', width: '199.7px', height: '39.9px' }
 }
@@ -178,20 +160,14 @@ function frameIdx(rarity: number | string): number {
   return n >= 5 ? 2 : n >= 4 ? 1 : 0
 }
 
-/**
- * 十连网格定位 —— 全部取自 `十连界面-图片工程.pxdesk`（画布 1400×787 → ×1.3714 到 1920）。
- * 卡框 276×444 1:1。
- */
+/** 十连网格定位 —— 全部取自 `十连界面-图片工程.pxdesk`。卡框 276×444 1:1 */
 const GRID_X0 = 291.9
 const GRID_Y0 = 119.4
 const GRID_DX = 257.3
 const GRID_DY = 400
 const GRID_STAGGER = 28.3
 
-/**
- * 每张卡的浮动参数：同时起浮，但幅度和速度各不相同。
- * 用固定表而不是随机数，保证每次进结果页观感一致。
- */
+/** 每张卡的浮动参数：同时起浮，但幅度和速度各不相同 */
 const FLOAT_AMP = [10, 15, 7, 13, 17, 9, 14, 6, 16, 11]
 const FLOAT_DUR = [3.4, 4.3, 2.9, 4.7, 3.7, 3.1, 4.5, 3.9, 3.2, 4.1]
 
@@ -218,9 +194,7 @@ function cardStyle(i: number): Record<string, string> {
   results.value = store.pull(times.value)
 }
 
-/**
- * 拉取结束后构建揭示序列（详情 → 新部件的套装页 → 详情 → …）；4★/5★ 集齐后再抽到重复部件触发第二套页。
- */
+/** 拉取结束后构建揭示序列（详情 → 新部件的套装页 → 详情 → …）；4★/5★ 集齐后再抽到重复部件触发第二套页 */
 function buildSeq(): SeqStep[] {
   const seq: SeqStep[] = []
   const running = new Map<string, number>()
@@ -245,9 +219,7 @@ function buildSeq(): SeqStep[] {
     const inPool = !!setId && !!store.banner?.sets.some((s) => s.id === setId)
     const star = Number(r.rarity)
     const firstFull = !!setId && (ownedBefore.value.get(setId) ?? 0) >= store.setProgress(setId).total
-    /**
-     * 第二套：4★/5★、第一套已集齐、且这一份正好是第 2 份。
-     */
+    /** 第二套：4★/5★、第一套已集齐、且这一份正好是第 2 份 */
     const secondHit = inPool && !r.isNew && star >= 4 && firstFull && (dupRun.get(r.part.id) ?? 0) === 2
 
     seq.push({ kind: 'detail', idx: i, forced: r.isNew || secondHit })
@@ -300,9 +272,7 @@ function startAnim() {
   }, 60)
 }
 
-/**
- * 共鸣演出音与抽卡动画尾部对齐：直接从头播，让视频结束事件统一收尾。
- */
+/** 共鸣演出音与抽卡动画尾部对齐：直接从头播，让视频结束事件统一收尾 */
 function attachOverlay(isGold: boolean) {
   const perfName = isGold ? 'perf-gold' : 'perf-normal'
   perfAudio = play(perfName, { volume: 0.5 })
@@ -337,9 +307,7 @@ function skip() {
   toResult()
 }
 
-/**
- * 进结果：单抽和十连都先进单抽界面，按 `revealSeq` 逐步揭示。
- */
+/** 进结果：单抽和十连都先进单抽界面，按 `revealSeq` 逐步揭示 */
 function toResult() {
   revealSeq.value = buildSeq()
   seqPos.value = 0
@@ -386,10 +354,7 @@ function toGrid() {
   }, 260)
 }
 
-/**
- * 复审模式的逐件索引（从结果网格点开卡片后用）。
- * 十连 = 10 件逐件过；揭示流程（动画后）走的是 `revealSeq`（详情与套装页交错）。
- */
+/** 复审模式的逐件索引（从结果网格点开卡片后用）。十连 = 10 件逐件过；揭示流程（动画后）走的是 `revealSeq`（详情与套装页交错） */
 const detailQueue = computed<number[]>(() => {
   if (!results.value.length) return []
   if (times.value !== 10) return [0]
@@ -399,9 +364,7 @@ const detailQueue = computed<number[]>(() => {
 
 /* ---------------------------------------------------- 交互 */
 
-/**
- * 单抽详情的入场动效总时长（ms）：`dtItemIn` 最后一帧 76% → 1.52s，按 1.52s 上锁。
- */
+/** 单抽详情的入场动效总时长（ms）：`dtItemIn` 最后一帧 76% → 1.52s，按 1.52s 上锁 */
 const DETAIL_INTRO_MS = 1520
 /** 入场动效播放中：屏蔽点击 / F / ESC / 跳过全部 */
 const dtLocked = ref(false)
@@ -414,10 +377,7 @@ function lockDetail() {
   }, DETAIL_INTRO_MS)
 }
 
-/**
- * 演出·2「跳过单抽动画」：详情入场动效期间双击 → 立刻结束上锁。
- * 双击前的两次 click 都落在 dtLocked 里被 next() 拦掉，不会误翻页。
- */
+/** 演出·2「跳过单抽动画」：详情入场动效期间双击 → 立刻结束上锁。双击前的两次 click 都落在 dtLocked 里被 next() 拦掉，不会误翻页 */
 function finishIntro() {
   if (!store.save.settings.skipSingleAnim || !dtLocked.value) return
   window.clearTimeout(dtLockTimer)
@@ -440,9 +400,7 @@ function toSuit() {
   window.setTimeout(() => play('set-progress-done', { volume: 0.8 }), 300)
 }
 
-/**
- * 「下一件」（点空白 / F / 详情页右上按钮）：揭示流程按 `revealSeq` 前进，复审模式沿 `detailQueue` 走。
- */
+/** 「下一件」（点空白 / F / 详情页右上按钮）：揭示流程按 `revealSeq` 前进，复审模式沿 `detailQueue` 走 */
 function next() {
   // 入场动效没放完不许交互（跳过 / 点击 / F 全部拦掉）
   if (phase.value === 'detail' && dtLocked.value) return
@@ -463,10 +421,7 @@ function next() {
   back()
 }
 
-/**
- * 揭示流程前进一步：`forced` 部件（新部件，或 4★/5★ 第 1、2 份）的套装页必播；
- * 按过「跳过全部」后其余重复件不再出现，直接跳到下一个 `forced`。
- */
+/** 揭示流程前进一步：`forced` 部件（新部件，或 4★/5★ 第 1、2 份）的套装页必播； 按过「跳过全部」后其余重复件不再出现，直接跳到下一个 `forced` */
 function advanceReveal() {
   const seq = revealSeq.value
   const cur = seq[seqPos.value]
@@ -497,9 +452,7 @@ function advanceReveal() {
   applyStep(seq[seqPos.value])
 }
 
-/**
- * 跳过全部（右上按钮 / ESC）：此后只走 `forced` 部件，每件带套装获得页，最后一件放完再点才进结算网格。
- */
+/** 跳过全部（右上按钮 / ESC）：此后只走 `forced` 部件，每件带套装获得页，最后一件放完再点才进结算网格 */
 function skipAll() {
   if (phase.value === 'detail' && dtLocked.value) return
   if (revealing.value) {
@@ -535,9 +488,7 @@ function back() {
 
 /* ---------------------------------------------------- 派生展示数据 */
 
-/**
- * 开发期截图对齐用：`?demo=<部件名>` 强制当前部件并直接进详情页（生产构建整段被摇掉）。
- */
+/** 开发期截图对齐用：`?demo=<部件名>` 强制当前部件并直接进详情页（生产构建整段被摇掉） */
 const demoPart = computed<Part | null>(() => {
   if (!import.meta.env.DEV) return null
   const q = route.query.demo
@@ -562,10 +513,7 @@ const suitInfo = computed(() => {
 
 const suitAttr = computed(() => suitInfo.value?.styles?.[0] ?? '')
 
-/**
- * 套名底板（720×300）四选一：4★ 未集齐 board_02（紫）/ 已集齐 board_03（蓝），
- * 5★ 未集齐 board_01（粉）/ 已集齐 board_04（暗金）。
- */
+/** 套名底板四选一：4★ 未集齐 board_02（紫）/ 已集齐 board_03（蓝）， 5★ 未集齐 board_01（粉）/ 已集齐 board_04（暗金） */
 const bandSrc = computed(() => {
   const boards = ui.value?.suit.boards
   if (!boards || boards.length < 4) return null
@@ -587,10 +535,7 @@ function badgeStyle(): Record<string, string> {
   return { '--p': String(pct) }
 }
 
-/**
- * ESC：动画中=跳过，单抽界面=跳过全部，十连网格=回共鸣页，套装页=继续。
- * 和屏幕上写的键位提示保持一致，别让提示说谎。
- */
+/** ESC：动画中=跳过，单抽界面=跳过全部，十连网格=回共鸣页，套装页=继续。和屏幕上写的键位提示保持一致，别让提示说谎 */
 function onKey(e: KeyboardEvent) {
   const k = e.key.toLowerCase()
   // F：动画屏 = 跳过动画；详情页 = 看下一件（与屏幕上的「F 跳过」「[F] 点击空白区域继续」一致）
@@ -692,7 +637,7 @@ onUnmounted(() => {
     <!-- ==================== 动画屏 ==================== -->
     <div v-if="phase === 'anim'" class="anim">
       <video ref="videoEl" class="anim-video" playsinline preload="auto" @ended="onVideoEnd"></video>
-      <!-- 跳过：实机是「F 键帽 + 跳过」，在右下角（按 F 键跳过动画） -->
+      <!-- 跳过 -->
       <button class="anim-skip" @click="skip">
         <img v-if="ui" class="as-f" :src="asset(ui.btn.keyF)" alt="F" />
         <span class="as-txt">跳过</span>
@@ -734,8 +679,7 @@ onUnmounted(() => {
             <span class="rc-name" :style="nameStyle()">{{ r.part.displayName }}</span>
             <!-- 新件：十连专用「新」角标 -->
             <img v-if="r.isNew && ui" class="rc-new" :src="asset(ui.result.newBadge)" alt="新" />
-            <!-- 重复件：柔层 + 下划线（pxdesk 的两层底）+ 材料图标 + ×n
-                 数量按稀有度固定：3★ ×10 / 4★ ×4 / 5★ ×10（不是本次重复件数） -->
+            <!-- 重复件 -->
             <span v-else class="rc-dup">
               <img class="rd-soft" :src="asset(ui?.result.soft)" alt="" />
               <img class="rd-line" :src="asset(ui?.result.line)" alt="" />
@@ -758,7 +702,7 @@ onUnmounted(() => {
       @click="next"
       @dblclick.stop="finishIntro"
     >
-      <!-- L01 整屏底板（1920×1080，上紫下暖） -->
+      <!-- L01 整屏底板（上紫下暖） -->
       <img v-if="ui" class="dt-bg" :src="asset(ui.detail.bgPlate)" alt="" />
       <!-- L01b 底部暖光：底板把解包 bg 的底部亮带抹掉了，用 screen 叠回来 -->
       <img v-if="ui" class="dt-glow" :src="asset(ui.detail.bg)" alt="" />
@@ -776,15 +720,14 @@ onUnmounted(() => {
       <!-- L08 面板标题右侧的金色圆环挂饰 1212,373 99×90 -->
       <img v-if="ui" class="dt-ornament" :src="asset(ui.detail.ornament3)" alt="" />
 
-      <!-- L09-L12 立绘组合：粗金线 → 丝绸纸角 → 立绘 → 金框。
-           四件相对位置固定，整体绕 (645,552) 缩放/平移，所以包在一个容器里 -->
+      <!-- L09-L12 立绘组合：粗金线 → 丝绸纸角 → 立绘 → 金框 -->
       <div class="dt-cardwrap">
         <img v-if="ui" class="dt-line2" :src="asset(ui.detail.line)" alt="" />
         <img v-if="ui" class="dt-silk" :src="asset(ui.detail.silkRibbon)" alt="" />
         <img class="dt-char" :src="asset(curPart.card)" :alt="curPart.displayName" draggable="false" />
         <img v-if="ui" class="dt-frame" :src="asset(ui.detail.frame)" alt="" />
       </div>
-      <!-- 新件角标（单抽专用 156×156）：卡框右上角 -->
+      <!-- 新件角标：卡框右上角 -->
       <img v-if="curResult?.isNew && ui" class="dt-new" :src="asset(ui.result.newSuit)" alt="新" />
 
       <!-- L13 卡侧丝带 772,197 184×488 -->
@@ -824,9 +767,7 @@ onUnmounted(() => {
         <span class="dt-ex-n">静谧水滴 <em>×10</em></span>
       </template>
 
-      <!-- L26/L27 右上按钮：实机文案就是「跳过全部」（行为上是看下一件）
-           共鸣一次（单抽）时没有「跳过全部」这个概念 → 按钮和文字都不显示
-           v1.5.02：按过一次之后消失（后续只剩强制步骤，点一下就前进一步） -->
+      <!-- L26/L27 右上按钮 -->
       <template v-if="times === 10 && !revealSkipping">
         <button class="dh-skip" @click.stop="skipAll">
           <img class="ds-n" :src="asset(ui?.btn.skip)" alt="" />
@@ -873,9 +814,9 @@ onUnmounted(() => {
         </defs>
       </svg>
 
-      <!-- L01 背景：SysReward.png 整图 1920×1080（实机就是这一张，不要再用两图拼接） -->
+      <!-- L01 背景 -->
       <img v-if="ui" class="su-bg" :src="asset(ui.suit.bg)" alt="" />
-      <!-- L02 卡后拱顶暖光：suit_img_bg_light(315×248) 放大 + screen（v0.6.08 才真正上屏） -->
+      <!-- L02 卡后拱顶暖光 -->
       <img v-if="ui" class="su-cardglow" :src="asset(ui.suit.imgLight)" alt="" />
       <!-- L03 大圆环细线组合 ornament_01：等比 1:1，圆面 (1031.5,515.5) r400.5 对准组合中心 -->
       <img v-if="ui" class="su-orn" :src="asset(ui.suit.ornament[0])" alt="" />
@@ -886,13 +827,9 @@ onUnmounted(() => {
       <!-- L05 黑底发光弧（必须 screen）：glow-2 卡顶左大弧 / glow-1 卡底亮弧 -->
       <img v-if="ui" class="su-glowarc" :src="asset(ui.suit.glow2)" alt="" />
       <img v-if="ui" class="su-glowbot" :src="asset(ui.suit.glow1)" alt="" />
-      <!-- L06 卡底暗土丘：**已删**（v1.5.06）—— `ui.suit.board`(board-4) 是套名底板改成 4 态
-           （boards[0..3]）之前的老单层，和 `.su-band` 叠在一起就是两个土丘；
-           而且 board-4 是「5★已集齐」态，挂在 4★ 套装上语义也不对。 -->
+      <!-- L06 卡底暗土丘：**已删**—— `ui.suit.board`(board-4) 是套名底板改成 4 态 （boards[0..3]）之前的老单层，和 `.su-band` 叠在一起就是两个土丘； 而且 board-4 是「5★已集齐」态，挂在 4★ 套装上语义也不对 -->
 
-      <!-- L08 套装卡 454×612 @(736,196)：装饰 → 金底 frame-2 → 顶光 → 立绘 → 外框 frame-1
-           v1.5.02 按 pxdesk「套装获得页」补了两层装饰（坐标/不透明度照抄），
-           并把立绘挪到 frame-2 与 frame-1 之间（实机是金框压住立绘边缘） -->
+      <!-- L08 套装卡 454×612 @(736,196)：装饰 → 金底 frame-2 → 顶光 → 立绘 → 外框 frame-1 按 pxdesk「套装获得页」补了两层装饰（坐标/不透明度照抄）， 并把立绘挪到 frame-2 与 frame-1 之间 -->
       <div class="su-card">
         <!-- 装饰层（在 frame-2 之下）：卡顶右上的柔光 + 贴身纹样 -->
         <img v-if="ui" class="sc-deco sc-deco-light" :src="asset(ui.suit.light)" alt="" draggable="false" />
@@ -902,11 +839,11 @@ onUnmounted(() => {
         <!-- 立绘：contain 进卡内，不再 object-fit:fill（会被拉变形且溢出容器）；层级在 frame-1 之下 -->
         <img class="sc-portrait" :src="asset(suitInfo.assets.portrait)" :alt="suitInfo.name" draggable="false" />
         <img v-if="ui" class="sc-frame" :src="asset(ui.suit.frames[0])" alt="" />
-        <!-- 第二套：只在「第一套已集齐、又抽到重复部件」时出现，纯文字（用户明确不要容器） -->
+        <!-- 第二套：只在「第一套已集齐、又抽到重复部件」时出现，纯文字 -->
         <span v-if="suitView?.second" class="sc-second">第二套</span>
       </div>
 
-      <!-- L07 套名底板 720×300：**在卡片之后**，实机这条云是盖住卡片下沿的 -->
+      <!-- L07 套名底板 720×300 -->
       <img v-if="bandSrc" class="su-band" :src="bandSrc" alt="" />
 
       <!-- L09 套装进度圆：空槽 schedule_02 → 盘面 schedule_bg/fullbg → 高亮动效 → 进度弧 → 四角星 → 左半金环 -->
@@ -916,8 +853,7 @@ onUnmounted(() => {
         :style="{ ...badgeStyle(), '--m-slot': ui ? `url(${asset(ui.suit.sched.slot)})` : 'none' }"
       >
         <img v-if="ui" class="sud-slot" :src="asset(ui.suit.sched.slot)" alt="" />
-        <!-- 进度弧放在盘面**之前**：用空槽图当蒙版，盘面再把内侧盖掉 → 弧天然填满整条槽
-             （槽和盘圆心差 2px，所以槽是「上细下粗」，弧也跟着一样） -->
+        <!-- 进度弧放在盘面**之前** -->
         <i class="sud-prog" aria-hidden="true"></i>
         <img v-if="ui" class="sud-face" :src="asset(isSuitFull ? ui.suit.sched.fullBg : ui.suit.sched.bg)" alt="" />
         <!-- 高亮动效：已集齐 0.6s 升到 80%；进度上涨 0.4s 升到 50%，随后落到对应盘面 -->
@@ -936,7 +872,7 @@ onUnmounted(() => {
       <!-- L10 套名 55px @(y816) / 星级四芒星 38px @(y878) / 属性胶囊（detail tag 素材） -->
       <div class="su-name">
         <h2>{{ suitInfo.name }}</h2>
-        <!-- 星级：用和详情页同一张素材（T_UI_common_quality_star_n），间距按实机 40 -->
+        <!-- 星级 -->
         <span class="sn-stars" :class="'s' + suitInfo.star">
           <img v-for="n in suitInfo.star" :key="n" :src="asset(ui?.detail.star)" alt="★" />
         </span>
@@ -947,10 +883,9 @@ onUnmounted(() => {
         >{{ suitAttr }}</span>
       </div>
 
-      <!-- L11 套装能力区：**不做**（用户明确要求，2026-10-26） -->
+      <!-- L11 套装能力区：**不做**（2026-10-26） -->
 
-      <!-- 右上「跳过全部」：与单抽界面**同一个按钮素材 + 同一套坐标**（.dh-skip / .dt-skip-txt）
-           v1.5.02：按过一次之后消失（与单抽界面同一条规则） -->
+      <!-- 右上「跳过全部」：与单抽界面**同一个按钮素材 + 同一套坐标**（.dh-skip / .dt-skip-txt） 按过一次之后消失（与单抽界面同一条规则） -->
       <button v-if="!revealSkipping" class="dh-skip" @click.stop="afterSuit" @mouseenter="play('common-hover', { volume: 0.4 })">
         <img class="ds-n" :src="asset(ui?.btn.skip)" alt="" />
         <img class="ds-h" :src="asset(ui?.btn.backH)" alt="" />
@@ -959,8 +894,7 @@ onUnmounted(() => {
 
       <!-- 底部点状装饰带（在键位文字下层） -->
       <i class="su-dotline" aria-hidden="true"></i>
-      <!-- 底部键位提示（实机套装段：ESC 跳过全部 ｜ F/🖱 点击空白区域继续）
-           按过「跳过全部」之后 ESC 这一组整段消失（此时 ESC 与点击同义） -->
+      <!-- 底部键位提示 按过「跳过全部」之后 ESC 这一组整段消失（此时 ESC 与点击同义） -->
       <template v-if="!revealSkipping">
         <svg class="df-cap" viewBox="0 0 38 24" aria-hidden="true">
           <defs>
@@ -982,10 +916,6 @@ onUnmounted(() => {
   </div>
 </template>
 <style scoped>
-/*
- * 抽卡演出三屏 —— 按 `布局坐标/界面标注` 的 02/03/05 号图层表摆放。
- * 设计坐标系 1920×1080，外层 App.vue 统一 scale。
- */
 .gacha {
   position: relative;
   width: 1920px;
@@ -1002,8 +932,7 @@ onUnmounted(() => {
   background: #04060e;
 }
 .anim-video { width: 100%; height: 100%; object-fit: cover; }
-/* 动画屏跳过：实机是右下角「F 键帽 + 跳过」（按 F 键跳过动画）。
-   实测 键帽 1763,1016 约 23×21，文字 1790,1013 约 24px */
+/* 动画屏跳过 */
 .anim-skip {
   position: absolute;
   left: 1759px;
@@ -1017,7 +946,6 @@ onUnmounted(() => {
   cursor: var(--nk-cursor, auto), pointer;
   z-index: 30;
 }
-/* 素材 40×38，内容只占 30×26，所以要放大到 31×30 才有实机那样 23×20 的键帽 */
 .as-f {
   width: 31px;
   height: 30px;
@@ -1032,8 +960,7 @@ onUnmounted(() => {
   letter-spacing: 0.02em;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
-/* 「共鸣中…」转圈 + 文字、以及旧胶囊跳过钮都已删除：
-   动画屏只留右上角与单抽界面同款的跳过按钮（.dh-skip / .dt-skip-txt） */
+/* 「共鸣中…」转圈 + 文字、以及旧胶囊跳过钮都已删除 */
 
 /* ==================== 十连结果 ====================
    背景是用户烘焙好的整图（SysResonance-10.png，1920×1080），这里只管卡片区。
@@ -1064,10 +991,10 @@ onUnmounted(() => {
   padding: 0;
   border: 0;
   background: none;
-  /* 卡牌仅做展示（用户要求：点卡不再回单抽界面）→ 不给手型、不做悬停位移 */
+  /* 卡牌仅做展示 */
   cursor: var(--nk-cursor, auto), default;
 }
-/* 浮动层：同时起浮，但**每张卡的幅度（--amp）与周期（--dur）都不同**（用户要求错落有致） */
+/* 浮动层 */
 .rc-in {
   position: absolute;
   inset: 0;
@@ -1086,8 +1013,6 @@ onUnmounted(() => {
   width: 286.8px;
   height: 643.8px;
   object-fit: fill;
-  /* ⚠️ 不能用 mix-blend-mode: screen —— .rc-in 有 transform，会形成独立层叠上下文，
-     screen 只跟空上下文混 → 光柱变成一块实心矩形。这里靠素材自带 alpha 叠。 */
   opacity: 0.5;
   pointer-events: none;
   animation: rcGlow 3.2s ease-in-out infinite alternate;
@@ -1096,7 +1021,7 @@ onUnmounted(() => {
   from { opacity: 0.36; }
   to { opacity: 0.62; }
 }
-/* 卡框：素材 276×444 **1:1**（pxdesk 实测，别再缩放） */
+/* 卡框 */
 .rc-frame {
   position: absolute;
   inset: 0;
@@ -1105,7 +1030,7 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* 立绘孔：素材 (46,49)-(231,348) → ×0.916 → (19.2,32.1) 169.5×274 */
+/* 立绘孔 */
 .rc-photo {
   position: absolute;
   overflow: hidden;
@@ -1122,7 +1047,7 @@ onUnmounted(() => {
   object-position: center top;
   display: block;
 }
-/* 星级：pxdesk 单星 36.3×33.0、步距 24.1（= 素材 86×87 缩 0.42），整组居中于卡宽 276 */
+/* 星级 */
 .rc-stars {
   position: absolute;
   display: flex;
@@ -1140,7 +1065,7 @@ onUnmounted(() => {
 .rc-stars img:last-child { margin-right: 0; }
 .rc-stars.s5 img { filter: drop-shadow(0 0 7px rgba(255, 206, 120, 0.95)); }
 .rc-stars.s4 img { filter: drop-shadow(0 0 5px rgba(210, 170, 255, 0.8)); }
-/* 套名：pxdesk 名牌 (28.6,346.5) 215.7×45.3，居中裁切 */
+/* 套名 */
 .rc-name {
   position: absolute;
   display: flex;
@@ -1157,7 +1082,7 @@ onUnmounted(() => {
   text-overflow: ellipsis;
   pointer-events: none;
 }
-/* 新件角标（十连专用 120×70，内容 55×54）→ 卡右上角 */
+/* 新件角标 */
 .rc-new {
   position: absolute;
   left: 188.3px;
@@ -1172,21 +1097,18 @@ onUnmounted(() => {
   0%, 100% { filter: brightness(1); }
   50% { filter: brightness(1.25); }
 }
-/* 重复件：材料图标 + ×n（提示框放大到 84×38） */
-/* 「×n」角标：pxdesk 的两层底 + 图标 + 文字
-   柔层 106.4×56.4 @(135.6,14.2)｜下划线 101.4×36.9 @(144.6,36.0)｜图标 38.9×36.9 @(164.2,31.9) */
+/* 重复件 */
+/* 「×n」角标 */
 .rc-dup {
   position: absolute;
   left: 135.6px;
   top: 14.2px;
   width: 106.4px;
   height: 56.4px;
-  /* 底板完全交给「柔层」素材本身，不再垫暗渐变（用户口径） */
+  /* 底板完全交给「柔层」素材本身 */
   pointer-events: none;
 }
-/* 柔层素材（400×148）：按用户口径**只用素材本身**，不垫暗渐变、不加混合模式。
-   ⚠️ 实测这张图 alpha 峰值只有 153、且集中在中间那条暖光带（顶部 alpha≈0），
-   压在亮卡面上几乎看不出「板子」——实机那块是近黑的，两者对不上。 */
+/* 柔层素材 */
 .rd-soft {
   position: absolute;
   inset: 0;
@@ -1236,7 +1158,6 @@ onUnmounted(() => {
   overflow: hidden;
   background: #120b20;
 }
-/* L01 主背景：整屏底板 1920×1080 */
 .dt-bg {
   position: absolute;
   inset: 0;
@@ -1244,8 +1165,6 @@ onUnmounted(() => {
   height: 1080px;
   object-fit: fill;
 }
-/* L01b 底部暖光：解包 bg（155×87）下半是 237,212,157 的暖白带，
-   底板合成时被压掉了，screen 叠一层把实机底部的光晕补回来 */
 .dt-glow {
   position: absolute;
   inset: 0;
@@ -1254,15 +1173,13 @@ onUnmounted(() => {
   object-fit: fill;
   mix-blend-mode: screen;
   opacity: 0.62;
-  /* 实机的暖光只在「底部偏左」一团，右下一片仍是很暗的紫，
-     所以不能整屏 screen，要用椭圆遮罩把光晕圈在左下 */
+  /* 实机的暖光只在「底部偏左」一团 */
   -webkit-mask-image: radial-gradient(ellipse 1400px 760px at 36% 106%,
     #000 0%, #000 34%, rgba(0, 0, 0, 0.55) 60%, transparent 82%);
   mask-image: radial-gradient(ellipse 1400px 760px at 36% 106%,
     #000 0%, #000 34%, rgba(0, 0, 0, 0.55) 60%, transparent 82%);
   pointer-events: none;
 }
-/* L03 罗盘徽记 1095,90 784×854 —— 实机是极淡的暗刻纹，不能压成亮白 */
 .dt-logo {
   position: absolute;
   left: 1095px;
@@ -1274,7 +1191,6 @@ onUnmounted(() => {
   filter: brightness(0.55) saturate(0.8);
   pointer-events: none;
 }
-/* L04 虚线圆点圆环 1573,757 286×280，36s 匀速慢旋 */
 .dt-ring {
   position: absolute;
   left: 1573px;
@@ -1287,7 +1203,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 @keyframes dtRingSpin { to { transform: rotate(360deg); } }
-/* L05 文字装饰条 1575,543 261×33 */
 .dt-textbar {
   position: absolute;
   left: 1575px;
@@ -1297,7 +1212,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L06 下划线 1576,581 300×18 */
 .dt-underline {
   position: absolute;
   left: 1576px;
@@ -1307,7 +1221,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L07 属性面板 970,340 670×338（胶片孔/米金横条都在纹理里） */
 .dt-board {
   position: absolute;
   left: 970px;
@@ -1317,7 +1230,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L08 面板标题右侧圆环挂饰 1212,373 99×90 */
 .dt-ornament {
   position: absolute;
   left: 1212px;
@@ -1327,9 +1239,7 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L09-L12 立绘组合容器：0×0 锚在舞台原点，子元素保留解包绝对坐标，
-   整体绕卡片中心 (645,552) 缩放/平移 —— 相对位置永不变 */
-/* 新件角标：卡框右上角（实机 156×156，内容 132×128） */
+/* 新件角标 */
 .dt-new {
   position: absolute;
   left: 806px;
@@ -1357,10 +1267,7 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-/* ⚠ 全局 reset 有 img{max-width:100%}，容器是 0×0 时百分比会算成 0 宽，
-   四件素材会集体消失 —— 必须显式关掉 */
 .dt-cardwrap > * { max-width: none; }
-/* L09 左上 L 形粗金线 415,231 329×55 */
 .dt-line2 {
   position: absolute;
   left: 415px;
@@ -1370,7 +1277,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L10 丝绸纸角 634,753 249×144（卡片右下撕纸边，压在立绘下面） */
 .dt-silk {
   position: absolute;
   left: 634px;
@@ -1380,7 +1286,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L11 立绘：实机是 420×585 贴在 435,257（模板匹配 MAE 3.16，无缩放） */
 .dt-char {
   position: absolute;
   left: 435px;
@@ -1391,9 +1296,6 @@ onUnmounted(() => {
   object-position: 50% 50%;
   pointer-events: none;
 }
-/* 四/五星的卡片图同样是 520×724 人像，和三星一样 cover 填满边框（不要 contain 缩进去） */
-/* L12 卡面金框：模板匹配 436×600 @427,250（MAE 5.99）。
-   标注表写的 429×589@431,259 偏右下 4/9px，以实机拟合为准 */
 .dt-frame {
   position: absolute;
   left: 427px;
@@ -1403,7 +1305,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L13 卡侧丝带 772,197 184×488 */
 .dt-ribbon {
   position: absolute;
   left: 772px;
@@ -1415,7 +1316,6 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: 3;
 }
-/* L14-L16 卡左侧三条金弧（解包 card_deco_01/02/03 拉伸成弧段） */
 .dt-arc {
   position: absolute;
   object-fit: fill;
@@ -1426,7 +1326,6 @@ onUnmounted(() => {
 .dt-arc.b { left: 392px; top: 373px; width:  68px; height: 114px; }
 .dt-arc.c { left: 390px; top: 556px; width:  70px; height: 103px; }
 
-/* L17 名称 1045,392 52px 白字 + 冷光晕 */
 .dt-name {
   position: absolute;
   left: 1031px;
@@ -1444,7 +1343,6 @@ onUnmounted(() => {
     0 2px 6px rgba(0, 0, 0, 0.18);
   z-index: 4;
 }
-/* L18 星级 1038/1072/1106,474 56×57，步距 34（四组参数实测最优，别按核心宽反推） */
 .dt-stars {
   position: absolute;
   left: 1038px;
@@ -1460,11 +1358,10 @@ onUnmounted(() => {
   margin-right: -22px;
 }
 .dt-stars img:last-child { margin-right: 0; }
-/* 星级一律用素材本色（金），**不做 hue-rotate 改色** —— 四星五星也是金 */
+/* 星级一律用素材本色 */
 .dt-stars.s5 { filter: drop-shadow(0 0 10px rgba(255, 200, 120, 0.8)); }
 .dt-stars.s4 { filter: drop-shadow(0 0 6px rgba(255, 214, 160, 0.45)); }
 
-/* L19 属性标签 1049,542 106×31 */
 .dt-tag {
   position: absolute;
   left: 1049px;
@@ -1483,7 +1380,6 @@ onUnmounted(() => {
   text-shadow: 0 1px 2px rgba(30, 40, 70, 0.25);
   z-index: 4;
 }
-/* L20 风格标签 1049,591 108×37，多个横排 */
 .dt-labels {
   position: absolute;
   left: 1049px;
@@ -1507,7 +1403,6 @@ onUnmounted(() => {
   text-shadow: 0 1px 2px rgba(30, 40, 70, 0.2);
   white-space: nowrap;
 }
-/* L21 细分割线 1053,640 654×3 */
 .dt-divline {
   position: absolute;
   left: 1053px;
@@ -1519,7 +1414,6 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: 4;
 }
-/* L22 文案 1051,663 宽 690，24px/31 */
 .dt-desc {
   position: absolute;
   left: 1051px;
@@ -1534,7 +1428,6 @@ onUnmounted(() => {
   z-index: 4;
 }
 
-/* L23 额外获得条 0,866 473×123（素材本身是暗条 + 金色括号，不要再 brightness） */
 .dt-tips {
   position: absolute;
   left: 0;
@@ -1545,7 +1438,6 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: 3;
 }
-/* L24 水滴图标：实机可见晶体 51×63，对应 256 画布 76×76 @29,886 */
 .dt-drop {
   position: absolute;
   left: 29px;
@@ -1557,7 +1449,6 @@ onUnmounted(() => {
   pointer-events: none;
   z-index: 4;
 }
-/* L25 两行文字 121,888 / 121,932 */
 .dt-ex-k,
 .dt-ex-n {
   position: absolute;
@@ -1585,7 +1476,6 @@ onUnmounted(() => {
   color: #e8e4dc;
 }
 
-/* L26 跳过圆钮：模板匹配 76×77 @1677,18（含外发光） */
 .dh-skip {
   position: absolute;
   left: 1677px;
@@ -1609,7 +1499,6 @@ onUnmounted(() => {
 }
 .ds-h { opacity: 0; }
 .dh-skip:hover .ds-h { opacity: 1; }
-/* L27 跳过文字 1753,42 28px 字距 5 */
 .dt-skip-txt {
   position: absolute;
   left: 1753px;
@@ -1626,7 +1515,6 @@ onUnmounted(() => {
   z-index: 20;
 }
 
-/* L28-L32 底部键位提示：1398,1017 起，行内依次排布 */
 .df-cap,
 .df-txt,
 .df-slash {
@@ -1640,8 +1528,6 @@ onUnmounted(() => {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   z-index: 20;
 }
-/* ESC：**纯白胶囊 + 字母镂空**（字母是真的挖空，透出底图）。
-   用内联 SVG + mask 做，CSS 没法把文字从纯色块里挖掉 */
 .df-cap {
   position: absolute;
   left: 1400px;
@@ -1652,7 +1538,7 @@ onUnmounted(() => {
   z-index: 20;
 }
 .df-txt.esc { left: 1446px; }
-/* F 与鼠标两个键帽**必须等大**（之前 22×23 vs 26×26，一大一小） */
+/* F 与鼠标两个键帽**必须等大 */
 .df-f {
   position: absolute;
   left: 1569px;
@@ -1674,7 +1560,6 @@ onUnmounted(() => {
 }
 .df-txt.go { left: 1648px; }
 
-/* L33 UID 9,1056 17px */
 .dt-uid {
   position: absolute;
   left: 9px;
@@ -1688,7 +1573,7 @@ onUnmounted(() => {
   z-index: 20;
 }
 
-/* ---------- 入场动效（对齐实机 2s 时间轴） ---------- */
+/* 入场动效 */
 .detail .dt-cardwrap { animation: dtCardIn 2s linear both; }
 .detail .dt-ribbon { animation: dtRibbonIn 2s linear both; }
 .detail .dt-arc { animation: dtDecoIn 2s linear both; }
@@ -1711,8 +1596,7 @@ onUnmounted(() => {
 .detail .dt-stars img:nth-child(3) { animation: dtStar3 2s linear both; }
 .detail .dt-stars img:nth-child(4) { animation: dtStar4 2s linear both; }
 .detail .dt-stars img:nth-child(5) { animation: dtStar5 2s linear both; }
-/* 「新」角标：跟着星级一起出现（星级 45% 起亮），0.4s 内 0%→100%；
-   脉动只动 filter，和淡入的 opacity 不冲突，所以两条动画并存 */
+/* 「新」角标 */
 .detail .dt-new { animation: dtNewIn 2s linear both, dtNewPulse 2.4s ease-in-out infinite; }
 @keyframes dtNewIn {
   0%, 45% { opacity: 0; }
@@ -1720,7 +1604,7 @@ onUnmounted(() => {
   100%    { opacity: 1; }
 }
 
-/* 立绘组合：正中 0.8 倍 → 0.55s 放大到 1 → 0.85s 缓出归位 */
+/* 立绘组合 */
 @keyframes dtCardIn {
   0%   { transform: translate(315px, -12px) scale(0.8); }
   15%  { transform: translate(315px, -12px) scale(0.8); }
@@ -1730,25 +1614,25 @@ onUnmounted(() => {
   42.5%{ transform: translate(0, 0) scale(1); }
   100% { transform: translate(0, 0) scale(1); }
 }
-/* 丝带绕底部角尖摆正 -15° → 0° */
+/* 丝带绕底部角尖摆正 */
 @keyframes dtRibbonIn {
   0%, 40% { opacity: 0; transform: rotate(-15deg); }
   47.5%   { opacity: 0.9; transform: rotate(0deg); }
   100%    { opacity: 0.9; transform: rotate(0deg); }
 }
-/* 左侧金弧自右 20px 淡入归位 */
+/* 左侧金弧自右 */
 @keyframes dtDecoIn {
   0%, 40% { opacity: 0; transform: translateX(20px); }
   47.5%   { opacity: 1; transform: translateX(0); }
   100%    { opacity: 1; transform: translateX(0); }
 }
-/* 信息组自左 100px 淡入归位 */
+/* 信息组自左 */
 @keyframes dtInfoIn {
   0%, 30% { opacity: 0; transform: translateX(-100px); }
   42.5%   { opacity: 1; transform: translateX(0); }
   100%    { opacity: 1; transform: translateX(0); }
 }
-/* 罗盘 1/10 放大恢复 */
+/* 罗盘 */
 @keyframes dtLogoIn {
   0%, 35% { transform: scale(0.1); }
   45%     { transform: scale(1); }
@@ -1765,13 +1649,13 @@ onUnmounted(() => {
   57.5%   { clip-path: inset(0 0 0 0); }
   100%    { clip-path: inset(0 0 0 0); }
 }
-/* 道具组自左 70px 淡入归位 */
+/* 道具组自左 */
 @keyframes dtItemIn {
   0%, 60% { opacity: 0; transform: translateX(-70px); }
   76%     { opacity: 1; transform: translateX(0); }
   100%    { opacity: 1; transform: translateX(0); }
 }
-/* 星星：隐藏 → 1.0s 发光 3 倍爆发 → 逐颗左移 30px 缩小回落 */
+/* 星星 */
 @keyframes dtStar1 {
   0%, 45% { opacity: 0; transform: translateX(30px) scale(1); filter: brightness(1); }
   50%, 57.5% { opacity: 1; transform: translateX(30px) scale(3); filter: brightness(3); }
@@ -1809,7 +1693,6 @@ onUnmounted(() => {
   background: #171009;
   cursor: var(--nk-cursor, auto), pointer;
 }
-/* L01 背景：SysReward.png 原图 1920×1080，1:1 铺满（不要再缩放/调色） */
 .su-bg {
   position: absolute;
   inset: 0;
@@ -1818,7 +1701,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* L02 卡后拱顶暖光：suit_img_bg_light(315×248) 等比放大 2.4x → 756×595，卡顶上方 */
 .su-cardglow {
   position: absolute;
   left: 338px;
@@ -1830,10 +1712,6 @@ onUnmounted(() => {
   opacity: 0.75;
   pointer-events: none;
 }
-/* L03 大圆环细线组合 ornament_01（2060×1032）：
-   素材圆面圆心 (1031.5,515.5) r400.5；实机圆环 r≈370、圆心 ≈ 组合中心 (956,500)
-   → 等比 0.92（1895×950），圆面中心对准 (956,500)：left = 956 − 1031.5×0.92、top = 500 − 515.5×0.92
-   ⚠️ 必须等比（width/height 同比例），非等比会把圆环拉成椭圆 */
 .su-orn {
   position: absolute;
   left: 7px;
@@ -1844,8 +1722,6 @@ onUnmounted(() => {
   opacity: 0.85;
   pointer-events: none;
 }
-/* L03b 右下虚线圆环：与单抽界面 `.dt-ring` **完全一致**（同位置 / 同尺寸 / 同 36s 转速）
-   实机绿点拟合 bbox 1589..1829 × 775..1013 → 圆心 (1709,894)，与 (1573,757)+286×280 吻合 */
 .su-dring {
   position: absolute;
   left: 1573px;
@@ -1857,9 +1733,6 @@ onUnmounted(() => {
   animation: dtRingSpin 36s linear infinite;
   pointer-events: none;
 }
-/* L04 金色放射光带：圆心 = ornament_01 圆面圆心 (956,500)，36s 匀速自转
-   ⚠️ 正方形盒子 + margin 负半宽定位（不要用 transform: translate(-50%,-50%)，
-      那个会被下面的 rotate 动画覆盖掉 → 圆心跑飞） */
 .su-rays {
   position: absolute;
   left: 522px;
@@ -1878,7 +1751,6 @@ onUnmounted(() => {
   animation: dtRingSpin 36s linear infinite;
   pointer-events: none;
 }
-/* L05 黑底发光弧（必须 screen）：glow-2 卡顶左大弧 / glow-1 卡底亮弧 */
 .su-glowarc {
   position: absolute;
   left: 440px;
@@ -1901,9 +1773,6 @@ onUnmounted(() => {
   opacity: 0.85;
   pointer-events: none;
 }
-/* L06 卡底暗土丘（board-4）已删：套名底板改成 4 态 boards[] 后它就成了重复层，
-   叠在 .su-band 上会出现两个土丘。样式一并移除，避免以后又被加回来。 */
-/* L07 套名底板：素材 T_showpic_suit_img_board_0N 720×300，1:1 居中（中心 x 956） */
 .su-band {
   position: absolute;
   left: 596px;
@@ -1914,10 +1783,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* L08 套装卡：frame_01 原图 476×756 **1:1** 摆放。
-   实机框体（拱顶下沿 167 → 底边 825、左右 728..1182）与素材内框（x10..466, y95..742）比例 1:1，
-   实测边框双线 x 723/737 与 1182/1196、下沿 834 → 盒子就是 476×756 @ (723,94) 1:1；
-   之前压成 454×612 会把拱顶和四角花饰一起挤扁。 */
 .su-card {
   position: absolute;
   left: 723px;
@@ -1935,7 +1800,7 @@ onUnmounted(() => {
   filter: brightness(1.06) saturate(0.96);
   pointer-events: none;
 }
-/* 卡顶拱部的白色光晕（实机拱顶一圈亮 Halo） */
+/* 卡顶拱部的白色光晕 */
 .sc-halo {
   position: absolute;
   left: 50%;
@@ -1956,9 +1821,7 @@ onUnmounted(() => {
   filter: drop-shadow(0 18px 44px rgba(0, 0, 0, 0.55));
   pointer-events: none;
 }
-/* 顶端两层装饰（v1.5.02，坐标/不透明度照 pxdesk「套装获得页」）：
-   页面设计坐标 light (1100,160) 150×132 / op .36、ornament (1125,170) 117×100 / op .42，
-   卡在 (723,94) → 减掉换算成卡内相对坐标；两者都在 frame-2 之下（DOM 里排在 .sc-body 前） */
+/* 顶端两层装饰 */
 .sc-deco {
   position: absolute;
   object-fit: contain;
@@ -1978,9 +1841,8 @@ onUnmounted(() => {
   height: 100px;
   opacity: 0.42;
 }
-/* 立绘：**object-fit: contain**（原来 fill 会把 448×656 拉成 430×630 → 变形 + 溢出容器） */
-/* 立绘：对齐**卡框内框**（frame_01 素材内框 x10..466 / y95..742），左右都要顶到金线。   原来盒子是 (0,52) 442×700 —— 左边比内框多出 10px（溢出容器）、右边少 24px（够不到金线）。
-   改用内框矩形 + `cover`（实机就是满宽取景、底部被套名底板裁掉），`object-position: center top` 保头。 */
+/* 立绘 */
+/* 立绘 */
 .sc-portrait {
   position: absolute;
   left: 10px;
@@ -1992,7 +1854,7 @@ onUnmounted(() => {
   filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.42));
 }
 
-/* 第二套：卡牌拱顶内的纯文字（不加任何底板 / 容器，用户明确要求） */
+/* 第二套 */
 .sc-second {
   position: absolute;
   left: 0;
@@ -2010,10 +1872,6 @@ onUnmounted(() => {
   z-index: 5;
 }
 
-/* L09 套装进度圆
-   实机实测（frame_0081）：圆心 (726,370)、空槽外径 Ø120、盘面 Ø108、细金环 r≈82、
-   进度弧落在槽上（r 54..60、厚 ~5px）、四角星中心 (726,295)。
-   盒子按空槽 Ø120 定，其它层用负偏移按各自素材内容比例摆放。 */
 .su-badge {
   position: absolute;
   left: 666px;
@@ -2023,7 +1881,6 @@ onUnmounted(() => {
   animation: suitIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .su-badge > * { position: absolute; }
-/* ⚠️ 全局 img{max-width:100%} 会把 176.7/165/159.5 宽的图层夹回 120（宽高比崩、圆心偏移） */
 .su-badge img { max-width: none; }
 
 /* 1) 空槽 schedule_02（190×196，内容 129×130）→ 内容拉到 Ø126（实机暗环外径 665..790）
@@ -2036,7 +1893,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* 2) 盘面 schedule_bg / schedule_fullbg（116×116 满幅）→ Ø108 */
 .sud-face {
   left: 6px;
   top: 6px;
@@ -2045,7 +1901,6 @@ onUnmounted(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* 3) 高亮动效 schedule_full(173×178) / schedule_01(129×130) → 盒 165×165 */
 .sud-flash {
   left: -22.5px;
   top: -22.5px;
@@ -2071,9 +1926,7 @@ onUnmounted(() => {
 }
 /* 4) 进度弧：落在空槽上（r 54..60 → 盒子 90%~100%），颜色取星饰同族、偏白更亮 */
 .sud-prog {
-  /* 盒 132×132（圆心仍是盘心）：环带 r 54..64 把整条空槽铺满。
-     盘面在 DOM 里排在它后面 → 内侧那几像素被盘面盖掉，弧正好落在槽里。
-     ⚠️ 蒙版必须 closest-side：默认 farthest-corner 的 100% 是 93.3px，环带会跑到元素外 */
+  /* 盒 */
   left: -6px;
   top: -6px;
   width: 132px;
@@ -2086,7 +1939,7 @@ onUnmounted(() => {
   mask: radial-gradient(circle closest-side, transparent 81%, #000 83.5%, #000 97.5%, transparent 99%);
   pointer-events: none;
 }
-/* 已集齐：整圈点亮，颜色偏暖白（实机「已集齐」帧的环是暖白金，不是薄荷绿） */
+/* 已集齐 */
 .su-badge.is-full .sud-prog {
   background: conic-gradient(from 0deg, #fff4d8 0deg 360deg);
 }
@@ -2136,7 +1989,7 @@ onUnmounted(() => {
   color: #f4f2ee;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
-/* 已集齐：实机显示「已集齐」而不是 N/N */
+/* 已集齐 */
 .sud-full-txt {
   left: 0;
   top: 0;
@@ -2153,7 +2006,6 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* L10 套名 52px @(y818) / 四芒星 38px @(y878) / 属性胶囊 105×35 @(905,949) */
 .su-name h2 {
   position: absolute;
   left: 0;
@@ -2168,9 +2020,7 @@ onUnmounted(() => {
   color: #fff;
   text-shadow: 0 0 26px rgba(210, 170, 255, 0.35), 0 4px 20px rgba(0, 0, 0, 0.6);
 }
-/* 星级：素材 T_UI_common_quality_star_n（86×87，内容 69×69）。
-   实机（Clipboard_Screenshot-2）星体明显更大、几乎相接：星形内容比模拟器宽约 1.4×，
-   而 4 颗星的总跨度不变 → 放大盒子、用负 margin 把步距压回 40。 */
+/* 星级 */
 .sn-stars {
   position: absolute;
   left: 0;
@@ -2214,7 +2064,7 @@ onUnmounted(() => {
 .suit .df-slash { left: 1599px; font-size: 26px; }
 .suit .df-mouse { left: 1615px; top: 1014px; width: 27px; height: 27px; }
 .suit .df-txt.go { left: 1650px; }
-/* 底部横向点状装饰带（实机 y1046 起两排细点贯穿全宽） */
+/* 底部横向点状装饰带 */
 .su-dotline {
   position: absolute;
   left: 90px;

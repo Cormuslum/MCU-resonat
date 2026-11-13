@@ -22,11 +22,7 @@
   --serif: 'Songti SC', 'STSong', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
   --sans: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', system-ui, sans-serif;
   --mono: 'Cascadia Mono', 'Consolas', 'SF Mono', monospace;
-  /* 鼠标：与模拟器同一张图（public/assets/ui/cursor/mouse.webp）。
-     v2.2.06 起缩到 26×30（源图 52×60 的一半），hotspot 4 4 → 2 2，
-     与模拟器 `--nk-cursor: url(...) 2 2` 保持一致。
-     只放图 + hotspot，落空时的关键字由各调用点自己接（auto / pointer），
-     免得出现 `auto, pointer` 这种叠尾。 */
+  /* 鼠标 */
   --nk-cursor: url("./mouse.webp") 2 2;
 }
 
@@ -81,7 +77,7 @@ img { user-select: none; }
   pointer-events: none;
 }
 
-/* ── 顶栏 ── */
+/* 顶栏 */
 .topbar {
   grid-area: top;
   display: flex;
@@ -91,7 +87,7 @@ img { user-select: none; }
 }
 .brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .brand-seal {
-  /* v2.7.02：换成一枚方形图标（ps5 update），不再是横条字标 */
+  /* 换成一枚方形图标 */
   width: 44px;
   height: 44px;
   object-fit: contain;
@@ -146,20 +142,20 @@ img { user-select: none; }
   transition: transform 0.18s ease, filter 0.18s ease;
 }
 .round img { width: 34px; height: 34px; object-fit: contain; opacity: 0.82; }
-/* 常态 / 高亮是两张素材（Rule_n / Rule_h、reset_s / reset_h），hover 直接换图 */
+/* 常态 / 高亮是两张素材 */
 .round .ic-h { display: none; }
 .round:hover .ic-n { display: none; }
 .round:hover .ic-h { display: block; }
-/* physical_btn_reset_s 是浅灰白圆盘，压在浅色羊皮纸上几乎看不见 —— 稍微压深一档提可读性 */
+/* physical_btn_reset_s 是浅灰白圆盘 */
 #btn-reload .ic-n { filter: brightness(0.72) contrast(1.15); }
-/* 清理按钮（v2.2.04）：源图是白色描边，已转成 #111 单色；缩到 27px 才和旁边那几个同视觉重量 */
+/* 清理按钮 */
 #btn-clean img { width: 27px; height: 27px; opacity: 0.78; }
 #btn-clean:hover img { opacity: 0.92; }
 .round:hover { transform: translateY(-1px) scale(1.04); filter: drop-shadow(0 2px 6px rgba(120, 90, 40, 0.45)); }
 .round:hover img { opacity: 1; }
 .round:active { transform: scale(0.96); }
 
-/* ── 左栏 ── */
+/* 左栏 */
 .rail {
   grid-area: rail;
   padding: 6px 12px 18px 22px;
@@ -221,11 +217,10 @@ img { user-select: none; }
 .history .h-item b { font-weight: 600; color: var(--ink-2); letter-spacing: 0.04em; }
 .history .empty { font-size: 11.5px; color: var(--ink-3); opacity: 0.7; padding: 4px 6px; }
 
-/* main.layout 只是语义包裹层：让 rail / stage 直接参与 #app 的网格，
-   否则它会变成一个普通块、把两个子元素一起塞进某个格子（踩过：整页挤到左栏宽度） */
+/* main.layout 只是语义包裹层 */
 .layout { display: contents; }
 
-/* ── 主区 ── */
+/* 主区 */
 .stage {
   grid-area: stage;
   display: flex;
@@ -291,8 +286,7 @@ img { user-select: none; }
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 .field textarea { resize: vertical; min-height: 68px; line-height: 1.65; }
-/* 正文框固定看 10 行（v2.2.00）：长故事不该把整张表单撑到屏幕外，
-   多了就在框里滚 —— 行高 1.65em × 10 + 上下 padding。 */
+/* 正文框固定看 */
 .field textarea.tall {
   height: calc(10 * 1.65em + 20px);
   min-height: calc(10 * 1.65em + 20px);
@@ -300,7 +294,7 @@ img { user-select: none; }
   overflow-y: auto;
 }
 
-/* 套装搜索框（v2.2.00）：输入即筛，结果最多 10 条，再多用滚轮/滚动条 */
+/* 套装搜索框 */
 .combo { position: relative; }
 .combo-list {
   position: absolute;
@@ -308,8 +302,6 @@ img { user-select: none; }
   left: 0;
   right: 0;
   top: calc(100% + 4px);
-  /* 容器高度恒等于 **10 行**（v2.2.02）：行高写死成 --combo-row，条目再多也是滚动，
-     不截断结果 —— 用户要的是「看得见 10 行」，不是「只给 10 条」。 */
   --combo-row: 32px;
   max-height: calc(10 * var(--combo-row) + 10px);
   overflow-y: auto;
@@ -549,7 +541,7 @@ img { user-select: none; }
 }
 .pathbox input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
 
-/* ── 控制台 ── */
+/* 控制台 */
 .console {
   grid-area: console;
   display: flex;
@@ -699,7 +691,7 @@ img { user-select: none; }
   box-shadow: 0 2px 10px rgba(190, 150, 80, 0.3);
 }
 
-/* ── 清理临时文件（v2.2.04）── */
+/* 清理临时文件 */
 .clean-list {
   margin: 12px 0 6px;
   border: 1px solid var(--line-2);
@@ -736,13 +728,13 @@ img { user-select: none; }
   display: flex; justify-content: flex-end; gap: 10px;
   margin-top: 14px;
 }
-/* 信纸是浅底，`.btn` 默认是给深底用的浅金字 —— 这里两枚都要换深字 */
+/* 信纸是浅底 */
 .modal-actions .btn { color: #6b4a17; background: rgba(255, 250, 236, 0.8); }
 .modal-actions .btn:hover { color: #402d0d; background: rgba(216, 184, 120, 0.32); }
 .modal-actions .btn.danger { color: #8d2f18; border-color: rgba(168, 74, 40, 0.5); background: rgba(255, 240, 232, 0.9); }
 .modal-actions .btn.danger:hover { color: #fff; background: linear-gradient(180deg, #b4522f, #92401f); border-color: #92401f; }
 .modal-actions .btn.danger:disabled { opacity: 0.45; }
-/* 确认框主按钮（撤回这类「确认但不删东西」的动作用金色，不走红） */
+/* 确认框主按钮 */
 .modal-actions .btn.primary {
   display: inline-block; margin: 0;
   color: #3a2b12;
@@ -751,7 +743,7 @@ img { user-select: none; }
 }
 .modal-actions .btn.primary:hover { color: #3a2b12; background: linear-gradient(180deg, #efd3a0, #cea967); }
 
-/* 确认框正文：文案里有 \n，要按行显示 */
+/* 确认框正文 */
 .confirm-body { white-space: pre-line; margin: 0 2px 4px; }
 
 /* 滚动条 */
@@ -780,7 +772,7 @@ img { user-select: none; }
 
 .rail-item.rail-dlc { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 10px; }
 
-/* ── 候选多选列表（v2.0.05）── */
+/* 候选多选列表 */
 .dlc-picks {
   border: 1px solid var(--line); border-radius: 8px;
   background: rgba(255, 253, 247, 0.7); overflow: hidden;
@@ -790,8 +782,7 @@ img { user-select: none; }
   padding: 7px 10px; border-bottom: 1px solid var(--line-2);
 }
 .dlc-pick-bar .hint { margin-left: auto; font-size: 11px; color: var(--ink-3); }
-/* v2.0.06：固定「四行四列」，超出的候选靠滚动条 / 滚轮查看。
-   以前是 auto-fill + 196px，列数随面板宽度变、行数也不是整 4 行。 */
+/* 固定「四行四列」 */
 .dlc-pick-list {
   --dlc-row-h: 30px;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -825,7 +816,7 @@ img { user-select: none; }
 .btn.danger { color: var(--red); border-color: rgba(164, 85, 63, 0.4); }
 .btn.danger:hover { background: rgba(164, 85, 63, 0.1); border-color: var(--red); }
 
-/* ── 包卡片 ── */
+/* 包卡片 */
 .dlc-packs { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
 .dlc-pack {
   border: 1px solid var(--line);
@@ -853,7 +844,7 @@ img { user-select: none; }
   font-size: 12px; color: var(--ink-3); line-height: 1.7;
 }
 
-/* ── 远端 ── */
+/* 远端 */
 .dlc-remcfg {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px; align-items: end; margin-top: 4px;
@@ -881,7 +872,7 @@ img { user-select: none; }
 .dlc-rp .dim { font-size: 11px; color: var(--ink-3); }
 .dlc-rp .btn { margin-left: auto; padding: 5px 11px; font-size: 11.5px; }
 
-/* ── 待分配：多选 / 批量（v1.6.07） ── */
+/* 待分配 */
 .inbox h4 {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
 }
@@ -907,14 +898,13 @@ img { user-select: none; }
 }
 .inbox .row .del:hover { background: #ffe9c9; color: #7a3b18; }
 
-/* ── 整套导入预览（v1.6.07） ── */
+/* 整套导入预览 */
 .bundle {
   margin-top: 18px; padding: 14px 16px;
   background: rgba(241, 232, 212, 0.5);
   border: 1px solid var(--line-2); border-radius: 4px;
 }
-/* 「去「服装阁」补全」的顶部对账单（v2.2.02）
-   把「带进来了什么 / 还缺什么」摆在最上面 —— 不用在一堆空槽位里自己数。 */
+/* 「去「服装阁」补全」的顶部对账单 把「带进来了什么 / 还缺什么」摆在最上面 —— 不用在一堆空槽位里自己数 */
 .fix-note {
   margin: 0 0 14px;
   padding: 10px 12px;
@@ -926,7 +916,7 @@ img { user-select: none; }
 .fix-note .fx.bad { color: #a4522b; }
 
 .bundle-bar { display: flex; align-items: center; gap: 12px; }
-/* 浅色面板上的按钮：`.btn` 默认是给深色底用的浅金字，在这儿几乎看不见 */
+/* 浅色面板上的按钮 */
 .bundle-bar .btn {
   color: #6b4a17;
   border-color: rgba(176, 138, 74, 0.55);
@@ -952,7 +942,7 @@ img { user-select: none; }
 .b-tags i { color: #b07a5a; font-style: normal; }
 .b-warn { margin-top: 10px; font-size: 11.5px; color: #a4522b; line-height: 1.7; }
 
-/* 「认不出归属」的条目（v2.2.00）：列出来让玩家去对应栏目补信息，而不是静默丢掉 */
+/* 「认不出归属」的条目 */
 .b-orphan {
   margin: 10px 0; padding: 10px 12px;
   background: rgba(214, 176, 106, 0.12);
@@ -985,7 +975,7 @@ img { user-select: none; }
 }
 .b-orphan-row .btn.mini:hover { color: #402d0d; background: rgba(216, 184, 120, 0.32); }
 
-/* 「修改已有」里的阁内套装清单（勾选 = 移出） */
+/* 「修改已有」里的阁内套装清单 */
 .setlist { display: flex; flex-direction: column; gap: 4px; max-height: 168px; overflow: auto; }
 .setrow {
   display: flex; align-items: center; gap: 8px;

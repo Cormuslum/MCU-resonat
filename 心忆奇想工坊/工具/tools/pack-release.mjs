@@ -1,9 +1,4 @@
-/**
- * 把 electron-builder 的产物 + 项目数据组装成「免安装发行版」：`node tools/pack-release.mjs`。
- * 前置：`npx electron-builder --config electron-builder-{sim,updater}.yml --win --dir`，输出到 `release/_build/{simulator,updater}/win-unpacked`。
- * 产出 `release/无限暖暖发行版/{心忆共鸣, 心忆奇想工坊}` —— 模拟器纯静态（exe + dist + public + userdata），
- * 工坊带 `运行时/`、`工具/{updater,tools,data}`、`工具/文案.json`；玩家只想玩可只下载模拟器那一个。
- */
+/** 把 electron-builder 的产物 + 项目数据组装成「免安装发行版」：`node tools/pack-release.mjs` */
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -24,31 +19,20 @@ const BUILD = path.join(ROOT, 'release', '_build')
 // dist 里只留代码：媒体一律由 public/assets 提供，避免 1.7G 重复
 const MEDIA = ['*.webp', '*.ogg', '*.mp4', '*.webm', '*.png', '*.jpg', '*.jpeg', '*.gif', '*.avif', '*.mp3', '*.wav', '*.m4a']
 
-/**
- * 编辑数据只带 `信息表`（约 0.3M）：`故事/` `套装库/` `阅读物/` 不随包发（成品已在模拟器里），
- * 发行版只当增量补丁 —— 用户拖进来的新文件覆盖对应那一条，其余原样保留（写入端会自动 mkdir）。
- */
+/** 编辑数据只带 `信息表`（约 0.3M）：`故事/` `套装库/` `阅读物/` 不随包发（成品已在模拟器里）， 发行版只当增量补丁 —— 用户拖进来的新文件覆盖对应那一条，其余原样保留（写入端会自动 mkdir） */
 const DATA_KEEP = ['信息表']
 
-/**
- * 信息表 / 阅读物里的开发期遗留，不进发行包：`前后名称对照表.md`、`desktop.ini`、`系列分类说明.md`
- * （`2872新增阅读物清单.txt` 是用户的工作清单，保留）。
- */
+/** 信息表 / 阅读物里的开发期遗留，不进发行包：`前后名称对照表.md`、`desktop.ini`、`系列分类说明.md` （保留） */
 const DATA_XF = ['前后名称对照表.md', 'desktop.ini', '系列分类说明.md']
 
-/**
- * 工坊代码里这些不进发行包：快照 / 缓存 / 扩展包源 / 临时重定向表（运行时状态）、`dlc/`（玩家自己的包）、`node_modules`；
- * README 是开发服务器版说明（端口 5178/5199），留着会误导。
- */
+/** 工坊代码里这些不进发行包：快照 / 缓存 / 扩展包源 / 临时重定向表（运行时状态）、`dlc/`（玩家自己的包）、`node_modules`； README 是开发服务器版说明（端口 5178/5199），留着会误导 */
 const UPD_XD = ['.snapshots', '.inbox', '.dist', 'dlc', 'node_modules']
 const UPD_XF = [
   '.last-apply.json', '.write-cache.json', '.passthrough.json',
   'README.md',
 ]
 
-/**
- * 工坊「写入并更新」会跑的管线入口：发行版只带这些脚本及其依赖闭包，验收 / 截图 / 预处理 / 打包工具一律不进包。
- */
+/** 工坊「写入并更新」会跑的管线入口：发行版只带这些脚本及其依赖闭包，验收 / 截图 / 预处理 / 打包工具一律不进包 */
 const PIPELINE_ENTRIES = [
   'build-pool-map.py',   // 生成 pool-map（阁 / 套装清单）
   'collect-assets.py',   // 转码 + 重建 manifest
@@ -56,10 +40,7 @@ const PIPELINE_ENTRIES = [
   'gen-readings.py',     // 阅读物图鉴数据 → public/assets/data/readings.json
 ]
 
-/**
- * 算出管线脚本的**依赖闭包**（本地 import / 被调用的同目录脚本）。
- * 比手写白名单可靠：以后给管线加了新依赖会自动跟上，不会漏；反之无关脚本不会混进来。
- */
+/** 算出管线脚本的**依赖闭包**（本地 import / 被调用的同目录脚本）。比手写白名单可靠：以后给管线加了新依赖会自动跟上，不会漏；反之无关脚本不会混进来 */
 function pipelineClosure() {
   const dir = TOOLS_DIR
   const files = fs.readdirSync(dir).filter((f) => /\.(py|mjs)$/.test(f))
@@ -100,10 +81,7 @@ function robocopy(args) {
   }
 }
 
-/**
- * 删掉一棵目录树：不用 `fs.rmSync(recursive)`（2.6G / 上万个文件在 Windows 上很慢、易撞「文件被占用」），
- * 改用 robocopy 镜像到空目录再删 —— 快且能重试。
- */
+/** 删掉一棵目录树：不用 `fs.rmSync(recursive)`（2.6G / 上万个文件在 Windows 上很慢、易撞「文件被占用」）， 改用 robocopy 镜像到空目录再删 —— 快且能重试 */
 function rmTree(p) {
   if (!fs.existsSync(p)) return
   const st = fs.lstatSync(p)
@@ -148,8 +126,8 @@ if (!fs.existsSync(simUn) || !fs.existsSync(updUn)) {
   process.exit(1)
 }
 
-// 旧发行版：不能整目录改名（Windows 上「非空目录改名」常被系统/安全钩子拒），
-// 也不能直接递归删（大目录删不动）。改成**逐层清空**再往里拷。
+// 旧发行版：不能整目录改名（Windows 上「非空目录改名」常被系统/安全钩子拒）
+// 也不能直接递归删（大目录删不动）。改成**逐层清空**再往里拷
 if (fs.existsSync(OUT)) {
   console.log('  清空旧发行版内容…')
   for (const entry of fs.readdirSync(OUT)) {
@@ -168,8 +146,8 @@ fs.mkdirSync(path.join(SIM, 'userdata'), { recursive: true })
 console.log('  ✓ userdata/（空存档目录）')
 
 // ───────────────────────── 可选视频包 ─────────────────────────
-// 大视频（服装阁动态背景 28 条 + 最大的主页轮播）拆成独立包，基础包小 1.3 GB；
-// manifest 仍保留视频条目，把包里的 public 拖回模拟器目录即自动归位生效。
+// 大视频（服装阁动态背景 28 条 + 最大的主页轮播）拆成独立包，基础包小 1.3 GB
+// manifest 仍保留视频条目，把包里的 public 拖回模拟器目录即自动归位生效
 {
   const packRoot = path.join(ROOT, 'release', '无限暖暖视频包')
   const packAssets = path.join(packRoot, 'public', 'assets')

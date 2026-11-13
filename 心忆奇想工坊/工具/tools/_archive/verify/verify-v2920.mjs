@@ -1,17 +1,4 @@
-/**
- * 验收：编号改号 + 废掉旧兼容链 + seq 重新定义 + 版本内按 seq 排序
- *
- * 用户四条要求：
- * ① 繁星织梦 1002 → **1207**，繁花映愿 1003 → **1208**
- * ② 舍弃 legacyId 拼接、舍弃老素材回落、舍弃 `前后名称对照表.md`（老素材已废弃）
- * ③ seq 重新定义：含 5★ 在前 → 同星级按 gachaKey 数值升序 → 常驻阁永远最后
- * ④ 模拟器里版本内的阁按 seq 排序
- *
- * 校验：A 数据 / B 旧链路确实没了 / C 浏览器里的实际顺序 / D 报错
- *
- * 依赖：`npm run up`（5178 + 5199）。
- * 跑法：node tools/verify-v2920.mjs
- */
+/** 验收：编号改号 + 废掉旧兼容链 + seq 重新定义 + 版本 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'

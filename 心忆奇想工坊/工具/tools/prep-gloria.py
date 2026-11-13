@@ -42,8 +42,7 @@ from asset_paths import ASSET, resolve, resolve_file  # noqa: E402
 #   - 目录名 `辉煌心光` → `素材/界面/辉煌心光`
 #   - 源文件（1-演出.png 等）只留在 `原始素材/辉煌心光/`，`素材/` 里只留「工程产出」
 #   - `朋友分享素材/` 已并入 `素材/界面/UI整包/`
-# ⚠ 源（SRC）与产出（DST）可能不在同一处：源在 原始素材/，产出必须写回 素材/
-#    所以**每个源文件都用 srcf() 单独找**，不能只解析目录。
+# 所以**每个源文件都用 srcf() 单独找**，不能只解析目录
 SRC = resolve("辉煌心光")
 TEX = resolve("UI/Common/Textures")
 DST = os.path.join(ASSET, "界面", "辉煌心光", "工程产出")
@@ -129,8 +128,7 @@ def main():
     print(f"  → tab.png  {tab.size}")
 
     cf = pxdesk_image(srcf("二级确认弹窗.pxdesk"))
-    # ⚠️ pxdesk 里的横条本身是**半透明**金条（内部 alpha≈179/232），直接铺到弹窗上
-    #    会把后面的行文字透出来。这里把内部 alpha 抬到接近不透明（×1.42，边缘仍渐变）。
+    # 会把后面的行文字透出来。这里把内部 alpha 抬到接近不透明（边缘仍渐变）
     r, g, b, a = cf.split()
     a = a.point(lambda v: 255 if v * 1.42 > 255 else int(v * 1.42))
     cf = Image.merge("RGBA", (r, g, b, a))

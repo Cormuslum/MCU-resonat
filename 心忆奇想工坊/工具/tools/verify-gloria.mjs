@@ -1,8 +1,4 @@
-/**
- * 「辉煌心光」设置页验收：`npm run dev` 后 `node tools/verify-gloria.mjs`。
- * 覆盖 R1 背景视频 / R2 退出键 / R3 四个交互区 / R4 弹窗版式 / R5 关闭键 / R6 音量 / R7 演出开关 / R8 快捷 /
- * R9 存档清理 / R10 存档统计 / R11 二级确认 / R12 左上标题 / R13 主界面彩蛋。
- */
+/** 「辉煌心光」设置页验收：`npm run dev` 后 `node tools/verify-gloria.mjs` */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -37,7 +33,7 @@ const SAVE = {
   // 现状口径：卡池主键 = 官方 gachaKey
   //   banner-076 = 2.10 执律的流金（当前版本 2.10 的第一池 = 当前卡池）
   //   banner-003 = 1.0 留于花间的浮想（别的版本，用来验「只清当前版本」）
-  // 旧写法 banner-2.10-02 / banner-1.0-03 只剩 legacyId，迁移路径由 verify-v2702 覆盖。
+  // 旧写法 banner-2.10-02 / banner-1.0-03 只剩 legacyId，迁移路径由 verify-v2702 覆盖
   pity: {
     'banner-076': { p5: 3, p4: 2, total: 12 },
     'banner-003': { p5: 0, p4: 0, total: 5 },
@@ -216,9 +212,7 @@ ok(
   JSON.stringify(stats),
 )
 
-/**
- * 点某一行的按钮 —— 按标题文本找，不按行下标（存档面板加行会让下标整体偏移）。
- */
+/** 点某一行的按钮 —— 按标题文本找，不按行下标（存档面板加行会让下标整体偏移） */
 async function clickRowBtn(title, sel = '.gm-btn') {
   const h = await p.evaluateHandle(([t, s]) => {
     const row = [...document.querySelectorAll('.gm-row')].find((r) =>
@@ -487,7 +481,7 @@ ok(
   `${before} → ${egg2.count}`,
 )
 
-// 循环翻到第 24 条（彩蛋文本2 的首条，居中排版；file1 共 23 条，所以它恒为 24）
+// 循环翻到第 24 条（彩蛋文本2 的首条，居中排版；file1 共 23 条）
 for (let i = 0; i < Number(eggTotal); i++) {
   const now = await p.evaluate(() => document.querySelector('.eg-count')?.textContent?.replace(/\s+/g, ''))
   if (now === `24/${eggTotal}`) break

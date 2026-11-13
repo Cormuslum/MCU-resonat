@@ -31,8 +31,8 @@ MANIFEST = os.path.join(OUT, "manifest.json")
 FFMPEG = os.environ.get("FFMPEG", "ffmpeg")
 
 # (Wwise 事件名, manifest key, 中文说明)
-# 注：`ui_general_window_a_open;ui_general_window_b_open` 在索引里是**同一行**的两个别名，
-#     指向同一个 `052_窗口打开.mp3`，所以「A + B」并不是两段叠加，只有一段 0.43s 的窗口音。
+# 注：`ui_general_window_a_open;ui_general_window_b_open` 在索引里是**同一行**的两个别名
+# 指向同一个 `052_窗口打开.mp3`，所以「A + B」并不是两段叠加，只有一段 0.43s 的窗口音
 PICK = [
     ("ui_general_window_a_open",            "window-open",   "窗口打开"),
     ("ui_general_unlock_big",               "unlock-big",    "解锁·大"),
@@ -83,7 +83,6 @@ def main():
         print(f"  {key:<16} ← {cn:<10} {fn:<26} {kb:>6.1f} KB")
         ok.append((key, f"sfx/{key}.ogg"))
 
-    # ⚠ merge，不要整段覆盖 manifest.sfx（别处可能还有手工补的键）
     with open(MANIFEST, encoding="utf-8") as f:
         man = json.load(f)
     sfx = man.setdefault("sfx", {})

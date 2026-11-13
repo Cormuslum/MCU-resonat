@@ -1,7 +1,4 @@
-/**
- * 黄历（天时层）：仿传统黄历格式、内容改成「择时抽卡」；纯函数 + 日期种子，同一天结果恒定、跨天翻页。
- * 纯娱乐，不参与抽卡概率计算（结果仍由 `engine.ts` 的保底链决定）。
- */
+/** 黄历（天时层）：仿传统黄历格式、内容改成「择时抽卡」；纯函数 + 日期种子，同一天结果恒定、跨天翻页 */
 import { hashStr, makeRng, pick, pickN } from './seed'
 import { SLIPS, type FortuneSlip } from './fortuneTexts'
 

@@ -1,7 +1,4 @@
-/**
- * M3 阅读物图鉴 Playwright 验收（开发期巡检，不打包进应用）：`node tools/verify-readings.mjs`。
- * 覆盖列表进度、区域切换（Q/E）、解锁三阶段动画、空态贴纸与随机彩蛋、深链 `?name=`、搜索弹窗、无报错。
- */
+/** M3 阅读物图鉴 Playwright 验收（开发期巡检，不打包进应用）：`node tools/verify-readings.mjs`。覆盖列表进度、区域切换（Q/E）、解锁三阶段动画、空态贴纸与随机彩蛋、深链 `?name=`、搜索弹窗、无报错 */
 import fs from 'node:fs'
 import { chromium } from 'playwright-core'
 
@@ -50,7 +47,6 @@ async function gotoReadings(query = '') {
 // 清空存档 → 阅读物全锁
 await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' })
 await page.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))
-// ⚠ 只改 hash 属同文档跳转，路由首帧可能把地址覆盖回 #/ → 过一页 about:blank 强制整页重载
 await page.goto('about:blank')
 
 await gotoReadings()

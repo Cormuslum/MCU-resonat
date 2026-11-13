@@ -1,13 +1,4 @@
-/**
- * 验收 —— 只覆盖本轮改动及其关联项。
- *
- * A. 2.11「雪落颂愿时」素材补齐（里程碑 / 立绘 / 图标 / 横幅）
- * B. 套装详情弹窗：立绘按画框裁切（大图 + 形态卡）
- * C. 主页左上角信封弹窗（信封 → 拆开 → 信纸翻页 → 滚动 → 点空白关闭）
- * D. 全程无 JS 报错
- *
- * 用法：node tools/verify-v2802.mjs
- */
+/** 验收 —— 只覆盖本轮改动及其关联项 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -45,12 +36,7 @@ function webpSize(buf) {
   return { w: 0, h: 0 }
 }
 
-/**
- * 从 CHANGELOG.md 里取最近 n 个版本号。
- *
- * 别硬编码版本号 —— 每发一版都要改断言，太容易漏。
- * 「信封」弹窗展示的就是最近三次更新，所以断言应该对着 CHANGELOG 求值。
- */
+/** 从 CHANGELOG.md 里取最近 n 个版本号。别硬编码版本号 —— 每发一版都要改断言，太容易漏 */
 function recentVersions(n = 3) {
   const md = fs.readFileSync(path.join(A, '..', '..', 'CHANGELOG.md'), 'utf8')
   const out = []
@@ -86,7 +72,7 @@ for (const s of b80?.sets ?? []) {
   const pf = s.assets.portrait
   const abs = path.join(A, pf || '')
   ok(`${s.name}：立绘落盘`, !!pf && fs.existsSync(abs), pf || 'null')
-  // 用 PNG 头读尺寸：448×656 的卡片图（此前 S0438 误用了 520×724 的内衣底模试穿图）
+  // 用 PNG 头读尺寸
   if (fs.existsSync(abs)) {
     const { w, h } = webpSize(fs.readFileSync(abs))
     ok(`${s.name}：立绘 448×656（与其余套装同规格）`, w === 448 && h === 656, `${w}×${h}`)
@@ -303,8 +289,8 @@ ok('末页内容放得下或可滚动（不再裁字）', overflow <= 1 || (awai
   })
 }
 
-// ：更新日志的长度随版本变化 —— 某一版变长就会把正文顶出容器。
-// 起改为滚动，所以每页只验「可读」：放得下、或能滚动到底。
+// ：更新日志的长度随版本变化 —— 某一版变长就会把正文顶出容器
+// 起改为滚动，所以每页只验「可读」：放得下、或能滚动到底
 {
   // 先回到第 1 页
   for (let i = 0; i < 3; i++) {
@@ -335,7 +321,7 @@ await page.keyboard.press('Escape')
 await page.waitForTimeout(320)
 ok('ESC 关闭信封弹窗', (await page.locator('.mail-mask').count()) === 0)
 
-// ：主路径是「点空白处退出」（× 已删除）
+// ：主路径是「点空白处退出」
 await page.locator('.hm-mail').click()
 await page.waitForTimeout(400)
 await page.mouse.click(120, 940)

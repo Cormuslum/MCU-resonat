@@ -1,8 +1,4 @@
-/**
- * 真机截图（一次性验收用）：① 版本页用临时静态服务（5188）serve `dist/`，展开折叠的大版本读 26 个版本号；
- * ② 工坊拓展包多选，直接渲染工坊 CSS 片段看四行四列 + 滚动条。
- * 用法：先 `npm run build`，再起 `python -m http.server 5188 --directory dist --bind 127.0.0.1`，然后 `node tools/shot-v2924.mjs`。
- */
+/** 真机截图（一次性验收用）：① 版本页用临时静态服务（5188）serve `dist/`，展开折叠的大版本读 26 个版本号； ② 工坊拓展包多选，直接渲染工坊 CSS 片段看四行四列 + 滚动条 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -18,8 +14,8 @@ const browser = await chromium.launch({ executablePath: CHROME, headless: true, 
   await p.goto(SIM, { waitUntil: 'networkidle', timeout: 60000 })
   await p.waitForSelector('.vr-minor', { timeout: 30000 })
   await p.evaluate(() => document.querySelectorAll('.vr-minors').forEach((el) => el.classList.add('open')))
-  // 左栏本身是固定高度 + 内部滚动，全页截图只能拍到前 6 个版本。
-  // 验收用：临时放开高度，把 26 张版本卡完整摊开（只在截图进程里生效，不改源码）。
+  // 左栏本身是固定高度 + 内部滚动，全页截图只能拍到前 6 个版本
+  // 验收用：临时放开高度，把 26 张版本卡完整摊开（不改源码）
   await p.addStyleTag({ content: `
     .vr-rail { height: auto !important; max-height: none !important; overflow: visible !important; }
     .vr-minors { max-height: none !important; overflow: visible !important; }
@@ -35,8 +31,8 @@ const browser = await chromium.launch({ executablePath: CHROME, headless: true, 
   const good = rows.length === 26 && Object.entries(want).every(([v, n]) => got[v] === n)
   console.log(`版本页：${rows.length} 个版本 | 1.1=${got['1.1']} 1.10=${got['1.10']} `
     + `2.1=${got['2.1']} 2.10=${got['2.10']} → ${good ? 'PASS' : 'FAIL'}`)
-  // 左栏是固定高度 + 内部滚动，一张页面图拍不全 26 张卡。
-  // 额外出一张「真机 DOM 读数」核对图：数据全部来自上面读到的 rows，不另造数据。
+  // 左栏是固定高度 + 内部滚动，一张页面图拍不全 26 张卡
+  // 额外出一张「真机 DOM 读数」核对图：数据全部来自上面读到的 rows，不另造数据
   const shot = path.join(ROOT, 'tools', 'v2924-versions.png')
   const hl = new Set(['1.1', '1.10', '2.1', '2.10'])
   const cells = rows.map((r) => `<div class="cell${hl.has(r.v) ? ' hot' : ''}">
@@ -61,7 +57,7 @@ const browser = await chromium.launch({ executablePath: CHROME, headless: true, 
   if (!good) process.exitCode = 1
 }
 
-/* ── 2. 工坊拓展包多选（4×4 + 滚动） ── */
+/* ── 2. 工坊拓展包多选 ── */
 {
   const css = fs.readFileSync(path.join(ROOT, 'updater/web/style.css'), 'utf8')
   const p = await browser.newPage({ viewport: { width: 1100, height: 820 }, deviceScaleFactor: 1 })

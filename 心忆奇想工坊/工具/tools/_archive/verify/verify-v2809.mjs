@@ -1,13 +1,4 @@
-/**
- * 验收：改名 / 素材换源 / 主页侧栏 / 归档 / 合成背景 / 进入音 / 版本点击音。
- *
- * A. 改名：界面不再出现「卡池」，改为「服装阁」
- * B. 主页不显示侧边栏（左缘悬停也不唤出）
- * C. 素材换源：053/066/080 用合成成品背景，艺术字为简体中文素材
- * D. 归档：public/assets 无孤儿文件（manifest 全量可达）
- * E. 进入音：80 座阁全部有音；2.11 只挂「雪落颂愿时」
- * F. 版本页点击音：点击版本播放该版本首个 5★ 阁的进入音
- */
+/** 验收：改名 / 素材换源 / 主页侧栏 / 归档 / 合成背景 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -101,7 +92,7 @@ console.log('\n【B. 主页不显示侧边栏】')
   const n1 = await page.locator('.rail').count()
   ok('左缘悬停也不唤出侧边栏', n1 === 0, `count=${n1}`)
 
-  // 二级页仍要有返回路径（不能因为删侧栏把导航一起删了）
+  // 二级页仍要有返回路径
   await page.goto(BASE + '/#/versions', { waitUntil: 'domcontentloaded' })
   await page.waitForTimeout(1500)
   ok('版本页仍有返回键', (await page.locator('.vr-back').count()) === 1)
@@ -146,9 +137,9 @@ console.log('\n【C. 素材换源（078~080 高清 / 简中艺术字）】')
         vid: v ? { src: v.getAttribute('src') || '', w: v.videoWidth } : null,
       }
     })
-    // ：`banners/bg-clean/` 改名为 `banners/bg/`；源图直接是 2560×1440 的 jpg，
-    // 不再经过「裁 16:9 缩到 1920」那条路，所以宽度期望放宽到 ≥1920。
-    // ：接了动态背景的阁直接播视频，静态底图不再渲染 —— 两种都算「铺满」。
+    // ：`banners/bg-clean/` 改名为 `banners/bg/`；源图直接是 2560×1440 的 jpg
+    // 不再经过「裁 16:9 缩到 1920」那条路，所以宽度期望放宽到 ≥1920
+    // ：接了动态背景的阁直接播视频，静态底图不再渲染 —— 两种都算「铺满」
     const bgOk = r.vid
       ? (r.vid.src.endsWith(`/video/${key}.mp4`) || r.vid.src.endsWith(`/video/${key}.webm`)) && r.vid.w >= 1920
       : r.bg.endsWith(`/bg/${key}.webp`) && r.bgW >= 1920
@@ -187,7 +178,7 @@ console.log('\n【D. 归档：public/assets 无孤儿】')
   })(path.join(ROOT, 'public/assets'))
 
   // `ui/updater/*` 是「更新工坊」自己的图标，被 `updater/web/index.html` 直接引用，
-  // 不进模拟器的 manifest —— 归档时特意留了下来，别算作孤儿。
+  // 不进模拟器的 manifest —— 归档时特意留了下来，别算作孤儿
   const orphan = all.filter((f) =>
     !used.has(f) && !bases.has(path.basename(f)) &&
     !/manifest\.json$/.test(f) && !f.startsWith('ui/updater/'))

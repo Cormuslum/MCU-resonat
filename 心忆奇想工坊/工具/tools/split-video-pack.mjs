@@ -1,10 +1,5 @@
 #!/usr/bin/env node
-/**
- * 把大视频拆成可选包：`node tools/split-video-pack.mjs`（拆开发版 public/assets）/ `--release`（拆发行版目录）。
- * 拆走：`assets/video/*.mp4`（服装阁动态背景，编号命名）、`assets/ui/home/bg-video-2.mp4` 与其配套 `bg-audio-2.ogg`；
- * 不拆：`video/*.webm`（登录 + 抽卡演出）、`ui/home/bg-video-1.mp4`、`bg-poster-*.webp`（静态兜底图）。
- * 目录结构原样保留，玩家把 `public` 拖进模拟器目录即自动合并归位；manifest 不删视频条目，没装时静默退回静态背景。
- */
+/** 把大视频拆成可选包：`node tools/split-video-pack.mjs`（拆开发版 public/assets）/ `--release`（拆发行版目录） */
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -20,10 +15,7 @@ const SIM_ROOT = isRelease ? SIM : ROOT
 /** 视频包根 */
 const PACK_ROOT = PACK
 
-/**
- * 要拆走的文件（相对成品根 `public/assets`）：服装阁动态背景 = `video/` 下编号命名的 mp4；
- * 抽卡演出 `RPs-*.webm` / `RPm-*.webm` 与登录 `login.webm` 都是 webm，不碰。
- */
+/** 要拆走的文件（相对成品根 `public/assets`）：服装阁动态背景 = `video/` 下编号命名的 mp4； 抽卡演出 `RPs-*.webm` / `RPm-*.webm` 与登录 `login.webm` 都是 webm，不碰 */
 function pickFiles(assetsDir) {
   const out = []
   const vdir = path.join(assetsDir, 'video')
@@ -34,10 +26,9 @@ function pickFiles(assetsDir) {
     }
   }
 
-  // 主页轮播里最大的那条 + 它的音轨（配对走，单独留音轨没意义）。
+  // 主页轮播里最大的那条 + 它的音轨（配对走，单独留音轨没意义）
   //
-  // ⚠ 判定时**成品目录与视频包一起看** —— 否则拆过一次之后再跑，
-  // 「最大的那条」会变成仅剩的那条，把本该留在基础包里的 bg-video-1 也拆走。
+  // 「最大的那条」会变成仅剩的那条，把本该留在基础包里的 bg-video-1 也拆走
   const home = path.join(assetsDir, 'ui', 'home')
   const packHome = path.join(PACK_ROOT, 'public', 'assets', 'ui', 'home')
   const cands = []

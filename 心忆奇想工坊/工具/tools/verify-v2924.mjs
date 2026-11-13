@@ -1,7 +1,4 @@
-/**
- * 验收 —— 版本序号覆盖修复 / 撤回含产物 / 拓展包四行四列 / 重复阅读物删除 / 写入只检验改动项。
- * 纯离线（不连 5178 / 5199）：浏览器只用 `page.setContent` 渲染工坊那段 CSS，测真实的 4×4 与滚动。
- */
+/** 验收 —— 版本序号覆盖修复 / 撤回含产物 / 拓展包四行四列 / 重复阅读物删除 / 写入只检验改动项 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'

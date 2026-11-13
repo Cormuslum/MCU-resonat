@@ -48,8 +48,8 @@ FFMPEG = None
 FFPROBE = None
 
 
-# 这些是**容器结构字段**，不是元数据 —— ISO-BMFF 规定 ftyp / hdlr 里必须有它们，
-# 删掉文件就废了（浏览器可能直接拒播）。它们不含任何「谁做的 / 什么时候」的信息。
+# 这些是**容器结构字段**，不是元数据 —— ISO-BMFF 规定 ftyp / hdlr 里必须有它们
+# 删掉文件就废了（浏览器可能直接拒播）。它们不含任何「谁做的 / 什么时候」的信息
 _STRUCTURAL_TAGS = {
     "major_brand", "minor_version", "compatible_brands",
     "stream:handler_name", "stream:language",
@@ -229,8 +229,8 @@ def strip_jpg(path):
 
 
 # ── 音视频：ffmpeg -c copy（流不动）────────────────────────────────────
-# 这些是**容器/编码器**层面的标记（用的是哪个 ffmpeg、什么版本），
-# 不是内容信息；但它们会暴露工具链指纹，清掉更干净。
+# 这些是**容器/编码器**层面的标记（用的是哪个 ffmpeg、什么版本）
+# 不是内容信息；但它们会暴露工具链指纹，清掉更干净
 MEDIA_SUFFIX = (".mp4", ".webm", ".mkv", ".mov", ".m4v",
                 ".ogg", ".mp3", ".wav", ".m4a", ".flac", ".aac", ".opus")
 
@@ -255,8 +255,8 @@ def strip_media(path):
         if os.path.getsize(dst) == 0:
             return False
         shutil.move(dst, path)
-        # matroska/webm 的封装器自己会再写一遍 MuxingApp / WritingApp，
-        # ffmpeg 的参数管不住 —— 那一层用 EBML 手术直接摘掉。
+        # matroska/webm 的封装器自己会再写一遍 MuxingApp / WritingApp
+        # ffmpeg 的参数管不住 —— 那一层用 EBML 手术直接摘掉
         if ext in (".webm", ".mkv"):
             strip_ebml(path)
         return True
@@ -268,14 +268,13 @@ def strip_media(path):
 # 要摘掉的块：
 #   0x1254C367 Tags（整块）  0x1043A770 Chapters
 #   0x5741 WritingApp  0x4D80 MuxingApp  0x4461 DateUTC  0x7BA9/0x4485 Title
-# 这些是「谁做的、什么时候做的」这类署名信息；时长 / 码率那些功能值不动。
+# 这些是「谁做的、什么时候做的」这类署名信息；时长 / 码率那些功能值不动
 #
-# ⚠ **不能用「删掉」的方式**：matroska 内部有绝对偏移引用
-# （SeekHead 指向上层元素、Cues 指向 Cluster 的位置）。删掉中间的 Tags 块，
-# 后面的 Cluster 全被挪位 → Cues 索引全部失效，播放器跳帧甚至播不了。
+# （SeekHead 指向上层元素、Cues 指向 Cluster 的位置）。删掉中间的 Tags 块
+# 后面的 Cluster 全被挪位 → Cues 索引全部失效，播放器跳帧甚至播不了
 #
 # 正确做法：把要摘的块**原地换成 Void（0xEC）填充** —— EBML 专门为「占位不改偏移」
-# 设计的元素。字节数不变 → 所有偏移引用继续有效，块里的元数据也彻底没了。
+# 设计的元素。字节数不变 → 所有偏移引用继续有效，块里的元数据也彻底没了
 _EBML_DROP = {0x1254C367, 0x1043A770, 0x5741, 0x4D80, 0x4461, 0x7BA9, 0x4485}
 _EBML_CONTAINERS = {0x1654AE6B, 0x18538067, 0x114D9B74, 0x1549A966,
                     0x1254C367, 0x1043A770, 0x1C53BB6B, 0xAE}

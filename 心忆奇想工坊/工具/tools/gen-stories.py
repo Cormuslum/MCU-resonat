@@ -35,24 +35,21 @@ PUB = _env_dir("NIKKI_OUT_DIR", os.path.join(SIM, "public", "assets"))
 # 素材重构：旧目录名 `套装故事` → 新结构 `故事`
 SRC = os.path.join(ASSET, "故事")
 POOL = os.path.join(ASSET, "pool-map.json")
-# ：输出改成运行时 JSON（`public/assets/data/stories.json`）。
-# 以前写 `src/data/stories.ts`，正文被编译进 JS —— 发行版里没有 vite，
-# 工坊改完故事永远不会生效。改成 JSON 后刷新浏览器就能看到。
+# ：输出改成运行时 JSON（`public/assets/data/stories.json`）
+# 工坊改完故事永远不会生效
 OUT = os.path.join(PUB, "data", "stories.json")
 
-# ：**基线模式**（发行版）。
+# ：**基线模式**（发行版）
 #
 # 发行版不再随包发 `素材/故事/`（那是 1.2M 的内置正文）——
-# 故事的主数据源变成 `stories.json` 本身，`素材/故事/` 只当**增量补丁**：
-# 用户拖进来的新故事 / 改写的故事会覆盖基线里对应的那一条，其余原样保留。
+# 用户拖进来的新故事 / 改写的故事会覆盖基线里对应的那一条，其余原样保留
 #
 # 开关用环境变量而不是「目录在不在」判断：
 #   - 开发版不设 → 纯源模式（`素材/故事/` 是唯一真源，删一篇就是删一篇）
 #   - 发行版设 1 → 基线模式（JSON 是主数据源，源目录只放增量）
 BASELINE_MODE = os.environ.get("NIKKI_JSON_BASELINE") == "1"
 
-# ⚠ 非基线模式下找不到源目录必须报错退出，否则会把数据写成空数组、
-# 悄悄丢掉全部故事（ 踩过这个坑）。基线模式下目录可以不存在。
+# 悄悄丢掉全部故事（踩过这个坑）
 if not BASELINE_MODE and not os.path.isdir(SRC):
     raise SystemExit(f"✗ 找不到故事源目录：{SRC}")
 
@@ -151,10 +148,10 @@ def main():
             }
         )
 
-    # 基线模式：把源目录当**增量补丁**，不是全集。
+    # 基线模式：把源目录当**增量补丁**，不是全集
     #   源里有同 id 的 → 用源的（用户改过/新建的）
     #   基线里有源没有的 → 保留（内置故事不受影响）
-    # 源目录为空或不存在 → 结果就是基线本身，一条都不丢。
+    # 源目录为空或不存在 → 结果就是基线本身，一条都不丢
     base = load_baseline() if BASELINE_MODE else []
     if base:
         merged = {r["id"]: dict(r) for r in base}
@@ -162,8 +159,8 @@ def main():
             merged[r["id"]] = r          # 源覆盖基线
         rows = list(merged.values())
         for r in rows:
-            # 基线条目来自 JSON，排序用的 `_num` 已被剥掉 → 按 setId 补算，
-            # 否则它们会全落到 9999、排序整个乱掉。
+            # 基线条目来自 JSON，排序用的 `_num` 已被剥掉 → 按 setId 补算
+            # 否则它们会全落到 9999、排序整个乱掉
             if "_num" not in r:
                 sid = str(r.get("setId") or "")
                 r["_num"] = int(sid[1:]) if sid[1:].isdigit() else 9999
@@ -175,8 +172,8 @@ def main():
     # 排序：套装编号正序；未命中的按名排在最后
     rows.sort(key=lambda r: (r["_num"], r.get("setName") or ""))
 
-    # 同名不同正文 → 标题加 ·01 / ·02。
-    # 用内容比对确认「真的不同」，完全相同的重复件不编号。
+    # 同名不同正文 → 标题加 ·01 / ·02
+    # 用内容比对确认「真的不同」，完全相同的重复件不编号
     rows, suffix_report = disambiguate_rows(rows, label="故事")
     print_report(suffix_report, "故事")
 

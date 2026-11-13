@@ -1,22 +1,4 @@
-/**
- * 验收 · 共鸣页「进入界面音」的播放时机与音量
- *
- * 用户口径：进入共鸣页时播一次（原始音量 1.0），**在缩略图栏切到另一座阁时再播一次，
- * 音量 0.7**；点当前这座不算切换，不该重复播。
- *
- * 覆盖：
- * E1 进页播 1 次，且是该阁自己的音（manifest.bannerEnter 里那只文件）
- * E2 切池后播新阁的音，音量 = 进页那次的 0.7 倍
- * E3 点当前阁不重复播
- * E4 切池时上一首被淡出（不会两首进入音叠着响）
- * E5 未收录的阁点击不播（只有「尚未收录」提示）
- * E6 无控制台报错
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2813.mjs`
- *
- * ⚠ 别和 `npm run build` 串在一条命令里跑：build 会写 `public/`，dev server 监听到就**整页 reload**，
- * `addInitScript` 会重跑、`window.__enter` 归零，计数断言会莫名报红（实测踩过一次）。
- */
+/** 验收 · 共鸣页「进入界面音」的播放时机与音量 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -66,11 +48,11 @@ const page = await ctx.newPage()
 const errors = []
 page.on('pageerror', (e) => errors.push(e.message))
 
-// 预热一次再开始测量。
+// 预热一次再开始测量
 // dev server 冷启动时，第一个页面加载会触发 vite 的依赖预打包并**整页 reload** ——
 // `addInitScript` 随之重跑、`window.__enter` 归零，后面所有计数断言都会错位
-// （实测：刚重启 dev server 后第一次跑必红，第二次就绿）。
-// 先空跑一轮把 reload 消化掉，再重新导航开始正式测量。
+// （实测：刚重启 dev server 后第一次跑必红，第二次就绿）
+// 先空跑一轮把 reload 消化掉，再重新导航开始正式测量
 await page.goto(`${BASE}/#/banner`, { waitUntil: 'domcontentloaded' })
 await page.waitForFunction(() => !document.querySelector('.loading'), { timeout: 30000 }).catch(() => {})
 await page.waitForTimeout(1500)
@@ -79,11 +61,7 @@ await page.goto(`${BASE}/#/banner`, { waitUntil: 'domcontentloaded' })
 await page.waitForFunction(() => !document.querySelector('.loading'), { timeout: 30000 }).catch(() => {})
 await page.waitForTimeout(2200)
 
-/**
- * 测量期间的「文档标记」。页面一旦被整页 reload（HMR / `npm run build` 都会写文件触发），
- * `addInitScript` 会重跑、`__enter` 归零 —— 这时所有计数断言都会错位，
- * 报出来的是一堆看不懂的 ✗。与其让人去猜，不如**直接说明是 reload 干扰，重跑**。
- */
+/** 测量期间的「文档标记」 */
 const BOOT = await page.evaluate(() => window.__boot ?? '')
 async function reloaded() {
   const now = await page.evaluate(() => window.__boot ?? '').catch(() => '')

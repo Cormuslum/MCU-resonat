@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 彩蛋弹窗（主页右下角 200×100 热区触发）：沿用共鸣概率弹窗美术并放大 1.25 倍（1045×640）。
- * 左右圆钮切换条目、底部页码跳转；打开时随机一条（不含「彩蛋文本3」），点空白 / ESC 关闭。
- */
+/** 彩蛋弹窗：沿用共鸣概率弹窗美术并放大 1.25 倍。左右圆钮切换条目、底部页码跳转；打开时随机一条（不含「彩蛋文本3」），点空白 / ESC 关闭 */
 import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { play } from '@/composables/useAudio'
@@ -17,15 +14,12 @@ function asset(p: string | null | undefined) {
   return store.asset(p)
 }
 
-/** 放大倍数：836×512 → 1045×640 */
+/** 放大倍数 */
 const K = 1.25
 const W = Math.round(836 * K) // 1045
 const H = Math.round(512 * K) // 640
 
-/**
- * 首次打开**随机**一条。之后左右切换仍在 0..N-1 里顺序走。
- * 随机池剔除 `彩蛋文本3`（剧情吐槽，30 条），从 `EGG_RANDOM_POOL` 里抽。
- */
+/** 首次打开**随机**一条。之后左右切换仍在 0..N-1 里顺序走。随机池剔除 `彩蛋文本3`（剧情吐槽，30 条），从 `EGG_RANDOM_POOL` 里抽 */
 const idx = ref(EGG_RANDOM_POOL[Math.floor(Math.random() * EGG_RANDOM_POOL.length)] ?? 0)
 const scroller = ref<HTMLElement | null>(null)
 const cur = computed(() => EGG_ENTRIES[idx.value])
@@ -95,7 +89,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
 <template>
   <div class="eg-mask" @click.self="close">
     <div class="eg-panel" :style="{ width: W + 'px', height: H + 'px' }">
-      <!-- 三道金线 + 羊皮纸（与共鸣概率弹窗同款，等比 ×1.25） -->
+      <!-- 三道金线 + 羊皮纸（与共鸣概率弹窗同款） -->
       <img class="pw-outer" :src="asset(B?.winLine3)" alt="" draggable="false" />
       <img class="pw-bg" :src="asset(B?.winBg)" alt="" draggable="false" />
       <img class="pw-line4" :src="asset(B?.winLine4)" alt="" draggable="false" />
@@ -184,7 +178,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   }
 }
 
-/* 三线一纸：坐标 = 共鸣概率弹窗（836×512）的数值 × 1.25 */
+/* 三线一纸 */
 .pw-outer,
 .pw-bg,
 .pw-line4,
@@ -218,13 +212,13 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   height: 606.9px;
 }
 
-/* 内容区（纸面亮部内，留出内框 18px） */
+/* 内容区 */
 .eg-body {
   position: absolute;
   left: 77px;
   top: 62px;
   right: 77px;
-  /* 羊皮纸下缘有一段深色做旧带（≈600 起），内容到 558 收住，计数器才落在亮纸上 */
+  /* 羊皮纸下缘有一段深色做旧带 */
   bottom: 82px;
   display: flex;
   flex-direction: column;
@@ -259,7 +253,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   min-height: 0;
   display: flex;
   flex-direction: column;
-  /* 短条目垂直居中；长条目（safe center 退化成 start）从顶部开始滚 */
+  /* 短条目垂直居中；长条目 */
   justify-content: safe center;
   margin-top: 12px;
   padding: 4px 18px 8px 8px;
@@ -298,8 +292,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
 }
 
 .eg-foot {
-  /* 三段：页码 | 跳转框 | 提示。用 grid 而不是 space-between，
-     中间那格才会真正居中，不会被左右两块宽度差推歪 */
+  /* 三段 */
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -330,7 +323,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   color: rgba(120, 88, 40, 0.62);
 }
 
-/* 左右切换键：74×74 圆钮（T_UI__collocation_btn_skip_n / _h），常态图叠高亮图做淡入 */
+/* 左右切换键 */
 .eg-nav {
   position: absolute;
   top: 50%;
@@ -357,7 +350,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
 .eg-nav:active {
   transform: translateY(2px);
 }
-/* 左键翻转后 :active 的位移方向也要翻回来 */
+/* 左键翻转后 */
 .eg-nav.prev:active {
   transform: scaleX(-1) translateY(2px);
 }
@@ -370,8 +363,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   object-fit: contain;
   transition: opacity 0.14s ease;
 }
-/* 左键翻转时不要把图标也镜像——这里靠外层 transform 整体翻转，图标朝向随之镜像，
-   正是我们要的「左键指向左」 */
+/* 左键翻转时不要把图标也镜像——这里靠外层 transform 整体翻转 */
 .eg-nav .nav-h {
   opacity: 0;
 }
@@ -382,7 +374,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   opacity: 0;
 }
 
-/* 页码跳转框：贴在「第 n / N 条」右边 */
+/* 页码跳转框 */
 .eg-jump {
   display: flex;
   align-items: center;

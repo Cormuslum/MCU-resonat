@@ -1,8 +1,4 @@
-/**
- * 服装图鉴子界面（M2）验收 · 断言式：先 `npm run dev`（5178），再 `node tools/verify-clothes.mjs`。
- * 覆盖 10 项改动 + 2 项布局守护，逐条 try/catch 互不中断，末尾打印 PASS/FAIL 汇总并按失败数退出。
- * 搜索弹窗用 `sp-*` 前缀选择器；`fill` 前先等 `.sp-mask` 可见 + `.sp-sbg` 解码，再点输入框拿焦点。
- */
+/** 服装图鉴子界面（M2）验收 · 断言式：先 `npm run dev`（5178），再 `node tools/verify-clothes.mjs` */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -20,10 +16,7 @@ const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, 
 const page = await ctx.newPage()
 
 const pageErrors = []
-/**
- * `ERR_ABORTED` 不算错：BGM 是 `new Audio(url)` 现造的离屏元素，元素回收时会被报成 aborted；
- * 真正的坏请求（404 / 5xx）仍然照记。
- */
+/** `ERR_ABORTED` 不算错：BGM 是 `new Audio(url)` 现造的离屏元素，元素回收时会被报成 aborted； 真正的坏请求（404 / 5xx）仍然照记 */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm)\//.test(t)
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
 
@@ -75,7 +68,7 @@ await page.screenshot({ path: `${OUT}/cl-01-default.png` })
 
 console.log('\n=== 服装图鉴 10 项 + 2 项守护 ===')
 
-/* ── R1 放大镜热区是正圆（200×200，border-radius:50%） ── */
+/* ── R1 放大镜热区是正圆 ── */
 await step('R1 搜索热区', async () => {
   const r = await page.$eval('.cl-search', (el) => {
     const b = el.getBoundingClientRect()
@@ -135,7 +128,7 @@ await step('R5 头部结构', async () => {
     `namerow 含 tags=${r.namerowHasTags} / head 直属 stars=${r.headDirectHasStars}`)
 })
 
-/* ── R6 部件高亮框与底板等大（inset:-3px） ── */
+/* ── R6 部件高亮框与底板等大 ── */
 await step('R6 高亮框', async () => {
   const r = await page.$eval('.pt-hi', (el) => {
     const cs = getComputedStyle(el)
@@ -161,10 +154,7 @@ await step('R8 套装栏宽度', async () => {
   check('R8 套装栏 1045（3 格 + 2×2px）', near(w, 1045, 1), `实测 ${round(w)}`)
 })
 
-/* ── R8b 赛季栏：大版本 option 的可见实体与小版本底板等大 ──
- opt 素材 437×132、实体 (15,16)-(421,116)；title-panel 473×128、实体 (16,13)-(459,117)。
- img 用 object-fit:fill 拉伸，所以实体尺寸 = img 尺寸 × 实体占比。
- 两者「可见实体」宽高必须相等（容差 1px），否则又会出现大版本小一圈。 */
+/* ── R8b 赛季栏 */
 await step('R8b 赛季栏等大', async () => {
   const r = await page.evaluate(() => {
     const solid = (img, w, h, bx0, by0, bx1, by1) => {

@@ -1,6 +1,4 @@
-/**
- * 博物图鉴 · 故事 / 阅读物子界面共用的派生几何（单一真源）。
- */
+/** 博物图鉴 · 故事 / 阅读物子界面共用的派生几何（单一真源） */
 import { RD_LAYOUT, RD_ROW_H, RD_LIST_TOP } from '@/data/readings-layout'
 import type { RdBox } from '@/data/readings-layout'
 

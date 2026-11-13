@@ -1,6 +1,4 @@
-/**
- * 阅读物图鉴内容（内置 + DLC）：内置部分运行时加载 `public/assets/data/readings.json`。
- */
+/** 阅读物图鉴内容（内置 + DLC）：内置部分运行时加载 `public/assets/data/readings.json` */
 import { reactive } from 'vue'
 import type { ReadingEntry } from '@/data/readings'
 import { addReadingNames } from './museum-names'

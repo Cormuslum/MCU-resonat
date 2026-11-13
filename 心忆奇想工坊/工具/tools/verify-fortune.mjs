@@ -1,7 +1,4 @@
-/**
- * 三合一运势核心算法单测（走 Vite dev server 动态 import），覆盖《玄学运势-详细设定》§10 第 6 条清单。
- * 用法：先 `npm run dev`（5178），再 `node tools/verify-fortune.mjs`。
- */
+/** 三合一运势核心算法单测（走 Vite dev server 动态 import），覆盖《玄学运势-详细设定》§10 第 6 条清单。用法：先 `npm run dev`（5178），再 `node tools/verify-fortune.mjs` */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -18,7 +15,7 @@ p.on('pageerror', (e) => errs.push(e.message))
 p.on('console', (m) => {
   if (m.type() === 'error') errs.push('console: ' + m.text())
 })
-  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg，
+  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg
   // 网络永远不会「空闲」→ waitUntil 必须用 domcontentloaded，不能用 networkidle
 await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 

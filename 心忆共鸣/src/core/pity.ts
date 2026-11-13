@@ -1,7 +1,4 @@
-/**
- * 保底与概率。
- * 4★ 基础概率 3.6801%（条件于未出 5★）、第 10 抽必出、综合 11.595%；`pity4` 只在 rarity === 4 时重置（5★ 不清零）。
- */
+/** 保底与概率 */
 import type { RulesConfig } from '@/types'
 
 /** 第 n 抽的 5★ 条件概率（n 从 1 开始，即「距上次 5★ 已抽了 n 抽」） */
@@ -25,9 +22,7 @@ export function fiveStarRate(n: number, rules: RulesConfig): number {
   return base
 }
 
-/**
- * 欧皇模式的 5★ 条件概率：单抽按「三次取最好」折算 p' = 1 − (1 − p)^3，硬保底窗口压到 1/3。
- */
+/** 欧皇模式的 5★ 条件概率：单抽按「三次取最好」折算 p' = 1 − (1 − p)^3，硬保底窗口压到 1/3 */
 export function luckyFiveRate(n: number, rules: RulesConfig, luck = 3): number {
   const hard = Math.max(1, Math.floor(rules.pity['5'].hard / luck))
   if (n >= hard) return 1
@@ -41,10 +36,7 @@ export function luckyFourRate(n: number, rules: RulesConfig, luck = 3): number {
   return Math.min(1, 1 - Math.pow(1 - fourStarRate(n, rules), luck))
 }
 
-/**
- * 纯 4★ 服装阁的规则视图：4★ 基础 10.21%、第 4 抽 20.15%、每 5 抽必出、综合 24.96%；
- * 派生一份 RulesConfig（5★ 概率压 0、硬保底够不到）。
- */
+/** 纯 4★ 服装阁的规则视图：4★ 基础 10.21%、第 4 抽 20.15%、每 5 抽必出、综合 24.96%； 派生一份 RulesConfig（5★ 概率压 0、硬保底够不到） */
 export function pure4Rules(base: RulesConfig): RulesConfig {
   const p = base.pure4
   if (!p) return base
@@ -66,8 +58,8 @@ export function pure4Rules(base: RulesConfig): RulesConfig {
         note: `每 ${p.hard4} 次共鸣必出四星服装` +
           (p.softStart4 ? `，第 ${p.softStart4} 抽起概率提升` : ''),
       },
-      // 纯 4★ 池没有 5★：hard 和 softStart 都要推到不可达，
-      // 否则 n >= softStart 时会走 base + (n - softStart + 1) * softSlope。
+      // 纯 4★ 池没有 5★：hard 和 softStart 都要推到不可达
+      // 否则 n >= softStart 时会走 base + (n - softStart + 1) * softSlope
       '5': {
         ...base.pity['5'],
         hard: Number.MAX_SAFE_INTEGER,

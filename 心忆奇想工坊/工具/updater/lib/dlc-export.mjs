@@ -1,8 +1,4 @@
-/**
- * DLC 导出器：把库里的自建内容切成一个**自包含**的包（包内带素材副本，路径改写为 `/dlc/<id>/assets/...`）。
- * 五个挂载接口各对应 `data/` 下一个 JSON 文件（统一为数组）：pool.banner / pool.set / codex.story / codex.reading / version.banner。
- * 一次导出可多选、同类装同一包；打包阁与套装自动附带其故事，打包版本自动附带该版本内的自建阁。素材取 `public/assets/` 里已转码的 webp。
- */
+/** DLC 导出器：把库里的自建内容切成一个**自包含**的包（包内带素材副本，路径改写为 `/dlc/<id>/assets/...`）。一次导出可多选、同类装同一包；打包阁与套装自动附带其故事，打包版本自动附带该版本内的自建阁。素材取 `public/assets/` 里已转码的 webp */
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -26,9 +22,7 @@ const IFACE_ORDER = Object.keys(IFACE_FILE)
 
 const KIND_LABEL = { banner: '服装阁', set: '套装', story: '故事', reading: '阅读物', version: '版本' }
 
-/**
- * 自建编号段的起点：编号 ≥ 500 即「不是内置内容」（001~099 官方、100~499 留给官方、500+ 自建 / DLC）。
- */
+/** 自建编号段的起点：编号 ≥ 500 即「不是内置内容」（001~099 官方、100~499 留给官方、500+ 自建 / DLC） */
 const DLC_GACHA_FROM = 500
 
 /** 去掉书名号、收空格 —— 阅读物在文件里带《》，在候选里不带 */
@@ -49,9 +43,7 @@ function isAssetPath(v) {
   return typeof v === 'string' && !v.startsWith('/') && ASSET_PREFIXES.some((p) => v.startsWith(p))
 }
 
-/**
- * 递归改写 JSON 里的素材路径，并把文件复制进包：`sets/S0438/portrait.webp` → `/dlc/<id>/assets/sets/S0438/portrait.webp`。
- */
+/** 递归改写 JSON 里的素材路径，并把文件复制进包：`sets/S0438/portrait.webp` → `/dlc/<id>/assets/sets/S0438/portrait.webp` */
 function rewire(node, pkgId, stats) {
   if (typeof node === 'string') {
     if (!isAssetPath(node)) return node
@@ -81,10 +73,7 @@ function readManifestJson() {
 
 /* ────────────────────────────── 自建内容范围 ────────────────────────────── */
 
-/**
- * 算出「哪些内容算自建（可进拓展包）」：阁看编号 ≥ 500 或 `自建内容.json` 的 pools；套装随阁或在 sets 白名单；
- * 故事随自建套装；阅读物看 readings 白名单；版本看「该版本下的阁全是自建阁」。
- */
+/** 算出「哪些内容算自建（可进拓展包）」：阁看编号 ≥ 500 或 `自建内容.json` 的 pools；套装随阁或在 sets 白名单； 故事随自建套装；阅读物看 readings 白名单；版本看「该版本下的阁全是自建阁」 */
 function dlcScope(m) {
   const custom = readCustom()
   const banners = m.banners || []
@@ -129,7 +118,6 @@ function findSet(m, name) {
   return null
 }
 
-/** 故事源目录：`故事/` 与 `套装故事/` 两者都认 */
 function storyRoot() {
   for (const n of ['故事', '套装故事']) {
     const d = path.join(ASSET, n)
@@ -138,9 +126,7 @@ function storyRoot() {
   return path.join(ASSET, '故事')
 }
 
-/**
- * 读一篇套装故事（`素材/故事/故事-{星级}-{套装名}.md`）；找不到 md 时返回 **null**（「附带」路径的正常情况）。
- */
+/** 读一篇套装故事（`素材/故事/故事-{星级}-{套装名}.md`）；找不到 md 时返回 **null**（「附带」路径的正常情况） */
 function storyEntry(setName, m) {
   const src = storyRoot()
   if (!exists(src)) return null
@@ -163,7 +149,6 @@ function storyEntry(setName, m) {
     setId: found?.set?.id || '',
     setName,
     star: Number(found?.set?.star || 5),
-    // 故事的分区跟着**阁**走，不跟套装首发版本
     major: Number(String(found?.pool?.version || '1').split('.')[0]) || 1,
     title: title || setName,
     text,
@@ -252,10 +237,7 @@ function multiPackageId(kind, keys) {
   return `dlc-${kind}-${h}`
 }
 
-/**
- * 选中项的**纯校验**，必须在建目录 / 复制素材之前跑完。
- * 否则混合选择里只要有一项不合法，就会留下一个已经复制了几百个素材却没有 dlc.json 的残包。
- */
+/** 选中项的**纯校验**，必须在建目录 / 复制素材之前跑完 */
 function validateSelection(kind, list, m, scope) {
   for (const key of list) {
     switch (kind) {
@@ -289,10 +271,7 @@ function validateSelection(kind, list, m, scope) {
   }
 }
 
-/**
- * 一次导出一个包。
- * p = { kind(banner|set|story|reading|version), keys[], name, author, description, poolId(kind=set 的目标阁), legacyId }
- */
+/** 一次导出一个包 */
 export function exportMany({ kind, keys = [], name, author, description, poolId, legacyId } = {}) {
   if (!KIND_LABEL[kind]) throw new Error('未知的导出类型：' + kind)
   const list = [...new Set((Array.isArray(keys) ? keys : [keys]).filter((x) => x != null && String(x).trim()))]
@@ -319,9 +298,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
   const storyNames = new Set()
   const attached = { banners: 0, stories: 0 }
 
-  /* ① 主内容：取数 + 改路径。
-        范围校验已在 validateSelection 里全量跑过；循环里再留一道是防御，
-        保证以后改了调用顺序也不会把内置内容写进包。 */
+  /* ① 主内容：取数 + 改路径 */
   for (const key of list) {
     if (kind === 'banner') {
       const b = (m.banners || []).find((x) => x.id === key)
@@ -388,8 +365,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
     attached.banners = own.length
   }
 
-  /* ③ 服装阁 / 套装 / 版本 → 顺带把这些套装的故事装进来。
-        故事没有对应 md 就跳过；「故事单独打包」这条路不受影响。 */
+  /* ③ 服装阁 / 套装 / 版本 → 顺带把这些套装的故事装进来 */
   if (kind !== 'story' && kind !== 'reading') {
     for (const n of storyNames) {
       const e = storyEntry(n, m)
@@ -434,10 +410,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
 
 /* ────────────────────────────── 候选列表（给界面多选列表用） ────────────────────────────── */
 
-/**
- * 库里能导出的东西 —— 界面拿它填候选列表。
- * **只列自建内容**。
- */
+/** 库里能导出的东西 —— 界面拿它填候选列表。**只列自建内容** */
 export function exportCandidates() {
   const m = readJson(MANIFEST, null)
   if (!m) return { banners: [], sets: [], stories: [], readings: [], versions: [] }

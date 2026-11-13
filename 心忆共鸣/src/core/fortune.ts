@@ -1,7 +1,4 @@
-/**
- * 三合一运势（黄历 · 八字 · 周易 + 纳音辅助）。综合运势 = clamp(0, 100, round(0.45×A + 0.45×B + 0.10×C + D))，D ∈[-5,+5]。
- * 个人种子 = hash(日期 + 匿名ID + 出生年月日时 + 版本号)，同天同用户恒定。
- */
+/** 三合一运势（黄历 · 八字 · 周易 + 纳音辅助） */
 import { almanacOf, dateKeyOf, getVerdict, type AlmanacDay, type VerdictTier } from './almanac'
 import {
   baziOf,
@@ -76,7 +73,7 @@ export function saveBirth(b: Birth | null): void {
   }
 }
 
-/** 标记「生辰弹窗问过了」。填写、跳过、清除三条路都要调，之后不再自动弹。 */
+/** 标记「生辰弹窗问过了」。填写、跳过、清除三条路都要调，之后不再自动弹 */
 export function markBirthAsked(): void {
   try {
     localStorage.setItem(ASKED_KEY, '1')
@@ -131,9 +128,7 @@ export interface FortuneResult {
   formula: string
 }
 
-/**
- * C 个人签分：50 + 8×|签∩宜| − 8×|签∩忌| + 6×|签∩卦| + slip.weight（各项有上限，同 theme 只计忌扣分）。
- */
+/** C 个人签分 */
 export function slipScore(day: AlmanacDay, div: Divination): SlipScore {
   const slipThemes = uniq(day.slip.theme)
   const yiThemes = uniq(day.yi.slice(0, 3).flatMap(themesOf))

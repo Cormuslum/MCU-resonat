@@ -1,15 +1,4 @@
-/**
- * 验收 · 三个页面改名 + 「时隙遗光」每个版本都能进到自己的卡池
- *
- * 覆盖用户这一批的两条要求：
- * 1. 改名：主页 → 心绮之启；版本 → 时隙遗光；共鸣 → 心忆共鸣
- * 2. 每个版本都有对应卡池，右下进入键点下去要**落到那个版本的池**
- *
- * 做法：24 个版本逐个走真实 UI —— 点小版本 → 读进入键旁的「对应卡池」标签
- * → 点进入键 → 在卡池页读当前大图卡池名 → 回 manifest 里的 version 核对。
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2601.mjs`
- */
+/** 验收 · 三个页面改名 + 「时隙遗光」每个版本都能进到自己的卡 */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -52,11 +41,11 @@ async function step(name, fn) {
 /* ══════════════════════════ 一、导航改名 */
 
 console.log('\n【一、侧边栏三处改名】')
-// 起**主页不再显示侧边栏**（App.vue 的 HIDE_RAIL_ROUTES 含 home），
-// 导航文案要去二级页面取；主页另有一条「不该有侧栏」的断言。
+// 起**主页不再显示侧边栏**（App.vue 的 HIDE_RAIL_ROUTES 含 home）
+// 导航文案要去二级页面取；主页另有一条「不该有侧栏」的断言
 await page.goto(`${BASE}/#/codex`, { waitUntil: 'domcontentloaded' })
 await page.waitForSelector('.rail', { timeout: 20000 })
-// 侧栏常态隐藏：把指针挪到屏幕左缘 100px 内
+// 侧栏常态隐藏
 await page.mouse.move(30, 540)
 await page.waitForTimeout(500)
 
@@ -90,8 +79,8 @@ const manifest = await page.evaluate(async () => {
   const firstOf = {}
   const verOf = {}
   for (const b of m.banners) {
-    // 与前端 VersionView.poolOf 一致：同版本里含 5★ 的池优先（1.1 的 006 是纯 4★，
-    // 页面给的其实是 008 飞向流星的愿望）；整版都是 4★ 才退回第一个。
+    // 与前端 VersionView.poolOf 一致：同版本里含 5★ 的池优先（1.1 的 006 是纯 4★
+    // 页面给的其实是 008 飞向流星的愿望）；整版都是 4★ 才退回第一个
     if (!firstOf[b.version]) firstOf[b.version] = { id: b.id, name: b.name }
     if (String(b.star || '').includes('5★') && !firstOf[b.version].five) {
       firstOf[b.version] = { id: b.id, name: b.name, five: true }
@@ -101,8 +90,7 @@ const manifest = await page.evaluate(async () => {
   return { firstOf, verOf, versions: [...new Set(m.banners.map((b) => b.version))] }
 })
 
-/* 版本清单**从 manifest 现算**：素材库会不断增长用户自建了 0.1 大版本，
- 写死 24 个版本会在新数据进来后误报。 */
+/* 版本清单**从 manifest 现算**：素材库会不断增长用户自建了 0.1 大版本， 写死 24 个版本会在新数据进来后误报 */
 const VERS = manifest.versions.slice().sort((a, b) => {
   const na = a.split('.').map(Number)
   const nb = b.split('.').map(Number)

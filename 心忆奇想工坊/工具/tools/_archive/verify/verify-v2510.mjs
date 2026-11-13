@@ -1,15 +1,4 @@
-/**
- * 验收：音量上限 / 加载动画像素 / 辉煌 BGM 换源 / 彩蛋弹窗换键与页码跳转
- *
- * 覆盖 5 项需求里能自动化的部分：
- * A 主页背景音（视频音轨）音量上限压到 70%
- * B echo-open 未设音量上限回退的 0.6 硬上限
- * C 切屏奔跑动画改用 `T_UI_loading_special_spirits.png` 的 16 格序列帧（不再抠白 → 脸不透明）
- * D 辉煌背景音 = 新的 wanzhang（111s、首尾交叉淡化、无声轨封面流）
- * E 彩蛋弹窗：左右圆钮素材 + 页码跳转框
- *
- * 用法：先 npm run dev（5178），再 node tools/verify-v2510.mjs
- */
+/** 验收：音量上限 / 加载动画像素 / 辉煌 BGM 换源 / 彩 */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -75,11 +64,7 @@ async function bgmNow() {
     return { src: a.src.split('/assets/')[1], volume: Math.round(a.volume * 1000) / 1000, loop: a.loop, dur: a.duration }
   })
 }
-/**
- * 某个音效播过的**最大**音量。
- * 不能取最后一次：同一个音效在一页里会以不同 volume 播好几次（主触发 0.85、淡出层 0.28），
- * 末次大概率是那个轻声的，测不出上限。
- */
+/** 某个音效播过的**最大**音量 */
 async function sfxVolume(name) {
   return page.evaluate((n) => {
     const list = (window.__played || []).filter((p) => p.src.endsWith(`/assets/sfx/${n}.ogg`))
@@ -123,7 +108,7 @@ await step('A 主页音轨上限', async () => {
     const vid = document.querySelector('.hm-bg-video')
     return el ? { vol: Math.round(el.volume * 1000) / 1000, playing: !el.paused, videoMuted: vid ? vid.muted : null } : null
   })
-  // 全开时：0.34(base) × 1(bgm) × 1(home) × 1(master) × 1.4 = 0.476
+  // 全开时
   // ：视频常驻 muted，声音由 <audio> 出 —— 断「音轨在播 + 音量对」，不再看 video.muted
   check('A 主页背景音全开 = 0.476（原 0.68 的 70%）且不超过 0.7',
     !!v && v.playing === true && v.videoMuted === true && near(v.vol, 0.476, 0.02) && v.vol <= 0.7,
@@ -141,8 +126,8 @@ await step('B echo-open 音量上限已回退', async () => {
   const vol = await sfxVolume('echo-open')
   await page.keyboard.press('Escape')
   await page.waitForTimeout(300)
-  // 上一版给 echo-open 加过 0.6 的硬上限（实测 0.48），用户要调的是别的音效，已回退。
-  // 现在回到纯乘法：0.85 × uiVol 0.8 × master 1 = 0.68
+  // 上一版给 echo-open 加过 0.6 的硬上限（实测 0.48），用户要调的是别的音效，已回退
+  // 现在回到纯乘法
   check('B echo-open 恢复无上限（0.85 × 0.8 = 0.68）',
     vol !== null && near(vol, 0.68, 0.03),
     `实测 ${vol}`)
@@ -170,11 +155,7 @@ await step('C 奔跑动画 16 帧且不透明', async () => {
 })
 
 await step('C 脸不透明（不透明像素总量）', async () => {
-  /*
-   * 上一版（抠白 gif）的问题就是「脸和手被打成半透明」，
-   * 直接表现是不透明像素总量崩掉 —— 原素材单帧 alpha>200 约 14300 个，
-   * 打穿之后只剩一万出头。这里按总量卡阈值，比猜坐标采样稳。
-   */
+  /* 上一版（抠白 gif）的问题就是「脸和手被打成半透明」， 直接表现是不透明像素总量崩掉 —— 原素材单帧 alpha>200 约 14300 个， 打穿之后只剩一万出头。这里按总量卡阈值，比猜坐标采样稳 */
   const opaque = await page.evaluate(async () => {
     const img = new Image()
     img.src = '/assets/ui/loading/nikki-run.webp'
@@ -222,7 +203,6 @@ await step('E 彩蛋弹窗换键 + 页码跳转', async () => {
     nav.imgs.map((s) => s?.split('/').pop()).join(' / '))
   check('E2 左键水平翻转（scaleX(-1)）', /matrix\(-1/.test(nav.prevTransform), nav.prevTransform)
 
-  // ⚠ 必须用真实指针悬停：`:hover` 是浏览器合成的，dispatchEvent('mouseover') 触发不了
   await page.hover('.eg-nav.next')
   await page.waitForTimeout(320)
   const hover = await page.evaluate(() => {

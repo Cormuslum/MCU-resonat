@@ -1,6 +1,4 @@
-/**
- * 稳定种子 / 伪随机；两条种子流必须隔离：almanacSeed = hash('almanac-v1|' + dateKey)、hexagramSeed = hash('hexagram-v1|' + dateKey)。
- */
+/** 稳定种子 / 伪随机；两条种子流必须隔离：almanacSeed = hash('almanac-v1|' + dateKey)、hexagramSeed = hash('hexagram-v1|' + dateKey) */
 
 /** FNV-1a 32 位 */
 export function hashStr(s: string): number {

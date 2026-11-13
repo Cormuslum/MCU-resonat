@@ -24,12 +24,10 @@ const store = useGameStore()
 const route = useRoute()
 const router = useRouter()
 
-/** 侧边栏展开态（常态隐藏，指针进入屏幕左缘 100px 才滑出） */
+/** 侧边栏展开态（常态隐藏） */
 const railOpen = ref(false)
 
-/**
- * 设计舞台缩放。所有界面统一按 1920×1080 设计坐标写死，外层只做一次等比缩放。
- */
+/** 设计舞台缩放。所有界面统一按 1920×1080 设计坐标写死，外层只做一次等比缩放 */
 const scale = ref(1)
 
 function fitStage() {
@@ -37,10 +35,7 @@ function fitStage() {
   scale.value = stageScale()
 }
 
-/**
- * 侧边导航项（主页为一级，其余为二级）。
- * `icon` 是缺图时的兜底字形；`sys` 指向 `manifest.ui.home.navSys`。
- */
+/** 侧边导航项（主页为一级，其余为二级）。`icon` 是缺图时的兜底字形；`sys` 指向 `manifest.ui.home.navSys` */
 const NAV = [
   { to: '/', name: 'home', label: '心绮之启', icon: '⌂', sys: 'home' },
   { to: '/versions', name: 'versions', label: '时隙遗光', icon: '❖', sys: 'ver' },
@@ -56,17 +51,12 @@ function navIcon(sys: string): string {
   return store.asset(map?.[sys] ?? null)
 }
 
-/**
- * 未选版本时「心忆共鸣」不可点。
- * 共鸣页只列当前版本的服装阁，没有当前版本就没有内容 —— 与主页入口同一套判定。
- */
+/** 未选版本时「心忆共鸣」不可点。共鸣页只列当前版本的服装阁，没有当前版本就没有内容 —— 与主页入口同一套判定 */
 function navLocked(item: { name: string }): boolean {
   return item.name === 'banner' && !store.selectedVersion
 }
 
-/**
- * 抽卡演出与主页不显示侧边栏；页面也可主动申请暂时隐藏（见 useChrome）。
- */
+/** 抽卡演出与主页不显示侧边栏；页面也可主动申请暂时隐藏（见 useChrome） */
 const railSuppressed = useRailSuppressed()
 const HIDE_RAIL_ROUTES = ['gacha', 'home']
 const railVisible = computed(
@@ -87,23 +77,15 @@ const activeName = computed(() => {
 const RAIL_SENSE = 100
 /** 面板展开后的实际宽度（与 CSS .rail 一致） */
 const RAIL_W = 158
-/**
- * 贴边死区：指针进到这个宽度以内**强制**展开，不管下面压着什么。
- */
+/** 贴边死区：指针进到这个宽度以内**强制**展开，不管下面压着什么 */
 const RAIL_SENSE_EDGE = 32
 
-/**
- * 指针的 clientX → 设计坐标（`core/stage.ts` 的 `toDesignX`）。
- * 舞台固定居中、只做一次 scale，所以屏幕黑边 = (innerW − 1920×scale)/2。
- */
+/** 指针的 clientX → 设计坐标（`core/stage.ts` 的 `toDesignX`） */
 function designX(clientX: number): number {
   return toDesignX(clientX)
 }
 
-/**
- * 页面自己的可交互元素 —— 指针停在这些东西上时不要抢着弹侧栏。
- * 标签判不了自定义热区，所以另开 `data-no-rail` 标记给页面自己声明。
- */
+/** 页面自己的可交互元素 —— 指针停在这些东西上时不要抢着弹侧栏 */
 const INTERACTIVE = 'button, a, [role="button"], input, select, textarea, [data-no-rail]'
 
 function onPointerMove(e: PointerEvent) {
@@ -114,10 +96,7 @@ function onPointerMove(e: PointerEvent) {
   const x = designX(e.clientX)
   const t = e.target as HTMLElement | null
   const inRail = !!t?.closest('.rail')
-  /**
-   * 页面上不少交互物件就贴在左边缘（玄学运势的收纳桶、共鸣页的服装阁列表
-   * 从 x=14 起）。所以再判一次指针下的元素：是页面按钮就让位，是空白/装饰才唤醒。
-   */
+  /** 页面上不少交互物件就贴在左边缘（玄学运势的收纳桶、共鸣页的服装阁列表 从 x=14 起） */
   const onPageUI = !!t?.closest(INTERACTIVE)
 
   let want = false
@@ -141,9 +120,7 @@ function onPointerLeave() {
 
 /* ════════════════════════════════ 黑屏加载过渡 */
 
-/**
- * 只有「一级 ↔ 二级」「二级 ↔ 二级」这三类跳转铺黑屏；三级走页面内转场，不遮。
- */
+/** 只有「一级 ↔ 二级」「二级 ↔ 二级」这三类跳转铺黑屏；三级走页面内转场，不遮 */
 const PAGE_L1 = '/'
 const PAGE_L2 = new Set(['/versions', '/banner', '/codex', '/almanac', '/settings'])
 
@@ -162,9 +139,7 @@ let loadingSeq = 0
 
 /* ════════════════════════════════ 背景音：按界面分场景 */
 
-/**
- * 路径 → 场景。三级路由归到父级（/codex/* → codex、/gacha → banner）。
- */
+/** 路径 → 场景。三级路由归到父级（/codex/* → codex、/gacha → banner） */
 const SCENE_OF: Record<string, SceneKey> = {
   '/': 'home',
   '/versions': 'versions',
@@ -237,7 +212,7 @@ onMounted(async () => {
   window.addEventListener('pointerdown', kick)
   window.addEventListener('keydown', kick)
 
-  // 鼠标指针：用游戏内素材（26×30，热点按比例设在左上 2,2 —— 原图是 52×60 / 4,4）
+  // 鼠标指针
   const cursor = store.manifest?.ui?.cursor
   if (cursor) {
     // 变量里放完整的 cursor 值，配合各处 `cursor: var(--nk-cursor, auto), pointer`
@@ -266,7 +241,7 @@ function go(to: string, name: string) {
 
 <template>
   <div class="stage">
-    <!-- 设计舞台：内部一律按 1920×1080 写死，只在外层等比缩放 -->
+    <!-- 设计舞台 -->
     <div class="design" :style="{ transform: `translate(-50%, -50%) scale(${scale})` }">
       <div class="app-shell">
         <!-- 背景星云 -->
@@ -353,10 +328,6 @@ function go(to: string, name: string) {
   background: #04060e;
   overflow: hidden;
 }
-/*
- * 居中不能用 grid/flex 的 center：设计盒 1920×1080 比容器大时，
- * CSS 的「安全对齐」会把 center 退化成 start。
- */
 .design {
   position: absolute;
   left: 50%;
@@ -373,7 +344,7 @@ function go(to: string, name: string) {
   overflow: hidden;
 }
 
-/* ---------- 背景 ---------- */
+/* 背景 */
 .bg-layer {
   position: absolute;
   inset: 0;
@@ -419,12 +390,9 @@ function go(to: string, name: string) {
   mix-blend-mode: overlay;
 }
 
-/* ---------- 侧边收纳栏 ----------
- * 常态**完全隐藏**（连那条细金线也不露），指针进入屏幕左缘 100px
- * 才整块滑入（判定在 App.vue 的 pointermove 里，用设计坐标算，跟缩放无关）。
- */
+/* 侧边收纳栏 ---------- 常态**完全隐藏 */
 .rail {
-  /* design 舞台内绝对定位，跟着 1920×1080 一起缩放 */
+  /* design 舞台内绝对定位 */
   position: absolute;
   left: 0;
   top: 50%;
@@ -445,7 +413,7 @@ function go(to: string, name: string) {
   opacity: 1;
   pointer-events: auto;
 }
-/* 圆角金边面板（底色 #C39C7A；只在滑入时可见） */
+/* 圆角金边面板 */
 .rail::before {
   content: '';
   position: absolute;
@@ -492,8 +460,7 @@ function go(to: string, name: string) {
   font-family: 'NikkiBodyBold', sans-serif;
   box-shadow: inset 0 0 0 1px rgba(255, 236, 190, 0.85), 0 3px 12px rgba(90, 62, 24, 0.25);
 }
-/* 未选版本：共鸣项置灰不可点。`:disabled` 自带 hover 屏蔽，
-   但底色/字色是写在 .rail-btn:hover 上的，得显式压回去。 */
+/* 未选版本 */
 .rail-btn:disabled,
 .rail-btn.is-locked:hover {
   cursor: not-allowed;
@@ -516,7 +483,7 @@ function go(to: string, name: string) {
   line-height: 1;
   flex: 0 0 auto;
 }
-/* 系统图标本体偏白，压在 #C39C7A 底上要加一点暗描边才立得住 */
+/* 系统图标本体偏白 */
 .rb-ico img {
   width: 22px;
   height: 22px;
@@ -529,7 +496,7 @@ function go(to: string, name: string) {
   letter-spacing: 0.2em;
 }
 
-/* ---------- 主区域 ---------- */
+/* 主区域 */
 .main-area {
   position: relative;
   z-index: 10;
@@ -537,7 +504,7 @@ function go(to: string, name: string) {
   overflow: hidden;
 }
 
-/* ---------- 页面切换 ---------- */
+/* 页面切换 */
 .page-enter-active,
 .page-leave-active {
   transition: opacity 0.26s ease, transform 0.26s ease;
@@ -551,7 +518,7 @@ function go(to: string, name: string) {
   transform: scale(1.008);
 }
 
-/* ---------- 加载 ---------- */
+/* 加载 */
 .loading {
   display: grid;
   gap: 18px;
@@ -568,7 +535,7 @@ function go(to: string, name: string) {
   animation: spin 0.9s linear infinite;
 }
 
-/* ---------- 错误 ---------- */
+/* 错误 */
 .error-box {
   padding: 34px 40px;
   max-width: 520px;

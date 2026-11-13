@@ -1,7 +1,4 @@
-/**
- * 抽卡引擎。判定顺序不可调换：先判 5★（含软 / 硬保底）→ 未命中再判 4★（第 10 抽必出）→ 否则 3★。
- * 重置规则：5★ → p5=0 但 p4 照常 +1；4★ → p4=0；3★ → 都累加。
- */
+/** 抽卡引擎。重置规则：5★ → p5=0 但 p4 照常 +1；4★ → p4=0；3★ → 都累加 */
 import type { Part, PityState, PullResult, RulesConfig } from '@/types'
 import type { PoolParts } from './inventory'
 import { Codex } from './inventory'
@@ -14,7 +11,7 @@ export interface DrawContext {
   codex: Codex
   pity: PityState
   rng: Rng
-  /** 欧皇模式：5★ / 4★ 概率 ×3（用户在「快捷」里手动开启） */
+  /** 欧皇模式 */
   lucky?: boolean
 }
 

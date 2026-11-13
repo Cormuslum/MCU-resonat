@@ -1,17 +1,4 @@
-/**
- * DLC 验收脚本/ 已适配当前架构。
- *
- * ⚠ 会清空源包区与运行区 —— 别在放着真实 DLC 包的机器上跑。
- * 起拓展包「只装自建内容」，测试样本一律从 exportCandidates 现取；
- * 起每个接口的数据文件是数组，下面的断言都按数组读（兼容单对象）。
- *
- * 覆盖五组：
- * A. 契约 两端接口表一致；包格式字段齐全
- * B. 导出 五类内容都能切出自包含的包（素材路径已改写）
- * C. 安装/挂载 运行区拷贝正确；开关能改；卸载能撤
- * D. 前端 模拟器启动后 DLC 内容真的进了 manifest / 图鉴
- * E. 分发 打包 zip → 上传到本地远端 → 从远端下载并装回
- */
+/** DLC 验收脚本/ 已适配当前架构 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -29,12 +16,7 @@ const dlcExport = await imp('updater/lib/dlc-export.mjs')
 const remote = await imp('updater/lib/remote.mjs')
 
 /** 手动递归删（fs.rmSync 在本机会走回收站语义，遇到占用就整批失败） */
-/**
- * 清目录 —— 复用 dlc.rmTree（内部有原生子进程 / 轮询兜底）。
- *
- * 别再手写 unlink 循环：某些环境会把 fs.unlink 改成回收站语义（每个文件 ~260ms），
- * 一个 66 文件的包要 24 秒，而且中途失败还会留半截目录。
- */
+/** 清目录 —— 复用 dlc.rmTree（内部有原生子进程 / 轮询兜底） */
 function wipe(dir) {
   if (!fs.existsSync(dir)) return
   try { dlc.rmTree(dir) } catch { /* 兜底：下面再手删一次 */ }
@@ -184,8 +166,8 @@ ok('卸载后索引里也没了', !dlc.readLiveIndex().packages.find((p) => p.id
 /* ────────────────────────────── D. 前端真的挂载 ────────────────────────────── */
 section('D. 模拟器运行时挂载')
 
-// 套装包：把选中套装挂到另一座自建阁。它本来属于 SOURCE_POOL，
-// 挂到 TARGET_POOL 之后**两只池各有一套** —— 这正是 pool.set 的语义。
+// 套装包：把选中套装挂到另一座自建阁。它本来属于 SOURCE_POOL
+// 挂到 TARGET_POOL 之后**两只池各有一套** —— 这正是 pool.set 的语义
 const setPkgLive = setPkg.id
 dlc.install(setPkgLive)
 const UPDATER = 'http://localhost:5199'
@@ -324,13 +306,13 @@ section('F. 删除可靠性')
 
 // 背景：某些运行环境（WorkBuddy 的 safe-delete shim 通过 NODE_OPTIONS 注入）
 // 会把 fs.rm / fs.rmSync / fs.unlink 改成**回收站**语义 ——
-//   ① 删除变成异步的：刚调完 exists() 目录还在 → 代码误判「删不掉」；
-//   ② 每个文件 ~260ms，一个 66 文件的包要 17~24 秒；
-//   ③ 偶尔整批失败（"Some operations were aborted"），目录原封不动。
-// 表现：接口报「目录删不掉」，但目录其实已经空了；或删半天超时。
+// ① 删除变成异步的：刚调完 exists() 目录还在 → 代码误判「删不掉」
+// ② 每个文件 ~260ms，一个 66 文件的包要 17~24 秒
+// ③ 偶尔整批失败（"Some operations were aborted"），目录原封不动
+// 表现：接口报「目录删不掉」，但目录其实已经空了；或删半天超时
 //
-// 解法（updater/lib/dlc.mjs 的 rmTree）：原生子进程 → 直接 rmSync → 手写 walk，
-// 每级之后轮询确认目录真的消失。下面这组断言锁住这个行为。
+// 解法（updater/lib/dlc.mjs 的 rmTree）：原生子进程 → 直接 rmSync → 手写 walk
+// 每级之后轮询确认目录真的消失
 {
   // 造一个跟真实包差不多大的目录（多文件 + 多子目录）
   const probe = path.join(dlc.DLC_SRC, `.rmprobe-${Date.now()}`)

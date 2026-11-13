@@ -1,7 +1,4 @@
-/**
- * DLC 挂载接口定义：包只声明实现了哪些接口，模拟器只认接口名。清单（与 `updater/lib/dlc.mjs` 的 INTERFACES 一一对应）：
- * pool.banner / pool.set / codex.story / codex.reading / version.banner
- */
+/** DLC 挂载接口定义：包只声明实现了哪些接口，模拟器只认接口名 */
 
 export const DLC_INTERFACES = {
   'pool.banner': {

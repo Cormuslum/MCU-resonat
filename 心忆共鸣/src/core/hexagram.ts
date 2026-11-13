@@ -1,13 +1,11 @@
-/**
- * 周易层（天机）—— 日课卦：每日自动卦象，不做手动摇卦；不直接断吉凶，只给行动建议。
- */
+/** 周易层（天机）—— 日课卦：每日自动卦象，不做手动摇卦；不直接断吉凶，只给行动建议 */
 
 import { HEXAGRAMS, HEX_BY_TRIGRAM, type Hexagram, type Trigram } from './fortuneTexts'
 import { hashStr, makeRng } from './seed'
 
 /* ------------------------------------------------------------------ 种子 / rng */
 
-/** FNV-1a / mulberry32 的唯一真源在 `./seed`，此处保留同名导出。 */
+/** FNV-1a / mulberry32 的唯一真源在 `./seed`，此处保留同名导出 */
 export { hashStr, makeRng }
 
 /* ------------------------------------------------------------------ 卦象 */
@@ -74,9 +72,7 @@ function hexOf(lines: boolean[]): Hexagram {
   return HEXAGRAMS[id - 1]
 }
 
-/**
- * 日课卦：6 爻自下而上，含本卦、变卦与动爻。
- */
+/** 日课卦：6 爻自下而上，含本卦、变卦与动爻 */
 export function divinationOf(dateKey: string): Divination {
   const rng = makeRng(hashStr('hexagram-v1|' + dateKey))
 

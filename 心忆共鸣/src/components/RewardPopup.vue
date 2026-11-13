@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * 十连「恭喜获得」弹窗：滚轮 + 底部横条拖动翻页，点空白 / ESC 关闭，背板只压暗不做高斯模糊。
- */
+/** 十连「恭喜获得」弹窗：滚轮 + 底部横条拖动翻页，点空白 / ESC 关闭，背板只压暗不做高斯模糊 */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { toDesignX } from '@/core/stage'
@@ -14,7 +12,7 @@ function asset(p: string | null | undefined) {
   return store.asset(p)
 }
 
-/* ---------------- 布局常量（pxdesk → 1920） ---------------- */
+/* ---------------- 布局常量 ---------------- */
 const PITCH = 169.2
 const VIEW_W = 1100
 
@@ -28,16 +26,14 @@ interface Row {
   star: number
 }
 
-/**
- * 卡片数据：重复件折算材料并聚合成 1 张，抽到的服装每件出卡；底板按内容分色（3★ 蓝 / 4★ 紫 / 5★ 金）。
- */
+/** 卡片数据：重复件折算材料并聚合成 1 张，抽到的服装每件出卡；底板按内容分色（3★ 蓝 / 4★ 紫 / 5★ 金） */
 const rows = computed<Row[]>(() => {
   const u = ui.value
   if (!u) return []
   const list = store.lastResults ?? []
   const out: Row[] = []
 
-  // ① 材料卡（排在前面，和实机一致：静谧水滴 90 是第一张）
+  // ① 材料卡（排在前面）
   const dropN = list.filter((r) => !r.isNew && Number(r.rarity) < 4).length * 10
   const sprayN = list
     .filter((r) => !r.isNew && Number(r.rarity) >= 4)
@@ -131,7 +127,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 
 <template>
   <div v-if="ui" class="rw" @click="close" @wheel.prevent="onWheel">
-    <!-- 背板：**只压暗，不做高斯模糊**（用户第 5 条） -->
+    <!-- 背板：**只压暗，不做高斯模糊** -->
     <div class="rw-veil" aria-hidden="true"></div>
 
     <!-- 标题组 -->
@@ -199,7 +195,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   background: rgba(8, 6, 14, 0.52);
 }
 
-/* ---------- 标题组（pxdesk 反查） ---------- */
+/* 标题组 */
 .rw-word {
   position: absolute;
   left: 703.9px;
@@ -246,7 +242,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   pointer-events: none;
 }
 
-/* ---------- 卡片条 ---------- */
+/* 卡片条 */
 .rw-strip {
   position: absolute;
   left: 116px;
@@ -314,7 +310,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   pointer-events: none;
 }
 
-/* ---------- 金线 / 箭头 / 进度条 ---------- */
+/* 金线 / 箭头 / 进度条 */
 .rw-line {
   position: absolute;
   left: 136.3px;
@@ -335,7 +331,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   opacity: 0.85;
   pointer-events: none;
 }
-/* 底部横条：185.6 宽，拇指块可拖 */
+/* 底部横条 */
 .rw-bar {
   position: absolute;
   left: 791.9px;

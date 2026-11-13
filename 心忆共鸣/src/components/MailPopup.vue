@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 主页 ·「信封」弹窗：点信封裂开飞走 → 信纸浮现（第 1 页欢迎词，第 2~4 页最近三次版本更新）。
- * 素材三张卡背：cardbg01 信封正面 / cardbg03 信封背 / cardbg08 信纸；无退出键，点空白或 ESC 关闭。
- */
+/** 主页 ·「信封」弹窗：点信封裂开飞走 → 信纸浮现（第 1 页欢迎词，第 2~4 页最近三次版本更新） */
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { play } from '@/composables/useAudio'
@@ -23,10 +20,7 @@ const phase = ref<Phase>('closed')
 
 const page = ref(0)
 
-/**
- * 版本日志：运行时从 `public/assets/data/mail-changelog.json` 读。
- * 读不到就只剩欢迎页（信封照常能拆开，不会白屏）。
- */
+/** 版本日志：运行时从 `public/assets/data/mail-changelog.json` 读。读不到就只剩欢迎页（信封照常能拆开，不会白屏） */
 const mailLogs = ref<MailLog[]>([])
 
 const pages = computed(() => [
@@ -44,10 +38,7 @@ const pages = computed(() => [
 const total = computed(() => pages.value.length)
 const cur = computed(() => pages.value[Math.min(page.value, total.value - 1)])
 
-/**
- * 正文滚动。**不缩放文字**，溢出的内容用滚轮或按住拖动看，`.lt-body` 自己滚。
- * 拖动位移必须换算设计坐标：用 `toDesignDelta()`（见 `core/stage.ts`）。
- */
+/** 正文滚动。**不缩放文字**，溢出的内容用滚轮或按住拖动看，`.lt-body` 自己滚。拖动位移必须换算设计坐标：用 `toDesignDelta()`（见 `core/stage.ts`） */
 const bodyRef = ref<HTMLElement | null>(null)
 /** 正文是否溢出（只用来决定光标形态，不参与拖拽判定） */
 const scrollable = ref(false)
@@ -201,7 +192,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-/* 设计坐标 1920×1080；信封 720×448（cardbg01 1292×804），信纸 900×508（cardbg08 1000×564） */
+/* 设计坐标 */
 .mail-mask {
   position: absolute;
   inset: 0;
@@ -240,7 +231,7 @@ onUnmounted(() => {
 }
 .env-wrap:hover {
   filter: drop-shadow(0 26px 54px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 26px rgba(255, 214, 150, 0.35));
-  /* 悬停即暂停晃动：否则指针追着一个左右摆的目标，容易点空 */
+  /* 悬停即暂停晃动 */
   animation-play-state: paused;
 }
 @keyframes envShake {
@@ -262,7 +253,7 @@ onUnmounted(() => {
   object-fit: contain;
   display: block;
 }
-/* 上下各留一半：视觉上就是「信封从中缝裂开」 */
+/* 上下各留一半 */
 .env-half.top { clip-path: inset(0 0 50% 0); }
 .env-half.bottom { clip-path: inset(50% 0 0 0); }
 
@@ -298,7 +289,6 @@ onUnmounted(() => {
 }
 
 /* ==================== 信封背 + 信纸 ==================== */
-/* cardbg03：信封背。尺寸比信纸略窄、位置略低 → 只从信纸下缘露出来一截，像信还没完全抽出 */
 .mail-back {
   position: absolute;
   left: 50%;
@@ -391,18 +381,18 @@ onUnmounted(() => {
 .lt-body {
   flex: 1 1 auto;
   min-height: 0;
-  /* 右侧留出滚动条的位置，正文不贴条 */
+  /* 右侧留出滚动条的位置 */
   padding: 16px 10px 0 0;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  /* 不缩字，溢出就滚 */
+  /* 不缩字 */
   font-size: 15px;
 }
 .lt-body.log {
   font-size: 14.5px;
 }
-/* 只在真的溢出时才给「可拖」光标，不然会误导 */
+/* 只在真的溢出时才给「可拖」光标 */
 .lt-body.scrollable {
   cursor: grab;
 }
@@ -410,9 +400,7 @@ onUnmounted(() => {
   cursor: grabbing;
   user-select: none;
 }
-/**
- * 滚动条只能用 `::-webkit-scrollbar`（同时写 `scrollbar-width` 会让 webkit 伪元素整组失效）。
- */
+/** 滚动条只能用 ` */
 .lt-body::-webkit-scrollbar {
   width: 10px;
 }
@@ -439,9 +427,7 @@ onUnmounted(() => {
   color: #60412c;
   text-align: justify;
 }
-/**
- * 段落样式（`文案.json` 的 `{ "style": … }`）：`h2` 小标题（居中、字号双倍）、`warn` 警示句（居中、红）。
- */
+/** 段落样式 */
 .lt-p.h2 {
   margin: 20px 0 10px;
   text-align: center;
@@ -457,7 +443,7 @@ onUnmounted(() => {
   font-weight: 700;
   color: #b0392f;
 }
-/* 更新日志页：每条一行，前面挂一枚小菱形 */
+/* 更新日志页 */
 .lt-body.log .lt-p {
   position: relative;
   padding-left: 18px;
@@ -484,7 +470,7 @@ onUnmounted(() => {
   color: #8a6742;
 }
 
-/* 翻页键：复刻共鸣页「抽取记录」的圆钮（32px 淡蓝渐变） */
+/* 翻页键 */
 .lt-pager {
   flex: 0 0 auto;
   align-self: center;

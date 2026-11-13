@@ -1,11 +1,4 @@
-/**
- * 验收
- *
- * A. 同名内容消歧：比对方式真的可用 + 只对「确实不同」的重名条目加 ·NN
- * B. 拓展包多选：一次多选打成一个包、每个接口的数据是数组
- * C. 关联规则：服装阁/套装附带故事、版本附带阁与故事、故事仍可单独打包
- * D. 工坊界面多选 + 两个图鉴真实显示
- */
+/** 验收 A. 同名内容消歧：比对方式真的可用 + 只对「确实不同」 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -54,8 +47,8 @@ console.log('\n════ A 同名内容消歧 ════')
 
 const storiesTs = read('src/data/stories.ts')
 const readingsTs = read('src/data/readings.ts')
-// ：`src/data/reading-titles.ts` / `story-titles.ts` 已删（标题并入运行时 JSON），
-// 改读现行真源 —— 否则 `read()` 直接 ENOENT，整份验收跑不起来。
+// ：`src/data/reading-titles.ts` / `story-titles.ts` 已删（标题并入运行时 JSON）
+// 改读现行真源 —— 否则 `read()` 直接 ENOENT，整份验收跑不起来
 const readingTitles = read('public/assets/data/readings.json')
 const storyTitles = read('public/assets/data/stories.json')
 
@@ -378,7 +371,6 @@ let SAVE = BASE_SAVE
   await ctx.close()
 }
 
-// 故事图鉴：分区与滚动复位回归
 {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } })
   await ctx.addInitScript(([k, v]) => localStorage.setItem(k, v), [SAVE_KEY, JSON.stringify(SAVE)])

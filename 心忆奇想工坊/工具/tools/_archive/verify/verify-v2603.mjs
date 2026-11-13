@@ -1,17 +1,4 @@
-/**
- * 验收 · 铭牌取图修正 + 2.11 版本卡 + 版本徽记 + 铭牌/艺术字位置 + 常驻池 + 退出目标
- *
- * 覆盖用户这一批 7 条：
- * 1. 铭牌要用 name01/name02（043 之前错拿了 112×112 的套装图标）
- * 2. 版本页 / 图鉴赛季栏补 2.11 缩略图与大图
- * 3. 版本大图里加星座徽记 —— ⚠ 起该设定已废除，本段改为反向核对「一个都不剩」
- * 4. 铭牌文字右移 20px
- * 5. 卡池艺术字垂直居中于「货币栏下划线」与「提示文字」之间
- * 6. 每个版本都显示常驻池，排最后
- * 7. 从版本页进共鸣页 → 退出回版本页
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2603.mjs`
- */
+/** 验收 · 铭牌取图修正 + 2.11 版本卡 + 版本徽记 + */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -64,11 +51,7 @@ async function step(name, fn) {
   }
 }
 
-/**
- * 切当前版本。
- * ⚠ 必须**先落到共鸣页再 reload**：`page.goto` 到只有 hash 不同的 URL 属于 same-document
- * 导航，文档不会重载、store 也不会重读 localStorage（踩过一次：版本一直卡在上一个）。
- */
+/** 切当前版本 */
 async function useVersion(v) {
   if (!/#\/banner/.test(page.url())) {
     await page.goto(`${BASE}/#/banner`, { waitUntil: 'domcontentloaded' })
@@ -111,7 +94,7 @@ await step('043', async () => {
   check('A1 043 五星→043-1、四星→043-2',
     /043-1\.webp$/.test(r.plates[0] ?? '') && /043-2\.webp$/.test(r.plates[1] ?? ''),
     `${r.names.join(' / ')} → ${r.plates.map((p) => p.split('/').pop()).join(' / ')}`)
-  // 素材必须是 332×96 那一档（不是被误用的 112×112 套装图标）
+  // 素材必须是 332×96 那一档
   const dim = await page.evaluate(async () => {
     const img = document.querySelector('.sb-plate')
     if (!img) return null
@@ -207,7 +190,7 @@ await step('徽记', async () => {
   await page.waitForTimeout(900)
 
   // 用户 2026-11-03 明确「删除版本页的徽记及其相关内容（这个设定废除）」——
-  // 所以这里不再验徽记长什么样，只验「确实一个都不剩」。
+  // 所以这里不再验徽记长什么样，只验「确实一个都不剩」
   const r = await page.evaluate(() => ({
     logo: document.querySelectorAll('.vs-logo').length,
     layers: document.querySelectorAll('.vl-lock, .vl-on').length,

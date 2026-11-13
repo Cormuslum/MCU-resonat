@@ -1,8 +1,4 @@
-/**
- * 心忆奇想工坊 · Electron 主进程（发行版启动器）：`<发行版>/心忆共鸣/`（纯静态）与 `心忆奇想工坊/`（本 exe、运行时、工具）。
- * 三个根：`NIKKI_TOOLROOT` = exeDir/工具、`NIKKI_DATA_DIR` = exeDir/工具/data、`NIKKI_ROOT` = ../心忆共鸣；找不到 `工具/` 时退回老布局。
- * 起服务用 Electron 自带 Node（`ELECTRON_RUN_AS_NODE=1`）；`UPDATER_NO_OPEN=1` 关闭 server 的自动开浏览器。
- */
+/** 心忆奇想工坊 · Electron 主进程（发行版启动器）：`<发行版>/心忆共鸣/`（纯静态）与 `心忆奇想工坊/`（本 exe、运行时、工具） */
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
@@ -12,18 +8,13 @@ import net from 'node:net'
 import { fileURLToPath } from 'node:url'
 
 const BASE_PORT = Number(process.env.NIKKI_UPDATER_PORT || 5199)
-/**
- * 端口冲突时向后找几个：先问对方一句「你是谁」（`/api/state` 的 toolRoot），
- * 只有同一个工具目录才复用，否则换端口起自己的实例 —— 绝不连错数据根。
- */
+/** 端口冲突时向后找几个：先问对方一句「你是谁」（`/api/state` 的 toolRoot）， 只有同一个工具目录才复用，否则换端口起自己的实例 —— 绝不连错数据根 */
 const PORT_SPAN = 8
 
 const isDir = (p) => { try { return fs.statSync(p).isDirectory() } catch { return false } }
 const isFile = (p) => { try { return fs.statSync(p).isFile() } catch { return false } }
 
-/**
- * 解析三个根。返回 null 表示这份安装不完整（缺 server 或找不到模拟器目录）。
- */
+/** 解析三个根。返回 null 表示这份安装不完整（缺 server 或找不到模拟器目录） */
 function findLayout() {
   const exeDir = path.dirname(app.getPath('exe'))
 
@@ -48,7 +39,7 @@ function findLayout() {
     }
   }
 
-  // ── 老布局：exe 同级或上一级有 updater/server.mjs（v2.0.10 的包）
+  // ── 老布局：exe 同级或上一级有 updater/server.mjs
   for (const base of [exeDir, path.join(exeDir, '..')]) {
     if (isFile(path.join(base, 'updater', 'server.mjs'))) {
       return {
@@ -101,9 +92,7 @@ function probeStudio(port, timeoutMs = 1200) {
   })
 }
 
-/**
- * 选一个能用的端口：空着 → 起新实例；占着但是同一套布局（toolRoot 相同）→ 复用；占着别人的 → 换下一个。
- */
+/** 选一个能用的端口：空着 → 起新实例；占着但是同一套布局（toolRoot 相同）→ 复用；占着别人的 → 换下一个 */
 async function pickPort(L) {
   const mine = path.resolve(L.toolRoot)
   for (let i = 0; i < PORT_SPAN; i++) {
@@ -125,8 +114,8 @@ function createWindow(port) {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      // v2.2.04：只为了把「拖进来的文件的绝对路径」交给页面（见 preload-updater.cjs）。
-      // 有了它，整套导入拖文件夹不必再把整棵树复制进 .inbox 中转。
+      // 只为了把「拖进来的文件的绝对路径」交给页面（见 preload-updater.cjs）
+      // 有了它，整套导入拖文件夹不必再把整棵树复制进 .inbox 中转
       preload: fileURLToPath(new URL('./preload-updater.cjs', import.meta.url)),
     },
   })
@@ -153,12 +142,12 @@ function spawnServer(L, port) {
   if (L.py && isFile(L.py)) env.NIKKI_PY = L.py
   if (L.ffmpeg && isFile(L.ffmpeg)) env.NIKKI_FFMPEG = L.ffmpeg
   // 成品写到**模拟器**的 public（不是工坊自己）—— 少了这个，管线会把 webp
-  // 转进工坊目录，模拟器那边的图反而永远不变。
+  // 转进工坊目录，模拟器那边的图反而永远不变
   if (L.targetRoot) env.NIKKI_OUT_DIR = path.join(L.targetRoot, 'public', 'assets')
   // 发行版不落 `素材/`：用户选的图直接从原位置转进 public
   if (L.distMode) env.NIKKI_DIST_MODE = '1'
-  // 基线模式：发行版不随包发 `数据/{故事,套装库,阅读物}`（成品已在模拟器里），这三个目录只当增量补丁；
-  // 少了 `NIKKI_JSON_BASELINE` 管线会把 stories.json 写成空数组。
+  // 基线模式：发行版不随包发 `数据/{故事,套装库,阅读物}`（成品已在模拟器里），这三个目录只当增量补丁
+  // 少了 `NIKKI_JSON_BASELINE` 管线会把 stories.json 写成空数组
   if (L.distMode) env.NIKKI_JSON_BASELINE = '1'
 
   child = spawn(process.execPath, [serverPath, String(port)], {

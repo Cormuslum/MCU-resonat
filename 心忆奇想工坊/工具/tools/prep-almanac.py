@@ -29,7 +29,7 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 SRC = os.path.join(ROOT, "素材", "玄学运势", "素材")
 DST = os.path.join(SRC, "工程产出")
 
-# ---- 实机尺寸（px @1920×1080） -----------------------------------------
+# ---- 实机尺寸 -----------------------------------------
 PAPER_W, PAPER_H = 1668, 956
 AXLE_H = 956
 BASKET_W, BASKET_H = 720, 717
@@ -44,7 +44,7 @@ SCROLL_SETS = [
     ("卷轴/纸面3.webp", "卷轴/轴杆3.webp", "3"),
 ]
 
-# ---- 两种场景风格（各 50%）：桶 + 四卷轴拆分 + 墨台 + 书写笔 -----------
+# ---- 两种场景风格：桶 + 四卷轴拆分 + 墨台 + 书写笔 -----------
 # 拆分图按 x 位置对应：-1 最左 → 过往，-2 → 今日，-4 → 生辰引导，-3 最右 → 未来
 STYLES = {
     "eu": {
@@ -137,7 +137,7 @@ def alpha_mask(im, grid=MASK_GRID, th=40):
             if a.crop((x0, y0, x1, y1)).getextrema()[1] > th:
                 bits |= 1 << gx
         rows.append(bits)
-    # 膨胀 1 格（≈11px @720 显示）：细长纸卷轮廓太窄，纯 alpha 命中率太低
+    # 膨胀 1 格：细长纸卷轮廓太窄，纯 alpha 命中率太低
     grown = []
     for gy in range(grid):
         bits = rows[gy]

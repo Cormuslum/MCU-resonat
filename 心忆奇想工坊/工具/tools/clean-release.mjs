@@ -1,9 +1,4 @@
-/**
- * 清理已打好的发行版里的冗余文件：`node tools/clean-release.mjs`。
- * ① `工具/tools/` 只留管线依赖闭包；② 删 `tools/shots/`、`tools/*.png`、`__pycache__/`；
- * ③ 删开发期遗留（`data/信息表/前后名称对照表.md`、`updater/README.md`）。
- * 保留数据、运行时、成品 `public/assets`、存档 `userdata`。
- */
+/** 清理已打好的发行版里的冗余文件：`node tools/clean-release.mjs`。保留数据、运行时、成品 `public/assets`、存档 `userdata` */
 import fs from 'node:fs'
 import path from 'node:path'
 
@@ -68,9 +63,7 @@ function countFiles(root) {
   return n
 }
 
-/**
- * 删掉一棵子树里的空目录（自底向上）：robocopy 的 /XF 只排文件、保留空目录，dist/ 里会留一堆空壳。
- */
+/** 删掉一棵子树里的空目录（自底向上）：robocopy 的 /XF 只排文件、保留空目录，dist/ 里会留一堆空壳 */
 function pruneEmpty(root) {
   let n = 0
   const walk = (d) => {
@@ -156,9 +149,9 @@ for (const p of legacy) {
 }
 
 // ：`故事/` `套装库/` `阅读物/` 不再随包 ——
-// 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里，
-// 这三个目录在发行版只当「增量补丁」（用户拖进来的文件覆盖对应那一条）。
-// 用户在工坊里拖文件时目录会自动重建，所以这里删干净。
+// 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里
+// 这三个目录在发行版只当「增量补丁」
+// 用户在工坊里拖文件时目录会自动重建，所以这里删干净
 for (const d of ['故事', '套装库', '阅读物']) {
   const p = path.join(DATA, d)
   if (fs.existsSync(p)) {

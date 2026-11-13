@@ -115,7 +115,6 @@ function close() {
 .sp-sbar {
   position: absolute;
   left: 474px;
-  /* 容器内边缘在实机 y=156（search-bg 素材 alpha 满宽起点 y=56 + 弹窗 y=100）→ 再留 20px */
   top: 176px;
   width: 972px;
   height: 156px;
@@ -133,7 +132,7 @@ function close() {
 }
 .sp-sicon {
   position: absolute;
-  /* 中心对齐搜索框左侧黄色区域中心（bar 内 115.5,78），素材 60 → 放大到 100 */
+  /* 中心对齐搜索框左侧黄色区域中心 */
   left: 65.5px;
   top: 28px;
   width: 100px;
@@ -146,7 +145,7 @@ function close() {
 .sp-sinput {
   position: relative;
   width: 100%;
-  /* 光标起点右移：黄色区域右缘 209 + 11 */
+  /* 光标起点右移 */
   margin: 0 30px 0 220px;
   padding: 0;
   border: 0;
@@ -221,7 +220,7 @@ function close() {
   object-fit: contain;
   max-width: none;
 }
-/* 跳转按钮：复用套装栏蓝呼吸框（选中/悬停） */
+/* 跳转按钮 */
 .sp-snext {
   position: relative;
   width: 56px;

@@ -41,16 +41,16 @@ def _env_dir(name, default):
     return os.path.abspath(v) if v else default
 
 
-# 编辑数据根（信息表 / 套装库 / 故事 / 阅读物）。发行版里它指向工坊目录下的 `data/`。
+# 编辑数据根（信息表 / 套装库 / 故事 / 阅读物）。发行版里它指向工坊目录下的 `data/`
 ASSET = _env_dir("NIKKI_DATA_DIR", os.path.join(ROOT, "素材"))
-# pool-map 落在数据根旁边 —— 它是索引，不是成品。
+# pool-map 落在数据根旁边 —— 它是索引，不是成品
 OUT = _env_dir("NIKKI_POOL_MAP", os.path.join(ASSET, "pool-map.json"))
 
 # UI 整包根目录的候选名（按顺序试，哪个存在用哪个）
 UI_ROOTS = ("界面/UI整包", "0主素材", "朋友分享素材")
 # 同一次整理里被改名的其它素材目录（旧名 → 新名）
 DIR_ALIASES = {
-    # 旧名 → 新名。P()/A() 会按顺序试，哪个存在用哪个。
+    # 旧名 → 新名。P()/A() 会按顺序试，哪个存在用哪个
     "抽卡奖励界面": ("界面/抽卡演出",),
     "抽卡道具": ("界面/抽卡演出",),
     "游戏内实机展示": ("界面/抽卡演出",),
@@ -260,18 +260,17 @@ def load_version_table():
             raw = (r.get("版本") or "").strip()
             if not raw:
                 continue
-            # 版本号规范化：`1` → `1.0`、`2` → `2.0`。
-            # ⚠ 大版本行（探索季 / 祷声起诸大地）在表里常写成裸数字，
-            #   不归一化的话 `ui.ver.cards` 会多出 `1`/`2` 两个键，
-            # 指向不存在的 `ui/ver/card/1.webp`（ 修）。
+            # 版本号规范化：`1` → `1.0`、`2` → `2.0`
+            # 不归一化的话 `ui.ver.cards` 会多出 `1`/`2` 两个键
+            # 指向不存在的 `ui/ver/card/1.webp`（修）
             v = norm_ver(raw)
             maj = (r.get("大版本") or v.split(".")[0]).strip()
             if v in out:
-                # 重复键会**静默覆盖**前一行 —— `1.10 丰收季` 被写成 `1.1` 时，
-                # 整条「流星季」就被顶掉，版本页少一栏且毫无提示（ 事故）。
-                # 只 warn 是不够的：工坊会接着生成一份残缺的 pool-map / manifest，
-                # 用户看到的是「版本页错乱」，很难倒推到这张 CSV。这里直接失败，
-                # 让工坊的 /api/apply 走自动回滚，并把修复方法写在报错里。
+                # 重复键会**静默覆盖**前一行 —— `1.10 丰收季` 被写成 `1.1` 时
+                # 整条「流星季」就被顶掉，版本页少一栏且毫无提示（事故）
+                # 只 warn 是不够的：工坊会接着生成一份残缺的 pool-map / manifest
+                # 用户看到的是「版本页错乱」，很难倒推到这张 CSV。这里直接失败
+                # 让工坊的 /api/apply 走自动回滚，并把修复方法写在报错里
                 raise SystemExit(
                     f"\n[版本表重复键] 版本 {v} 出现两次："
                     f"「{out[v].get('name', '')}」与「{(r.get('版本名') or '').strip()}」。\n"
@@ -413,13 +412,13 @@ GACHA_EXTRA = {
 }
 
 # ---------------------------------------------------------------- 手工补充池
-# `素材/source/` 只整理到 2.10。2.11「时光缝合的扉页」目前只有：
+# `素材/source/` 只整理到 2.10
 #   · 素材/图片素材/2.11时光缝合的扉页/<星级>-限定共鸣-《套装》/   → 部件卡 + 属性 yaml
 #   · 素材/套装文案/2.11时光缝合的扉页/                            → 整体文案 + 部件文案
 #   · 素材/朋友分享素材/UI/SysResonance/texture/Pic/080/            → 只有卡池名艺术字（多语言）
 # 没有卡池背景 / 列表缩略图 / 标题横幅 / 深忆奖励，也没有套装立绘与部件图标
-# （5★ 能在 Showpic/S0438 找到 520×724 试穿图，4★ 只能用卡片里的「整体」图兜底）。
-# 所以这里显式补一条池定义，套装其余字段仍走和常规池完全相同的组装逻辑。
+# （4★ 只能用卡片里的「整体」图兜底）
+# 所以这里显式补一条池定义，套装其余字段仍走和常规池完全相同的组装逻辑
 EXTRA_POOLS = [
     {
         # 官方编号即主键（080）
@@ -430,24 +429,24 @@ EXTRA_POOLS = [
         "type": "limited",
         "sets": ["绽若颂愿心", "奶酪与剑"],
         # ：`bgClean` / `thumbnail` / `titleArt` 三个「指向老素材」的补位已删除 ——
-        # 2.11 的阁目录里（服装阁/2.11时光缝合的扉页/雪落颂愿时/）背景图、列表缩略图、
-        # 艺术字齐全，扫描阶段就能取到，这里只需提供套装清单。
+        # 2.11 的阁目录里（服装阁/2.11时光缝合的扉页/雪落颂愿时/）背景图、列表缩略图
+        # 艺术字齐全，扫描阶段就能取到，这里只需提供套装清单
         # ：原来给绽若颂愿心指了 `T_showpic_clothes_S0438H.png`，那是**错误的试穿图**
-        # （红发内衣底模，520×724 不透明），弹窗里既不对版又溢出。现在不再指定 —— 扫描路径
-        # 统一按「套装立绘.png → 初始/整体-初始.png」取，和其余套装立绘同规格。
+        # （红发内衣底模），弹窗里既不对版又溢出。现在不再指定 —— 扫描路径
+        # 统一按「套装立绘.png → 初始/整体-初始.png」取，和其余套装立绘同规格
     },
 ]
 
 # ---------------------------------------------------------------- 高清整屏背景（已废弃）
-# ：`BG_HIRES` / `TITLEART_EXTRA` 两张「从 Pic 里翻老图兜底」的表已删除。
-#   88 座阁的 `素材/服装阁/<版本>/<阁>/` 里都自带 `背景图.*` 与 `艺术字.*`，
-#   这两张表从来没命中过；留着只会在缺图时静默拿老图顶上，掩盖问题。
-#   现在缺图走 `[缺图]` 告警，缺就明说缺。
+# ：`BG_HIRES` / `TITLEART_EXTRA` 两张「从 Pic 里翻老图兜底」的表已删除
+# 88 座阁的 `素材/服装阁/<版本>/<阁>/` 里都自带 `背景图.*` 与 `艺术字.*`
+# 这两张表从来没命中过；留着只会在缺图时静默拿老图顶上，掩盖问题
+# 现在缺图走 `[缺图]` 告警，缺就明说缺
 
 # ---------------------------------------------------------------- 默认背景
-# 服装阁没有 `背景图.*` 时，界面拿**版本页那张整屏背景**顶上（`ui/ver/bg.webp`，
-# 运行时按 manifest 的 `ui.banner.fallbackBg` 取）。这里是它的源图 + 产物路径，
-# 两边都找不到才算「默认背景也丢了」，才打 `[缺图]` 告警。
+# 服装阁没有 `背景图.*` 时，界面拿**版本页那张整屏背景**顶上（`ui/ver/bg.webp`
+# 运行时按 manifest 的 `ui.banner.fallbackBg` 取）
+# 两边都找不到才算「默认背景也丢了」，才打 `[缺图]` 告警
 DEFAULT_BG_SRC = "朋友分享素材/UI/SysLogin/Texture/T_UI_login_bg.png"
 DEFAULT_BG_OUT = os.path.join(SIM, "public", "assets", "ui", "ver", "bg.webp")
 
@@ -711,7 +710,7 @@ def load_set_texts():
                 # 兜底：`套装文案：` 之后、`『部位』` 之前的裸文本，整段都算整体文案
                 if in_set_text:
                     desc = (desc + line).strip()
-            # 键用「纯套装名」（与 source/<池>/<套装> 目录名一致），
+            # 键用「纯套装名」（与 source/<池>/<套装> 目录名一致）
             # 否则会和 set_dirs 的 蒙尘之罪 对不上
             mm = re.match(r"^[45]星-(?:限定|常驻)共鸣-《(.+)》$", stem)
             out[mm.group(1) if mm else stem] = {
@@ -841,7 +840,7 @@ def load_stars3():
     `标签` 是行内数组 `[清凉]`，`五维` 是行内 map `{ 典雅: 24, ... }`。
     之前误以为 3★ 散件没有文案，所以面板一直是空的 —— 其实数据全在。
     """
-    # 用 P 走目录别名（ 后目录改名成 `通用散件/`）
+    # 用 P 走目录别名（后目录改名成 `通用散件/`）
     path = P("所有卡池通用三星散件", "三星散件清单.yaml")
     if not os.path.exists(path):
         return []
@@ -947,9 +946,9 @@ def load_card_sets():
 
 
 # ---------------------------------------------------------------- 7.5 深海回响的摆饰 / 礼盒
-# 权威源：`0主素材/UI/SysResonance/texture/Rewards Introduction.md`（用户维护的一张表，
-# 文件名 / 摆饰名 / 文案 / 对应套装），图片在旁边的 `Rewards/` 里。
-# 一个套装最多一件摆饰；「文件名」写成「缺失」的有文案没图（保留文案、图留空）。
+# 权威源：`0主素材/UI/SysResonance/texture/Rewards Introduction.md`（用户维护的一张表
+# 文件名 / 摆饰名 / 文案 / 对应套装），图片在旁边的 `Rewards/` 里
+# 一个套装最多一件摆饰；「文件名」写成「缺失」的有文案没图（保留文案、图留空）
 DECOR_DIR = "0主素材/UI/SysResonance/texture/Rewards"
 DECOR_MD = "0主素材/UI/SysResonance/texture/Rewards Introduction.md"
 
@@ -1019,7 +1018,7 @@ def load_milestones(pool_dir):
                 "file": rel(os.path.join(d, f)),
             })
     # 保持原有顺序（按抽数稳定排序），不要改成按奖励名排 —— `230-1/2/3` 的落盘序号
-    # 由这里的顺序决定，改了会让既有池的图与名字错位（collect-assets 不覆盖已存在的 webp）。
+    # 由这里的顺序决定，改了会让既有池的图与名字错位（collect-assets 不覆盖已存在的 webp）
     return sorted(out, key=lambda x: x["pulls"])
 
 
@@ -1027,7 +1026,7 @@ def load_milestones(pool_dir):
 def scan_set_assets(suit_dir, warns=None):
     """扫描一个套装目录 → `{portrait, ov, cards, icons}`。
 
-    ## 新结构（v1.9.02，按「实体」组织）
+    # 新结构
 
     ```
     <套装名>/
@@ -1059,13 +1058,13 @@ def scan_set_assets(suit_dir, warns=None):
             code = part_code.ov_code(f)
             if not code:
                 continue
-            # 4★ 的「整体-进化」与 5★ 的「整体-一进」同槽（都 OV-lv2），
-            # 排序后取先出现的那张，避免同槽两张互相覆盖。
+            # 4★ 的「整体-进化」与 5★ 的「整体-一进」同槽（都 OV-lv2）
+            # 排序后取先出现的那张，避免同槽两张互相覆盖
             picked.setdefault(code, {
                 "code": code,
-                # 两套名字都留：`stage` 是代号反查的规范名，`stageRaw` 是素材原名。
+                # 两套名字都留：`stage` 是代号反查的规范名，`stageRaw` 是素材原名
                 # 4★ 第 3 段叫「进化」、5★ 叫「一进」，都落 OV-lv2 —— 前端的形态卡
-                # 要显示素材原名才不会把 4★ 错标成「一进」。
+                # 要显示素材原名才不会把 4★ 错标成「一进」
                 "stage": part_code.stage_name(code),
                 "stageRaw": part_code.ov_stage_raw(f) or part_code.stage_name(code),
                 "file": rel(os.path.join(ov_dir, f)),
@@ -1122,7 +1121,7 @@ def scan_set_assets(suit_dir, warns=None):
 
 
 # 五星限时池 20/40/60/80/100 抽送的都是同一件「流光自选礼盒」，图也逐字节相同
-# （ 起五档共用 `milestones/shared/low.webp`）。
+# （起五档共用 `milestones/shared/low.webp`）
 LOW_TIER_PULLS = (20, 40, 60, 80, 100)
 LOW_TIER_REWARD = "Flowing Spectrum Selectable"
 
@@ -1167,8 +1166,8 @@ def load_currency():
 
 
 # ---------------------------------------------------------------- 主流程
-# 套装信息表（素材/套装信息表.xlsx）停在 2.10 之前，2.10 的两个四星池套装没有 S 编号。
-# 用户 2026-10-26 给了官方值，这里兜底（只在新套装缺 id 时生效）。
+# 套装信息表（素材/套装信息表.xlsx）停在 2.10 之前，2.10 的两个四星池套装没有 S 编号
+# 用户 2026-10-26 给了官方值，这里兜底
 SET_ID_OVERRIDE = {
     "幽影嬉夜时": "S0431",
     "永眠的伫望": "S0455",
@@ -1178,13 +1177,12 @@ SET_ID_OVERRIDE = {
 # ---------------------------------------------------------------- 基线合并
 #
 # 发行版不发 `素材/`（3.9G 的源图/视频），只发 `data/`（约 7M：信息表 + 套装库 +
-# 故事 + 阅读物）和 `public/assets`（成品）。没有 `服装阁/` 目录，本脚本就一个阁
-# 也扫不到 —— 那 88 座内置阁的清单只能来自**上一版冻结的 pool-map**。
+# 也扫不到 —— 那 88 座内置阁的清单只能来自**上一版冻结的 pool-map**
 #
 # 合并规则（刻意做得笨，因为 pool-map 是 88 阁的唯一索引，写坏就是全崩）：
 #   · 扫到的阁 → 用它，基线里同 id 的只在**字段为空时**补（补 assets，不覆盖新扫描）
 #   · 基线独有（无源目录）的阁 → 原样追加，但套装文案/属性用最新 YAML 刷新
-# 开发版有全套 `素材/`：扫出 88 座，基线全部被覆盖，行为与合并前完全一致。
+# 开发版有全套 `素材/`：扫出 88 座，基线全部被覆盖，行为与合并前完全一致
 
 def load_baseline():
     """读上一次的 pool-map 当基线；不存在/损坏就返回 None（首次生成时正常扫目录）。"""
@@ -1199,7 +1197,7 @@ def load_baseline():
 
 
 # 基线里这些字段是「源文件相对路径」，发行版里源文件已不在，但路径仍是
-# 推算产物名（banners/bg/<gachaKey>.webp）的唯一依据 —— 必须原样保留。
+# 推算产物名（banners/bg/<gachaKey>.webp）的唯一依据 —— 必须原样保留
 _POOL_ASSET_KEYS = ("thumbnail", "bgClean", "titleArt", "bg", "dynamicBg", "milestones")
 _SET_ASSET_KEYS = ("portrait", "ov", "cards", "icons")
 
@@ -1211,9 +1209,9 @@ def _fill_assets(target, base):
         if not ta.get(k) and ba.get(k):
             ta[k] = ba[k]
     base_sets = {s.get("name"): s for s in (base.get("sets") or []) if s.get("name")}
-    # ① 扫描不到的套装整条补回来。
-    #    发行版只发一张阁图时（用户只换了背景），套装目录根本不存在 ——
-    #    不补的话这座阁的 sets 会变成 0，套装、故事、图鉴全跟着少一批。
+    # ① 扫描不到的套装整条补回来
+    # 发行版只发一张阁图时，套装目录根本不存在 ——
+    # 不补的话这座阁的 sets 会变成 0，套装、故事、图鉴全跟着少一批
     have = {s.get("name") for s in (target.get("sets") or [])}
     for name, bs in base_sets.items():
         if name not in have:
@@ -1228,16 +1226,16 @@ def _fill_assets(target, base):
         for k in _SET_ASSET_KEYS:
             if not sa.get(k) and bsa.get(k):
                 sa[k] = bsa[k]
-        # 专属铭牌序号：来自 `banners/name/<池号>-<序号>.webp` 的反查，
-        # 发行版没有 UI 源 → 用基线里冻结的那个（否则铭牌会退回通用名）。
+        # 专属铭牌序号：来自 `banners/name/<池号>-<序号>.webp` 的反查
+        # 发行版没有 UI 源 → 用基线里冻结的那个（否则铭牌会退回通用名）
         if s.get("plateIdx") is None and bs.get("plateIdx"):
             s["plateIdx"] = bs["plateIdx"]
-        # ③ 文案与部件属性兜底。
+        # ③ 文案与部件属性兜底
         #    发行版删掉 `套装库/` 后，**手工池**（EXTRA_POOLS 里的
         #    「绽若颂愿心」「奶酪与剑」等）只带套装名，文案 / 部件属性
-        #    全在 YAML 里 —— YAML 一没，这两条会整条变空（实测 134 → 132）。
-        #    基线 pool-map 里存着完整值，目标为空时用它补；
-        #    YAML 有值（用户改过）时不覆盖。
+        # 全在 YAML 里 —— YAML 一没，这两条会整条变空（实测 134 → 132）
+        # 基线 pool-map 里存着完整值，目标为空时用它补
+        # YAML 有值时不覆盖
         for k in ("desc", "styles", "parts", "formTexts", "textSource"):
             if not s.get(k) and bs.get(k):
                 s[k] = json.loads(json.dumps(bs[k]))
@@ -1289,7 +1287,7 @@ def merge_baseline(banners, baseline, set_texts, part_info, set_info, versions):
         if bb.get("decor") and not (b.get("decor") or {}).get("file"):
             b["decor"] = bb["decor"]
         # 套装顺序以基线为准。同一座阁可能从两条路生成 —— 目录扫描（名字序）或
-        # EXTRA_POOLS 手工池（官方宣传序）—— 顺序一变，前端套装标签就换位置。
+        # EXTRA_POOLS 手工池（官方宣传序）—— 顺序一变，前端套装标签就换位置
         bs, ss = bb.get("sets") or [], b.get("sets") or []
         order = {s.get("name"): i for i, s in enumerate(bs)}
         if len(bs) == len(ss) and ss and all(s.get("name") in order for s in ss):
@@ -1315,10 +1313,10 @@ def merge_baseline(banners, baseline, set_texts, part_info, set_info, versions):
 def main():
     report_only = "--report" in sys.argv
 
-    # 发行版只发数据（信息表/套装库/故事/阅读物），不发源图源视频。
-    # 下面这些 loader 里有一半是去源目录捞文件的（艺术字重命名表、动态背景、
+    # 发行版只发数据（信息表/套装库/故事/阅读物），不发源图源视频
+    # 下面这些 loader 里有一半是去源目录捞文件的（艺术字重命名表、动态背景
     # UI 分层件、卡片图、三星散件、货币图标…），文件不在时不能让它把整个管线带崩 ——
-    # 缺的那部分本来也冻结在基线的 pool-map 里。
+    # 缺的那部分本来也冻结在基线的 pool-map 里
     def _safe(fn, default, label):
         try:
             return fn()
@@ -1334,8 +1332,8 @@ def main():
     # 心忆更新工坊写的索引优先：新池只在那里登记过（覆盖同名老条目）
     upd_gm, pool_cfg = _safe(lambda: load_pool_index(), ({}, {}), "load_pool_index")
     gacha_map = {**gacha_map, **upd_gm}
-    # 没有源目录时无法从「艺术字重命名映射表.xlsx」反查编号 → 用基线里的阁反推，
-    # 否则 gacha_map 为空会让每座阁都判成「无官方编号」而被跳过。
+    # 没有源目录时无法从「艺术字重命名映射表.xlsx」反查编号 → 用基线里的阁反推
+    # 否则 gacha_map 为空会让每座阁都判成「无官方编号」而被跳过
     if baseline:
         for _b in baseline.get("banners", []):
             if _b.get("gachaKey") and _b.get("name"):
@@ -1348,9 +1346,9 @@ def main():
     set_texts = _safe(load_set_texts, {}, "load_set_texts")
 
     # ：优先读合并后的新套装库（素材/套装库/<套装ID_套装名>/套装.yaml）
-    #   一份 YAML 同时含「部件属性」与「整体文案/属性标签/进化形态」，
-    #   取代原先分散在 图片素材/<版本>/属性-*.yaml 与 套装文案/<版本>/*.txt 两处的数据。
-    #   库不存在时自动回落旧路径（旧素材目录照常可用，不破坏现有流程）。
+    # 一份 YAML 同时含「部件属性」与「整体文案/属性标签/进化形态」
+    # 取代原先分散在 图片素材/<版本>/属性-*.yaml 与 套装文案/<版本>/*.txt 两处的数据
+    # 库不存在时自动回落旧路径（旧素材目录照常可用，不破坏现有流程）
     merged = _safe(load_merged_sets, {}, "load_merged_sets")
     if merged:
         part_info = {n: m["parts"] for n, m in merged.items()}
@@ -1369,7 +1367,7 @@ def main():
     warnings = []
     used_gacha = set()
 
-    # 发行版布局：`素材/服装阁/` 整个不存在 → 扫不到任何阁，全靠基线 + overrides。
+    # 发行版布局：`素材/服装阁/` 整个不存在 → 扫不到任何阁，全靠基线 + overrides
     src = P("服装阁")
     ver_dirs = sorted(virtual_subdirs(src), key=lambda x: (
         [int(n) for n in re.findall(r"\d+", x)] or [999]
@@ -1378,8 +1376,8 @@ def main():
         print(f"[pool-map] 无 服装阁/ 目录（{src}）→ 不扫素材，改用 pool-map 基线"
               + ("" if baseline else "（基线也没有，将生成空清单）"))
 
-    # 套装名 → 套装目录的全局索引（供 EXTRA_POOLS 定位素材用）。
-    # 建一次，避免手工池反查时重复遍历整棵树。
+    # 套装名 → 套装目录的全局索引（供 EXTRA_POOLS 定位素材用）
+    # 建一次，避免手工池反查时重复遍历整棵树
     suit_index = {}
     for _v in ver_dirs:
         _vp = os.path.join(src, _v)
@@ -1398,14 +1396,14 @@ def main():
         if not virtual_is_dir(vp) or ver_dir.startswith("卡池艺术字"):
             continue
         # 版本目录名不统一：多数是 `2.10·金羽的裁决`，2.11 是用户手放的
-        # `2.11时光缝合的扉页`（没有间隔号）。两种都要认，否则 version 会变成整串目录名，
-        # 版本页分组、版本内 seq、前端排序全跟着出错。
+        # `2.11时光缝合的扉页`（没有间隔号）
+        # 版本页分组、版本内 seq、前端排序全跟着出错
         vm = re.match(r"([\d.]+)[·\s]*(.+)$", ver_dir)
         ver_no = norm_ver(vm.group(1)) if vm else ver_dir
         ver_name = (vm.group(2) or "").strip() if vm else ""
-        # 版本名以**版本表**为准。目录名常带「（公测）」「（联机玩法上线）」这类补充语，
+        # 版本名以**版本表**为准。目录名常带「（公测）」「（联机玩法上线）」这类补充语
         # 而版本表才是工坊里维护的唯一真源 —— 发行版没有目录名可用，两边不统一的话
-        # 同一座阁在开发版和发行版会显示成两个名字。
+        # 同一座阁在开发版和发行版会显示成两个名字
         _vm = versions.get(ver_no) or {}
         if _vm.get("name"):
             ver_name = _vm["name"]
@@ -1419,10 +1417,10 @@ def main():
             pool_name = raw_name[3:] if is_std else raw_name
 
             # 套装目录
-            # 三星散件不是「套装」：它是全池通用的散件池，由 pool-map.stars3 单独处理。
-            # source 里 1.0 常驻池新增了这个目录，若不排除会变成第 9 个空套装（star=0、无部件）。
+            # 三星散件不是「套装」：它是全池通用的散件池，由 pool-map.stars3 单独处理
+            # source 里 1.0 常驻池新增了这个目录，若不排除会变成第 9 个空套装（star=0、无部件）
             # ：`深海回响` 是阁级素材目录（深忆奖励图），同理要排除 ——
-            #   不排除会被当成第 3 个套装，让每个池的 sets 数从 2 变 3。
+            # 不排除会被当成第 3 个套装，让每个池的 sets 数从 2 变 3
             skip = {"卡池横幅", "深忆奖励", "深海回响", "妆容展示", "三星散件"}
             set_dirs = sorted(
                 d for d in virtual_subdirs(pp)
@@ -1439,18 +1437,18 @@ def main():
             else:
                 used_gacha.add(gk)
 
-            # 没有官方编号的池**不进 manifest**。
+            # 没有官方编号的池**不进 manifest**
             # 2026-11-04 的一次批量导入往 source 里塞了 12 个「半截池」
-            # （1.0 心愿金蔷薇/祈愿新生/纯净之风/轻盈泡泡/飞花的追忆、1.1 咏叹银夜莺、
+            # （1.0 心愿金蔷薇/祈愿新生/纯净之风/轻盈泡泡/飞花的追忆、1.1 咏叹银夜莺
             #  1.5 星之海、2.0 深林遥梦/谒灵、2.5 梦隙灵语/眠于花畔、2.11 重逢之约）：
-            # 只有套装目录，没有背景 / 缩略图 / 艺术字，也没有 gacha 编号。
-            # 官方编号是池的主键，缺编号就没法建 id，列表会重复渲染、保底记录也会串。
-            # 补齐编号（写进 卡池索引.json）后自动回来，无需改代码。
+            # 只有套装目录，没有背景 / 缩略图 / 艺术字，也没有 gacha 编号
+            # 官方编号是池的主键，缺编号就没法建 id，列表会重复渲染、保底记录也会串
+            # 补齐编号（写进 卡池索引.json）后自动回来，无需改代码
             if gk is None:
                 warnings.append(f"[跳过] 无官方编号，暂不入库：{ver_dir}/{pool_dir}")
                 continue
 
-            # 卡池 id 一律用**官方编号**（`banner-076`）。
+            # 卡池 id 一律用**官方编号**（`banner-076`）
             banner_id = f"banner-{gk}"
 
             # 套装
@@ -1459,7 +1457,7 @@ def main():
                 ci = cards.get(sd, {})
                 si = set_info.get(sd, {})
                 tx = set_texts.get(sd, {})
-                # ：套装素材统一由 scan_set_assets 扫（半身像/图标/进化等阶），
+                # ：套装素材统一由 scan_set_assets 扫（半身像/图标/进化等阶）
                 # 产物用官方部位代号命名，映射见 素材/信息表/部位代号对照表.csv
                 sa = scan_set_assets(os.path.join(pp, sd), warnings)
                 sets.append({
@@ -1472,7 +1470,7 @@ def main():
                     "firstVersion": si.get("firstVersion", ""),
                     "reprintVersion": si.get("reprintVersion", ""),
                     "parts": part_info.get(sd, []),
-                    # 完整套装文案（ 起来自合并后的 素材/套装库，不再读 txt）
+                    # 完整套装文案（起来自合并后的 素材/套装库，不再读 txt）
                     "desc": tx.get("desc", ""),
                     "styles": tx.get("styles", []),
                     "textSource": tx.get("source", ""),
@@ -1481,9 +1479,9 @@ def main():
                 })
 
             # 铭牌序号：Pic 目录里的 `_name01/_name02/...` 编号 =
-            # 「该池套装按 5★ 在前、同级按目录顺序」的名次，**不是星级**。
-            # 前端按 `set.plateIdx` 去 `<gachaKey>-<idx>.webp` 取名牌，
-            # 取不到才退回通用底板 —— 之前这里没写，导致所有带编号的专属铭牌从未生效。
+            # 「该池套装按 5★ 在前、同级按目录顺序」的名次，**不是星级**
+            # 前端按 `set.plateIdx` 去 `<gachaKey>-<idx>.webp` 取名牌
+            # 取不到才退回通用底板 —— 之前这里没写，导致所有带编号的专属铭牌从未生效
             for _rank, _i in enumerate(sorted(range(len(sets)),
                                              key=lambda i: (-(sets[i]["star"] or 0), i)), start=1):
                 sets[_i]["plateIdx"] = _rank
@@ -1493,11 +1491,11 @@ def main():
             star_label = "+".join(f"{x}★" for x in stars) if stars else str(pcfg.get("star") or "")
 
             # 资源
-            # 起素材按「实体」重组：阁级素材（背景 / 缩略图 / 艺术字）就在阁目录下。
+            # 起素材按「实体」重组：阁级素材（背景 / 缩略图 / 艺术字）就在阁目录下
             # ：`卡池横幅/`、`卡池背景图/`、`卡池背景图（纯图片，无艺术字）/`
             # 这些老结构的回落**全部删除** —— 用户已确认老素材废弃，88 座阁目录里
             # 背景图 / 列表缩略图 / 艺术字齐全，回落链从来没命中过，留着只是隐患
-            # （少一张图就会静默串到别人的老图上）。
+            # （少一张图就会静默串到别人的老图上）
 
             def pool_file(*names):
                 """在阁目录下按候选名找第一个存在的文件，返回绝对路径或 None。
@@ -1511,8 +1509,8 @@ def main():
             pool_bg = pool_file("背景图.jpg", "背景图.png", "背景图.webp")
             pool_thumb = pool_file("列表缩略图.png", "列表缩略图.webp", "列表缩略图.jpg")
             pool_title = pool_file("艺术字.png", "艺术字.webp")
-            # 缺背景不再立刻报错：界面会用默认背景顶上（见 DEFAULT_BG_*）。
-            # 只有**默认背景也找不到**时才真的没东西可显示 —— 那时才告警。
+            # 缺背景不再立刻报错：界面会用默认背景顶上（见 DEFAULT_BG_*）
+            # 只有**默认背景也找不到**时才真的没东西可显示 —— 那时才告警
             if not pool_bg and not default_bg_exists():
                 warnings.append(
                     f"[缺图] 背景图缺、默认背景也缺（{DEFAULT_BG_SRC} / ui/ver/bg.webp）："
@@ -1520,9 +1518,9 @@ def main():
                 )
 
             assets = {
-                # 列表缩略图（200×…，阁目录下的 `列表缩略图.*`）
+                # 列表缩略图（阁目录下的 `列表缩略图.*`）
                 "thumbnail": rel(pool_thumb) if pool_thumb else None,
-                # 去艺术字版整屏背景 —— 界面**只**认这一张。
+                # 去艺术字版整屏背景 —— 界面**只**认这一张
                 "bgClean": rel(pool_bg) if pool_bg else None,
                 # 卡池名艺术字（透明 PNG / WebP）
                 "titleArt": rel(pool_title) if pool_title else None,
@@ -1559,7 +1557,7 @@ def main():
             tx = set_texts.get(sname, {})
 
             # ：手工池也走同一套扫描。素材已按实体收进
-            # `服装阁/<版本>/<阁>/<套装>`，按套装名在全局索引里取目录。
+            # `服装阁/<版本>/<阁>/<套装>`，按套装名在全局索引里取目录
             suit_dir = suit_index.get(sname)
             sa = scan_set_assets(suit_dir, warnings) if suit_dir else {
                 "portrait": None, "ov": [], "cards": [], "icons": []
@@ -1612,10 +1610,10 @@ def main():
             },
         }
 
-        # 合并而非追加：更新程序往 2.11 补套装时会创建 source/2.11·…/<池>/<套装>/，
+        # 合并而非追加：更新程序往 2.11 补套装时会创建 source/2.11·…/<池>/<套装>/
         # 上面的 source 扫描已经生成了一个同 id 的池（只有新套装）。两个同 id 的池
-        # 会让前端索引撞车、版本页出现重复卡池 —— 所以把 EXTRA 的套装并进扫描结果，
-        # 扫描结果没有的素材（2.11 的 bgClean / 列表缩略图）再用 EXTRA 的补位。
+        # 会让前端索引撞车、版本页出现重复卡池 —— 所以把 EXTRA 的套装并进扫描结果
+        # 扫描结果没有的素材（2.11 的 bgClean / 列表缩略图）再用 EXTRA 的补位
         exist = next((b for b in banners if b["id"] == cfg["id"]), None)
         if exist is None:
             banners.append(entry)
@@ -1634,8 +1632,8 @@ def main():
                     exist["assets"][k] = v
 
     # ---------- 基线合并：把「本次没扫到素材目录」的阁补回来
-    # 发行版没有 `素材/服装阁/`，扫描结果天然为空 —— 88 座内置阁全靠这一步。
-    # 开发版扫得到全部 88 座，这里补 0 个，行为与合并前一致。
+    # 发行版没有 `素材/服装阁/`，扫描结果天然为空 —— 88 座内置阁全靠这一步
+    # 开发版扫得到全部 88 座，这里补 0 个，行为与合并前一致
     banners, _added = merge_baseline(
         banners, baseline, set_texts, part_info, set_info, versions
     )
@@ -1645,19 +1643,18 @@ def main():
     if _added:
         print(f"[pool-map] 基线补回 {len(_added)} 座阁（本次未扫到其素材目录）")
 
-    # ---------- seq：版本内序号（ 起**由管线计算**，不再手写、不再读对照表）
+    # ---------- seq：版本内序号（起**由管线计算**，不再手写、不再读对照表）
     #
-    #   主依据：**星级** —— 含 5★ 的阁在前，纯 4★ 的阁在后；
-    #   辅依据：**gachaKey 数值**升序（不是字符串，见下面的坑）；
-    #   特别的：**常驻阁永远排最后**（在 1.0 自己那组里垫底，
-    #           其它版本由前端把常驻池追加到列表末尾）。
+    # 主依据：**星级** —— 含 5★ 的阁在前，纯 4★ 的阁在后
+    # 辅依据：**gachaKey 数值**升序（不是字符串，见下面的坑）
+    # 特别的：**常驻阁永远排最后**（在 1.0 自己那组里垫底
+    # 其它版本由前端把常驻池追加到列表末尾）
     #
-    #   例（用户口径）：0.1 → 心愿栖金蕊(1)、银羽衔月歌(2)、心轮曳星河(3)、繁星织梦(4)；
-    #                  常驻「遥远之海」在 1.0 组里是第 5 个。
+    # 例：0.1 → 心愿栖金蕊(1)、银羽衔月歌(2)、心轮曳星河(3)、繁星织梦(4)
+    # 常驻「遥远之海」在 1.0 组里是第 5 个
     #
-    # ⚠ ：编号是「001~999 官方 + 1000~9999 自定义」两段并存，且允许不连续
-    #   （999 / 1000 / 1206 / 2233 同时存在）。所以必须按**数值**比，
-    #   不能按字符串 —— 字符串会把 "999" 排到 "1206" 后面。
+    # （999 / 1000 / 1206 / 2233 同时存在）
+    # 不能按字符串 —— 字符串会把 "999" 排到 "1206" 后面
     def gacha_num(b):
         m = re.search(r"\d+", str(b.get("gachaKey") or ""))
         return int(m.group()) if m else 10 ** 6   # 没编号的排最后
@@ -1699,7 +1696,7 @@ def main():
 
     unused_gacha = sorted(set(gacha_map) - used_gacha)
 
-    # 抽卡规则（用户 2026-10-19 拍板 + 概率反解校验）
+    # 抽卡规则
     rules = {
         "_comment": "概率参数由实机统计反解（不用公示值），改动前请跑 tools/verify-rates.py",
         "cost": {
@@ -1748,8 +1745,7 @@ def main():
         },
         "standardPoolSamePity": True,
         # 纯 4★ 卡池（池内没有 5★ 套装，如 2.10「不灭的幽旅」/「以长夜为誓」）
-        # ⚠ 踩坑：这段以前只存在于 pool-map.json 里（手工补的），脚本里的 rules 常量没同步，
-        #    重跑构建就丢了 —— 纯 4★ 池会静悄悄退回主池的 3.6801% / 10 抽保底。
+        # 重跑构建就丢了 —— 纯 4★ 池会静悄悄退回主池的 3.6801% / 10 抽保底
         "pure4": {
             "base4": 0.1021,
             "hard4": 5,
@@ -1768,8 +1764,8 @@ def main():
         "milestonePulls": [20, 40, 60, 80, 100, 120, 140, 160, 180, 230],
     }
 
-    # 三星散件 / 货币图标同样来自源目录（通用散件、界面整包）—— 发行版没有源，
-    # 就用基线里冻结的那份，别把这两块写成空数组（前端会没有图标可显示）。
+    # 三星散件 / 货币图标同样来自源目录（通用散件、界面整包）—— 发行版没有源
+    # 就用基线里冻结的那份，别把这两块写成空数组（前端会没有图标可显示）
     stars3 = _safe(load_stars3, [], "load_stars3")
     currency = _safe(load_currency, [], "load_currency")
     if baseline:

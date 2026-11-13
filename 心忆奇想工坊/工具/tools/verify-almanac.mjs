@@ -1,8 +1,4 @@
-/**
- * 玄学运势全流程验收：`npm run dev` 后 `node tools/verify-almanac.mjs`。
- * 覆盖侧边栏改名 / 待机几何对齐 / alpha 轮廓热区 / 全状态流转 / 书写逐字 + 跳过 / 书签三段式 /
- * 时间范围 / 无退出键 + 点空白不退 + ESC / 首登免责 → 引导卷轴 → 生辰弹窗 → 解锁。
- */
+/** 玄学运势全流程验收：`npm run dev` 后 `node tools/verify-almanac.mjs` */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -86,7 +82,7 @@ const SNAP = () => {
 
 async function gotoAlmanac() {
   await p.goto(BASE + '/#/almanac', { waitUntil: 'domcontentloaded' })
-  // 起一级 ↔ 二级切换会铺 1.4s 黑屏加载层（整屏拦截指针），
+  // 起一级 ↔ 二级切换会铺 1.4s 黑屏加载层（整屏拦截指针）
   // 等待时间必须盖过它，否则悬停检测全落空
   await p.waitForTimeout(1900)
 }
@@ -108,7 +104,6 @@ await p.evaluate(() => {
   localStorage.setItem('nikki-almanac-birth-v1', JSON.stringify({ year: 1995, month: 6, day: 15, hour: 9 }))
   localStorage.setItem('nikki-almanac-uid-v1', 'u-verify')
 })
-// ⚠ 只改 hash 属同文档跳转，路由首帧可能把地址覆盖回 #/ → 过一页 about:blank 强制整页重载
 await p.goto('about:blank')
 await gotoAlmanac()
 
@@ -224,7 +219,7 @@ let ax = await p.evaluate(() => {
   const b = e.getBoundingClientRect()
   return { x: (b.left - stage.left) / k + b.width / k / 2, y: (b.top - stage.top) / k + b.height / k / 2 }
 })
-// 往左拖 55%（1668*0.55 ≈ 917px）
+// 往左拖 55%
 await p.mouse.move(ax.x, ax.y)
 await p.mouse.down()
 for (let i = 1; i <= 10; i++) {
@@ -236,7 +231,7 @@ await p.waitForTimeout(900)
 const drag50 = await p.evaluate(SNAP)
 ok(drag50.sheet.w <= 60, `反拖 ≥50% 松手 → 卷回收起态（宽 ${drag50.sheet.w}）`)
 
-// 再展开，拖到底（100%）
+// 再展开，拖到底
 await p.click('.qa-open')
 await p.waitForTimeout(1200)
 ax = await p.evaluate(() => {
@@ -346,7 +341,7 @@ await p.waitForTimeout(1500)
 const withBazi = await p.evaluate(() => !!document.querySelector('.pz'))
 ok(withBazi, '填了生辰 → 八字区显示四柱')
 // 起「问过没」单独记在 nikki-almanac-bazi-asked-v1 上：
-// 只删 birth 不再算首登（用户主动清生辰不该被重新盘问一遍），要模拟真首登得连标记一起删
+// 只删 birth 不再算首登，要模拟真首登得连标记一起删
 await p.evaluate(() => {
   localStorage.removeItem('nikki-almanac-birth-v1')
   localStorage.removeItem('nikki-almanac-bazi-asked-v1')

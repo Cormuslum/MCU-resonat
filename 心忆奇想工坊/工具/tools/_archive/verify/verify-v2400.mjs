@@ -1,16 +1,4 @@
-/**
- * verify-v2400.mjs —— 六项改动验收
- *
- * 覆盖：
- * 1 侧边栏 常态隐藏 / 左缘 100px 唤起 / 移开收起 / 左下角切换键不误触
- * 2 主页 LOGO 动态背景只有「心忆共鸣」/ 静态背景双 LOGO 恢复
- * 3 套装名版式 星级 32.4（54 的 3/5）/ 间距 −3（−6 的 1/2）/ 名称牌 300×86
- * 4 图鉴切换 整屏碎裂（600 块）→ 虚空 → 重构
- * 5 加载过渡 三类跳转触发 / 进度条 bottom 100 / 装饰底边 932 / 结束后销毁
- * 6 套装名列表 常驻池 8 套全列出 / 同屏 3 套 / 滚轮与拖动都能滚
- *
- * 运行：node tools/verify-v2400.mjs（需 dev server 在 5178）
- */
+/** verify-v2400.mjs —— 六项改动验收 */
 import { chromium } from 'playwright-core'
 
 const BASE = 'http://localhost:5178'
@@ -71,7 +59,7 @@ console.log('\n1) 侧边栏：常态隐藏 + 左缘 100px 唤起')
 await go('/banner')
 ok('常态 opacity = 0', (await style('.rail', 'opacity')) === '0')
 ok('常态整体在屏幕左侧之外', (await rect('.rail')).right <= 0, `right ${Math.round((await rect('.rail')).right)}`)
-// (50,540) 压在共鸣页卡池列表上（.pool-list 带 data-no-rail，故意让位），
+// (50,540) 压在共鸣页卡池列表上（.pool-list 带 data-no-rail，故意让位）
 // 取 y=1000 的空白背景才是在测「100px 感应宽度」本身
 await p.mouse.move(50, 1000)
 await p.waitForTimeout(500)
@@ -207,7 +195,7 @@ ok('加载层自行销毁', await p.evaluate(() => !document.querySelector('.ld'
 ok('已进入版本页', (await p.evaluate(() => location.hash)) === '#/versions')
 
 // 二级 → 二级（侧栏）
-// 版本页左栏整列都是版本卡（button），压着按钮时侧栏会让位；
+// 版本页左栏整列都是版本卡（button），压着按钮时侧栏会让位
 // 必须进到最左 32px 的贴边死区才能强制叫出侧栏的导航兜底
 await p.mouse.move(24, 540)
 await p.waitForTimeout(500)

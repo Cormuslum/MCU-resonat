@@ -62,7 +62,7 @@ SKIP_DIRS = {".git", "node_modules", "dist", ".shots", ".workbuddy-ai", "备份"
 UPDATER_SKIP = {".inbox", ".snapshots"}
 # tools/ 只收脚本（沿用备份约定：不含 shots/*.png 截图产物）
 TOOLS_EXT = {".py", ".mjs", ".sh", ".json"}
-# 布局坐标/ 只收 Markdown 文档（pxdesk / png 素材体积大且可再生）
+# 布局坐标/ 只收 Markdown 文档
 LAYOUT_EXT = {".md"}
 
 # 目录 → 允许的扩展名（None = 全收）

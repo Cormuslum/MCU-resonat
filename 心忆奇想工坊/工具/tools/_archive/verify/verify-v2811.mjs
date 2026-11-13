@@ -1,15 +1,4 @@
-/**
- * 验收 · 存档备份（导出 / 导入）
- *
- * 这是单机游戏：存档只在 localStorage，清一次浏览器数据就全没。
- * 本轮加了「导出 JSON / 从 JSON 恢复」，这个脚本覆盖三条主线：
- *
- * 1. 导出：点「导出」真的能下一个 .json，内容结构正确（外壳 + 数据）
- * 2. 校验：不是存档的文件（坏 JSON / 别的程序的 / 空对象）要被拒绝，且**不覆盖**现有进度
- * 3. 往返：导出 → 清空 → 导入 → 保底 / 图鉴 / 记录都回来了
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2811.mjs`
- */
+/** 验收 · 存档备份（导出 / 导入） */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -58,13 +47,7 @@ function seededSave() {
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 
-/**
- * 开一个带指定存档的页面。
- *
- * ⚠ `addInitScript` **每次导航都会跑**（含 reload）。直接写存档的话，
- * 「导入后 reload 验证」这一步会被它又覆盖回初始值 —— 测试会误报成「导入没生效」。
- * 所以只播一次种：写存档的同时打一个标记，之后只在标记不存在时才写。
- */
+/** 开一个带指定存档的页面。直接写存档的话， 「导入后 reload 验证」这一步会被它又覆盖回初始值 —— 测试会误报成「导入没生效」 */
 async function newPage(save) {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, acceptDownloads: true })
   await ctx.addInitScript(([k, v, flag]) => {
@@ -207,7 +190,7 @@ console.log('\n【三、导出 → 清空 → 导入 往返】')
   }, text)
   ok(r.ok === true, '导入成功写入', r.error ?? '')
 
-  // 3.4 重载页面，确认进度真的回来了（不是只在内存里）
+  // 3.4 重载页面，确认进度真的回来了
   await p2.reload({ waitUntil: 'domcontentloaded' })
   await p2.waitForTimeout(2200)
   const after = await p2.evaluate((k) => JSON.parse(localStorage.getItem(k) || 'null'), SAVE_KEY)

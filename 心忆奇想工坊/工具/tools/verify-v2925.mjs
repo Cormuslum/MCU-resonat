@@ -1,8 +1,4 @@
-/**
- * 验收（两项前端修复，纯离线）：A. 信封正文 `**…**` 渲染成 <b> 且不出现字面 `**`；
- * B. 服装图鉴雷达：未选部件 = 套装五维之和、选中部件 = 该部件五维（与页面 `.rd-area` 实测对比）。
- * 用已 build 的 `dist` 静态托管 + 本机 Chrome 无头；改完前端先 `npm run build`。
- */
+/** 验收（两项前端修复，纯离线）：A. 信封正文 `**…**` 渲染成 <b> 且不出现字面 `**`； B. 服装图鉴雷达：未选部件 = 套装五维之和、选中部件 = 该部件五维（与页面 `.rd-area` 实测对比）。用已 build 的 `dist` 静态托管 + 本机 Chrome 无头；改完前端先 `npm run build` */
 import fs from 'node:fs'
 import path from 'node:path'
 import http from 'node:http'

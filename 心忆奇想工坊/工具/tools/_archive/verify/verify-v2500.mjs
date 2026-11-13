@@ -1,15 +1,4 @@
-/**
- * 验收：按界面分配背景音 + 音量总控修复 + 生辰弹窗 + 卷轴侧栏 + 加载底图
- *
- * 覆盖这批 11 条需求里能自动化的部分：
- * A 玄学·生辰：首次弹免责 → 默认 2020/2/20 → 点「不填写」落盘 → 二次进入不再打扰
- * B 玄学·卷轴：待机有侧栏，点卷轴后（收起态）侧栏整块不出现，回待机恢复
- * C 加载层：底图换成 `T_UI_loading_bg`（不再是纯黑），进度条距底 100、装饰距进度条 20
- * D 背景音：五个界面各自的曲目、图鉴权重、主音量归零后换界面不复活、六根分界面滑杆
- * E 主页：静态背景无音轨（video/audio 都不渲染），动态背景 video 常驻 muted、声音由独立 <audio> 承担
- *
- * 用法：先 npm run dev（5178），再 node tools/verify-v2500.mjs
- */
+/** 验收：按界面分配背景音 + 音量总控修复 + 生辰弹窗 + 卷轴 */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -64,7 +53,7 @@ await page.addInitScript(() => {
 })
 
 const pageErrors = []
-// 音频 / 视频是 `new Audio()` / <video> 现造的，切页时浏览器会取消未完成的取流，
+// 音频 / 视频是 `new Audio()` / <video> 现造的，切页时浏览器会取消未完成的取流
 // 报成 ERR_ABORTED —— 跟代码无关；真正的 404 / 5xx 仍然照记
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm|video|ui\/home)\//.test(t)
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
@@ -211,7 +200,7 @@ await step('B3 卷轴收起时贴左缘也不弹侧栏', async () => {
 
 await step('B4 版本页贴边死区能叫出侧栏', async () => {
   await go('/versions', 2200)
-  // 版本页左栏整列是版本卡（button），压着按钮时侧栏会让位；
+  // 版本页左栏整列是版本卡（button），压着按钮时侧栏会让位
   // 贴到最左 32px 的「死区」必须能强制叫出来，否则这一页的跨页导航就没有入口
   await page.mouse.move(960, 500)
   await page.waitForTimeout(300)
@@ -222,8 +211,8 @@ await step('B4 版本页贴边死区能叫出侧栏', async () => {
 })
 
 await step('B5 回主页后侧栏保持隐藏', async () => {
-  // 起主页**不再有侧边栏**（信封入口在左上角，左缘感应区会让位），
-  // 所以这里反过来验：从二级页 ESC 回主页后，`.rail` 必须不在。
+  // 起主页**不再有侧边栏**（信封入口在左上角，左缘感应区会让位）
+  // 所以这里反过来验：从二级页 ESC 回主页后，`.rail` 必须不在
   await go('/almanac', 2000)
   await page.keyboard.press('Escape')
   await page.waitForTimeout(900)
@@ -367,10 +356,7 @@ await step('E 主页动态有音轨 / 静态静音', async () => {
   await go('/', 2600)
   // 浏览器要先有一次真实交互才允许出声，点一下站着不动的地方
   await page.mouse.click(960, 1040)
-  /*
-   * 开场动画（本次会话第一次进主页时）跑完才进 reveal，音轨是这时才起播的
-   * —— 所以不能死等固定毫秒，直接等 audio 真正开始播（最多 12s，够 boot 5s + reveal 1.9s）。
-   */
+  /* 开场动画（本次会话第一次进主页时）跑完才进 reveal，音轨是这时才起播的 —— 所以不能死等固定毫秒，直接等 audio 真正开始播（最多 12s，够 boot 5s + reveal 1.9s） */
   await page
     .waitForFunction(() => {
       const a = document.querySelector('.hm-bg-audio')

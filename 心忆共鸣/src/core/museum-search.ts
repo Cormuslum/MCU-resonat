@@ -1,6 +1,5 @@
 import type { useGameStore } from '@/stores/game'
 import type { SearchItem } from '@/components/SearchPopup.vue'
-// ⚠ 只用**标题索引**，不要 import `./museum-content` —— 那是正文的入口。
 import { storyNames, readingNames } from './museum-names'
 
 type Store = ReturnType<typeof useGameStore>
@@ -50,9 +49,7 @@ function suitUnlocked(store: Store, s: SuitLike): boolean {
   return parts.some((p) => store.codex.has(`${s.id}:${p.name}`))
 }
 
-/**
- * 主界面统一搜索：服装（套装名 / 属性标签 / 星级 / 部件名）+ 故事 / 阅读名称（来自 `museum-names`）。
- */
+/** 主界面统一搜索：服装（套装名 / 属性标签 / 星级 / 部件名）+ 故事 / 阅读名称（来自 `museum-names`） */
 export function searchMuseum(q: string, store: Store): SearchItem[] {
   const query = q.trim()
   if (!query) return []

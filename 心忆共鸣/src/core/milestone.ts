@@ -1,12 +1,7 @@
-/**
- * 深海回响里程碑：横向曲线时间轴 + 节点 + 右侧详情。阈值三套 —— 纯 4★ 池 5/15/25、
- * 5★+4★ 池 20/40/…/230、常驻池（遥远之海）36 档 20…715；同一档多件奖励按档位 group。
- */
+/** 深海回响里程碑：横向曲线时间轴 + 节点 + 右侧详情 */
 import type { BannerInfo, MilestoneInfo } from '@/types'
 
-/**
- * 里程碑奖励名的中文对照；原始资源里是英文，查不到的统一叫「深海回响礼盒」。
- */
+/** 里程碑奖励名的中文对照；原始资源里是英文，查不到的统一叫「深海回响礼盒」 */
 const REWARD_CN: Record<string, string> = {
   'Flowing Spectrum Selectable': '流光自选礼盒',
   'Blossoming Tales': '花间絮语',

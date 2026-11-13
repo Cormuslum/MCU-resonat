@@ -1,9 +1,5 @@
 import { chromium } from 'playwright-core'
 
-/* ⚠ 现状口径：本脚本是「博物图鉴重构」之前的旧巡检，
- * 断言的入口（`.mz-hit` / `.rd-collect` 等）在重构后已不存在，跑起来只会报超时。
- * 现行验收统一看 tools/verify-readings.mjs（按《博物图鉴重构计划书.md》§8 M3）。
- * 文件保留仅作历史参考，不再执行。 */
 console.log('[已并入 verify-readings.mjs] 本脚本为重构前的旧巡检，不再执行。')
 process.exit(0)
 
@@ -20,7 +16,7 @@ const errs = []
 p.on('pageerror', (e) => errs.push(e.message))
 p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()) })
 
-  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg，
+  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg
   // 网络永远不会「空闲」→ waitUntil 必须用 domcontentloaded，不能用 networkidle
 await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 await p.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))
@@ -58,7 +54,7 @@ const menuGone = await p.evaluate(() => ({
 ok(!menuGone.menu, '右上角 menu 按钮已移除')
 ok(menuGone.back, '返回键仍在')
 
-/* 3) 列表底边距：距 tabpanel 底 ≥ 30px */
+/* 3) 列表底边距 */
 const gap = await p.evaluate(() => {
   const list = document.querySelector('.rd-list').getBoundingClientRect()
   // tabpanel 是第二个 rd-layer（reel/paper/tabpanel 顺序）→ 用坐标推算
@@ -106,7 +102,7 @@ await p.waitForTimeout(400)
 const eggSame = await p.$eval('.rd-egg', (e) => e.getAttribute('src')).catch(() => null)
 ok(eggSame === egg1, `重复点同一本彩蛋不变（${egg1} → ${eggSame}）`)
 
-// 换一本（先双击解锁第二本， 起未解锁不显示彩蛋）
+// 换一本（先双击解锁第二本，起未解锁不显示彩蛋）
 await p.locator('.rd-row').nth(1).click()
 await p.waitForTimeout(80)
 await p.locator('.rd-row').nth(1).click()

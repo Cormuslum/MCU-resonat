@@ -1,7 +1,4 @@
-/**
- * 「ESC 返回跳转前界面」栈：跳转前把来源完整 URL 压栈（最多 2 层），目标页 ESC 先问 `takeHop()`；
- * 需要恢复的状态全部编码在 query 里，只在内存里，不落 localStorage。
- */
+/** 「ESC 返回跳转前界面」栈：跳转前把来源完整 URL 压栈（最多 2 层），目标页 ESC 先问 `takeHop()`； 需要恢复的状态全部编码在 query 里，只在内存里，不落 localStorage */
 
 /** 最多记几层跳转 */
 const MAX_DEPTH = 2
@@ -25,10 +22,7 @@ export function clearHops(): void {
   hops = []
 }
 
-/**
- * 给「来源 URL」挂上需要恢复的弹窗状态。
- * 用 `resume=search&kw=<关键词>` 表示「回来时把搜索弹窗打开，关键词还原」。
- */
+/** 给「来源 URL」挂上需要恢复的弹窗状态。用 `resume=search&kw=<关键词>` 表示「回来时把搜索弹窗打开，关键词还原」 */
 export function withSearchResume(url: string, kw: string): string {
   const [path, rawQuery] = url.split('?')
   const q = new URLSearchParams(rawQuery ?? '')

@@ -1,17 +1,4 @@
-/**
- * 验收 · 共鸣页按版本收窄 + 首次必须选版本 + 080 卡池背景
- *
- * 覆盖用户这一批的两条要求：
- * 1. 共鸣页只显示**当前版本**的卡池；首次进入必须先在「时隙遗光」选一次版本，
- * 没选之前主页的共鸣入口与侧栏共鸣项都置灰不可点。
- * 2. 「雪落颂愿时」（080）的卡池背景用用户补的图（`bg/080.webp`）。
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2602.mjs`
- *
- * ⚠ 现状口径（2026-11-03 改）：卡池主键 = **官方 gachaKey**（`banner-076`），
- * 版本内按官方号排序 → 2.10 的第一池是 076 执律的流金；常驻池 id = `banner-001`。
- * 旧写法「版本内序号」只剩 legacyId。
- */
+/** 验收 · 共鸣页按版本收窄 + 首次必须选版本 + 080 卡池 */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -112,14 +99,13 @@ check('A2 主页右缘竖排「心忆共鸣」置灰 + disabled',
 const others = gate.nav.filter((x) => !x.cls.includes('nv-banner'))
 check('A3 其余入口不受影响（4 个都还能点）',
   others.length === 4 && others.every((x) => !x.dis), `${others.length} 个正常`)
-// 起主页**不再有侧边栏**（信封移到左上角、左缘感应区一并撤掉），
-// 置灰这道闸只剩「居中星芒 + 右缘竖排」两套入口（见 A1/A2）。
+// 起主页**不再有侧边栏**（信封移到左上角、左缘感应区一并撤掉）
+// 置灰这道闸只剩「居中星芒 + 右缘竖排」两套入口（见 A1/A2）
 check('A4 主页已无侧栏（v1.6.06 删除），闸门只由星芒 + 右缘承担',
   gate.rail.length === 0,
   gate.rail.length ? gate.rail.map((x) => `${x.txt}:${x.dis ? '禁' : '可'}`).join(' ') : '无 .rail-btn')
 
-/* 视觉：置灰是真的变了样（灰度 + 压暗），不是只加了个 class。
-   静态背景看星芒、动态背景看右缘竖排 —— 两套都要拦，这里各取一次计算样式。 */
+/* 视觉：置灰是真的变了样（灰度 + 压暗），不是只加了个 class。静态背景看星芒、动态背景看右缘竖排 —— 两套都要拦，这里各取一次计算样式 */
 const look = await page.evaluate(() => {
   const pick = (sel) => {
     const el = document.querySelector(sel)
@@ -161,7 +147,7 @@ const manifest = await page.evaluate(async () => await (await fetch('/assets/man
 await step('B 2.10', async () => {
   const cap = await pickVersion('2.10')
   // 起版本内按**官方编号**排序（不再是目录顺序）：
-  // 2.10 的第一池是 076 执律的流金（原目录顺序里是「在属于孩子的故事里」）。
+  // 2.10 的第一池是 076 执律的流金（原目录顺序里是「在属于孩子的故事里」）
   const first210 = manifest.banners.find((b) => b.version === '2.10')?.name ?? ''
   check('B1 2.10 进入键标签 = 该版本第一池（官方编号序）', cap === first210, `${cap}（期望 ${first210}）`)
   await enterPool()

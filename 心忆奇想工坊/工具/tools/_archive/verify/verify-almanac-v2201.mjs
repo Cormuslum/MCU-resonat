@@ -1,21 +1,4 @@
-/**
- * verify-almanac-v2201.mjs —— 玄学运势验收（11 项用户需求）
- *
- * 用法：npm run dev 后 node tools/verify-almanac-v2201.mjs
- *
- * 覆盖：
- * R1 高清素材全部换新（纸面/轴杆/桶/四卷轴/墨台/笔，中欧两套）
- * R2 文字不溢出纸面 / 不溢出所在列（连续 8 天实测）
- * R3 弹窗无「玄学运势」四字；副标题居中 + 放大
- * R4 左侧重复元素（运势环）已移除
- * R5 主界面标题用「玄运」艺术字
- * R6 书签默认背面；点一次才翻面；再点翻回
- * R7 闭合态两轴杆紧贴（不计透明通道）
- * R8 展开全程轴杆中心线 == 纸面边缘（含 600ms 补间中途）
- * R9 书签档位用艺术字（6 档齐全 + 大凶兜底）
- * R10 中/欧两风格各 50%（多次进入统计）
- * R11 返回键悬停换 _h 素材
- */
+/** verify-almanac-v2201.mjs —— 玄学运势 */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -46,9 +29,8 @@ p.on('console', (m) => {
 const BIRTH = { year: 1995, month: 6, day: 15, hour: 9 }
 
 async function enter(withBirth = true) {
-  // ⚠ 不要用 `networkidle`：首页挂着 bgm / 背景视频的 `preload="auto"`，
-  // 连接一直不断，networkidle 永远等不到 → 20s 超时（这个脚本因此长期跑不通）。
-  // 改成 domcontentloaded + 等 loading 消失。
+  // 连接一直不断，networkidle 永远等不到 → 20s 超时（这个脚本因此长期跑不通）
+  // 改成 domcontentloaded + 等 loading 消失
   await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
   await p.waitForFunction(() => !document.querySelector('.loading'), { timeout: 30000 }).catch(() => {})
   await p.evaluate((b) => {
@@ -59,9 +41,8 @@ async function enter(withBirth = true) {
   await p.goto(BASE + '/#/almanac', { waitUntil: 'domcontentloaded' })
   await p.waitForFunction(() => !document.querySelector('.loading'), { timeout: 30000 }).catch(() => {})
   await p.waitForTimeout(900)
-  // 等书签的入场补间真的停稳。
-  // 以前靠 `networkidle` 拖够了时间，改成 domcontentloaded 后入场动画可能还在跑，
-  // 这时量到的 `bm-card` 位置是中途值，真实鼠标点击会落空（R6 翻面两条会假失败）。
+  // 等书签的入场补间真的停稳
+  // 这时量到的 `bm-card` 位置是中途值，真实鼠标点击会落空（R6 翻面两条会假失败）
   await p.waitForFunction(() => !!document.querySelector('.bm.in'), { timeout: 15000 }).catch(() => {})
   await p.evaluate(async () => {
     const el = document.querySelector('.bm-card')
@@ -78,7 +59,7 @@ async function enter(withBirth = true) {
   })
 }
 
-/** 舞台坐标（1920×1080 设计坐标，已除缩放） */
+/** 舞台坐标（已除缩放） */
 const boxOf = (sel) =>
   p.evaluate((s) => {
     const st = document.querySelector('.design').getBoundingClientRect()

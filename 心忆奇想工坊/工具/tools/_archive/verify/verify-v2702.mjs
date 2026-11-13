@@ -1,15 +1,4 @@
-/**
- * 验收 —— 只覆盖本轮实际改动的项目及其关联项。
- *
- * A. 卡池编号统一官方号（manifest id / 版本内 seq / 排序 / 20~100 抽共用图）
- * B. 起存档迁移已删除：目前没有老存档，manifest 不再出 legacyId
- * C. 版本页徽记已删
- * D. 深海回响按池取摆饰（有图 / 只有文案 / 常驻无摆饰）
- * E. 跳过全部只播「新部件 + 4★/5★ 第 1、2 份」+ 套装页不再有「跳过全部」文字
- * F. 工坊：改名、图标、表单字段
- *
- * 用法：node tools/verify-v2702.mjs
- */
+/** 验收 —— 只覆盖本轮实际改动的项目及其关联项 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -80,8 +69,8 @@ ok('套装槽位合并为「整体图（OV）」',
 ok('卡池奖励槽位改名「深海回响奖励图」',
   state.jobs.pool.groups.some((g) => g.slots.some((s) => s.label === '深海回响奖励图')))
 ok('/api/state 带 majors 列表', (state.options.majors || []).length >= 2)
-// ：版本下拉必须按版本号**数值**排序（0.1 < 0.2 < 1.0 < 1.10 < 2.11），
-// 否则 readdir / 写表顺序会把 0.2 排到 2.11 后面，新建版本还会默认选中它。
+// ：版本下拉必须按版本号**数值**排序（0.1 < 0.2 < 1.0 < 1.10 < 2.11）
+// 否则 readdir / 写表顺序会把 0.2 排到 2.11 后面，新建版本还会默认选中它
 {
   const vs = (state.options.versions || []).map((v) => v.v)
   const key = (s) => s.split('.').map((n) => Number(n) || 0)
@@ -95,7 +84,7 @@ ok('/api/state 带 majors 列表', (state.options.majors || []).length >= 2)
   ok('版本下拉按版本号排序', sorted && vs.length > 0, vs.join(' '))
   ok('版本下拉末位是最新版本（作为默认值）', vs.at(-1) === '2.11', vs.at(-1) || '（空）')
 
-  // 磁盘上的 版本表.csv 也必须按版本号排好 —— 工坊写入时会重排，
+  // 磁盘上的 版本表.csv 也必须按版本号排好 —— 工坊写入时会重排
   // 但外部手改 / 追加行很容易又把 0.1 之类塞到末尾
   const csvV = fs.readFileSync(path.join(ROOT, '素材/信息表/版本表.csv'), 'utf8')
     .replace(/^\uFEFF/, '').trim().split(/\r?\n/).slice(1)

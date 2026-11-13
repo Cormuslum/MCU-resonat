@@ -1,8 +1,4 @@
-/**
- * 增量写入判定：`applyFingerprint()` 是整次写入的内容指纹（任务 + 字段 + 每个源文件的内容哈希），
- * `isUnchangedWrite()` 是单个素材的「上次写入结果」缓存；指纹只看内容，不看路径与时间。
- * 状态落在 `updater/` 下、不参与管线，删掉这两个 json 只是让下次全量跑一遍。
- */
+/** 增量写入判定：`applyFingerprint()` 是整次写入的内容指纹（任务 + 字段 + 每个源文件的内容哈希）， `isUnchangedWrite()` 是单个素材的「上次写入结果」缓存；指纹只看内容，不看路径与时间。状态落在 `updater/` 下、不参与管线，删掉这两个 json 只是让下次全量跑一遍 */
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -17,7 +13,7 @@ function exists(p) {
   try { fs.accessSync(p); return true } catch { return false }
 }
 
-/** 文件内容签名：全文 SHA-256 + 字节数。不含路径、不含时间戳。 */
+/** 文件内容签名：全文 SHA-256 + 字节数。不含路径、不含时间戳 */
 function contentSig(abs) {
   if (!exists(abs)) return 'missing'
   let fd
@@ -44,9 +40,7 @@ function contentSig(abs) {
 
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex')
 
-/**
- * 一次写入的内容指纹：`files` 每项都带源文件的内容签名，换了任何一张图或一个字段，指纹就变。
- */
+/** 一次写入的内容指纹：`files` 每项都带源文件的内容签名，换了任何一张图或一个字段，指纹就变 */
 export function applyFingerprint({ job, fields = {}, files = [], options = {} }) {
   const normFields = Object.fromEntries(
     Object.keys(fields).sort().map((k) => [k, String(fields[k] ?? '')]),
@@ -84,7 +78,7 @@ export function writeLastApply(fp, meta = {}) {
   writeJson(LAST_APPLY, { fp, at: new Date().toISOString(), ...meta })
 }
 
-/** 撤回之后必须清掉指纹，否则用户撤回完再写同一批会被误判成「没改动」。 */
+/** 撤回之后必须清掉指纹，否则用户撤回完再写同一批会被误判成「没改动」 */
 export function clearLastApply() {
   try { if (exists(LAST_APPLY)) fs.unlinkSync(LAST_APPLY) } catch { /* ignore */ }
 }
@@ -107,10 +101,7 @@ export function saveWriteCache(cache) {
   writeJson(WRITE_CACHE, trimmed)
 }
 
-/**
- * 这一项是不是「与上一次写入完全一致」：
- * 源内容没变，且上次写完之后目标也没被别人动过 → 不必再检验/复制。
- */
+/** 这一项是不是「与上一次写入完全一致」： 源内容没变，且上次写完之后目标也没被别人动过 → 不必再检验/复制 */
 export function isUnchangedWrite(cache, src, target) {
   const k = cacheKey(target)
   const prev = cache[k]

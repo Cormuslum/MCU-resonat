@@ -1,7 +1,4 @@
-/**
- * 验证模拟器 EXE 的存档（localStorage）能跨重启保留。
- * 复现：启动 → 写 localStorage → 关闭 → 再启动 → 读回。固定端口 51800 应保证同 origin。
- */
+/** 验证模拟器 EXE 的存档（localStorage）能跨重启保留。复现：启动 → 写 localStorage → 关闭 → 再启动 → 读回。固定端口 51800 应保证同 origin */
 import { spawn, execFileSync } from 'node:child_process'
 import path from 'node:path'
 import http from 'node:http'

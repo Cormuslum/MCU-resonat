@@ -1,7 +1,4 @@
-/**
- * 元数据读写：版本表 / 服装阁索引 / 套装序列 / 属性 yaml / 故事 / 阅读物。
- * 只碰「人可以手改的纯文本」——CSV / JSON / YAML / Markdown。
- */
+/** 元数据读写：版本表 / 服装阁索引 / 套装序列 / 属性 yaml / 故事 / 阅读物。只碰「人可以手改的纯文本」——CSV / JSON / YAML / Markdown */
 import fs from 'node:fs'
 import path from 'node:path'
 import {
@@ -31,10 +28,7 @@ export function readVersionTable() {
   })).filter((x) => x.v))
 }
 
-/**
- * 版本表整表写入前的唯一性检查。
- * 版本号是**字符串键**：`1.10` 与 `1.1` 是两个不同版本，撞键即抛错。
- */
+/** 版本表整表写入前的唯一性检查。版本号是**字符串键**：`1.10` 与 `1.1` 是两个不同版本，撞键即抛错 */
 function assertUniqueVersionRows(list, where = '写入前') {
   const seen = new Map()
   for (const x of list) {
@@ -91,9 +85,7 @@ export function upsertVersion(patch) {
   return list
 }
 
-/**
- * 新增 / 改名一个大版本；大版本名在版本表里是冗余列，改名要遍历所有同 major 的行一起写。
- */
+/** 新增 / 改名一个大版本；大版本名在版本表里是冗余列，改名要遍历所有同 major 的行一起写 */
 export function upsertMajor(major, majorName) {
   const m = String(major || '').trim()
   if (!m) return readVersionTable()
@@ -120,10 +112,7 @@ export function listMajors() {
 
 /* ────────────────────────────── 服装阁索引 ────────────────────────────── */
 
-/**
- * `素材/信息表/卡池索引.json` —— 服装阁名 → 版本 / 序号 / 官方编号 / 素材键。
- * build-pool-map.py 读它并**覆盖**素材扫描的结果。
- */
+/** `素材/信息表/卡池索引.json` —— 服装阁名 → 版本 / 序号 / 官方编号 / 素材键 */
 const POOL_INDEX = path.join(INFO, '卡池索引.json')
 
 export function readPoolIndex() {
@@ -134,9 +123,7 @@ function writePoolIndex(obj) {
   writeJson(POOL_INDEX, obj)
 }
 
-/**
- * 服装阁编号规范化：001~999 官方 / 1000~9999 自定义，两段并存且允许不连续；`7` → `007`，空 / 0 / 5 位以上 → 空串。
- */
+/** 服装阁编号规范化：001~999 官方 / 1000~9999 自定义，两段并存且允许不连续；`7` → `007`，空 / 0 / 5 位以上 → 空串 */
 export function normalizeGacha(raw) {
   const digits = String(raw ?? '').replace(/\D/g, '')
   if (!digits) return ''
@@ -160,10 +147,7 @@ function usedGachaSet() {
   return set
 }
 
-/**
- * 下一个可用编号：从 500 起找空号。001~499 留给官方，500~999 自建 / DLC 默认，1000~9999 历史自建与兜底；
- * 编号只是主键，顺序看 `seq`。
- */
+/** 下一个可用编号：从 500 起找空号 */
 export function nextFreeGacha() {
   const used = usedGachaSet()
   for (let i = 500; i <= 999; i++) {
@@ -177,9 +161,7 @@ export function nextFreeGacha() {
   throw new Error('服装阁编号已用尽（500~9999 全占）')
 }
 
-/**
- * 新增 / 更新一座服装阁的索引；这里不写 `seq` —— 由 `tools/build-pool-map.py` 的 `assign_seq` 算。
- */
+/** 新增 / 更新一座服装阁的索引；这里不写 `seq` —— 由 `tools/build-pool-map.py` 的 `assign_seq` 算 */
 export function upsertPool(name, cfg) {
   const idx = readPoolIndex()
   const prev = idx[name] || {}
@@ -200,9 +182,7 @@ export function readSetSeq() {
   return txt ? parseCsv(txt) : []
 }
 
-/**
- * 追加 / 更新套装（同名「初始」等阶已存在则更新）：同阁视为修正登记信息，异阁按复刻把这次版本记到 `复刻` 列。
- */
+/** 追加 / 更新套装（同名「初始」等阶已存在则更新）：同阁视为修正登记信息，异阁按复刻把这次版本记到 `复刻` 列 */
 export function upsertSet({ id, star, name, pool, versionLabel }) {
   const rows = readSetSeq()
   const i = rows.findIndex((r) => r['套装名'] === name && (r['进化等阶'] || '初始') === '初始')
@@ -235,10 +215,7 @@ export function upsertSet({ id, star, name, pool, versionLabel }) {
 
 /* ────────────────────────────── 自建内容 ────────────────────────────── */
 
-/**
- * `素材/信息表/自建内容.json` —— 哪些服装阁 / 套装 / 阅读物是工坊自己造的（白名单，不看编号位数）。
- * 新建时自动登记；历史内容手动加一行：`{"pools":["某某阁"],"sets":["某某套装"]}`。
- */
+/** `素材/信息表/自建内容.json` —— 哪些服装阁 / 套装 / 阅读物是工坊自己造的（白名单，不看编号位数）。新建时自动登记；历史内容手动加一行：`{"pools":["某某阁"],"sets":["某某套装"]}` */
 const CUSTOM_FILE = path.join(INFO, '自建内容.json')
 // `readings`：阅读物没有归属阁可反推「是不是自建」，只能靠写入时登记（见 writeReading）
 const CUSTOM_KINDS = ['pools', 'sets', 'readings']
@@ -336,10 +313,7 @@ export function renameSetSeqName(from, to) {
   return hit
 }
 
-/**
- * 把一套服装改挂到另一座阁（「修改套装 → 换所属阁」用）。
- * 直接改来源那一行，不走 `upsertSet`（后者按「来源不同」判成**复刻**）。
- */
+/** 把一套服装改挂到另一座阁（「修改套装 → 换所属阁」用）。直接改来源那一行，不走 `upsertSet`（后者按「来源不同」判成**复刻**） */
 export function moveSetToPool(name, pool, versionLabel) {
   const rows = readSetSeq()
   const i = rows.findIndex((r) => r['套装名'] === name && (r['进化等阶'] || '初始') === '初始')
@@ -374,10 +348,7 @@ export const SLOTS = [
 
 /* ────────────────────────────── 目录解析 ────────────────────────────── */
 
-/**
- * 版本目录：`素材/服装阁/<版本号><版本名>/`，三种写法都要认（`1.0·探索季（公测）` / `0.1·祈愿星` / `2.11时光缝合的扉页`）；
- * 判据是「版本号之后不能紧跟数字」。
- */
+/** 版本目录：`素材/服装阁/<版本号><版本名>/`，三种写法都要认（`1.0·探索季（公测）` / `0.1·祈愿星` / `2.11时光缝合的扉页`）； 判据是「版本号之后不能紧跟数字」 */
 function versionPoolDir(version, versionName, { create = false } = {}) {
   const root = path.join(ASSET, '服装阁')
   const want = String(version)
@@ -396,10 +367,7 @@ function versionPoolDir(version, versionName, { create = false } = {}) {
   return made
 }
 
-/**
- * 某座阁的目录：`<版本目录>/<阁名>`。
- * 常驻池的目录名带 `常驻·` 前缀（`常驻·遥远之海`），build-pool-map 靠这个前缀判 standard。
- */
+/** 某座阁的目录：`<版本目录>/<阁名>`。常驻池的目录名带 `常驻·` 前缀（`常驻·遥远之海`），build-pool-map 靠这个前缀判 standard */
 export function poolDirOf(version, versionName, poolName, { create = false, standard = false } = {}) {
   const root = versionPoolDir(version, versionName, { create })
   const plain = String(poolName || '').replace(/^常驻·/, '')
@@ -408,19 +376,13 @@ export function poolDirOf(version, versionName, poolName, { create = false, stan
   return dir
 }
 
-/**
- * 兼容层：老代码按 `resolveVerDirs(...).{sourceDir,picDir,textDir}` 取目录。
- * 这三处**都是同一个「版本目录」**。
- */
+/** 兼容层：老代码按 `resolveVerDirs(...).{sourceDir,picDir,textDir}` 取目录。这三处**都是同一个「版本目录」** */
 function resolveVerDirs(version, versionName, { createSource = false } = {}) {
   const dir = versionPoolDir(version, versionName, { create: createSource })
   return { poolDir: dir, sourceDir: dir, picDir: dir, textDir: dir }
 }
 
-/**
- * 套装素材落盘：`素材/服装阁/<版本>/<阁>/<套装>/{半身像,图标,进化等阶}` —— 半身像 520×724、
- * 部件图标 256×256、整体图按阶段（初始 / 焕新 / 一进 / 二进 / 满进）；前端只认 OV-lvN。
- */
+/** 套装素材落盘 */
 const EVOLVE_STAGES = ['焕新', '一进', '二进', '满进']
 
 /** 从一个文件名判断它属于哪个进化阶段 */
@@ -434,10 +396,7 @@ function ovStageOf(filename) {
   return '初始'
 }
 
-/**
- * 写一套的图片素材。`busts` / `icons` / `ovs` 都是 `{src, name}`。
- * @returns {{stageCount:number, bustCount:number, iconCount:number}}
- */
+/** 写一套的图片素材。`busts` / `icons` / `ovs` 都是 `{src, name}` */
 export function writeSetImages({ snap, setDir, busts = [], icons = [], ovs = [], notes = [] }) {
   const stem = (f) => path.basename(String(f.name || f.src), path.extname(String(f.name || f.src)))
 
@@ -486,10 +445,7 @@ function yamlScalar(v) {
   return s
 }
 
-/**
- * 写新格式的套装 YAML 到套装库（平铺 `素材/套装库/<套装ID>.yaml`，管线 build-pool-map 优先读它）。
- * o = { setName, star(4|5), setId(S0001，同时是文件名), origin, firstVersion, desc, styles, parts[{name,slot,id,desc,stats}] }
- */
+/** 写新格式的套装 YAML 到套装库（平铺 `素材/套装库/<套装ID>.yaml`，管线 build-pool-map 优先读它） */
 export function writeSuitLibYaml({
   setName, star, setId = '', origin = '', firstVersion = '',
   desc = '', styles = [], parts = [],
@@ -540,9 +496,7 @@ export function writeStory({ name, star, body }) {
 
 /* ────────────────────────────── 故事 · 成品直写（发行版） ────────────────────────────── */
 
-/**
- * 成品故事的落点：发行版（`NIKKI_DIST_MODE=1`）直接改 `stories.json`，开发版走 md → `gen-stories.py`。
- */
+/** 成品故事的落点：发行版（`NIKKI_DIST_MODE=1`）直接改 `stories.json`，开发版走 md → `gen-stories.py` */
 const storyJsonFile = () => path.join(PUBLIC, 'assets', 'data', 'stories.json')
 
 /** 从成品 stories.json 里取一篇（按套装名，兼容按标题） */
@@ -554,10 +508,7 @@ export function readStoryOf(name) {
   return list.find((s) => s.setName === want) || list.find((s) => s.title === want) || null
 }
 
-/**
- * 把正文直接写进成品 `stories.json`（新增或覆盖），不产生中间 md：紧凑 JSON，与 `gen-stories.py` 的 `separators=(",", ":")` 一致；
- * `setId` / `major` 从 pool-map 反查。
- */
+/** 把正文直接写进成品 `stories.json`（新增或覆盖），不产生中间 md：紧凑 JSON，与 `gen-stories.py` 的 `separators=(",", ":")` 一致； `setId` / `major` 从 pool-map 反查 */
 export function upsertStoryJson({ name, star, body }) {
   const file = storyJsonFile()
   const list = readJson(file, null)
@@ -616,7 +567,7 @@ function nextReadingId(regionPrefix) {
   }
   walk(root)
   // ② 成品 JSON 里已有的编号。发行版不随包发 `阅读物/` 源目录 ——
-  //    内置阅读物只存在于 `public/assets/data/readings.json`，两处都看才唯一。
+  // 内置阅读物只存在于 `public/assets/data/readings.json`，两处都看才唯一
   const jf = path.join(PUBLIC, 'assets', 'data', 'readings.json')
   if (exists(jf)) {
     for (const r of readJson(jf, []) || []) {
@@ -626,10 +577,7 @@ function nextReadingId(regionPrefix) {
   return `read_L_book_${regionPrefix}${String(max + 1).padStart(3, '0')}`
 }
 
-/**
- * 写阅读物 txt。
- * 格式与现有文件一致：第 1 行《书名》，随后元数据，空行，正文。
- */
+/** 写阅读物 txt。格式与现有文件一致：第 1 行《书名》，随后元数据，空行，正文 */
 export function writeReading({ region, title, type = '书籍', body, id }) {
   const regionDir = REGION_DIR[region] || region
   // 不再分「系列」子目录 —— 模拟器的阅读物图鉴只按分区展示
@@ -648,15 +596,10 @@ export function writeReading({ region, title, type = '书籍', body, id }) {
 
 /* ────────────────────────────── 阅读物 · 成品直写（发行版） ────────────────────────────── */
 
-/**
- * 成品阅读物的落点：发行版（`NIKKI_DIST_MODE=1`）直接改 `readings.json`，开发版走 txt → `gen-readings.py`。
- */
+/** 成品阅读物的落点：发行版（`NIKKI_DIST_MODE=1`）直接改 `readings.json`，开发版走 txt → `gen-readings.py` */
 const readingJsonFile = () => path.join(PUBLIC, 'assets', 'data', 'readings.json')
 
-/**
- * 新增 / 覆盖一条阅读物（直接写成品 `readings.json`）：字段仅 `id/region/series/title/text`，紧凑 JSON、按 id 正序。
- * 给了 `id` 就按 id 查找，否则按书名（含《》）；`type`（书籍 / 信件 / 告示）只在 txt 头部，JSON 里没有。
- */
+/** 新增 / 覆盖一条阅读物（直接写成品 `readings.json`）：字段仅 `id/region/series/title/text`，紧凑 JSON、按 id 正序 */
 export function upsertReadingJson({ region, title, body, id }) {
   const file = readingJsonFile()
   const list = readJson(file, null)
@@ -698,9 +641,8 @@ export function overview() {
   const mf = readJson(path.join(PUBLIC, 'assets', 'manifest.json'), {}) || {}
   const vers = readVersionTable()
 
-  // 故事 / 阅读物的条数：**优先读成品 JSON**。
-  // 发行版不随包发 `素材/{故事,阅读物}` 源目录，数源目录会得到 0；
-  // JSON 里的条数也更准（源目录里有重复副本）。
+  // 发行版不随包发 `素材/{故事,阅读物}` 源目录，数源目录会得到 0
+  // JSON 里的条数也更准（源目录里有重复副本）
   const storyJson = readJson(path.join(PUBLIC, 'assets', 'data', 'stories.json'), null)
   const readingJson = readJson(path.join(PUBLIC, 'assets', 'data', 'readings.json'), null)
   const storyDir = path.join(ASSET, '故事')
@@ -708,9 +650,9 @@ export function overview() {
     ? storyJson.length
     : (exists(storyDir) ? fs.readdirSync(storyDir).filter((f) => f.endsWith('.md')).length : 0)
 
-  // 阅读物计数必须与 `tools/gen-readings.py` **同口径**，否则概览和图鉴对不上。
-  // 管线只扫两层：`<分区>/*.txt` 与 `<分区>/<系列>/*.txt`；
-  // `素材/阅读物/` 根下的文件（如 `2872新增阅读物清单.txt`）不算阅读物。
+  // 阅读物计数必须与 `tools/gen-readings.py` **同口径**，否则概览和图鉴对不上
+  // 管线只扫两层：`<分区>/*.txt` 与 `<分区>/<系列>/*.txt`
+  // `素材/阅读物/` 根下的文件（如 `2872新增阅读物清单.txt`）不算阅读物
   let readings = 0
   const countTxt = (d) => {
     if (!exists(d)) return

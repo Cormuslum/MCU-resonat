@@ -1,10 +1,4 @@
-/**
- * 《无限暖暖》共鸣抽卡模拟器 · Electron 主进程（自包含发行版）。
- * 1) 固定端口 51800（`NIKKI_SIM_PORT` 可覆盖）：localStorage 按 origin 隔离，端口一变就是新域名、存档全丢。
- * 2) 素材与代码分离：dist 只放编译产物（js/css/html），素材（webp/ogg/mp4/manifest）在同级 `public/assets`；
- *    `/assets/x` 先查 public/assets（工坊写入处，改了立即生效），再回落 dist/assets。
- * 3) 数据根：打包版 = exe 所在目录（发行根），开发版 = 项目根。
- */
+/** 《无限暖暖》共鸣抽卡模拟器 · Electron 主进程（自包含发行版）。3) 数据根：打包版 = exe 所在目录（发行根），开发版 = 项目根 */
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -14,7 +8,7 @@ const isPackaged = app.isPackaged
 const ROOT_DIR = isPackaged ? path.dirname(app.getPath('exe')) : app.getAppPath()
 
 // 存档/缓存放发行根下的 userdata/：① 避开 %APPDATA% 权限问题（写不进去会让 localStorage 不落盘）
-// ② 整包拷走时存档也跟着走，真正自包含。
+// ② 整包拷走时存档也跟着走，真正自包含
 try { app.setPath('userData', path.join(ROOT_DIR, 'userdata')) } catch { /* 设不了就沿用默认 */ }
 
 const DIST = path.join(ROOT_DIR, 'dist')

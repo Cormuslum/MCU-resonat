@@ -1,7 +1,4 @@
-/**
- * 管线执行：把素材变成前端能读的数据。
- * 这里只负责「按正确顺序、正确参数」调用既有的 python 脚本，并把日志实时吐给界面。
- */
+/** 管线执行：把素材变成前端能读的数据 */
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { ROOT, WORKSPACE, TOOL_ROOT, ASSET, readJson, pythonBin } from './util.mjs'
@@ -17,10 +14,7 @@ function seedPoolId() {
   return first || ''
 }
 
-/**
- * 跑一条命令，stdout/stderr 按行回调。
- * @returns Promise<{code:number, ok:boolean}>
- */
+/** 跑一条命令，stdout/stderr 按行回调 */
 function run(cmd, args, { cwd = TOOL_ROOT, onLog = () => {}, timeoutMs = 600000 } = {}) {
   return new Promise((resolve) => {
     onLog({ kind: 'cmd', text: `$ ${cmd} ${args.join(' ')}` })
@@ -62,10 +56,7 @@ function run(cmd, args, { cwd = TOOL_ROOT, onLog = () => {}, timeoutMs = 600000 
   })
 }
 
-/**
- * 组装本次更新要跑的步骤。collect-assets 两段式：`--pool <id>` 只转这座阁，再 `--all --manifest-only` 全量重建 manifest；
- * 纯版本更新（没有新池）借一个已存在的池 id 当引子跑一次非 manifest-only 的 collect（版本卡转码在 collect 主流程里）。
- */
+/** 组装本次更新要跑的步骤 */
 export function buildSteps({
   job = '', poolIds = [], force = false, story = false, reading = false,
   version = false, versionOnly = false,
@@ -75,10 +66,7 @@ export function buildSteps({
   const steps = []
   const DIST = !!process.env.NIKKI_DIST_MODE
 
-  /* ── 按任务裁剪 ──
-   * 故事只进 `stories.json`、阅读物只进 `readings.json`，版本 / 服装阁 / 套装才改 pool-map 与 manifest；
-   * `gen-stories` / `gen-readings` 只在这批真的写了对应内容时跑，纯元数据编辑不跑转码。
-   */
+  /* ── 按任务裁剪 ── 故事只进 `stories.json`、阅读物只进 `readings.json`，版本 / 服装阁 / 套装才改 pool-map 与 manifest； `gen-stories` / `gen-readings` 只在这批真的写了对应内容时跑，纯元数据编辑不跑转码 */
   const pureStory = job === 'story' && !poolIds.length
   const pureReading = job === 'reading' && !poolIds.length
 
@@ -199,11 +187,7 @@ export async function devServerAlive(port = 5178) {
   }
 }
 
-/**
- * 重启 dev server（vite 的 `watch.ignored` 排除了 `public/assets/**`，新转的 webp 不会触发刷新）。
- * ⚠ 杀 vite 后先分清：`npm run up` 起的有守护、1 秒内自愈（不能重复 spawn，会抢 5178）；单独 `npm run dev` 起的没有守护。
- * 顺序：停 → 等端口释放 → 先等守护 → 等不到才自己拉。
- */
+/** 重启 dev server（vite 的 `watch.ignored` 排除了 `public/assets/**`，新转的 webp 不会触发刷新）。顺序：停 → 等端口释放 → 先等守护 → 等不到才自己拉 */
 async function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms))
 }
@@ -220,10 +204,7 @@ function portListening(port) {
   }
 }
 
-/**
- * `npm run up` 是否正在守着？
- * 用 pid 探活而不是只看文件在不在。
- */
+/** `npm run up` 是否正在守着？ 用 pid 探活而不是只看文件在不在 */
 function guardAlive() {
   try {
     const g = readJson(path.join(WORKSPACE, '.dev-guard.json'), null)
@@ -236,8 +217,7 @@ function guardAlive() {
 }
 
 export async function restartDevServer({ port = 5178, onLog = () => {} } = {}) {
-  // ⚠ 先后顺序很要紧：**先判断有没有守护，再决定杀完要不要自己拉**。
-  //   反过来做会在机器忙的时候双开：两个 vite 抢 5178，输的那个 exit 1。
+  // 反过来做会在机器忙的时候双开：两个 vite 抢 5178，输的那个 exit 1
   const guarded = guardAlive()
 
   // ① 停掉占着端口的进程（杀的是 vite 本身）
@@ -270,7 +250,7 @@ export async function restartDevServer({ port = 5178, onLog = () => {} } = {}) {
     await sleep(200)
   }
 
-  // 直接跑 vite 的入口，不经 npx（Windows 上 npx 会多一层 cmd，
+  // 直接跑 vite 的入口，不经 npx（Windows 上 npx 会多一层 cmd
   // kill 不干净，还容易留一个只回 502 的空壳）
   const simRoot = path.join(WORKSPACE, '心忆共鸣')
   // vite 的依赖被 npm workspaces 提升到了工作区根，子目录里没有 node_modules

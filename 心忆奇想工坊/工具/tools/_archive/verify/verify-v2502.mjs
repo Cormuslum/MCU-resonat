@@ -1,21 +1,4 @@
-/**
- * 验收：把「所有弹窗一个音」拆成按场景各用各的
- *
- * 背景：`panel-fadein`（`UI_WBP_Resonance_RewarPanel_Fadein_Ten`，4.85s）以前被 21 处共用，
- * 用户听起来就是「所有弹窗一个味」。这轮按场景换成 6 个新音效，`panel-fadein` 只留给抽卡奖励弹窗。
- *
- * 覆盖：
- * A 6 个新音效都进了 manifest 且能取到（HTTP 200 + 非 HTML）
- * B `panel-fadein` 只剩 RewardPopup 一处、volume 0.4（源码静态）
- * C 辉煌心光：点图标弹面板 = window-open / 一键解锁阅读物 = unlock-big
- * D 主页彩蛋弹窗 = window-open
- * E 抽卡：跳过演出 = sendgift-popup
- * F 图鉴主界面：切大版本 = big-b-select / 搜索 = nav-select / 进子图鉴 = nav-select
- * G 服装图鉴搜索 = btn-deny
- * H 阅读 / 故事图鉴搜索 = points-slide
- *
- * 用法：先 npm run dev（5178），再 node tools/verify-v2502.mjs
- */
+/** 验收：把「所有弹窗一个音」拆成按场景各用各的 */
 import { chromium } from 'playwright-core'
 import { mkdirSync, readFileSync } from 'node:fs'
 

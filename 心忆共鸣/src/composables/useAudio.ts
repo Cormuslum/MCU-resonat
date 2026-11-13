@@ -1,10 +1,7 @@
 import { ref } from 'vue'
 import type { BgmScene, BgmTrack } from '@/types'
 
-/**
- * 音频系统：抽卡音效 / 共鸣演出音 / 按界面分场景的 BGM；音量链 = BGM_BASE × 背景音总控 × 本界面滑杆 × 主音量 ×（演出压低）。
- * sfx 键名与 `manifest.sfx` 一一对应（由 collect-assets.py 生成）。
- */
+/** 音频系统 */
 export type SfxName =
   // 共鸣页
   | 'btn-res-hover' | 'btn-res-select'
@@ -41,10 +38,7 @@ export interface PlayOpts {
 
 const SFX_BASE = '/assets/'
 
-/**
- * 背景音场景：主页无 BGM（静态静音 / 动态放视频自带音轨）、版本、共鸣（含抽卡演出 duck）、
- * 图鉴（5 首加权随机）、玄学（2 首各 50）、辉煌；多曲界面在进界面时与播完时换曲。
- */
+/** 背景音场景：主页无 BGM（静态静音 / 动态放视频自带音轨）、版本、共鸣（含抽卡演出 duck）、 图鉴（5 首加权随机）、玄学（2 首各 50）、辉煌；多曲界面在进界面时与播完时换曲 */
 export type SceneKey = BgmScene
 
 /** 分场景音量面板的顺序（主页排第一，虽然它没有独立 BGM，但动态背景的视频音轨归它管） */
@@ -134,9 +128,7 @@ function fadeTo(el: HTMLAudioElement, target: number, ms: number, stopAtEnd = fa
   fadeTimers.set(el, id)
 }
 
-/**
- * 音频注册：只同步注册 URL，`play()` 时 `new Audio(url)` 按需取；首屏 UI 音预热，其余空闲补预热。
- */
+/** 音频注册：只同步注册 URL，`play()` 时 `new Audio(url)` 按需取；首屏 UI 音预热，其余空闲补预热 */
 const WARM_KEYS = [
   'common-hover', 'nav-hover', 'thumb-hover', 'btn-res-hover', 'btn-res-select',
   'btn-ten-select', 'back-select', 'panel-fadein', 'paper-fadein', 'flip-star', 'reward-a',
@@ -178,10 +170,7 @@ export function preloadAudio(sfx: Record<string, string>, bannerEnter: Record<st
   }
   loaded.value = true
   warm(WARM_KEYS)
-  /**
-   * 空闲时补预热其余常驻音效。
-   * `bgm` / `bgm-egg` 排除在外：背景音改走 `bgm/*.ogg` 分场景曲库。
-   */
+  /** 空闲时补预热其余常驻音效。`bgm` / `bgm-egg` 排除在外：背景音改走 `bgm/*.ogg` 分场景曲库 */
   idle(() => warm(Object.keys(sfx).filter((k) => k !== 'bgm' && k !== 'bgm-egg')))
 }
 
@@ -190,10 +179,7 @@ export function warmBannerEnter(bannerId: string) {
   warm([`banner-enter:${bannerId}`])
 }
 
-/**
- * 播放一次音效。返回 Audio 实例，便于调用方手动淡出（如「跳过动画」）。
- * 复音：每次播放都用一个新的 Audio，避免相互打断。
- */
+/** 播放一次音效。返回 Audio 实例，便于调用方手动淡出（如「跳过动画」）。复音：每次播放都用一个新的 Audio，避免相互打断 */
 export function play(name: SfxName | string, opts: PlayOpts = {}): HTMLAudioElement | null {
   const url = resolve(name)
   if (!url) return null
@@ -223,10 +209,7 @@ export function stopAllSfx(fadeMs = 200) {
   }
 }
 
-/**
- * 星级音：3★ 响 3 次、4★ 响 4 次、5★ 响 5 次，间隔 100ms。
- * 实机就是同一个小音效连击，音高不变。
- */
+/** 星级音 */
 export function playStarHit(star: number, opts: PlayOpts = {}) {
   const times = Math.max(1, Math.min(5, star))
   for (let i = 0; i < times; i++) {
@@ -234,9 +217,7 @@ export function playStarHit(star: number, opts: PlayOpts = {}) {
   }
 }
 
-/**
- * 服装阁专属「进入界面」音（每座阁一个，键名带 bannerId 前缀）；`factor` 是相对基准的微调。
- */
+/** 服装阁专属「进入界面」音（每座阁一个，键名带 bannerId 前缀）；`factor` 是相对基准的微调 */
 let bannerEnterEl: HTMLAudioElement | null = null
 
 export function playBannerEnter(bannerId: string, factor = 1) {
@@ -251,7 +232,7 @@ export function playBannerEnter(bannerId: string, factor = 1) {
 
 // ------------------------------------------------------------------ BGM
 
-/** 当前场景的最终音量：base × 总控 × 本界面 × 主音量 ×(演出压低) */
+/** 当前场景的最终音量 */
 function level(at: SceneKey = scene.value): number {
   return clamp(
     BGM_BASE * bgmVolume.value * (sceneVol.value[at] ?? 1) * masterVolume.value * (bgmDucked ? 0.28 : 1),
@@ -292,9 +273,7 @@ function stopBgm(fadeMs = 420) {
   fadeTo(el, 0, fadeMs, true)
 }
 
-/**
- * 切到某个场景。同一场景重复调用是**幂等**的（只有场景变了或已经没声了才重新起播）。
- */
+/** 切到某个场景。同一场景重复调用是**幂等**的（只有场景变了或已经没声了才重新起播） */
 export function setBgmScene(k: SceneKey) {
   if (k === scene.value) {
     if (!bgmEl && bgmEnabled.value && (sceneTracks[k]?.length ?? 0) > 0) playScene(k)
@@ -316,7 +295,7 @@ function playScene(k: SceneKey, fadeMs = 800) {
 
   const el = new Audio(SFX_BASE + t.src)
   el.preload = 'auto'
-  // 单曲场景整轨循环；多曲场景播完就换（用户要求的两条换曲时机之一）
+  // 单曲场景整轨循环；多曲场景播完就换
   el.loop = list.length === 1
   el.volume = 0
   el.addEventListener('ended', () => {
@@ -360,9 +339,7 @@ export function setUiVolume(v: number) {
   uiVolume.value = clamp(v)
 }
 
-/**
- * 主音量。主音量已计入 `level()`，这里只需要把当前元素跟随过去。
- */
+/** 主音量。主音量已计入 `level()`，这里只需要把当前元素跟随过去 */
 export function setMasterVolume(v: number) {
   masterVolume.value = clamp(v)
   if (bgmEl && !bgmEl.paused) fadeTo(bgmEl, level(), 180)

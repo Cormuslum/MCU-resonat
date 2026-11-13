@@ -1,11 +1,4 @@
-/**
- * 验收
- *
- * A. 故事分区归位：0 号「奇迹传说」= 0.1 / 0.2 两版 8 座阁的 14 篇
- * （这 14 套里有 10 套是从官方旧版本借调的，按「套装首发版本」归区会散掉）
- * B. 故事图鉴 / 阅读物图鉴：换一条就回到正文开头
- * C. 拓展包只装自建内容：内置 88 座阁 / 134 篇故事 / 596 篇阅读物都不进候选
- */
+/** 验收 A. 故事分区归位：0 号「奇迹传说」= 0.1 / 0. */
 import fs from 'node:fs'
 import path from 'node:path'
 import { chromium } from 'playwright-core'
@@ -77,13 +70,7 @@ const BASE_SAVE = {
   settings: { skipAnim: true, skipOpening: true },
 }
 
-/**
- * 造一份「全部解锁」的存档。
- *
- * 不手工拼 codex —— 部件 id 是 `S0062:发型-翠金花藤` 这种由图标名派生的，
- * 还带一层「没有卡片图的部件不算」的过滤（见 inventory.expandSet），
- * 在测试里重写一遍必然对不上。直接点设置页的两个「执行」，让应用自己算。
- */
+/** 造一份「全部解锁」的存档。直接点设置页的两个「执行」，让应用自己算 */
 async function forgeSave() {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } })
   await ctx.addInitScript(([k, v]) => localStorage.setItem(k, v), [SAVE_KEY, JSON.stringify(BASE_SAVE)])
@@ -130,11 +117,7 @@ async function openPage(hash) {
   return { ctx, page }
 }
 
-/**
- * 在某一篇上把正文滚到底，再切到另一篇，检查 scrollTop 是否归零。
- *
- * 只有「本文溢出容器」时才有意义 —— 所以先逐行点过去找一篇真溢出的。
- */
+/** 在某一篇上把正文滚到底，再切到另一篇，检查 scrollTop 是否归零 */
 async function testScrollReset(page, { label, tabIndex }) {
   if (tabIndex !== undefined) {
     await page.locator('.rd-tab').nth(tabIndex).click()

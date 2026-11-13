@@ -1,9 +1,4 @@
-/**
- * 验收：发行版工坊「外部源 → 成品」直转（不落内部源）：`node tools/verify-v2929-write.mjs [端口]`。
- * 前置：发行版工坊 exe 已启动（默认 5200）、模拟器目录在旁边。对「心愿栖金蕊」换一张背景图后核对：
- * ① 服务没报 9009（自带 Python 生效） ② `public/assets/banners/bg/1000.webp` 内容确实变了
- * ③ 工坊数据目录里没有多出 `服装阁/` 或任何图片副本。
- */
+/** 验收：发行版工坊「外部源 → 成品」直转（不落内部源）：`node tools/verify-v2929-write.mjs [端口]`。前置：发行版工坊 exe 已启动（默认 5200）、模拟器目录在旁边 */
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -50,8 +45,8 @@ const payload = {
   options: { restartDev: false, force: true },
 }
 
-// 内置 88 座阁是只读的（工坊只允许改「自建内容」）。测试时先把目标阁临时标记为自建，
-// 跑完立刻还原 —— 否则这个测试没法验证「改已有阁」的真实链路。
+// 内置 88 座阁是只读的（工坊只允许改「自建内容」）。测试时先把目标阁临时标记为自建
+// 跑完立刻还原 —— 否则这个测试没法验证「改已有阁」的真实链路
 const CUSTOM = path.join(DATA, '信息表', '自建内容.json')
 const origCustom = fs.readFileSync(CUSTOM, 'utf8')
 try {

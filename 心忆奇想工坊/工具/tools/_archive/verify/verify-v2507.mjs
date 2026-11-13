@@ -1,16 +1,4 @@
-/**
- * 验收 · 全量卡池 + 专属铭牌/艺术字 + 080 新池
- *
- * ⚠️ 起共鸣页**只列当前版本的卡池**，所以下面的断言按「当前版本的池」重写：
- * A1/A2 在 2.10 上数（4 个池），A4 切 1.8（030）、A5 切 1.0（004）、A6/B1 切 2.11（080）。
- *
- * 覆盖用户这一批的三条要求：
- * 1. 补全所有版本的所有卡池（列表 6 项 → manifest 全量 80 项）
- * 2. 有专属套装铭牌就用专属：五星 `_name_01`、四星 `_name_02`，没有才用通用底框
- * 3. 有卡池名艺术字就必须用（不许退回纯文字）
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2507.mjs`
- */
+/** 验收 · 全量卡池 + 专属铭牌/艺术字 + 080 新池 */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
 
@@ -27,10 +15,7 @@ const browser = await chromium.launch({
 const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })
 const page = await ctx.newPage()
 
-/**
- * 版本门禁：未选版本时 /banner 会被守卫打回版本页。
- * 这里在存档里预置一个当前版本（只在「还没选过」时写，方便后面 useVersion 切换后不被覆盖）。
- */
+/** 版本门禁：未选版本时 /banner 会被守卫打回版本页 */
 await page.addInitScript(() => {
   try {
     const KEY = 'nikki-resonance-save-v1'
@@ -55,11 +40,7 @@ async function useVersion(v) {
 }
 
 const pageErrors = []
-/**
- * `ERR_ABORTED` 不算错：BGM / 音效是离屏 `new Audio()`，卡池 PV 是 `<video>`，
- * 切池 / 切页时元素被回收，Chrome 会把正在下载的那段报成 aborted —— 与代码无关。
- * 真正的坏请求（404 / 5xx）仍然照记。
- */
+/** `ERR_ABORTED` 不算错：BGM / 音效是离屏 `new Audio()`，卡池 PV 是 `<video>`， 切池 / 切页时元素被回收，Chrome 会把正在下载的那段报成 aborted —— 与代码无关。真正的坏请求（404 / 5xx）仍然照记 */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm|video)\//.test(t)
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
 page.on('console', (m) => { if (m.type() === 'error') pushErr(m.text()) })
@@ -182,7 +163,7 @@ await step('B1 080 新池', async () => {
   check('B1 080 雪落颂愿时可选 + 艺术字',
     r.big.startsWith('雪落颂愿时') && /title\/080\.webp$/.test(r.title ?? '') && !r.titleText,
     `选中=${r.big} / title=${r.title}`)
-  // ：080 的卡池背景已由用户补图（1000×500 列表图 → bg/），不再是渐变兜底
+  // ：080 的卡池背景已由用户补图，不再是渐变兜底
   const bg = await page.evaluate(() => ({
     src: document.querySelector('.bg-still')?.getAttribute('src') ?? '',
     none: !!document.querySelector('.bg-none'),

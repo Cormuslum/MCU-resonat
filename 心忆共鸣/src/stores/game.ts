@@ -21,9 +21,7 @@ export const useGameStore = defineStore('game', () => {
 
   const save = ref<SaveData>(loadSave())
   const codex = shallowRef<Codex>(Codex.fromJSON(save.value.codex))
-  /**
-   * 图鉴版本号：每次抽完 +1，读图鉴的 computed 都先读它一下（`codex` 是 shallowRef）。
-   */
+  /** 图鉴版本号：每次抽完 +1，读图鉴的 computed 都先读它一下（`codex` 是 shallowRef） */
   const codexRev = ref(0)
   const rng = new Rng()
 
@@ -33,9 +31,7 @@ export const useGameStore = defineStore('game', () => {
   /** 常驻池 id：每个版本的列表末尾都挂它（「常驻永远是当前版本的最后一座服装阁」） */
   const STANDARD_BANNER_ID = 'banner-001'
 
-  /**
-   * 当前版本（`''` = 还没在「时隙遗光」选过），存在存档 `save.selectedVersion`；空串时共鸣入口置灰。
-   */
+  /** 当前版本（`''` = 还没在「时隙遗光」选过），存在存档 `save.selectedVersion`；空串时共鸣入口置灰 */
   const selectedVersion = ref<string>(save.value.selectedVersion ?? '')
 
   /** 最近一次抽卡结果 */
@@ -45,9 +41,7 @@ export const useGameStore = defineStore('game', () => {
 
   // ---------------- 派生
 
-  /**
-   * 当前版本自己的服装阁，按 `seq`（版本内序号，由 `tools/build-pool-map.py` 写入 manifest）升序；缺 seq 排最后。
-   */
+  /** 当前版本自己的服装阁，按 `seq`（版本内序号，由 `tools/build-pool-map.py` 写入 manifest）升序；缺 seq 排最后 */
   const versionPools = computed<BannerInfo[]>(() => {
     const all = manifest.value?.banners ?? []
     if (!selectedVersion.value) return []
@@ -89,9 +83,7 @@ export const useGameStore = defineStore('game', () => {
   /** 当前池是否为「纯 4★ 池」（奖池里没有任何 5★ 套装） */
   const isPure4 = computed(() => !!pool.value && pool.value['5'].length === 0)
 
-  /**
-   * 当前池实际生效的概率规则；纯 4★ 池需过 `pure4Rules()`（4★ 10.21% / 第 4 抽提升 / 5 抽保底）。
-   */
+  /** 当前池实际生效的概率规则；纯 4★ 池需过 `pure4Rules()` */
   const rules = computed(() => {
     const base = manifest.value?.rules
     if (!base) return null
@@ -129,10 +121,7 @@ export const useGameStore = defineStore('game', () => {
     return [...pool.value['5'], ...pool.value['4'], ...pool.value['3']]
   })
 
-  /* ---------------- 全库套装完成度（图鉴用） ----------------
-   * ⚠ `allParts` 只含**当前服装阁**的部件，图鉴（服装/故事）判"这套有没有集齐"
-   *   必须跨全部池算。这里按 manifest 全量 buildPool 一次，结果随 codexRev 失效重算。
-   */
+  /* ---------------- 全库套装完成度（图鉴用） ---------------- ⚠ `allParts` 只含**当前服装阁**的部件，图鉴（服装/故事）判"这套有没有集齐" 必须跨全部池算 */
   const allSetsParts = computed<Part[]>(() => {
     const m = manifest.value
     if (!m) return []
@@ -170,9 +159,7 @@ export const useGameStore = defineStore('game', () => {
     return !!s && s.owned > 0
   }
 
-  /**
-   * 资源路径拼接：内置资源为相对 `/assets/` 的路径，DLC 资源自带 `/dlc/<id>/...` 绝对路径（原样返回）。
-   */
+  /** 资源路径拼接：内置资源为相对 `/assets/` 的路径，DLC 资源自带 `/dlc/<id>/...` 绝对路径（原样返回） */
   function asset(p: string | null | undefined): string {
     if (!p) return ''
     if (p.startsWith('/')) return p
@@ -229,7 +216,7 @@ export const useGameStore = defineStore('game', () => {
     persist()
   }
 
-  /** 抽一次 / 十连。返回结果数组 */
+  /** 抽一次 / 十连 */
   function pull(times: 1 | 10): PullResult[] {
     if (!rules.value || !pool.value) return []
     const ctx = {
@@ -283,10 +270,7 @@ export const useGameStore = defineStore('game', () => {
     persist()
   }
 
-  /* ---------------- 存档清理（存档弹窗 5 项） ----------------
-   * 图鉴里的部件也要删 —— 清完回共鸣页不该仍显示「套装全部获得」。
-   *   故事解锁是「套装集齐」派生的，部件一少，对应故事自然回到上锁状态。
-   */
+  /* ---------------- 存档清理（存档弹窗 5 项） ---------------- 图鉴里的部件也要删 —— 清完回共鸣页不该仍显示「套装全部获得」 */
 
   /** 若干服装阁所拥有的 4★/5★ 部件 id（3★ 散件是全局共用的，不属于任何池，不动） */
   function partIdsOfBanners(ids: string[]): string[] {
@@ -365,9 +349,7 @@ export const useGameStore = defineStore('game', () => {
     return toSaveFileText(save.value)
   }
 
-  /**
-   * 导入存档：校验通过后直接写盘，由调用方刷新页面重载（不在内存里热替换）。
-   */
+  /** 导入存档：校验通过后直接写盘，由调用方刷新页面重载（不在内存里热替换） */
   function importSave(text: string): { ok: true } | { ok: false; error: string } {
     const r = parseSaveFileText(text)
     if (!r.ok) return r
@@ -416,9 +398,7 @@ export const useGameStore = defineStore('game', () => {
     return added
   }
 
-  /**
-   * 集齐全部阅读物（两个区域一起）；动态 import 阅读物包，避免首页白下整包。
-   */
+  /** 集齐全部阅读物（两个区域一起）；动态 import 阅读物包，避免首页白下整包 */
   async function collectAllReadings(): Promise<number> {
     const before = codex.value.countWhere((id) => id.startsWith('reading:'))
     // 正文是运行时 JSON：先等它到，否则列表是空的，一键收集会收 0 条
@@ -464,17 +444,14 @@ export const useGameStore = defineStore('game', () => {
     return codex.value.setProgress(allParts.value, setId)
   }
 
-  /**
-   * 是否「集齐第二套」——每个部件都至少抽到 2 次。
-   * 对应 进化条件.md 里 5★「满进」/ 4★「进化」的解锁条件。
-   */
+  /** 是否「集齐第二套」——每个部件都至少抽到 2 次。对应 进化条件.md 里 5★「满进」/ 4★「进化」的解锁条件 */
   function setDupFull(setId: string): boolean {
     void codexRev.value
     const parts = allParts.value.filter((p) => p.setId === setId)
     return parts.length > 0 && parts.every((p) => codex.value.count(p.id) >= 2)
   }
 
-  /** 阅读物图鉴：获得（解锁）一本阅读物；返回是否首次获得。复用 codex（key=reading:${id}）+ codexRev 触发响应式。 */
+  /** 阅读物图鉴：获得（解锁）一本阅读物；返回是否首次获得 */
   function obtainReading(id: string): boolean {
     const key = `reading:${id}`
     const { isNew } = codex.value.add(key)

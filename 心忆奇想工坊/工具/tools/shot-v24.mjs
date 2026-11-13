@@ -1,7 +1,4 @@
-/**
- * 验收截图：`node tools/shot-v24.mjs <场景>`。
- * 场景：`banner` 共鸣页（默认池）/ `banner-std` 共鸣页（常驻池）/ `rail` 侧边栏 / `home` 主页（动态背景）/ `loading` 加载层。
- */
+/** 验收截图：`node tools/shot-v24.mjs <场景>` */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'

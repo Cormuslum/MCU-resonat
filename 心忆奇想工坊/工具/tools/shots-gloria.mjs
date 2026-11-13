@@ -1,6 +1,4 @@
-/**
- * 辉煌心光截图巡检，产物在 `.shots/`：`gl-idle.png` 首页 / `gl-hover.png` 悬停金环 / `gl-panel-0~3.png` 四类面板 / `gl-confirm.png` 二级确认条。
- */
+/** 辉煌心光截图巡检，产物在 `.shots/`：`gl-idle.png` 首页 / `gl-hover.png` 悬停金环 / `gl-panel-0~3.png` 四类面板 / `gl-confirm.png` 二级确认条 */
 import { chromium } from 'playwright-core'
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 const b = await chromium.launch({ executablePath: CHROME, headless: true })

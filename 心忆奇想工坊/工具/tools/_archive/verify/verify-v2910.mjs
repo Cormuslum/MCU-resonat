@@ -1,14 +1,4 @@
-/**
- * 验收：动态背景（首页轮播 / 服装阁去音轨 / 缺失兜底）
- *
- * A. 首页两条动态背景各约 50%：多次冷启动统计出现次数
- * B. 抽到的那条能真正解码播放（videoWidth > 0、非 paused、muted）
- * C. 服装阁动态背景**没有音轨**（管线 `-an` 的产物级验证，ffprobe 直接看容器）
- * D. 兜底：视频 404 时首页换到另一条、服装阁落到静态图，且不抛 pageerror
- *
- * 依赖：模拟器 dev server（5178）在跑。
- * 跑法：node tools/verify-v2910.mjs
- */
+/** 验收：动态背景（首页轮播 / 服装阁去音轨 / 缺失兜底） */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -35,8 +25,8 @@ const SAVE = {
 /* ───────────────────────── A/B：首页轮播 ───────────────────────── */
 console.log('\n════ A/B 首页动态背景轮播 ════')
 
-// F 段要测音轨相位，必须放行自动播放：冷启动直接落在主页时没有任何用户手势，
-// 默认策略会把 <audio> 拦下来，drift 就永远是 null。
+// F 段要测音轨相位，必须放行自动播放：冷启动直接落在主页时没有任何用户手势
+// 默认策略会把 <audio> 拦下来，drift 就永远是 null
 const browser = await chromium.launch({
   executablePath: CHROME,
   headless: true,
@@ -54,7 +44,7 @@ for (let i = 0; i < ROUNDS; i++) {
   }, SAVE)
   const page = await ctx.newPage()
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
-  // 等到「有尺寸 且 真的开始播」为止。只等 videoWidth>0 会在 readyState 刚够拿尺寸、
+  // 等到「有尺寸 且 真的开始播」为止。只等 videoWidth>0 会在 readyState 刚够拿尺寸
   // 还没进 playing 的那一刻就返回，读到的 paused 是 true —— 那是取样太早，不是没播
   await page.waitForFunction(
     () => {
@@ -118,7 +108,7 @@ const posterMiss = homeVids.filter((v) => !v.poster || !fs.existsSync(path.join(
 ok('首页每条都带首帧 poster', posterMiss.length === 0,
   homeVids.map((v) => v.poster || '（无）').join(' | '))
 
-/* 星海那条原始画面是 1920×800（上下各 140px 黑边），转码时应裁掉而不是铺回来 */
+/* 星海那条原始画面是 1920×800，转码时应裁掉而不是铺回来 */
 const homeH = homeVids.map((v) => {
   const r = spawnSync('ffprobe', ['-v', 'error', '-select_streams', 'v:0',
     '-show_entries', 'stream=height', '-of', 'csv=p=0', path.join(ASSETS, v.video)], { encoding: 'utf8' })
@@ -143,7 +133,7 @@ console.log('\n════ D 视频缺失兜底 ════')
   const errs = []
   page.on('pageerror', (e) => errs.push(e.message))
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
-  // 起开屏阶段不挂载视频（避免后台抢跑导致音画错位），
+  // 起开屏阶段不挂载视频
   // 所以要等开屏结束、视频真正起来之后再看，不能再固定等几秒
   await page.waitForFunction(
     () => (document.querySelector('.hm-bg-video')?.videoWidth || 0) > 0,

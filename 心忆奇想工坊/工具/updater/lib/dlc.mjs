@@ -1,8 +1,4 @@
-/**
- * DLC（延迟包）核心库：源包区 `updater/dlc/<id>/`（工坊编辑 / 打包 / 上传）、运行区 `public/dlc/<id>/`（模拟器直接 fetch）。
- * 一个包 = `dlc.json`（清单 + 提供哪些接口）+ `data/*.json`（每接口一份）+ `assets/**`（已转码 webp）。
- * 「接口」是包与模拟器之间唯一的契约：模拟器只认接口名，包不直接改模拟器。
- */
+/** DLC（延迟包）核心库：源包区 `updater/dlc/<id>/`（工坊编辑 / 打包 / 上传）、运行区 `public/dlc/<id>/`（模拟器直接 fetch）。「接口」是包与模拟器之间唯一的契约：模拟器只认接口名，包不直接改模拟器 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -36,10 +32,7 @@ function writeLiveIndex(idx) {
 
 /* ────────────────────────────── 包身份 ────────────────────────────── */
 
-/**
- * 包 id：只允许小写字母 / 数字 / 短横线（会进 URL `/dlc/<id>/…` 与文件名，必须能转写成 ASCII）；
- * 调用方传稳定 ASCII 底名（`banner-080` / `set-s0438`），拿不到时才退回内容短 hash。
- */
+/** 包 id：只允许小写字母 / 数字 / 短横线（会进 URL `/dlc/<id>/…` 与文件名，必须能转写成 ASCII）； 调用方传稳定 ASCII 底名（`banner-080` / `set-s0438`），拿不到时才退回内容短 hash */
 export function slugId(name) {
   const base = String(name || '')
     .trim()
@@ -104,9 +97,7 @@ function isInstalled(id) {
 
 /* ────────────────────────────── 安装 / 卸载 ────────────────────────────── */
 
-/**
- * 把源包（或任意目录）安装进运行区：只是拷贝，运行区是静态目录，模拟器 fetch 到的就是最新内容。
- */
+/** 把源包（或任意目录）安装进运行区：只是拷贝，运行区是静态目录，模拟器 fetch 到的就是最新内容 */
 export function install(id, { from = null, log = () => {} } = {}) {
   const src = from || srcDir(id)
   const mf = readJson(path.join(src, 'dlc.json'), null)
@@ -171,10 +162,7 @@ export function setMount(id, { enabled, interfaces } = {}) {
 
 /* ────────────────────────────── zip 打包 / 解包 ────────────────────────────── */
 
-/**
- * 打包成 zip（交给 python 的 zipfile —— 项目本来就依赖 python 管线，
- * 不为这一个功能引入 npm 依赖）。
- */
+/** 打包成 zip（交给 python 的 zipfile —— 项目本来就依赖 python 管线，不为这一个功能引入 npm 依赖） */
 export function packZip(dir, outZip) {
   fs.mkdirSync(path.dirname(outZip), { recursive: true })
   const py = [
@@ -193,9 +181,7 @@ export function packZip(dir, outZip) {
   return outZip
 }
 
-/**
- * 解包到目标目录；成员名逐个校验（zip 里可以写 `../../evil`，不拦就是任意写文件）。
- */
+/** 解包到目标目录；成员名逐个校验（zip 里可以写 `../../evil`，不拦就是任意写文件） */
 export function unpackZip(zipFile, destDir) {
   const py = [
     'import sys, os, zipfile',
@@ -238,9 +224,7 @@ function sleep(ms) {
   }
 }
 
-/**
- * 递归删除（只对包目录用）：原生子进程 → `fs.rmSync` → 手写逐层 unlink/rmdir 三级兜底，每级之后轮询确认目录真的消失。
- */
+/** 递归删除（只对包目录用）：原生子进程 → `fs.rmSync` → 手写逐层 unlink/rmdir 三级兜底，每级之后轮询确认目录真的消失 */
 export function rmTree(dir, { budgetMs = 60000 } = {}) {
   if (!exists(dir)) return
 

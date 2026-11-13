@@ -52,9 +52,7 @@ const SPOTS: NavSpot[] = [
   { key: 'gloria', to: '/settings', label: '辉煌心光', x: 297, y: 466, w: 336, h: 268 },
 ]
 
-/**
- * 未选版本时「心忆共鸣」入口置灰。
- */
+/** 未选版本时「心忆共鸣」入口置灰 */
 function navLocked(s: NavSpot): boolean {
   return s.key === 'banner' && !store.selectedVersion
 }
@@ -77,21 +75,16 @@ function go(s: NavSpot) {
   router.push(s.to)
 }
 
-/* ════════════════════════════════ 动态背景 + 右缘竖排入口（v1.2.02） */
+/* ════════════════════════════════ 动态背景 + 右缘竖排入口 */
 
-/**
- * 背景模式。默认 `video`，
- * `ui.banner.switch / switchH`。
- */
+/** 背景模式。默认 `video`， `ui.banner.switch / switchH` */
 type BgMode = 'video' | 'still'
 const BG_MODE_KEY = 'nikki-home-bg'
 const BG_PICK_KEY = 'nikki-home-bg-pick'
 const bgMode = ref<BgMode>('video')
 const homeVideo = ref<HTMLVideoElement | null>(null)
 
-/**
- * 轮播的几条动态背景，
- */
+/** 轮播的几条动态背景 */
 const bgList = computed<{ video: string; audio?: string | null; poster?: string | null }[]>(() => {
   const h = ui.value
   if (!h) return []
@@ -99,10 +92,7 @@ const bgList = computed<{ video: string; audio?: string | null; poster?: string 
   return h.bgVideo ? [{ video: h.bgVideo, audio: h.bgAudio ?? null }] : []
 })
 
-/**
- * 本次选中的那条。
- * 结果存进 sessionStorage。
- */
+/** 本次选中的那条 */
 const bgPickIdx = ref(-1)
 const bgPick = computed(() => bgList.value[bgPickIdx.value] ?? null)
 
@@ -155,9 +145,7 @@ const homeAudio = ref<HTMLAudioElement | null>(null)
 /** 被拦过一次时挂着的一次性手势监听（成功播放后自己卸掉） */
 let audioKick: (() => void) | null = null
 
-/**
- * 音轨的基准系数。
- */
+/** 音轨的基准系数 */
 const HOME_GAIN = 1.4
 const HOME_MAX = 0.7
 const homeVol = computed(() => Math.min(HOME_MAX, bgmGain('home') * HOME_GAIN))
@@ -410,7 +398,7 @@ onUnmounted(() => {
   disarmAudioKick()
 })
 
-/* ════════════════════════════════ 右上角信封（v1.5.05） */
+/* ════════════════════════════════ 右上角信封 */
 
 const mailOpen = ref(false)
 function openMail() {

@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 辉煌心光（设置页）：1920×1080 绝对定位，背景是无声循环宣传片。
- * 四个交互区按全画布等比叠图，图标进热区或该面板打开时才显形（热区见 `src/data/gloria-hits.ts`）。
- */
+/** 辉煌心光（设置页） */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -43,7 +40,7 @@ const PANEL_TITLE: Record<PanelKey, string> = {
 }
 
 const panel = ref<PanelKey | null>(null)
-/** 鼠标当前所在的交互区（图标只在这时显形） */
+/** 鼠标当前所在的交互区 */
 const hoverKey = ref<PanelKey | null>(null)
 const closeHover = ref(false)
 const backHover = ref(false)
@@ -94,9 +91,7 @@ function onBgmVol(e: Event) {
   setBgmEnabled(v > 0)
 }
 
-/**
- * 单个界面的背景音：它是「背景音总控」下面的乘数，不是绝对值。
- */
+/** 单个界面的背景音：它是「背景音总控」下面的乘数，不是绝对值 */
 function onSceneVol(k: SceneKey, e: Event) {
   const v = Number((e.target as HTMLInputElement).value) / 100
   const next = { ...(S.value.bgmScene ?? {}), [k]: v }
@@ -232,10 +227,7 @@ function pickImportFile() {
   fileEl.value?.click()
 }
 
-/**
- * 导入：先校验，再确认，最后才覆盖。
- * 校验失败时只 toast 说原因，绝不弹确认框。
- */
+/** 导入：先校验，再确认，最后才覆盖。校验失败时只 toast 说原因，绝不弹确认框 */
 async function onImportFile(e: Event) {
   const input = e.target as HTMLInputElement
   const f = input.files?.[0]
@@ -331,7 +323,7 @@ onBeforeUnmount(() => {
     ></video>
     <div class="gl-scrim"></div>
 
-    <!-- 四个交互区：1920×1080 全画布叠图，常态透明 -->
+    <!-- 四个交互区 -->
     <img
       v-for="h in GLORIA_HOTS"
       :key="'i' + h.key"
@@ -617,7 +609,7 @@ onBeforeUnmount(() => {
   color: #f2e6cc;
 }
 
-/* ---------- 背景 ---------- */
+/* 背景 */
 .gl-bg {
   position: absolute;
   inset: 0;
@@ -636,7 +628,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-/* ---------- 四个交互区（全画布叠图，常态透明） ---------- */
+/* 四个交互区 */
 .gl-ic {
   position: absolute;
   left: 0;
@@ -675,7 +667,7 @@ onBeforeUnmount(() => {
   z-index: 3;
 }
 
-/* ---------- 返回键 ---------- */
+/* 返回键 */
 .gl-back {
   position: absolute;
   left: 28px;
@@ -693,7 +685,7 @@ onBeforeUnmount(() => {
   transform: translateX(-2px);
 }
 
-/* ---------- 标题 ---------- */
+/* 标题 */
 .gl-head {
   position: absolute;
   left: 148px;
@@ -728,7 +720,7 @@ onBeforeUnmount(() => {
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-/* ---------- 弹窗（评分板容器 1496×1012 → 1240×839） ---------- */
+/* 弹窗 */
 .gl-mask {
   position: absolute;
   inset: 0;
@@ -774,7 +766,7 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
-/* 左上角名牌：十字准星金环兜住该项名称 */
+/* 左上角名牌 */
 .gm-tab {
   position: absolute;
   left: 6px;
@@ -825,7 +817,7 @@ onBeforeUnmount(() => {
   transform: scale(1.05);
 }
 
-/* ---------- 弹窗内容（落在评分板内面板亮部） ---------- */
+/* 弹窗内容 */
 .gm-body {
   position: absolute;
   left: 101px;
@@ -834,7 +826,6 @@ onBeforeUnmount(() => {
   bottom: 118px;
   display: flex;
   flex-direction: column;
-  /* safe center：内容不超高时居中，超高时退化成 start */
   justify-content: safe center;
   overflow-y: auto;
   scrollbar-width: thin;
@@ -859,7 +850,7 @@ onBeforeUnmount(() => {
 .gm-row:first-child {
   border-top: 1px solid rgba(216, 178, 106, 0.22);
 }
-/* 紧凑行：分界面背景音那六条，比常规行矮一半 */
+/* 紧凑行 */
 .gm-row.mini {
   padding: 4px 6px;
 }
@@ -868,7 +859,7 @@ onBeforeUnmount(() => {
   line-height: 1.2;
   letter-spacing: 4px;
 }
-/* 小标题：把「主音量 / 背景音 / UI 音效」和「各界面背景音」分开 */
+/* 小标题 */
 .gm-sub {
   margin: 7px 6px 2px;
   font-size: 15px;
@@ -1055,7 +1046,7 @@ onBeforeUnmount(() => {
   color: rgba(226, 202, 160, 0.6);
 }
 
-/* ---------- 二级确认（成品条 837×183 → 900×197） ---------- */
+/* 二级确认 */
 .cf-mask {
   position: absolute;
   inset: 0;
@@ -1067,7 +1058,7 @@ onBeforeUnmount(() => {
   animation: glFade 140ms ease both;
 }
 .cf-wrap {
-  /* 设置弹窗中部偏上：标题胶囊落在评分板上方留白带 */
+  /* 设置弹窗中部偏上 */
   margin-top: 232px;
   display: flex;
   flex-direction: column;
@@ -1099,7 +1090,7 @@ onBeforeUnmount(() => {
   object-fit: fill;
   pointer-events: none;
 }
-/* 两个圆钮在成品图里已烘好，这里只叠透明点击区，悬停点亮 */
+/* 两个圆钮在成品图里已烘好 */
 .cf-btn {
   position: absolute;
   top: 88px;
@@ -1126,7 +1117,7 @@ onBeforeUnmount(() => {
   transform: scale(0.94);
 }
 
-/* ---------- 提示 ---------- */
+/* 提示 */
 .gl-toast {
   position: absolute;
   left: 50%;

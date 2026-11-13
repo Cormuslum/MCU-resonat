@@ -1,6 +1,4 @@
-/**
- * 录屏抓图鉴切换特效：`node tools/rec-v24.mjs {codex|loading}` → `.shots/rec-{codex,loading}/*.webm`，之后用 ffmpeg 抽帧分析。
- */
+/** 录屏抓图鉴切换特效：`node tools/rec-v24.mjs {codex|loading}` → `.shots/rec-{codex,loading}/*.webm`，之后用 ffmpeg 抽帧分析 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 

@@ -1,7 +1,4 @@
-/**
- * 整套导入：素材按「大版本 / 版本号+版本名 / 服装阁 / S 编号套装 / 阅读物」的固定结构整理好再丢进来。
- * 两个函数：`scanBundle(path)` 把目录读成一份计划（不写任何文件），`applyBundle(...)` 按计划一次性写完。
- */
+/** 整套导入：素材按「大版本 / 版本号+版本名 / 服装阁 / S 编号套装 / 阅读物」的固定结构整理好再丢进来 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { ASSET, exists, readText, safeName, uiRoot, imageSize, verKey } from './util.mjs'
@@ -14,10 +11,7 @@ import {
 } from './meta.mjs'
 import { archive } from './archive.mjs'
 
-/**
- * 发行版（启动器设 `NIKKI_DIST_MODE=1`）：故事 / 阅读物**直写成品 JSON**，
- * 不在 `工具/data/{故事,阅读物}/` 里留副本。
- */
+/** 发行版（启动器设 `NIKKI_DIST_MODE=1`）：故事 / 阅读物**直写成品 JSON**， 不在 `工具/data/{故事,阅读物}/` 里留副本 */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 
 /** 拖进来的 md 头部的 `# 标题` 与 `---` 不是正文，直写 JSON 时必须剥掉 */
@@ -53,9 +47,7 @@ function parseVersionDir(dirName) {
     const name = (m[2] || '').replace(/^[·.\s-]+/, '').trim()
     return { v, name }
   }
-  /**
-   * 兜底：版本号没写在开头也要认，从名字里捞一个 `x.y` 出来。
-   */
+  /** 兜底：版本号没写在开头也要认，从名字里捞一个 `x.y` 出来 */
   const m2 = /(\d+\.\d+)/.exec(dirName)
   if (m2) {
     const v = m2[1]
@@ -96,10 +88,7 @@ function collectReadingsDeep(dir) {
   return out
 }
 
-/**
- * 这个目录**自己**是哪一层？
- * 路径末尾那一层对得上就该能认，不硬性要求再套一层。
- */
+/** 这个目录**自己**是哪一层？ 路径末尾那一层对得上就该能认，不硬性要求再套一层 */
 function classifySelf(dir) {
   const base = path.basename(dir)
   const asDir = { name: base, dir: true, path: dir }
@@ -125,9 +114,7 @@ function classifySelf(dir) {
   return { level: '' }
 }
 
-/**
- * 往上找 1~2 层里的「版本目录名」，猜出版本号 / 版本名 / 大版本名；只用于预填表单，绝不拿它当写入依据。
- */
+/** 往上找 1~2 层里的「版本目录名」，猜出版本号 / 版本名 / 大版本名；只用于预填表单，绝不拿它当写入依据 */
 function guessContext(dir) {
   const parent = path.dirname(dir)
   if (!parent || parent === dir) return {}
@@ -145,11 +132,7 @@ function guessContext(dir) {
   }
 }
 
-/**
- * 扫描一个整理好的文件夹：允许指到大版本 / 版本 / 服装阁 / 套装 / 阅读物任意一层，指到哪层就认哪层；
- * 缺上级归属的收成 `orphans`（界面可一键填进「服装阁」表单）。
- * @returns {{ok:boolean, plan?:object, error?:string, code?:string}}
- */
+/** 扫描一个整理好的文件夹：允许指到大版本 / 版本 / 服装阁 / 套装 / 阅读物任意一层，指到哪层就认哪层； 缺上级归属的收成 `orphans`（界面可一键填进「服装阁」表单） */
 export function scanBundle(root) {
   if (!exists(root)) return { ok: false, error: '路径不存在' }
   if (!fs.statSync(root).isDirectory()) return { ok: false, error: '这不是文件夹' }
@@ -258,7 +241,7 @@ export function scanBundle(root) {
         return 0
       })
     if (!verDirs.length) {
-      // 顶层直接是版本目录（用户少套了一层）—— 也认
+      // 顶层直接是版本目录—— 也认
       const maybe = parseVersionDir(majorDir.name)
       if (maybe) {
         const m = collectVersion(majorDir, { majorName: '', majorIcon: null })
@@ -410,9 +393,7 @@ function collectPool(poolDir) {
   const audio = entries.find((e) => !e.dir && AUDIO_RE.test(e.name)) || null
   // 「标题横幅」已废弃（模拟器从不显示），不再识别、不再归档
 
-  /**
-   * 背景：先认文件名（`背景图.*` / `bg.*`），认不到再按尺寸兜底（16:9 且宽 ≥1900），必须排除已认出的缩略图 / 艺术字。
-   */
+  /** 背景：先认文件名（`背景图.*` / `bg.*`），认不到再按尺寸兜底（16:9 且宽 ≥1900），必须排除已认出的缩略图 / 艺术字 */
   let bg = pickBy(/^(背景图?|bg)$/i)
   if (!bg) {
     const used = new Set([thumb, titleArt].filter(Boolean).map((e) => e.path))
@@ -454,10 +435,7 @@ function collectPool(poolDir) {
     milestones, sets }
 }
 
-/**
- * 这个目录是不是「一套服装」：S 编号目录 / 带 `属性-5星-XXX.yaml`、`故事-*.md` / 带 `半身像/` `图标/` `进化等阶/`
- * / 直接放 `整体-初始.png`。
- */
+/** 这个目录是不是「一套服装」：S 编号目录 / 带 `属性-5星-XXX.yaml`、`故事-*.md` / 带 `半身像/` `图标/` `进化等阶/` / 直接放 `整体-初始.png` */
 function isSetDir(e) {
   if (/^S\d{2,}$/i.test(e.name)) return true
   const entries = listDir(e.path)
@@ -503,7 +481,7 @@ function collectSet(setDir) {
   if (/四星|4\s*星/.test(setDir.name)) set.star = '4'
   else if (/五星|5\s*星/.test(setDir.name)) set.star = '5'
 
-  // 目录名本身可能就是套装名。`S0062` 这类编号目录不能当名字 —— 那是 ID，不是套名。
+  // 目录名本身可能就是套装名。`S0062` 这类编号目录不能当名字 —— 那是 ID，不是套名
   if (!set.name && !/^S\d+$/i.test(setDir.name)) set.name = setDir.name
   if (!set.name) return null   // 没有 属性/故事 文件、目录名又是纯编号 → 认不出套装名，跳过
   // 一个素材都没有的空壳（或被 isSetDir 误判进来的普通目录）不算套装
@@ -515,10 +493,7 @@ function collectSet(setDir) {
 
 const pad3 = (n) => String(n).padStart(3, '0')
 
-/**
- * 把一个阁的旧编号「搬」到新编号（修非数字 / 超范围这类脏数据）。
- * 只搬 Pic 目录（艺术字 + 铭牌在那）；其余素材按名称定位，不受编号影响。
- */
+/** 把一个阁的旧编号「搬」到新编号（修非数字 / 超范围这类脏数据）。只搬 Pic 目录（艺术字 + 铭牌在那）；其余素材按名称定位，不受编号影响 */
 function rekeyPool(snap, oldKey, newKey, log) {
   if (!oldKey || oldKey === newKey) return
   const picRoot = path.join(ASSET, uiRoot(), 'UI', 'SysResonance', 'texture', 'Pic')
@@ -532,8 +507,8 @@ function rekeyPool(snap, oldKey, newKey, log) {
       log({ kind: 'warn', text: `Pic 目录改名失败（不影响其余写入）：${e.message || e}` })
     }
   }
-  // 背景图已收进阁目录（`<阁>/背景图.jpg`），不再按编号命名；
-  // 视频是按阁名命名的 —— 两者都不用跟着编号搬。
+  // 背景图已收进阁目录（`<阁>/背景图.jpg`），不再按编号命名
+  // 视频是按阁名命名的 —— 两者都不用跟着编号搬
 }
 
 /** 阅读物：有元数据头就用现成的，没有就按正文生成 */
@@ -560,10 +535,7 @@ function importReading(file, snap) {
   return { ...r, dist: false }
 }
 
-/**
- * 按扫描结果一次性写入。
- * @param {{plan:object, snap:object, log:Function, force?:boolean}} p
- */
+/** 按扫描结果一次性写入 */
 export async function applyBundle({ plan, snap, log = () => {} }) {
   const notes = []
   const poolIds = []
@@ -623,8 +595,8 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
       for (const pool of ver.pools) {
         const idx = readPoolIndex()
         const prev = idx[pool.name]
-        // 编号两段区间（001~999 官方 / 1000~9999 自定义）且允许不连续，
-        // 只做数值规范化；真的不合法（空 / 0 / 5 位以上）才重新分配。
+        // 编号两段区间（001~999 官方 / 1000~9999 自定义）且允许不连续
+        // 只做数值规范化；真的不合法（空 / 0 / 5 位以上）才重新分配
         let gachaKey = normalizeGacha(prev?.gachaKey)
         let rekeyFrom = ''
         if (!gachaKey) {
@@ -643,14 +615,14 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
         }
         log({ kind: 'ok', text: `服装阁：${pool.name} → ${gachaKey}` })
 
-        // 素材已按「实体」重构：一座阁一个目录，图片/文案都在里面。
-        // 常驻阁的目录名带 `常驻·` 前缀（build-pool-map 靠它判 standard）；
-        // 扫描结果里没有 type，沿用索引里已登记的阁型。
+        // 素材已按「实体」重构：一座阁一个目录，图片/文案都在里面
+        // 常驻阁的目录名带 `常驻·` 前缀（build-pool-map 靠它判 standard）
+        // 扫描结果里没有 type，沿用索引里已登记的阁型
         const poolDir = poolDirOf(ver.v, ver.name, pool.name, {
           create: true, standard: prev?.type === 'standard',
         })
 
-        // 背景（1000×500 列表图与 4K 成品都收，collect 的 bg_webp 会自己裁 16:9）
+        // 背景（collect 的 bg_webp 会自己裁 16:9）
         if (pool.bg) {
           const ext = (path.extname(pool.bg) || '.png').toLowerCase()
           const dst = path.join(poolDir, `背景图${['.png', '.jpg', '.jpeg', '.webp'].includes(ext) ? ext : '.png'}`)
@@ -664,7 +636,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
           const dst = path.join(poolDir, '艺术字.png')
           archive(snap, [{ src: pool.titleArt, target: dst }])
         }
-        // 动态背景 / 进入音：按**阁名**存（编号会变，阁名不会），与 jobs.mjs 的「服装阁」任务一致。
+        // 动态背景 / 进入音：按**阁名**存（编号会变，阁名不会），与 jobs.mjs 的「服装阁」任务一致
         if (pool.video) {
           const ext = (path.extname(pool.video) || '.webm').toLowerCase()
           const dst = path.join(ASSET, '视频', '服装阁动态', `${safeName(pool.name)}${ext === '.mp4' ? '.mp4' : '.webm'}`)
@@ -729,7 +701,6 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
             notes.push(`${set.name}：没给套装 YAML，已按图标生成`)
           }
 
-          // 故事（发行版直写成品 stories.json）
           if (set.story) {
             const body = stripMd(readText(set.story))
             if (body.trim()) {
@@ -783,9 +754,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
   }
 }
 
-/**
- * 决定这一套的套装 ID：序列里已有则沿用原 ID、目录名是 S 编号则直接用、都没有则取现有最大 S 编号 + 1。
- */
+/** 决定这一套的套装 ID：序列里已有则沿用原 ID、目录名是 S 编号则直接用、都没有则取现有最大 S 编号 + 1 */
 function resolveSetId(set) {
   const rows = readSetSeq()
   const hit = rows.find((r) => r['套装名'] === set.name && (r['进化等阶'] || '初始') === '初始')

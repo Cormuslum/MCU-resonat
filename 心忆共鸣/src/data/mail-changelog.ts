@@ -1,7 +1,4 @@
-/**
- * 主页「信封」弹窗 · 版本更新日志（类型 + 运行时加载），数据在 `public/assets/data/mail-changelog.json`；
- * 生成器 `node tools/gen-mail-changelog.mjs`（已挂 `prebuild`），取最近三版各前 5 条 bullet。
- */
+/** 主页「信封」弹窗 · 版本更新日志（类型 + 运行时加载），数据在 `public/assets/data/mail-changelog.json`； 生成器 `node tools/gen-mail-changelog.mjs`（已挂 `prebuild`），取最近三版各前 5 条 bullet */
 import { loadAssetJson } from '@/core/asset-data'
 
 export interface MailLog {

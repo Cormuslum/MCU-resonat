@@ -1,7 +1,4 @@
-/**
- * 心忆奇想工坊 · 前端（原生 JS，无框架）。状态极简：一个 job + fields + files；
- * 「写到哪、写哪张表」全在后端 `jobs.mjs`，前端只负责收集用户意图。
- */
+/** 心忆奇想工坊 · 前端（原生 JS，无框架） */
 
 const $ = (s, r = document) => r.querySelector(s)
 const $$ = (s, r = document) => [...r.querySelectorAll(s)]
@@ -65,10 +62,7 @@ function log(kind, text) {
 function clearLog() { $('#log').innerHTML = '' }
 
 /* ────────────────────────────── 文案（项目根 文案.json） ────────────────────────────── */
-/**
- * 固定文案的真源是项目根的 `文案.json`（`server.mjs` 挂在 `/copy.json`）：顶栏按 `data-copy*` 覆盖，
- * 帮助弹窗整段重建；`index.html` 里的中文是同名兜底。
- */
+/** 固定文案的真源是项目根的 `文案.json`（`server.mjs` 挂在 `/copy.json`）：顶栏按 `data-copy*` 覆盖， 帮助弹窗整段重建；`index.html` 里的中文是同名兜底 */
 let COPY = null
 
 /** 'updater.help.title' → COPY.updater.help.title */
@@ -76,10 +70,7 @@ function pick(obj, dotted) {
   return dotted.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj)
 }
 
-/**
- * 取 `updater.<key>` 的文案，取不到就用第二参数（页面/代码里的原文）。
- * 第二参数是唯一的兜底：`文案.json` 缺键、读失败时靠它。
- */
+/** 取 `updater.<key>` 的文案，取不到就用第二参数（页面/代码里的原文）。第二参数是唯一的兜底：`文案.json` 缺键、读失败时靠它 */
 function C(key, fallback) {
   const v = pick(COPY, 'updater.' + key)
   return typeof v === 'string' && v ? v : fallback
@@ -151,9 +142,9 @@ async function loadState() {
   S.snapshots = d.snapshots
   S.dlc = d.dlc
 
-  // 顶栏悬停提示：这次到底在改**哪一份**数据。
+  // 顶栏悬停提示：这次到底在改**哪一份**数据
   // 发行版和开发版都叫「心忆奇想工坊」，端口也都默认 5199 ——
-  // 光看界面分不出连的是哪个。
+  // 光看界面分不出连的是哪个
   {
     const lb = d.labels || {}
     const tip = []
@@ -259,7 +250,7 @@ function fieldHtml(f) {
   let input
 
   if (f.type === 'setlist') {
-    // 阁内套装清单：勾上 = 移出。数据来自「要修改的阁」当前的套装，
+    // 阁内套装清单：勾上 = 移出。数据来自「要修改的阁」当前的套装
     // 值是逗号分隔的套装名（后端按这个删）
     const pool = (S.options.customPools || []).find((p) => p.name === String(S.fields.target || ''))
     const cur = new Set(String(S.fields[f.key] || '').split(',').map((s) => s.trim()).filter(Boolean))
@@ -276,7 +267,7 @@ function fieldHtml(f) {
     || f.type === 'customPools' || f.type === 'customSets') {
     let opts = []
     if (f.type === 'select') opts = f.options || []
-    // 套装下拉按**套装序号**排：suitList 已由后端按 套装序列.csv 的序号排好。
+    // 套装下拉按**套装序号**排：suitList 已由后端按 套装序列.csv 的序号排好
     else if (f.type === 'sets') {
       const list = S.options.suitList || []
       opts = list.length ? list.map((s) => [s.name, s.name]) : (S.options.suitNames || []).map((n) => [n, n])
@@ -286,9 +277,9 @@ function fieldHtml(f) {
     } else if (f.type === 'customSets') {
       opts = (S.options.customSets || []).map((s) => [s.name, `${s.name} · ${s.star}★ · ${s.pool}`])
     } else opts = optionsOf(f)
-    // sets 类型（如故事要挂哪一套）必须用户自己选，不能默认第一项。
-    // 版本下拉默认**最新版本**（列表已按版本号升序）。
-    // 「要修改的阁 / 套装」不自动选：它一选中就要回填整张表单。
+    // sets 类型（如故事要挂哪一套）必须用户自己选，不能默认第一项
+    // 版本下拉默认**最新版本**（列表已按版本号升序）
+    // 「要修改的阁 / 套装」不自动选：它一选中就要回填整张表单
     let auto = ''
     if (f.type !== 'sets' && f.type !== 'customPools' && f.type !== 'customSets' && opts.length) {
       auto = f.type === 'versions' ? opts[opts.length - 1][0] : opts[0][0]
@@ -315,7 +306,7 @@ function fieldHtml(f) {
         ${list.map((m) => `<option value="${esc(m.major)}">${esc(m.name)}</option>`).join('')}
       </datalist>`
   } else if (f.type === 'setsearch') {
-    // 套装搜索：输名字或星级（5 / 5星 / 4）即时筛，**结果全列**（容器高度固定 10 行）。
+    // 套装搜索：输名字或星级（5 / 5星 / 4）即时筛，**结果全列**（容器高度固定 10 行）
     input = `<div class="combo" data-combo="set">
       <input type="text" id="f-${f.key}" data-key="${f.key}" data-search="set"
         value="${esc(val)}" placeholder="${esc(f.placeholder || '')}" autocomplete="off" />
@@ -340,9 +331,7 @@ function bindFields(root) {
     })
   })
 
-  /* ── 套装搜索框──
-     输名字或星级 → 立即筛，**全部列出**（容器固定 10 行高，超出滚动）；
-     点中一条 = 把它写进「套装名」「星级」，并把这篇故事的正文取回来。 */
+  /* ── 套装搜索框── 输名字或星级 → 立即筛，**全部列出**（容器固定 10 行高，超出滚动）； 点中一条 = 把它写进「套装名」「星级」，并把这篇故事的正文取回来 */
   const sb = $('[data-search="set"]', root)
   if (sb) {
     const wrap = sb.closest('.combo')
@@ -405,7 +394,6 @@ function bindFields(root) {
       S.fields[k] = el.value
       const fdef = (S.jobs[S.job].fields || []).find((x) => x.key === k) || {}
 
-      // 故事面板：在下拉里选中一个套装 → 把这一篇的正文取回来
       if (k === 'name' && fdef.type === 'sets' && el.value) previewStory(el.value)
 
       // 切换「新建 / 修改」：把上一种模式留下的目标与名字清掉
@@ -667,10 +655,7 @@ function setGroupHtml(g) {
 
 /* ────────────────────────────── 整套导入 ────────────────────────────── */
 
-/**
- * 「整套导入」的预览：把扫描结果按 大版本 / 版本 / 阁 / 套装 列出来，
- * 写入前就能看出缺了什么，不用先写一遍再回滚。
- */
+/** 「整套导入」的预览：把扫描结果按 大版本 / 版本 / 阁 / 套装 列出来， 写入前就能看出缺了什么，不用先写一遍再回滚 */
 function bundleHtml() {
   const plan = S.bundlePlan
   const head = `
@@ -750,10 +735,7 @@ async function bindBundle() {
   }
 }
 
-/**
- * 扫一个文件夹并把计划挂到界面上（扫描按钮与「拖文件夹」共用这一条路）。
- * @returns {Promise<boolean>} 是否扫出了结构
- */
+/** 扫一个文件夹并把计划挂到界面上（扫描按钮与「拖文件夹」共用这一条路） */
 async function scanBundleRoot(root) {
   if (!root) return false
   setStatus(C('status.scanBusy', '正在扫描文件夹…'), 'busy')
@@ -792,10 +774,7 @@ async function scanBundleRoot(root) {
   }
 }
 
-/**
- * 把「待补归属」这一项能认出来的东西**整批**带进「服装阁」表单。
- * 并把**真正还缺的**列清楚（缺版本号、缺艺术字…）。
- */
+/** 把「待补归属」这一项能认出来的东西**整批**带进「服装阁」表单。并把**真正还缺的**列清楚（缺版本号、缺艺术字…） */
 function jumpToOrphan(o) {
   const g = o.guess || {}
   const pool = (g.pools || [])[0]
@@ -1016,10 +995,7 @@ function placeOneSilent(i, value) {
   window.__placeOne(i, value)
 }
 
-/**
- * 真正的放置逻辑：从 pending 里取出第 i 个，push 进 files。
- * 返回放进去的对象（拿不到返回 null）。
- */
+/** 真正的放置逻辑：从 pending 里取出第 i 个，push 进 files。返回放进去的对象（拿不到返回 null） */
 window.__placeOne = function (i, value) {
   const f = S.pending[Number(i)]
   if (!f || !value) return null
@@ -1063,20 +1039,12 @@ document.addEventListener('click', (e) => {
 
 /* ────────────────────────────── 文件处理 ────────────────────────────── */
 
-/**
- * 可多张的类目：同一批里应全部塞进同一个套装卡，不能一有空槽就散过去。
- */
+/** 可多张的类目：同一批里应全部塞进同一个套装卡，不能一有空槽就散过去 */
 const MULTI_KINDS = new Set(['partIcon', 'setBust', 'setCardEvo', 'awaken', 'setPortrait', 'milestone', 'plate'])
 
-/**
- * 把一批已识别的文件放进槽位：可多张的类目先找「同类已放过」的槽再找空槽，单值类目找第一个空槽，
- * 都没有则进待分配（用户可多选后批量放）。
- */
+/** 把一批已识别的文件放进槽位：可多张的类目先找「同类已放过」的槽再找空槽，单值类目找第一个空槽， 都没有则进待分配 */
 function placeFiles(list) {
-  /* ── 1. 先按路径里的 `S0062` 目录聚类 ──
-     同一个文件夹里常同时放着两套（S0062 / S0083），文件名又完全一样
-     （都叫「发型-XXX.png」）。只有靠路径才能知道哪些属于同一套，
-     否则会把两套的部件混进同一张套装卡（用户报的「同一套被拆到两个套装」反过来也成立）。 */
+  /* ── 1. 先按路径里的 `S0062` 目录聚类 ── 同一个文件夹里常同时放着两套（S0062 / S0083），文件名又完全一样 （都叫「发型-XXX.png」） */
   const groupOrder = []
   const groupOf = new Map()
   for (const f of list) {
@@ -1138,10 +1106,7 @@ function placeFiles(list) {
 /** 上传（浏览器只给 File，没有绝对路径） */
 /* ────────────────────────────── 故事预览 ────────────────────────────── */
 
-/**
- * 把一篇故事的正文取回来填进「故事正文」框：`previewStory('雪境长歌')` 按套装名从成品 stories.json 取，
- * `previewStory('', '/…/故事-5星-雪.md')` 直接读拖进来的 md；只改文本框、不整页重渲染。
- */
+/** 把一篇故事的正文取回来填进「故事正文」框：`previewStory('雪境长歌')` 按套装名从成品 stories.json 取， `previewStory('', '/…/故事-5星-雪.md')` 直接读拖进来的 md；只改文本框、不整页重渲染 */
 async function previewStory(name, src) {
   const q = src ? `src=${encodeURIComponent(src)}` : `name=${encodeURIComponent(name || '')}`
   if (!src && !name) return
@@ -1163,9 +1128,7 @@ async function previewStory(name, src) {
   } catch { /* 预览失败不该挡住写入 */ }
 }
 
-/**
- * 从 markdown 文件名里认套装：`故事-5星-雪境长歌.md`（最准）→ 含套装全名 → 含套装编号（`S0429` / `0429`）。
- */
+/** 从 markdown 文件名里认套装：`故事-5星-雪境长歌.md`（最准）→ 含套装全名 → 含套装编号（`S0429` / `0429`） */
 function matchStorySet(fileName) {
   const base = String(fileName || '').replace(/\.md$/i, '').trim()
   const list = S.options.suitList || []
@@ -1210,10 +1173,7 @@ async function autoStoryFromFiles(list) {
 /** 工坊认的扩展名（拖文件夹时也用这一条筛，避免把 .DS_Store 之类传上去） */
 const ACCEPT_RE = /\.(png|jpe?g|webp|gif|bmp|webm|mp4|mov|mkv|ogg|mp3|wav|flac|m4a|md|txt|yaml|yml)$/i
 
-/**
- * 上传一批文件。`relList` 是与 fileList 一一对应的相对路径（拖文件夹时必须带 ——
- * 「半身像 / 图标 / 进化等阶」三个目录里的文件名长得一样，只看文件名会认错）。
- */
+/** 上传一批文件 */
 async function uploadFiles(fileList, relList = null) {
   const kept = [...fileList]
     .map((f, i) => ({ f, rel: relList?.[i] || f.webkitRelativePath || f.name }))
@@ -1226,12 +1186,9 @@ async function uploadFiles(fileList, relList = null) {
   const d = await r.json()
   if (!d.ok) { log('err', '上传失败'); return }
 
-  // 保留 File 引用，缩略图直接走 blob，不用再请求后端。
-  // ⚠ 必须**按下标配对**：半身像与图标里的文件名完全相同（都叫「发型-XXX.png」），
-  // 以前用 name 建 Map，后一个会把前一个顶掉 → 拖 16 个文件只生效 8 个。
+  // 保留 File 引用，缩略图直接走 blob，不用再请求后端
   const list = d.files.map((x, i) => ({ ...x, file: kept[i].f }))
   placeFiles(list)
-  // 故事面板：md 进来就认套名、回填正文
   await autoStoryFromFiles(list)
 }
 
@@ -1296,10 +1253,7 @@ window.addEventListener('drop', async (e) => {
   await handleDrop(e.dataTransfer, null)
 })
 
-/* ── 拖进来的是文件夹（Electron 壳能拿到绝对路径时走「粘贴路径」链路，这套只是兜底）──
- * 浏览器给的文件夹是无扩展名、size 0 的条目，所以用 `webkitGetAsEntry` 读出整棵树：
- * 整套导入先落到 `.inbox` 再按「粘贴路径」同一条流程扫描，其它任务拆成文件 + 相对路径照常上传。
- */
+/* ── 拖进来的是文件夹（Electron 壳能拿到绝对路径时走「粘贴路径」链路，这套只是兜底）── 浏览器给的文件夹是无扩展名、size 0 的条目，所以用 `webkitGetAsEntry` 读出整棵树： 整套导入先落到 `.inbox` 再按「粘贴路径」同一条流程扫描，其它任务拆成文件 + 相对路径照常上传 */
 function readEntryFile(entry) {
   return new Promise((res) => entry.file((f) => res(f), () => res(null)))
 }
@@ -1321,8 +1275,7 @@ async function collectEntry(entry, prefix = '') {
     return f ? [{ file: f, rel: prefix + entry.name }] : []
   }
   if (!entry.isDirectory) return []
-  // ⚠ 必须在 drop 事件里同步取 entry，await 之后 items 就失效了；
-  //   这里已经拿到 entry，递归读就是安全的。
+  // 这里已经拿到 entry，递归读就是安全的
   const kids = await readAllEntries(entry.createReader())
   const out = []
   for (const k of kids) out.push(...await collectEntry(k, `${prefix}${entry.name}/`))
@@ -1346,10 +1299,7 @@ async function droppedTree(dt) {
   return out
 }
 
-/**
- * 拖进来的东西的绝对路径：Electron 壳由 preload 暴露 `window.nikki.getPathForFile(file)`，
- * 拿到资源管理器里的真路径（文件夹也给）；拿不到则返回空数组，调用方退回目录树上传。
- */
+/** 拖进来的东西的绝对路径：Electron 壳由 preload 暴露 `window.nikki.getPathForFile(file)`， 拿到资源管理器里的真路径（文件夹也给）；拿不到则返回空数组，调用方退回目录树上传 */
 function droppedPaths(dt) {
   const api = window.nikki
   if (!api || typeof api.getPathForFile !== 'function') return []
@@ -1388,10 +1338,7 @@ async function dropByPaths(paths, target) {
   await readPaths()
 }
 
-/**
- * 把「这一次」新加进 S.files 的那批挪进指定槽位（单值槽只留第一张）。
- * 拖文件、拖文件夹都走这条 —— 以前拖文件夹那条路会无视「拖到哪个槽」。
- */
+/** 把「这一次」新加进 S.files 的那批挪进指定槽位（单值槽只留第一张）。拖文件、拖文件夹都走这条 —— 以前拖文件夹那条路会无视「拖到哪个槽」 */
 function assignToSlot(before, target) {
   if (!target) return
   const def = allSlotDefs().find(
@@ -1489,8 +1436,8 @@ function precheck() {
   const problems = []
   const warns = []
   const repeat = localStorage.getItem(LAST_SIG_KEY) === payloadSig()
-  // 只检验改动项：与上一次写入完全一致的素材不再重复报一遍同样的提示。
-  // 必填项（problems）始终检查 —— 那是「能不能写」的问题，不是「检验素材」。
+  // 只检验改动项：与上一次写入完全一致的素材不再重复报一遍同样的提示
+  // 必填项（problems）始终检查 —— 那是「能不能写」的问题，不是「检验素材」
   const warn = (...args) => { if (!repeat) warns.push(...args) }
   if (repeat) {
     warns.push(C('precheck.sameAsLast',
@@ -1507,7 +1454,7 @@ function precheck() {
       problems.push(CT('precheck.missing', '「{label}」没填', { label: f.label }))
     }
   }
-  // 「修改已有」时不再要求「至少一套套装」—— 那套东西本来就在库里，
+  // 「修改已有」时不再要求「至少一套套装」—— 那套东西本来就在库里
   // 这次可能只是换张背景
   const editMode = String(S.fields.mode || 'new') === 'edit'
   if (S.job === 'pool' && !editMode) {
@@ -1595,7 +1542,7 @@ async function apply() {
       slot: f.slot, setIndex: f.setIndex ?? null, src: f.src, name: f.name, kind: f.kind,
     })),
     options: {
-      // ：不再传 restartDev —— 发行版没有 vite/5178，开发版的收尾由服务端自己判断。
+      // ：不再传 restartDev —— 发行版没有 vite/5178，开发版的收尾由服务端自己判断
       force: $('#opt-force').checked,
     },
   }
@@ -1630,8 +1577,8 @@ async function apply() {
     }
 
     if (done?.ok && done.skipped) {
-      // 服务端判定「与上一次写入完全一致」：没有改动项，未检验、未写盘、未跑管线。
-      // 保留现场，用户改一两个字段就能直接再点一次。
+      // 服务端判定「与上一次写入完全一致」：没有改动项，未检验、未写盘、未跑管线
+      // 保留现场，用户改一两个字段就能直接再点一次
       setStatus(C('status.noChange', '与上一次写入完全一致，已跳过'), 'live')
       await refreshMeta()
     } else if (done?.ok) {
@@ -1656,9 +1603,9 @@ async function apply() {
     }
   } catch (e) {
     const msg = String(e?.message || e)
-    // 连接被重置时浏览器只给一句 "network error" / "Failed to fetch"。
-    // 多半是工坊进程在写入中途被关掉/重启了 —— 此时管线往往早已跑完，
-    // 素材和 manifest 都写好了，只是结果没能送回来。别让用户以为要重做一遍。
+    // 连接被重置时浏览器只给一句 "network error" / "Failed to fetch"
+    // 多半是工坊进程在写入中途被关掉/重启了 —— 此时管线往往早已跑完
+    // 素材和 manifest 都写好了，只是结果没能送回来
     if (/network error|failed to fetch|terminated|aborted|networkerror/i.test(msg)) {
       log('err', '与工坊的连接中断了（工坊进程可能刚被重启）。')
       log('warn', '素材与管线多半已写入完成，请刷新页面确认——不要直接重跑，避免重复写入。')
@@ -1748,9 +1695,7 @@ $('#modal-tip').addEventListener('click', (e) => {
   if (e.target.id === 'modal-tip') $('#modal-tip').classList.remove('on')
 })
 
-/* ── 通用确认弹窗（替掉 `window.confirm`）──
- * 确定 → resolve(true)；取消 / 点遮罩 / ESC → resolve(false)；只留一个 pending，后开的覆盖先开的。
- */
+/* ── 通用确认弹窗（替掉 `window.confirm`）── 确定 → resolve(true)；取消 / 点遮罩 / ESC → resolve(false)；只留一个 pending，后开的覆盖先开的 */
 let confirmResolve = null
 function showConfirm({ title, body, okText, primary = false }) {
   const m = $('#modal-confirm')
@@ -1777,9 +1722,7 @@ $('#modal-confirm').addEventListener('click', (e) => {
   if (e.target.id === 'modal-confirm') closeConfirm(false)
 })
 
-/* ── 清理临时文件（顶栏垃圾桶）──
- * 列出 `.dist` / `.inbox` / `.snapshots` 的条目数与体积，勾选后二次确认再删；`.snapshots` 删了就没有「撤回」。
- */
+/* ── 清理临时文件（顶栏垃圾桶）── 列出 `.dist` / `.inbox` / `.snapshots` 的条目数与体积，勾选后二次确认再删；`.snapshots` 删了就没有「撤回」 */
 function fmtBytes(n) {
   const v = Number(n || 0)
   if (v < 1024) return `${v} B`

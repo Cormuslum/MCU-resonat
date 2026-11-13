@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 深海回响 —— 奖励预览详情页（左上返回金钮 / 顶部紫缎带 / 左侧摆饰礼盒 / 右侧物品信息 / 底部里程碑轨道）。
- * 坐标写死 1920×1080 绝对像素，根元素落在 `.banner` 内随 `.design` 一起缩放。
- */
+/** 深海回响 —— 奖励预览详情页（左上返回金钮 / 顶部紫缎带 / 左侧摆饰礼盒 / 右侧物品信息 / 底部里程碑轨道）。坐标写死 1920×1080 绝对像素，根元素落在 `.banner` 内随 `.design` 一起缩放 */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { toDesignX } from '@/core/stage'
@@ -51,9 +48,7 @@ const LONG_PTS: ReadonlyArray<readonly [number, number]> = [
 /** 超过 10 档铺不下固定轨道 → 切长轨道（横向滚动）模式 */
 const longMode = computed(() => tiers.value.length > 10)
 
-/**
- * 四星池短轨道（3 档 5/15/25）：节点间距 ≈190、奖励图标 105×123、抽数徽章外环 Ø170。
- */
+/** 四星池短轨道（3 档 5/15/25）：节点间距 ≈190、奖励图标 105×123、抽数徽章外环 Ø170 */
 const shortMode = computed(() => !longMode.value && tiers.value.length > 0 && tiers.value.length <= 3)
 const SHORT_GAP = 190
 const SHORT_MID = 1010
@@ -106,21 +101,19 @@ const trackD = computed(() =>
 const NODE_GAP = 169
 const NODE_MID = 934
 const CARD_W = 96
-/** 徽章中心到轨道中线的垂直距离（实机 108 抽 → 徽章 y=692、轨道 y≈759） */
+/** 徽章中心到轨道中线的垂直距离 */
 const BADGE_DY = 67
 
 const n = computed(() => tiers.value.length)
 
-/**
- * 档位间距。10 档时正好 169（与实机一致）；长轨道恒为 188（实机实测）。
- */
+/** 档位间距 */
 const gap = computed(() => {
   if (longMode.value) return LONG_GAP
   if (shortMode.value) return SHORT_GAP
   const m = Math.max(1, n.value - 1)
   return Math.min(NODE_GAP, (TRACK_X1 - TRACK_X0) / m)
 })
-/** 卡片缩放比：间距被压窄时卡片跟着缩，1 档时恒为 1，不影响默认池；长轨道不缩；四星池按实机放大到 105 宽 */
+/** 卡片缩放比 */
 const cardK = computed(() => {
   if (longMode.value) return 1
   if (shortMode.value) return SHORT_CARD_K
@@ -175,9 +168,7 @@ const badgeX = computed(() => {
 })
 const badgeY = computed(() => trackY(badgeX.value) - BADGE_DY)
 
-/**
- * 「已走过」的那一段轨道：用同一套样条从起点重画到当前抽数。
- */
+/** 「已走过」的那一段轨道：用同一套样条从起点重画到当前抽数 */
 const passedD = computed(() => {
   const x1 = badgeX.value
   if (longMode.value) return trackPath(0, Math.max(1, x1))
@@ -221,8 +212,7 @@ function dragEnd() {
 
 /* ══════════════════════════════════════════════════════ 档位语义 */
 
-/** 重点档：带摆饰的那一档（如 076 的 160 抽）以及 230 抽大档 —— 金色灯泡 + 蓝色光柱。
- *  这是五星池的概念；常驻池长轨道没有摆饰重点档（实机也无光柱），长轨道下一律不渲染。 */
+/** 重点档 */
 function isMajor(t: TierView): boolean {
   if (longMode.value) return false
   return t.pulls >= 230 || showcaseTier.value?.pulls === t.pulls
@@ -231,9 +221,7 @@ function isMajor(t: TierView): boolean {
 /** 第一个还没达成的档（底部「N次后可领取」提示挂在它下面） */
 const nextTier = computed(() => tiers.value.find((t) => !t.reached) ?? null)
 
-/**
- * 本池的摆饰 / 礼盒（数据来自 pool-map 的 `decor`）；为 null 时整块不渲染。
- */
+/** 本池的摆饰 / 礼盒（数据来自 pool-map 的 `decor`）；为 null 时整块不渲染 */
 const decor = computed(() => store.banner?.decor ?? null)
 
 /** 摆饰所在的那一档（奖励名与摆饰名对得上才认）；对不上就没有「N次后可领取」缎带 */
@@ -266,8 +254,7 @@ const showcase = computed(() => {
  * 五种环境动效，全部纯 CSS（只动 transform / opacity）。背景层不随长轨道 scrollX 平移。
  */
 
-/** 彩虹光带四色：黄 → 蓝 → 红 → 绿 循环（c1=主色亮芯 / c2=边缘深一档）。
- *  单周期内一色作为带中央的主色调，其余三色在带上下边缘，层间 crossfade 即「柔和混杂」。 */
+/** 彩虹光带四色：黄 → 蓝 → 红 → 绿 循环（c1=主色亮芯 / c2=边缘深一档）。单周期内一色作为带中央的主色调，其余三色在带上下边缘，层间 crossfade 即「柔和混杂」 */
 const RB_COLORS = [
   { name: 'y', main: '#f4e3a0', deep: '#d9bd6b' },
   { name: 'b', main: '#9fcdff', deep: '#6ea6e0' },
@@ -292,7 +279,7 @@ const STARS = (() => {
   }))
 })()
 
-/** 上浮气泡：实测出现点/尺寸（Ø15–30，≈10px/s 上浮，6~9s 循环，升约 100px 后消散） */
+/** 上浮气泡 */
 const BUBBLES = [
   { x: 1000, y: 838, size: 24, dur: 6.8, delay: 0 },
   { x: 1230, y: 800, size: 17, dur: 8.2, delay: -2.6 },
@@ -319,10 +306,7 @@ function onKey(e: KeyboardEvent) {
 onMounted(() => {
   play('echo-open', { volume: 0.7 })
   window.addEventListener('keydown', onKey)
-/*
-     * 达成即视为已领取 —— 这样轨道上的对勾状态与实机一致，
-     * 共鸣页那个「可领取」小红点也会跟着消失。
-     */
+/* 达成即视为已领取 —— 这样轨道上的对勾状态与实机一致， 共鸣页那个「可领取」小红点也会跟着消失 */
   for (const t of tiers.value) {
     if (t.reached && !t.claimed) store.claimMilestone(t.pulls)
   }
@@ -369,7 +353,7 @@ onBeforeUnmount(() => {
         }"
       ></i>
     </div>
-    <!-- 上浮气泡（轨道区域升起，升约 100px 消散，带左右轻摆） -->
+    <!-- 上浮气泡（轨道区域升起，带左右轻摆） -->
     <div class="bubbles" aria-hidden="true">
       <span
         v-for="(b, i) in BUBBLES"
@@ -395,7 +379,7 @@ onBeforeUnmount(() => {
     </div>
     <!-- 中部环境光呼吸（解包 Fx_Glow 一族：y 365..600 水平光晕带） -->
     <i class="ds-glowband" aria-hidden="true"></i>
-    <!-- 顶部横幅后光柱（解包 img_titleBg，8s 极微弱闪烁；实机里几乎只在高光瞬间可感知） -->
+    <!-- 顶部横幅后光柱（解包 img_titleBg） -->
     <img
       v-if="uiBanner"
       class="ds-titleglow"
@@ -437,11 +421,6 @@ onBeforeUnmount(() => {
     </div>
 
     <!-- ══════════ 底部里程碑轨道 -->
-    <!--
-      ⚠️ 这里**不放** track.webp 叠层：那张图是「纯黑底 + 白线」且不带透明通道，
-      而 `.ds-track` 因为 z-index 形成了独立层叠上下文，`mix-blend-mode: screen`
-      只会跟这个空上下文混，黑底就原样留下一条黑杠。轨道形态改由下面 SVG 完全负责。
-    -->
     <div
       class="ds-track"
       :style="{
@@ -449,7 +428,7 @@ onBeforeUnmount(() => {
         '--m-hint': `url(${asset(ui.glowBand)})`,
       }"
     >
-      <!-- 长轨道：内层比屏幕宽（≈7150px），整个随 scrollX 平移；固定轨道 innerW=1920 与原渲染一致 -->
+      <!-- 长轨道 -->
       <div
         class="ds-inner"
         :style="{ width: innerW + 'px', transform: `translateX(${-scrollX}px)` }"
@@ -508,26 +487,20 @@ onBeforeUnmount(() => {
       >
         <!-- 连接竖杆：节点中线 → 抽数标签 -->
         <span class="ds-stem"></span>
-        <!--
-          环 + 球：**每个节点都画**。实机里「经过」的节点是发光的白球（环也亮），
-          「未经过」的是灰环 + 灰球 —— 只靠 CSS 改滤镜，不换结构。
-        -->
+        <!-- 环 + 球 -->
         <img
           class="ds-ring"
           :src="asset(t.reached ? ui.nodeRingOn : ui.nodeRing)"
           alt=""
           draggable="false"
         />
-        <!-- 重点档：实心金球（素材中心是暗核，拉亮也留黑芯，所以用 CSS 画） -->
+        <!-- 重点档：实心金球（素材中心是暗核，拉亮也留黑芯） -->
         <span v-if="isMajor(t)" class="ds-orb ds-orb-major"></span>
         <!-- 已达成：白球用素材 grade_main -->
         <img v-else-if="t.reached" class="ds-orb" :src="asset(ui.badgeBall)" alt="" draggable="false" />
-        <!-- 未经过：实机是一颗浅灰实心小球 -->
+        <!-- 未经过 -->
         <span v-else class="ds-dot"></span>
-        <!--
-          箭头 grade_arrow **永远贴着球**（球盖住它的宽口，只露出向下的尖端），
-          不再单独出现在轨道节点上；只有「已达成」或「重点档」才有。
-        -->
+        <!-- 箭头 grade_arrow **永远贴着球**（球盖住它的宽口，只露出向下的尖端）， 不再单独出现在轨道节点上；只有「已达成」或「重点档」才有 -->
         <img
           v-if="t.reached || isMajor(t)"
           class="ds-arrow"
@@ -573,7 +546,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* 全局 img{max-width:100%} 会把超宽素材算成 0 —— 这里统一放开 */
 .echo img {
   max-width: none;
 }
@@ -588,7 +560,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
   animation: echoIn 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-/* 长轨道（常驻池）：整页可拖拽浏览，滚轮/拖拽横向滚动 */
+/* 长轨道 */
 .echo.long {
   cursor: grab;
   user-select: none;
@@ -618,12 +590,12 @@ onBeforeUnmount(() => {
   from { transform: scale(1.015); }
   to { transform: scale(1.055); }
 }
-/* 中部横向光晕带（y 365..600）+ 轨道上方压暗带（y 600..760），对应解包 Fx_Glow / Fx_Bg_Black */
+/* 中部横向光晕带 */
 .ds-bg-veil {
   position: absolute;
   inset: 0;
   background:
-    /* 顶部压暗：实机上半区比素材更黑，不压住会整页发灰 */
+    /* 顶部压暗 */
     linear-gradient(180deg, rgba(6, 4, 20, 0.58) 0%, rgba(8, 6, 24, 0.18) 16%, transparent 30%),
     /* 中部环境光晕 */
     linear-gradient(180deg, transparent 0%, transparent 33%, rgba(120, 130, 220, 0.10) 42%, rgba(120, 130, 220, 0.06) 54%, transparent 58%),
@@ -638,9 +610,7 @@ onBeforeUnmount(() => {
 
 /* ══════════ 环境动效（实机逐帧实测，纯 transform/opacity） ══════════ */
 
-/* ── 右上彩虹光带：黄/蓝/红/绿四色周期渐变 ──
-   单周期（20s，每色 5s）内一色作为带中央的主色调，其余三色在带上下边缘，
-   层间 crossfade 即「颜色交界处的柔和混杂」。整条以 32° 斜置并在右上区缓慢往返摆动。 */
+/* 右上彩虹光带 */
 .rb {
   position: absolute;
   left: 1080px;
@@ -652,16 +622,13 @@ onBeforeUnmount(() => {
   overflow: visible;
   animation: rbSway 7.5s ease-in-out infinite alternate;
 }
-/* 用户要求整条光带**左右翻转**（镜像）。transform 写在 keyframes 里，
-   否则会被 animation 的 transform 覆盖掉。 */
+/* 用户要求整条光带**左右翻转 */
 @keyframes rbSway {
   from { transform: scaleX(-1) translateX(-55px); opacity: 0.55; }
   50% { opacity: 0.78; }
   to { transform: scaleX(-1) translateX(55px); opacity: 0.55; }
 }
-/* 窄长光带：300×1050 居中斜置（与竖直约 32°）。
-   三条「边缘柔和的条带」由 3 层横向 mask 切出（mask 默认 add 叠加）：
-   各条带宽窄不一（118/168/136）、长短不一（88%/100%/76%），避免三条一样齐。 */
+/* 窄长光带 */
 .rb-band {
   position: absolute;
   left: 50%;
@@ -671,10 +638,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%) rotate(-32deg);
   mix-blend-mode: screen;
   opacity: 0;
-  /*
-   * 用径向椭圆遮罩：横竖两个方向同时渐隐，端头自然收圆；
-   * 再叠一层 blur(10px) 把剩下的过渡带抹开。
-   */
+  /* 用径向椭圆遮罩 */
   -webkit-mask-image:
     radial-gradient(ellipse 62px 46% at 12% 50%, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%),
     radial-gradient(ellipse 88px 50% at 50% 50%, #000 0%, rgba(0, 0, 0, 0.55) 55%, transparent 100%),
@@ -687,8 +651,7 @@ onBeforeUnmount(() => {
   mask-repeat: no-repeat;
   filter: blur(10px);
 }
-/* 主色亮芯居中（渐变沿带宽方向 = 旋转后的纵向），其余三色各占一条边缘、向中心渐隐。
-   首尾各加 transparent，颜色整体内缩到 10%~90%，两端自然淡出。 */
+/* 主色亮芯居中 */
 .rb-y {
   background: linear-gradient(
     180deg,
@@ -729,7 +692,7 @@ onBeforeUnmount(() => {
     transparent 100%
   );
 }
-/* 四层同 keyframes、负延迟错相 5s：任一时刻一色为主，相邻色在其两侧淡出 → 柔和混杂 */
+/* 四层同 keyframes、负延迟错相 */
 @keyframes rbPhase {
   0% { opacity: 0; }
   12% { opacity: 0.55; }
@@ -742,7 +705,7 @@ onBeforeUnmount(() => {
 .rb-r { animation: rbPhase 20s linear -10s infinite; }
 .rb-g { animation: rbPhase 20s linear -15s infinite; }
 
-/* ── 星空粒子闪烁：上半屏随机生灭 + 少量缓慢漂移 ── */
+/* 星空粒子闪烁 */
 .stars {
   position: absolute;
   inset: 0;
@@ -770,7 +733,7 @@ onBeforeUnmount(() => {
   to { transform: translateX(-16px); }
 }
 
-/* ── 上浮气泡：Ø15–30 半透明泡，≈10px/s 上浮 + 左右轻摆，升约 100px 消散 ── */
+/* 上浮气泡 */
 .bubbles {
   position: absolute;
   inset: 0;
@@ -785,7 +748,7 @@ onBeforeUnmount(() => {
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
-/* 泡体 = 内层：竖向升沉由外层负责，内层只做左右摆 + 画泡 */
+/* 泡体 = 内层 */
 .bb-body {
   position: absolute;
   inset: 0;
@@ -808,7 +771,7 @@ onBeforeUnmount(() => {
   to { transform: translateX(5px); }
 }
 
-/* ── 底部云雾翻涌：三层异速向左漂 + 长周期明暗（与场景地面倒影交融） ── */
+/* 底部云雾翻涌 */
 .mist {
   position: absolute;
   left: 0;
@@ -868,7 +831,7 @@ onBeforeUnmount(() => {
   50% { opacity: 0.72; }
 }
 
-/* ── 中部环境光呼吸（y 365..600 水平光晕带，7s 明暗） ── */
+/* 中部环境光呼吸 */
 .ds-glowband {
   position: absolute;
   left: 0;
@@ -887,7 +850,7 @@ onBeforeUnmount(() => {
   50% { opacity: 1; }
 }
 
-/* ── 顶部横幅后光柱（img_titleBg 族：竖向光柱 + 8s 极微弱闪烁） ── */
+/* 顶部横幅后光柱 */
 .ds-titleglow {
   position: absolute;
   left: 478px;
@@ -913,7 +876,6 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 返回金钮 ══════════ */
-/* backN 69×69，内容 bbox (7,7)-(63,62)=56×55 → 缩到实机 54×54 得盒子 66.5 */
 .ds-back {
   position: absolute;
   left: 36.25px;
@@ -934,7 +896,7 @@ onBeforeUnmount(() => {
   object-fit: contain;
   filter: brightness(1.18) saturate(1.1);
 }
-/* 悬停态 backH 只有外发光环、没有底，必须两层叠，不能替换 */
+/* 悬停态 backH 只有外发光环、没有底 */
 .ds-back-h {
   opacity: 0;
   transition: opacity 0.18s ease;
@@ -948,7 +910,7 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 标题 ══════════ */
-/* 实机墨迹 119,38 → 241,66（123×29），字高 29 */
+/* 实机墨迹 */
 .ds-title {
   position: absolute;
   left: 119px;
@@ -965,8 +927,6 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 顶部紫缎带 ══════════ */
-/* ribbon 380×48，内容 (28,0)-(363,48)=335×48；实机实心紫带 495,113 → 740,156（246×44）
-   横向 246/335=0.7343、纵向 44/48=0.9167，非等比 —— 盒子 279×44 @ (474.4, 113) */
 .ds-ribbon {
   position: absolute;
   left: 474.4px;
@@ -982,7 +942,7 @@ onBeforeUnmount(() => {
   height: 100%;
   object-fit: fill;
 }
-/* 整行文字 525,120 → 715,148，中心 (620,134) */
+/* 整行文字 */
 .ds-rb {
   position: absolute;
   left: 20.6px;
@@ -1016,9 +976,9 @@ onBeforeUnmount(() => {
   z-index: 2;
   object-fit: contain;
   pointer-events: none;
-  /* 实机场景与背景融合得比素材更暗，直接放会「浮」起来 */
+  /* 实机场景与背景融合得比素材更暗 */
   filter: brightness(0.78) saturate(1.2) contrast(1.04);
-  /* 素材四边是硬边，压在暗背景上会露出矩形轮廓 —— 四边羽化才像实机那样「无 UI 框」 */
+  /* 素材四边是硬边 */
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 21%, #000 79%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 10%, #000 91%, transparent 100%);
@@ -1044,8 +1004,7 @@ onBeforeUnmount(() => {
   z-index: 3;
   pointer-events: none;
 }
-/* 物品名 1386,201 → 1572,243（187×43），字高 42，字距加宽，中心 x≈1479。
-   盒子必须比墨迹宽 —— 4 字×43 + 4×字距 4 = 188 已经超过 187，会硬生生折成两行。 */
+/* 物品名 */
 .ds-name {
   position: absolute;
   left: 1379px;
@@ -1060,8 +1019,6 @@ onBeforeUnmount(() => {
   color: #ffffff;
   text-shadow: 0 3px 20px rgba(0, 0, 0, 0.5);
 }
-/* divider 668×180，线本体 y≈115、菱形中心 (310,114)，实机菱形中心 (1482,277)
-   等比 0.78 → 盒子 521×140.4 @ (1240.2, 188.1) */
 .ds-divider {
   position: absolute;
   left: 1240.2px;
@@ -1072,7 +1029,7 @@ onBeforeUnmount(() => {
   mix-blend-mode: screen;
   opacity: 0.9;
 }
-/* 金色副标题 1319,320 → 1628,346，字高 27 */
+/* 金色副标题 */
 .ds-sub {
   position: absolute;
   left: 1319px;
@@ -1085,8 +1042,7 @@ onBeforeUnmount(() => {
   white-space: nowrap;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 }
-/* 描述正文 1220,375 → 1738,468（519×94），实机 3 行、行高 37。
-   每行 19 个汉字要塞进 519px → 单字宽 ≈27.3，所以字号 27、不加字距，否则变 4 行。 */
+/* 描述正文 */
 .ds-desc {
   position: absolute;
   left: 1220px;
@@ -1110,8 +1066,7 @@ onBeforeUnmount(() => {
   z-index: 6;
   pointer-events: none;
 }
-/* 长轨道内层：比屏幕宽，随 scrollX 平移（wheel/drag）。
-   固定轨道 innerW=1920、scrollX 恒 0，渲染与旧版完全一致。 */
+/* 长轨道内层 */
 .ds-inner {
   position: absolute;
   left: 0;
@@ -1144,10 +1099,8 @@ onBeforeUnmount(() => {
   stroke: rgba(198, 178, 255, 0.20);
   stroke-width: 1.1;
 }
-/* 沿轨道自左向右扫动的流光。
-   实机这条只是「比主线亮一点点」的柔光，不是灯管 —— 亮度压到 1/3，
-   再用 blur 把 dash 的两端糊开（dash 的端头本来是硬切口）。 */
-/* 已走过的轨道：一层粗柔光把槽填满，一层细亮芯压在上面 */
+/* 沿轨道自左向右扫动的流光 */
+/* 已走过的轨道 */
 .ds-pass-halo {
   fill: none;
   stroke: url(#dsPassGrad);
@@ -1180,8 +1133,6 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 重点档蓝色光柱 ══════════ */
-/* beam 172×372，内容 (4,17)-(167,351)=163×334；实机柱 145 宽、y 660..1035
-   横向 145/163=0.8896 → 盒宽 153.1；纵向 375/334=1.1228 → 盒高 417.6；top 640.9 */
 .ds-beam {
   position: absolute;
   top: 640.9px;
@@ -1191,7 +1142,7 @@ onBeforeUnmount(() => {
   mix-blend-mode: screen;
   opacity: 0.95;
   filter: brightness(2.6) saturate(1.85) hue-rotate(-6deg);
-  /* 实机光柱「边缘无锐利边界、与背景雾化融合」——素材是硬边矩形，必须双向羽化 */
+  /* 实机光柱「边缘无锐利边界、与背景雾化融合」——素材是硬边矩形 */
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 84%, transparent 100%);
@@ -1220,7 +1171,7 @@ onBeforeUnmount(() => {
   position: absolute;
 }
 
-/* 连接竖杆：标签底板顶 → 节点中线（实机 25~46px） */
+/* 连接竖杆 */
 .ds-stem {
   left: var(--nx);
   top: calc(var(--ny) + 4px);
@@ -1235,10 +1186,6 @@ onBeforeUnmount(() => {
   opacity: 0.85;
 }
 
-/* 灯泡 nodeArrow 50×37，内容 (4,5)-(46,33)=42×28 → 1:1 用原尺寸，
-   盒子顶 = ny-33，内容底边 y=33 正好落在轨道中线上 */
-/* ── 节点球 grade_main 166×167，圆面 (11,11)-(153,152) 直径 142、圆心 (82,81.5)
-      实机已达成球的光晕 Ø26 → 盒子 30（30/166 × 142 ≈ 25.7） ── */
 .ds-orb {
   left: var(--nx);
   top: var(--ny);
@@ -1247,7 +1194,7 @@ onBeforeUnmount(() => {
   transform: translate(-50%, -50%);
   object-fit: contain;
 }
-/* 未经过的灰球：Ø11，浅灰实心（实机环内那颗） */
+/* 未经过的灰球 */
 .ds-dot {
   left: var(--nx);
   top: var(--ny);
@@ -1259,12 +1206,12 @@ onBeforeUnmount(() => {
   opacity: 0.9;
   box-shadow: 0 0 7px rgba(170, 188, 226, 0.45);
 }
-/* 已达成：白球 + 冷光晕 */
+/* 已达成 */
 .ds-node.reached .ds-orb {
   filter: brightness(1.5) saturate(0.55) drop-shadow(0 0 10px rgba(198, 216, 255, 0.95));
   animation: orbBreath 3.6s ease-in-out infinite;
 }
-/* 重点档（160 / 230）：实心金球 + 细亮环（实机就是一颗均匀发光的金珠） */
+/* 重点档 */
 .ds-orb-major {
   width: 21px;
   height: 21px;
@@ -1281,8 +1228,6 @@ onBeforeUnmount(() => {
   50% { opacity: 1; }
 }
 
-/* ── 箭头 grade_arrow 50×37，内容 (4,5)-(46,33)=42×28，尖端 (25,33)
-      实机箭头比球窄、藏在球下面 → 盒 26×19，尖端落在 ny+12 ── */
 .ds-arrow {
   left: var(--nx);
   top: calc(var(--ny) - 3px);
@@ -1297,7 +1242,7 @@ onBeforeUnmount(() => {
   filter: sepia(1) saturate(3.4) hue-rotate(-10deg) brightness(1.9);
 }
 
-/* ── 细环 cir_01 220×220，圆面 (19,20)-(200,202) Ø181 → 盒 32 得 Ø26.3 ── */
+/* 细环 cir_ */
 .ds-ring {
   left: var(--nx);
   top: var(--ny);
@@ -1309,7 +1254,7 @@ onBeforeUnmount(() => {
   filter: grayscale(0.7) brightness(1);
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
-/* 已达成：环也点亮（cir_02 是高光环，叠 screen 才有光） */
+/* 已达成 */
 .ds-node.reached .ds-ring {
   opacity: 0.95;
   filter: none;
@@ -1319,14 +1264,13 @@ onBeforeUnmount(() => {
   opacity: 0.6;
   filter: sepia(1) saturate(2.2) hue-rotate(-8deg) brightness(1.25);
 }
-/* 下一档：环再亮一档 */
+/* 下一档 */
 .ds-node.next .ds-ring {
   opacity: 0.85;
   filter: none;
 }
 
-/* 抽数标签：实机 45×19，文字金色 + 深色圆角底板。
-   底板形状直接用 bg_number_01（116×44 的柔和圆角胶囊）当 mask —— 换素材就能换形状。 */
+/* 抽数标签 */
 .ds-cap {
   left: var(--nx);
   top: calc(var(--ny) + 61px * var(--ck));
@@ -1340,7 +1284,7 @@ onBeforeUnmount(() => {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
   transition: background 0.18s ease, color 0.18s ease;
 }
-/* 底板形状：素材只当 mask，垫在文字底下（直接给元素加 mask 会把文字一起羽化） */
+/* 底板形状 */
 .ds-cap::before {
   content: '';
   position: absolute;
@@ -1367,7 +1311,7 @@ onBeforeUnmount(() => {
   color: #fff3d2;
 }
 
-/* 奖励卡：card 128×137 满幅，实机 96×102（比例 0.9375 / 0.934，等比） */
+/* 奖励卡 */
 .ds-card {
   left: var(--nx);
   top: calc(var(--ny) + 105px * var(--ck));
@@ -1393,10 +1337,8 @@ onBeforeUnmount(() => {
   object-fit: contain;
   filter: drop-shadow(0 2px 5px rgba(60, 30, 60, 0.35));
 }
-/* 实机卡片始终是原色（只有节点分「经过 / 未经过」），所以这里不做去饱和 */
-/* 已领取对勾：解包 T_UI_common_icon_hook_06（75×74 绿圈勾）。
-   素材是深绿实体 → **正常混合 + 提亮**（screen 会被粉卡底色吃成白粉痕迹），
-   提亮后勾身是鲜绿、圈身深绿，浮在卡上与实机的覆盖式对勾同理。 */
+/* 实机卡片始终是原色 */
+/* 已领取对勾 */
 .ds-tick {
   position: absolute;
   left: 50%;
@@ -1418,9 +1360,7 @@ onBeforeUnmount(() => {
   color: #fff6dd;
 }
 
-/* 下一档提示：实机 963,989 → 1075,1006，挂在下一档卡片正下方。
-   底板形状用 txtbg04（616×68 两端渐隐的光带）当 mask —— 素材本身就是柔边，
-   比手写 border-radius 更像实机。 */
+/* 下一档提示 */
 .ds-hint {
   left: var(--nx);
   top: calc(var(--ny) + 232px * var(--ck));
@@ -1453,16 +1393,13 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 抽数徽章 ══════════ */
-/* 外环 Ø89：badgeDial 144×144，圆面 (16,16)-(128,120) → 圆心 (75,68)、Ø104
-   盒子 109.4（比例 0.7597）→ left/top 必须让「圆心」落在徽章原点，不是盒子中心。
-   ⚠️ 这个素材要转圈，`transform-origin` 也必须设在圆心，否则会绕着盒子中心公转、
-      看起来就是「外环和内球不同心」。 */
+/* 外环 Ø */
 .ds-badge {
   position: absolute;
   width: 0;
   height: 0;
   pointer-events: none;
-  /* 四星池徽章 Ø170（五星池 Ø89）→ 整枚绕自身原点放大 1.9× */
+  /* 四星池徽章 Ø */
   transform: scale(var(--bk, 1));
 }
 .ds-badge > * {
@@ -1481,8 +1418,7 @@ onBeforeUnmount(() => {
 @keyframes dialSpin {
   to { transform: rotate(360deg); }
 }
-/* 内球 63×64：badgeBall 166×167，圆面 (11,11)-(153,152) → 圆心 (82,81.5)、Ø142
-   盒子 63.7（比例 0.3837）→ 圆心对齐原点 */
+/* 内球 */
 .ds-badge-ball {
   left: -31.47px;
   top: -31.27px;
@@ -1503,7 +1439,7 @@ onBeforeUnmount(() => {
   color: #fbfcfe;
   text-shadow: 0 0 12px rgba(180, 200, 255, 0.95), 0 1px 3px rgba(0, 0, 0, 0.6);
 }
-/* 底部尖锥光柱，尖端触到轨道中线 */
+/* 底部尖锥光柱 */
 .ds-badge-spike {
   left: 0;
   top: 30px;

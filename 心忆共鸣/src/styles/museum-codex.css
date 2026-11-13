@@ -6,7 +6,7 @@
   color: #4a3618;
   user-select: none;
 }
-/* 层：素材按 pxdesk 盒子 object-fit:fill（素材 alpha 满，无留白） */
+/* 层 */
 .rd-bg,
 .rd-layer,
 .rd-dec {
@@ -23,7 +23,7 @@
   z-index: 1;
 }
 
-/* 返回箭头：arrowN 打底 + arrowH 悬停发光 */
+/* 返回箭头 */
 .rd-back {
   position: absolute;
   padding: 0;
@@ -58,7 +58,7 @@
   z-index: 18;
 }
 
-/* 分区选项卡：容器 = common_img_menu_s（金底），仅高亮时出现；常态只有文字 */
+/* 分区选项卡 */
 .rd-tab {
   position: absolute;
   padding: 0;
@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* 白色文字 30px，容器内居中；不加描边/投影 */
+  /* 白色文字 */
   font-size: 30px;
   letter-spacing: 1px;
   color: #ffffff;
@@ -105,7 +105,7 @@
   font-weight: 600;
 }
 
-/* 左缘放大镜（搜索入口） */
+/* 左缘放大镜 */
 .rd-mag {
   position: absolute;
   padding: 0;
@@ -125,14 +125,14 @@
   filter: brightness(1.06) drop-shadow(0 0 10px rgba(255, 226, 150, 0.55));
 }
 
-/* ── 列表（行高 71.5 / 首行顶 188.8 / 高亮框 410×72.2） ── */
+/* 列表 */
 .rd-list {
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 250, 235, 0.72) transparent;
-  /* 底部 18px 渐隐：行高 71.5 不是列表高的整数倍，静止时会露半行残影 */
+  /* 底部 */
   mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent 100%);
   z-index: 12;
 }
@@ -188,8 +188,7 @@
   font-weight: 600;
 }
 
-/* 未获取：锁框 + 斜向链条 + 挂锁
-   —— 靠 margin-left:auto 推到行右端（滚动条左侧） */
+/* 未获取 */
 .rd-lock {
   position: relative;
   flex: 0 0 30px;
@@ -227,7 +226,7 @@
   height: 24px;
 }
 
-/* 解锁三阶段：锁扣翘起(180ms) → 链条对角消失(200~500) → 锁框淡出(520~720) */
+/* 解锁三阶段 */
 .rd-unlock {
   position: relative;
   flex: 0 0 30px;
@@ -267,7 +266,7 @@
   animation: unlock-shackle 0.18s ease-out both;
 }
 
-/* 标签头（-3.33° 旋转，文字同步旋转） */
+/* 标签头 */
 .rd-label,
 .rd-label-shadow {
   position: absolute;
@@ -304,7 +303,7 @@
   z-index: 14;
 }
 
-/* ── 正文（纸面右页）：标题固定不动，仅正文区滚动 ── */
+/* 正文 */
 .rd-content {
   position: absolute;
   display: flex;
@@ -322,7 +321,7 @@
   margin-bottom: 20px;
   letter-spacing: 2px;
 }
-/* 正文滚动容器：滚动条收细到 4px（原 6px 太宽、顶到纸鹤） */
+/* 正文滚动容器 */
 .rd-cbody-wrap {
   flex: 1;
   min-height: 0;
@@ -357,7 +356,7 @@
   opacity: 1;
 }
 
-/* 空态贴纸：绝对定位，紧贴纸面下边缘，opacity 0.15（pxdesk「伊赞之土2」） */
+/* 空态贴纸 */
 .rd-empty-sticker {
   position: absolute;
   max-width: none;
@@ -385,7 +384,7 @@
   animation: rd-fadein 0.15s ease-out 0.1s both;
 }
 
-/* 黑屏过渡（切换大版本） */
+/* 黑屏过渡 */
 .rd-blackout {
   position: absolute;
   inset: 0;
@@ -400,7 +399,7 @@
 }
 
 
-/* 顶部压暗层：分割线以上整条 27% 纯黑，底边柔化过渡 */
+/* 顶部压暗层 */
 .rd-dim {
   position: absolute;
   left: 0;
@@ -416,12 +415,12 @@
   pointer-events: none;
   z-index: 5;
 }
-/* 分割线压在压暗层之上（也高于纸鹤），保证不被遮挡 */
+/* 分割线压在压暗层之上 */
 .rd-topline {
   z-index: 6;
 }
 
-/* 提示条：容器 = common_bg_placename（872×264），文字居中；定位见各自视图 */
+/* 提示条 */
 .rd-toast {
   position: absolute;
   left: 760px;
@@ -442,12 +441,11 @@
   max-width: none;
   object-fit: fill;
   pointer-events: none;
-  /* placename 素材本身很淡（深色区 alpha 低），在浅色纸面上几乎看不出 → 压暗提对比 */
+  /* placename 素材本身很淡 */
   filter: brightness(0.62) contrast(1.25) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
 }
 .rd-toast-txt {
   position: relative;
-  /* 素材的内容条在 264 高的中间偏下（y≈100~160），文字需下移 40px 才压在条中心 */
   margin-top: 40px;
   padding: 0 40px;
   font-size: 30px;
@@ -474,7 +472,6 @@
     opacity: 1;
   }
 }
-/* 空态贴纸专用：淡入到 15%（pxdesk「伊赞之土2」标注 op 0.15） */
 @keyframes rd-fadein-15 {
   from {
     opacity: 0;
@@ -483,7 +480,6 @@
     opacity: 0.15;
   }
 }
-/* 空态贴纸专用：淡入到 13%（不能复用 rd-fadein，其 to{opacity:1} 会覆盖 0.13） */
 @keyframes rd-fadein-13 {
   from {
     opacity: 0;

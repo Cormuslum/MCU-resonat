@@ -1,7 +1,4 @@
-/**
- * 玄学运势 · 卷轴几何常量（自动生成，勿手改）
- * 由 `tools/prep-almanac.py` 按素材实际尺寸算出。素材已裁到 alpha 实体框。
- */
+/** 玄学运势 · 卷轴几何常量（自动生成，勿手改） 由 `tools/prep-almanac.py` 按素材实际尺寸算出。素材已裁到 alpha 实体框 */
 
 export const PAPER_W = 1668
 export const PAPER_H = 956

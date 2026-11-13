@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 黑屏加载过渡：主页 ↔ 二级、二级 ↔ 二级切换时铺一层黑底（1920×1080 设计像素）。
- * 进度用固定节拍（900ms 走满 → 停 120ms → 360ms 淡出），与真实加载进度无关。
- */
+/** 黑屏加载过渡 */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useGameStore } from '@/stores/game'
 import type { LoadPhotoKey } from '@/types'
@@ -24,9 +21,7 @@ const sliderOn = computed(() => src(L.value?.sliderOn, 'ui/loading/slider-on.web
 const spirits = computed(() => src(L.value?.spirits, 'ui/loading/spirits.webp'))
 const runner = computed(() => src(L.value?.runner, 'ui/loading/nikki-run.webp'))
 
-/**
- * 右下角装饰动画用 `奔跑暖暖_动态.gif`（已转 webp）；4×4 序列帧留在 `ui.loading.spirits` 备用。
- */
+/** 右下角装饰动画用 `奔跑暖暖_动态.gif`（已转 webp）；4×4 序列帧留在 `ui.loading.spirits` 备用 */
 
 /** 0 → 100，由 CSS transition 补间（clip-path 裁切，不压缩素材） */
 const progress = ref(0)
@@ -64,13 +59,13 @@ onBeforeUnmount(() => {
       <i class="ld-mist mist-d"></i>
     </div>
 
-    <!-- 右下角装饰动画：奔跑的暖暖（底边在进度条上方 20px） -->
+    <!-- 右下角装饰动画 -->
     <div class="ld-deco">
       <i class="ld-deco-glow"></i>
       <img class="ld-runner" :src="runner" alt="" draggable="false" />
     </div>
 
-    <!-- 进度条：距屏幕下边缘 100px -->
+    <!-- 进度条 -->
     <div class="ld-bar">
       <img class="lb-off" :src="sliderOff" alt="" draggable="false" />
       <img
@@ -92,7 +87,7 @@ onBeforeUnmount(() => {
   height: 1080px;
   z-index: 120;
   overflow: hidden;
-  /* 底图未到位时的兜底色：取底图的主色，避免闪一下白/黑 */
+  /* 底图未到位时的兜底色 */
   background: #dfe2dc;
   opacity: 1;
   transition: opacity 0.36s ease;
@@ -113,10 +108,7 @@ onBeforeUnmount(() => {
   object-fit: cover;
   pointer-events: none;
 }
-/*
- * 底缘暗化：底图是浅色宣纸，而进度条「已加载」是纯白，直接压上去等于隐形。
- * 所以从底边往上铺一层暗色渐变当「取景框」，白线才立得住。
- */
+/* 底缘暗化 */
 .ld-foot {
   position: absolute;
   left: 0;
@@ -133,9 +125,6 @@ onBeforeUnmount(() => {
 }
 
 /* ============ 中心指向性装饰 ============ */
-/*
- * 素材 1220×632（水彩羽化边），显示 960×497：占屏约一半，不压底部进度条。
- */
 .ld-scene {
   --ld-photo-mask: radial-gradient(
     ellipse 78% 82% at 50% 50%,
@@ -158,19 +147,16 @@ onBeforeUnmount(() => {
   object-fit: contain;
   opacity: 0;
   transform: scale(1.05);
-  /*
-   * 底图换成浅色宣纸后，插画自带的白色羽化边会和纸面糊成一片、
-   * 只看得见一个方框。`multiply` 让「白」等于「不画」，纸面纹理直接透过来。
-   */
+  /* 底图换成浅色宣纸后 */
   mix-blend-mode: multiply;
   filter: saturate(1.06) contrast(1.04);
-  /* 各张插画的羽化边不一致（废墟那张带方形硬边），统一再柔一次 */
+  /* 各张插画的羽化边不一致 */
   mask-image: var(--ld-photo-mask);
   -webkit-mask-image: var(--ld-photo-mask);
   animation: ldPhotoIn 1s cubic-bezier(0.22, 1, 0.36, 1) 0.04s forwards,
     ldPhotoBreath 6.4s 1.1s ease-in-out infinite;
 }
-/* 「云雾潋散」的底子：同一张装饰糊一层厚雾，撑出插画外沿那圈柔光 */
+/* 「云雾潋散」的底子 */
 .ld-photo-glow {
   position: absolute;
   inset: 0;
@@ -179,7 +165,7 @@ onBeforeUnmount(() => {
   max-width: none;
   object-fit: contain;
   opacity: 0;
-  /* 这层是「晕开的水彩」：同样走 multiply，在纸面上是一圈淡淡的洇色而不是白雾 */
+  /* 这层是「晕开的水彩」 */
   mix-blend-mode: multiply;
   filter: blur(42px) saturate(1.1);
   transform: scale(1.06);
@@ -221,14 +207,11 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 云雾潋散：四团白雾贴着装饰四边缓慢漂移、呼吸，边缘自然化开 */
+/* 云雾潋散 */
 .ld-mist {
   position: absolute;
   border-radius: 50%;
-  /*
-   * 浅色宣纸底上不能用 `screen` 的白雾（白压白等于没画）。
-   * 改成 `multiply` 的淡灰蓝 —— 在纸面上就是洇开的烟青色水痕。
-   */
+  /* 浅色宣纸底上不能用 `screen` 的白雾 */
   mix-blend-mode: multiply;
   pointer-events: none;
   opacity: 0;
@@ -294,9 +277,6 @@ onBeforeUnmount(() => {
 }
 
 /* ============ 右下角装饰动画 ============ */
-/*
- * 进度条 top = 1080 − 100 − 28 = 952；容器底边 20px 上方 = 932 → bottom: 148。
- */
 .ld-deco {
   position: absolute;
   right: 40px;
@@ -305,7 +285,7 @@ onBeforeUnmount(() => {
   height: 236px;
   pointer-events: none;
 }
-/* 暖暖脚下的柔光，让动图不至于「浮」在底图上 */
+/* 暖暖脚下的柔光 */
 .ld-deco-glow {
   position: absolute;
   left: 52px;
@@ -323,7 +303,7 @@ onBeforeUnmount(() => {
   opacity: 0;
   animation: ldFadeIn 1.2s ease 0.5s forwards;
 }
-/* 奔跑的暖暖：480×270 原图（已抠掉白底）→ 320×180，贴在右下角 */
+/* 奔跑的暖暖 */
 .ld-runner {
   position: absolute;
   right: 0;
@@ -372,7 +352,7 @@ onBeforeUnmount(() => {
   opacity: 1;
   filter: brightness(2.1) saturate(0.55);
 }
-/* 已加载段：只做横向裁切，位图不被拉伸 */
+/* 已加载段 */
 .lb-on {
   filter: brightness(1.45) drop-shadow(0 0 12px rgba(220, 240, 255, 0.9));
   transition: clip-path 0.9s cubic-bezier(0.16, 0.84, 0.3, 1);

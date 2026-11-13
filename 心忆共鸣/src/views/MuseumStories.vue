@@ -1,8 +1,5 @@
 ﻿<script setup lang="ts">
-/**
- * 博物图鉴 · 故事图鉴子界面：数据 `src/data/stories.ts`（按 set.id 正序），
- * 分区 0 奇迹传说 / 1 心愿原野 / 2 伊赞之土；抽齐对应套装才可读，不写 codex。
- */
+/** 博物图鉴 · 故事图鉴子界面：数据 `src/data/stories.ts`（按 set.id 正序）， 分区 0 奇迹传说 / 1 心愿原野 / 2 伊赞之土；抽齐对应套装才可读，不写 codex */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -43,9 +40,7 @@ function box(b: RdBox | undefined): Record<string, string> {
 
 type Region = RdRegion | 'miracle'
 
-/**
- * 分区的权威定义（顺序 = 顶部切换栏从左到右）；`art` = 借用的版式素材区域。
- */
+/** 分区的权威定义（顺序 = 顶部切换栏从左到右）；`art` = 借用的版式素材区域 */
 interface RegionDef {
   key: Region
   major: number
@@ -66,7 +61,6 @@ function regionOfMajor(m: number): Region {
 }
 
 const L = computed(() => RD_LAYOUT[artKey.value])
-/** 故事：按套装编号（set.id）正序 —— 数据文件已排好序，filter 后顺序不变 */
 const regionStories = computed(() => stories.filter((s) => s.major === def.value.major))
 
 /** 按书名定位（深链 / 搜索选中）：先精确匹配，再退化为包含匹配 */
@@ -78,16 +72,13 @@ function findStory(name: string): StoryEntry | undefined {
   )
 }
 
-/**
- * 已集齐的套装集合 —— 故事解锁条件 = 该套全部部件都抽到过（owned === total）。
- */
+/** 已集齐的套装集合 —— 故事解锁条件 = 该套全部部件都抽到过（owned === total） */
 const gotSets = computed(() => {
   const m = new Set<string>()
   // 必须用全库完成度：store.allParts 只含「当前服装阁」
   for (const [sid, s] of store.setProgressAll) if (s.total > 0 && s.owned === s.total) m.add(sid)
   return m
 })
-/** 故事是否已解锁 = 对应套装已集齐 */
 function unlocked(s: StoryEntry) {
   return !!s.setId && gotSets.value.has(s.setId)
 }
@@ -100,9 +91,7 @@ const animId = ref('')
 const bodyShown = ref(false)
 let bodyTimer = 0
 
-/**
- * 当前要展示正文的条目；只有已解锁（套装已集齐）才返回。
- */
+/** 当前要展示正文的条目；只有已解锁（套装已集齐）才返回 */
 function selEntry(): StoryEntry | undefined {
   const r = regionStories.value.find((x) => x.id === selId.value)
   return r && unlocked(r) ? r : undefined
@@ -132,14 +121,10 @@ function pick(s: StoryEntry) {
   play('points-slide', { volume: 0.5 })
 }
 
-/**
- * 正文滚动容器。
- */
+/** 正文滚动容器 */
 const bodyWrap = ref<HTMLElement | null>(null)
 
-/**
- * 切换故事 → 正文回到第一行（正文容器是同一个 DOM 节点）。
- */
+/** 切换故事 → 正文回到第一行（正文容器是同一个 DOM 节点） */
 watch(selId, () => {
   nextTick(() => {
     if (bodyWrap.value) bodyWrap.value.scrollTop = 0
@@ -168,9 +153,7 @@ function setRegion(r: Region) {
   }, 160)
 }
 
-/**
- * 键盘 ←→（Q / E）在三个分区之间循环。
- */
+/** 键盘 ←→（Q / E）在三个分区之间循环 */
 function stepRegion(d: number) {
   const i = REGIONS.findIndex((r) => r.key === region.value)
   const n = REGIONS.length
@@ -307,9 +290,7 @@ watch(
 
 /* ════════════════════════════════════════ 派生几何 */
 
-/**
- * 顶部大版本切换栏几何（pxdesk）：栏宽 194.8 / 高 120.1，间距 180.8，两栏重叠 14px。
- */
+/** 顶部大版本切换栏几何 */
 const TAB_W = 194.8
 const TAB_H = 120.1
 const TAB_STEP = 180.8
@@ -342,9 +323,7 @@ const emptyStickerStyle = computed<Record<string, string>>(() => rdLayout(L.valu
 /** 当前是否有选中条目（= 纸面展示正文，而非空态） */
 const hasSelection = computed(() => !!selEntry())
 
-/**
- * 没有深链、也没手动选过时，自动停在第一条已解锁条目上。
- */
+/** 没有深链、也没手动选过时，自动停在第一条已解锁条目上 */
 function autoPick() {
   if (selId.value) return
   const first = regionStories.value.find((r) => unlocked(r))

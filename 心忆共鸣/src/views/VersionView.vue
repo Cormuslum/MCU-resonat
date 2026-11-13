@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * 时隙遗光（版本选择页）：左侧版本栏，右侧版本大图；右下进入键跳到该版本对应的服装阁。
- */
+/** 时隙遗光（版本选择页）：左侧版本栏，右侧版本大图；右下进入键跳到该版本对应的服装阁 */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -14,9 +12,7 @@ interface VerItem {
   desc: string
 }
 
-/**
- * 兜底版本表（manifest 未加载 / 无 `ui.ver.versions` 时用）；权威来源是 `素材/信息表/版本表.csv` → `manifest.ui.ver.versions`。
- */
+/** 兜底版本表（manifest 未加载 / 无 `ui.ver.versions` 时用）；权威来源是 `素材/信息表/版本表.csv` → `manifest.ui.ver.versions` */
 const FALLBACK_VERSIONS: VerItem[] = [
   { v: '1.0', name: '探索季', desc: '与伙伴一同踏上旅途，走向未知的远方，寻找奇迹诞生的地方。' },
   { v: '1.1', name: '流星季', desc: '听闻在流星雨降临的时候，许下的愿望会被赐予幸运的祝福。' },
@@ -52,9 +48,7 @@ const route = useRoute()
 const router = useRouter()
 const ui = computed(() => store.manifest?.ui.ver)
 
-/**
- * 版本卡 / 大图：取 `ui.ver.cards[v]`、`ui.ver.bigCards[v]`，缺图回落 `cardDefault` / `bigDefault`。
- */
+/** 版本卡 / 大图：取 `ui.ver.cards[v]`、`ui.ver.bigCards[v]`，缺图回落 `cardDefault` / `bigDefault` */
 function cardOf(v: string): string {
   const u = ui.value
   return u?.cards?.[v] || u?.cardDefault || ''
@@ -110,9 +104,7 @@ function asset(p: string | null | undefined) {
 }
 
 const root = ref<HTMLElement | null>(null)
-/**
- * 展开的大版本：已选过版本时展开其所属大版本，否则默认展开第 1 代。
- */
+/** 展开的大版本：已选过版本时展开其所属大版本，否则默认展开第 1 代 */
 const openMajor = ref<string | null>(store.selectedVersion ? store.selectedVersion.split('.')[0] : '1')
 const selected = ref<string | null>(store.selectedVersion || null)
 
@@ -125,9 +117,7 @@ const groups = computed(() =>
 
 const current = computed(() => VERSIONS.value.find((v) => v.v === selected.value) ?? null)
 
-/**
- * 跑马灯判定：名字实际宽度超出容器才滚动。
- */
+/** 跑马灯判定：名字实际宽度超出容器才滚动 */
 function refreshOverflow() {
   const nodes = root.value?.querySelectorAll<HTMLElement>('.vn-name') ?? []
   nodes.forEach((el) => {
@@ -151,9 +141,7 @@ function toggleMajor(id: string, ev?: MouseEvent) {
     rail.scrollTo({ top: (group as HTMLElement).offsetTop - 8, behavior: 'smooth' })
   }
 }
-/**
- * 大版本图标：优先 `ui.majorIcons[大版本号]`，否则取内置 `ui.tower[大版本号-1]`。
- */
+/** 大版本图标：优先 `ui.majorIcons[大版本号]`，否则取内置 `ui.tower[大版本号-1]` */
 function majorIconOf(majorId: string): string {
   const map = ui.value?.majorIcons
   const own = map?.[majorId]
@@ -169,9 +157,7 @@ function pick(v: string) {
   const p = poolOf.value[v]
   if (p) playBannerEnter(p.id)
 }
-/**
- * 版本 → 该版本对应的服装阁：同版本取第一个含 5★ 的池，整版只有 4★ 时取第一条。
- */
+/** 版本 → 该版本对应的服装阁：同版本取第一个含 5★ 的池，整版只有 4★ 时取第一条 */
 const poolOf = computed(() => {
   const map: Record<string, { id: string; name: string }> = {}
   const fiveOnly: Record<string, { id: string; name: string }> = {}
@@ -194,9 +180,7 @@ function back() {
   play('back-select', { volume: 0.7 })
   router.push(parentOf(route.path))
 }
-/**
- * 进入服装阁：先切到选中版本对应的池再跳页；未选版本时不跳。
- */
+/** 进入服装阁：先切到选中版本对应的池再跳页；未选版本时不跳 */
 function enter() {
   play('back-select', { volume: 0.7 })
   const p = targetPool.value
@@ -332,7 +316,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   pointer-events: none;
 }
 
-/* 退出 / 进入键：96×96 */
+/* 退出 / 进入键 */
 .vr-back,
 .vr-enter {
   position: absolute;
@@ -359,7 +343,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 .vr-back:hover .vb-h,
 .vr-enter:hover .vb-h { opacity: 1; }
 
-/* 进入键左邻的「对应服装阁」标签：右对齐 */
+/* 进入键左邻的「对应服装阁」标签 */
 .vr-pool {
   position: absolute;
   right: 188px;
@@ -409,7 +393,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 .vr-group { margin-bottom: 0; }
 
-/* 大版本按钮：option 素材 437×132 → 340×103（1:1 比例） */
+/* 大版本按钮 */
 .vr-major {
   position: sticky;
   top: 0;
@@ -422,8 +406,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   background: none;
   cursor: var(--nk-cursor, auto), pointer;
 }
-/* 大版本按钮：盒子 340×103；option 素材 437×132、实体 (15,16)-(421,116)=406×100
-   → img 放大到 366×136 并左移/上移，让实体正好铺满盒子（上下贴边，与小版本 0 间距） */
+/* 大版本按钮 */
 .vm-bg {
   position: absolute;
   left: -12.56px;
@@ -443,7 +426,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   object-fit: contain;
   filter: drop-shadow(0 2px 6px rgba(30, 50, 70, 0.45));
 }
-/* 大版本名称：居中 */
+/* 大版本名称 */
 .vm-txt {
   position: absolute;
   left: 0;
@@ -460,12 +443,12 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
 }
 .vr-major.open .vm-txt { color: #6b3f18; }
 
-/* 小版本：与大版本同尺寸（340×103），折叠 / 展开 */
+/* 小版本 */
 .vr-minors {
   overflow: hidden;
   max-height: 0;
   opacity: 0;
-  /* 左右各留 8px 给底板投影 */
+  /* 左右各留 */
   width: 356px;
   margin-left: -8px;
   padding-left: 8px;
@@ -486,7 +469,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   background: none;
   cursor: var(--nk-cursor, auto), pointer;
 }
-/* 容器底板：`btn_title_l/h` 裁掉透明边距后的 473×128 */
+/* 容器底板 */
 .vn-bg {
   position: absolute;
   left: -12.28px;
@@ -497,7 +480,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   filter: drop-shadow(0 2px 6px rgba(20, 40, 60, 0.3));
 }
 .vr-minor.active .vn-bg { filter: drop-shadow(0 0 10px rgba(255, 226, 160, 0.75)); }
-/* 版本缩略图：672×188 → 324×87，不透明度 70%；四周留 8px 露出容器底板 */
+/* 版本缩略图 */
 .vn-thumb {
   position: absolute;
   left: 8px;
@@ -508,7 +491,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   border-radius: 5px;
   opacity: 0.7;
 }
-/* 版本号：`tuning_txtbg01` 紫色缎带做容器，左/上边缘与缩略图左上角重合 */
+/* 版本号 */
 .vn-ver {
   position: absolute;
   left: 8px;
@@ -536,7 +519,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: #fff;
   text-shadow: 0 1px 2px rgba(38, 28, 72, 0.7);
 }
-/* 版本名：容器内居中；超宽时改跑马灯 */
+/* 版本名 */
 .vn-name {
   position: absolute;
   left: 12px;
@@ -563,7 +546,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
     0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .vn-run .dup { display: none; }
-/* 跑马灯：单向匀速无缝循环 */
+/* 跑马灯 */
 .vn-name.scroll { justify-content: flex-start; }
 .vn-name.scroll .vn-run { animation: vnMarquee 7s linear infinite; }
 .vn-name.scroll .vn-run b { padding-right: 56px; }
@@ -587,7 +570,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   pointer-events: none;
 }
 .vr-stage.show { opacity: 1; transform: scale(1); }
-/* 边框容器 1400×800 → 1280×732 */
+/* 边框容器 */
 .vs-frame {
   position: absolute;
   inset: 0;
@@ -601,7 +584,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 226, 170, 0.32)); }
   50% { filter: drop-shadow(0 0 26px rgba(255, 236, 190, 0.72)); }
 }
-/* 粉色呼吸层：与边框重合，鼠标悬停 30%~90% 呼吸 */
+/* 粉色呼吸层 */
 .vs-pink {
   position: absolute;
   inset: 0;
@@ -635,7 +618,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   from { opacity: 0; transform: translateY(12px) scale(0.985); }
   to { opacity: 1; transform: none; }
 }
-/* 文案条装饰 tuning_txtbg03 */
 .vs-orn {
   position: absolute;
   left: 350px;
@@ -647,7 +629,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   z-index: 2;
   filter: brightness(1.34) drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
 }
-/* 文案条：tuning_txtbg04（616×68，两头渐隐）→ 1024×92，九宫格只拉中间 */
+/* 文案条 */
 .vs-desc {
   position: absolute;
   left: 128px;
@@ -659,7 +641,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   justify-content: center;
   z-index: 3;
 }
-/* 底板挂 ::before：border-image 的 border 区会吃掉内容盒 */
+/* 底板挂 */
 .vs-desc::before {
   content: '';
   position: absolute;
@@ -684,7 +666,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey))
   color: #f4efe2;
   text-shadow: 0 1px 2px rgba(18, 22, 34, 0.75), 0 0 12px rgba(18, 22, 34, 0.55);
 }
-/* 版本大图左上角：版本名称 */
+/* 版本大图左上角 */
 .vs-title {
   position: absolute;
   left: 76px;

@@ -1,7 +1,4 @@
-/**
- * 纳音五行（辅助层）：**另一套五行语言**，不进 A/C/D，只作 B 分辅参与展示标签。
- * 权威来源：`玄学运势-详细设定.md` §5.1.2 纳音辅参表 + 附录 A.4（60 甲子 → 30 纳音）。
- */
+/** 纳音五行（辅助层）：**另一套五行语言**，不进 A/C/D，只作 B 分辅参与展示标签。权威来源：`玄学运势-详细设定.md` §5.1.2 纳音辅参表 + 附录 A.4（60 甲子 → 30 纳音） */
 import type { Element } from './bazi'
 
 export interface Nayin {
@@ -80,10 +77,7 @@ export interface NayinDetail {
   parts: string[]
 }
 
-/**
- * 纳音辅参（×1.4 权重）：纳音五行对喜忌 ±4 → 今日 vs 本命生克 ±3 / ±1 → clamp(-8, +8)；
- * 与正五行主项符号相反时降级 clamp(-3, +3)。
- */
+/** 纳音辅参：纳音五行对喜忌 ±4 → 今日 vs 本命生克 ±3 / ±1 → clamp(-8, +8)； 与正五行主项符号相反时降级 clamp(-3, +3) */
 export function nayinBonus(
   today: Nayin,
   self: Nayin | null,

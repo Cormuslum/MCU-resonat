@@ -1,7 +1,4 @@
-/**
- * 五类更新任务：版本 / 服装阁 / 套装 / 故事 / 阅读物。一个任务 = 表单字段 + 素材槽位 + 归档与写表逻辑；
- * 界面完全由这里的描述渲染（jobs 只描述，web/ 负责画）。
- */
+/** 五类更新任务：版本 / 服装阁 / 套装 / 故事 / 阅读物 */
 import fs from 'node:fs'
 import path from 'node:path'
 import {
@@ -27,18 +24,12 @@ const CUSTOM_FILE = path.join(ASSET, '信息表', '自建内容.json')
 function touchCustom(snap) { snap.touch(CUSTOM_FILE) }
 const PIC_DIR = path.join(ASSET, UI, 'UI', 'SysResonance', 'texture', 'Pic')
 
-/**
- * 「这次会写入」清单里的路径前缀：开发版 D = `素材/`、O = `public/assets/`；
- * 发行版 D = `心忆奇想工坊/工具/data/`、O = `心忆共鸣/public/assets/`。
- */
+/** 「这次会写入」清单里的路径前缀：开发版 D = `素材/`、O = `public/assets/`； 发行版 D = `心忆奇想工坊/工具/data/`、O = `心忆共鸣/public/assets/` */
 const D = `${dataLabel()}/`
 const O = `${outLabel()}/`
 // 归档目录（移出套装 / 删掉的素材）落在**工具根**，不是数据根 —— 单独一个 `{T}`
 const T = toolLabel()
-/**
- * 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）：差别只有一件事 —— 直接改成品 `public/assets/data/*.json`，
- * 工坊数据目录里不落中转文件。
- */
+/** 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）：差别只有一件事 —— 直接改成品 `public/assets/data/*.json`， 工坊数据目录里不落中转文件 */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 
 /* ────────────────────────────── 工具 ────────────────────────────── */
@@ -73,18 +64,12 @@ function one(files, slot, setIndex = null) {
   return pick(files, slot, setIndex)[0] || null
 }
 
-/**
- * 这次给的文件里有没有媒体（图 / 视频 / 音频）。
- * 没有就说明只是改了元数据，转码那一趟全是 skipped。
- */
+/** 这次给的文件里有没有媒体（图 / 视频 / 音频） */
 function hasMedia(files) {
   return (files || []).some((f) => isMedia(f.src || f.name))
 }
 
-/**
- * 拖进来的 md 常带 `# 标题` 与 `---` 分隔线，正文只留内容本身。
- * 「故事」任务与「套装/服装阁里顺手挂的故事」共用同一套剥离规则。
- */
+/** 拖进来的 md 常带 `# 标题` 与 `---` 分隔线，正文只留内容本身。「故事」任务与「套装/服装阁里顺手挂的故事」共用同一套剥离规则 */
 function stripMd(s) {
   return String(s || '')
     .replace(/\r\n/g, '\n')
@@ -93,10 +78,7 @@ function stripMd(s) {
     .trim()
 }
 
-/**
- * 现网 pool-map 里这一套的元数据（找不到返回 null）；发行版的 `套装库/*.yaml` 是中转文件，
- * 生成「最小版 YAML」时要把已有的文案 / 五维带上。
- */
+/** 现网 pool-map 里这一套的元数据（找不到返回 null）；发行版的 `套装库/*.yaml` 是中转文件， 生成「最小版 YAML」时要把已有的文案 / 五维带上 */
 function poolMapSet(name) {
   const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
   for (const b of pm.banners || []) {
@@ -106,10 +88,7 @@ function poolMapSet(name) {
   return null
 }
 
-/**
- * 按部件图标生成 `writeSuitLibYaml` 的 parts，并把已有的五维 / 文案沿过来。
- * `icons` 是 `{src, name}`（来自 `pick(files,'icons')`）。
- */
+/** 按部件图标生成 `writeSuitLibYaml` 的 parts，并把已有的五维 / 文案沿过来。`icons` 是 `{src, name}`（来自 `pick(files,'icons')`） */
 function partsFromIcons(icons, gachaKey, setName) {
   const prev = poolMapSet(setName)
   const byName = new Map((prev?.parts || []).map((p) => [p.name, p]))
@@ -129,10 +108,7 @@ function partsFromIcons(icons, gachaKey, setName) {
   })
 }
 
-/**
- * 写一篇套装故事：发行版直写成品 `stories.json`，开发版写 md 交给 `gen-stories.py`。
- * @returns {{file:string, dist:boolean, created?:boolean}}
- */
+/** 写一篇套装故事：发行版直写成品 `stories.json`，开发版写 md 交给 `gen-stories.py` */
 function saveStory({ snap, name, star, body }) {
   if (DIST_MODE) {
     const r = upsertStoryJson({ name, star, body })
@@ -145,7 +121,7 @@ function saveStory({ snap, name, star, body }) {
   return { file: dst, dist: false }
 }
 
-/** 写一篇阅读物。发行版直写成品 `readings.json`（理由同上）。 */
+/** 写一篇阅读物。发行版直写成品 `readings.json`（理由同上） */
 function saveReading({ snap, region, title, type = '书籍', body }) {
   // 两条路都会 markCustom（拓展包候选按它过滤）→ 自建名录也得进快照
   touchCustom(snap)
@@ -172,9 +148,7 @@ export function pruneEmpty(root) {
   try { if (fs.readdirSync(root).length === 0) fs.rmdirSync(root) } catch { /* 非空或占用 */ }
 }
 
-/**
- * 把目录搬走（`src` → `dst`）并让快照能回滚：快照只认文件级 touch(path)，逐文件记录两侧再搬。
- */
+/** 把目录搬走（`src` → `dst`）并让快照能回滚：快照只认文件级 touch(path)，逐文件记录两侧再搬 */
 function moveTree(snap, src, dst) {
   if (!exists(src)) return 0
   const files = walkFiles(src)
@@ -201,10 +175,7 @@ function moveFile(snap, src, dst) {
   return true
 }
 
-/**
- * 在磁盘上找一座阁 / 一套服装（pool-map 的兜底）。
- * 服装阁的目录结构本身就是权威的（`<版本>/<阁>/<套装>/`）。
- */
+/** 在磁盘上找一座阁 / 一套服装（pool-map 的兜底）。服装阁的目录结构本身就是权威的（`<版本>/<阁>/<套装>/`） */
 function findOnDisk(kind, name) {
   const root = path.join(ASSET, '服装阁')
   if (!exists(root)) return null
@@ -224,9 +195,7 @@ function findOnDisk(kind, name) {
   return null
 }
 
-/**
- * 服装阁素材落盘：背景 / 缩略图 / 艺术字 / 动态背景 / 进入音 / 深海回响；给了哪张就覆盖哪张，没给的一律不动。
- */
+/** 服装阁素材落盘：背景 / 缩略图 / 艺术字 / 动态背景 / 进入音 / 深海回响；给了哪张就覆盖哪张，没给的一律不动 */
 function writePoolAssets({ snap, poolDir, name, files, notes }) {
   const bg = one(files, 'bg')
   if (bg) {
@@ -259,7 +228,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     notes.push(`动态背景 → ${rel(dst)}`)
   }
 
-  // 服装阁进入音：按**阁名**存。管线里这一份优先于「卡池进入·<版本> <阁名>.mp3」的自动匹配。
+  // 服装阁进入音：按**阁名**存。管线里这一份优先于「卡池进入·<版本> <阁名>.mp3」的自动匹配
   const enterSfx = one(files, 'enterSfx')
   if (enterSfx) {
     const ext = (path.extname(enterSfx.name || enterSfx.src) || '.mp3').toLowerCase()
@@ -276,16 +245,12 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
   if (pick(files, 'milestone').length) notes.push(`深海回响奖励 ${pick(files, 'milestone').length} 张`)
 }
 
-/**
- * 服装阁编号规范化：001~999 官方 + 1000~9999 自定义两段并存、允许不连续（见 `meta.normalizeGacha`）。
- */
+/** 服装阁编号规范化：001~999 官方 + 1000~9999 自定义两段并存、允许不连续（见 `meta.normalizeGacha`） */
 function normalizeGachaKey(raw) {
   return normalizeGacha(raw)
 }
 
-/**
- * 从 `部位-部件名.png` 拆出部件信息：部位优先按文件名前缀判，不认识时退回图鉴固定的部位顺序。
- */
+/** 从 `部位-部件名.png` 拆出部件信息：部位优先按文件名前缀判，不认识时退回图鉴固定的部位顺序 */
 
 /* ────────────────────────────── 任务定义 ────────────────────────────── */
 
@@ -384,7 +349,6 @@ const JOBS = {
           { key: 'icons', label: '部件图标', kinds: ['partIcon'], multiple: true, hint: '一次拖整个「图标」文件夹，文件名 = 部位-部件名' },
           { key: 'suitLib', label: '套装数据（YAML）', kinds: ['suitYaml'], hint: '属性 + 文案合并成的一份 YAML；不给则按图标生成最小版' },
           { key: 'plate', label: '专属铭牌', kinds: ['namePlate'], multiple: true, hint: '可选，按套装顺序编号' },
-          // 故事可以直接挂在这一套上，不用再单独跑一次「故事」任务
           { key: 'story', label: '套装故事 (.md)', kinds: ['story'], hint: '可选，拖 .md 进来就一并写入' },
         ],
       },
@@ -457,8 +421,8 @@ const JOBS = {
     fields: [
       { key: 'name', label: '套装名', required: true, type: 'sets', placeholder: '与套装名完全一致才能挂上' },
       { key: 'star', label: '星级', type: 'select', options: [['5', '5★'], ['4', '4★']], default: '5', width: 'short' },
-      // 搜索框：拖 md 进来或手动挑套装都行，放在「星级」右边。
-      // 不是写入字段 —— 选中后只负责把 `name` / `star` 填好。
+      // 搜索框：拖 md 进来或手动挑套装都行，放在「星级」右边
+      // 不是写入字段 —— 选中后只负责把 `name` / `star` 填好
       { key: 'setSearch', label: '搜索套装', type: 'setsearch',
         placeholder: '套装名或星级（如 5、雪境）' },
       { key: 'body', label: '故事正文', type: 'textarea', tall: true, placeholder: '直接粘贴正文；也可以拖一个 .md 进来' },
@@ -537,10 +501,7 @@ const JOBS = {
 
 /* ────────────────────────────── 表单辅助数据 ────────────────────────────── */
 
-/**
- * 把 `文案.json` 的 `updater.jobs` 覆盖到任务定义上（`title` / `subtitle` / `fields.*` / `groups.*` / `writes[]`），
- * 每次从 `JOBS` 深拷贝出发，json 缺某个键时保留代码里的原文。
- */
+/** 把 `文案.json` 的 `updater.jobs` 覆盖到任务定义上（`title` / `subtitle` / `fields.*` / `groups.*` / `writes[]`）， 每次从 `JOBS` 深拷贝出发，json 缺某个键时保留代码里的原文 */
 export function jobsWithCopy() {
   const jobs = structuredClone(JOBS)
   const c = readCopy()?.updater?.jobs
@@ -570,13 +531,12 @@ export function jobsWithCopy() {
         if (typeof so.hint === 'string' && so.hint) s.hint = so.hint
       }
     }
-    // `writesDist`：发行版的「这次会写入」和开发版不是一回事（媒体直转成品、
-    // 故事/阅读物直写 JSON、套装 YAML 只作中转）—— 有就优先用它，免得清单骗人。
+    // `writesDist`：发行版的「这次会写入」和开发版不是一回事（媒体直转成品
     if (DIST_MODE && Array.isArray(over.writesDist) && over.writesDist.length) job.writes = over.writesDist
     else if (Array.isArray(over.writes) && over.writes.length) job.writes = over.writes
   }
-  // 写入清单里的路径前缀：`{D}` / `{O}` 是**布局占位符**，在服务端换成真实目录名。
-  // 必须在**服务端**替换：前端 `fillTemplate()` 只认表单字段。
+  // 写入清单里的路径前缀：`{D}` / `{O}` 是**布局占位符**，在服务端换成真实目录名
+  // 必须在**服务端**替换：前端 `fillTemplate()` 只认表单字段
   for (const job of Object.values(jobs)) {
     if (!Array.isArray(job.writes)) continue
     job.writes = job.writes.map((w) => String(w).replace(/\{D\}|\{O\}|\{T\}/g,
@@ -585,9 +545,7 @@ export function jobsWithCopy() {
   return jobs
 }
 
-/**
- * 给前端下拉用：版本列表 + 池列表 + 自建名单（带编辑表单要回填的字段）；只有自建名单里的能进「修改」模式。
- */
+/** 给前端下拉用：版本列表 + 池列表 + 自建名单（带编辑表单要回填的字段）；只有自建名单里的能进「修改」模式 */
 export function formOptions() {
   const vers = readVersionTable()
   const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
@@ -600,9 +558,7 @@ export function formOptions() {
   const byName = new Map(pools.map((p) => [p.name, p]))
   const seq = readSetSeq()
 
-  /**
-   * 套装清单：按套装序号排列（带 `seq/id/star/version/pool`）；未登记进 CSV 的自建套装 seq=0，统一排最后。
-   */
+  /** 套装清单：按套装序号排列（带 `seq/id/star/version/pool`）；未登记进 CSV 的自建套装 seq=0，统一排最后 */
   const seqOf = new Map()
   for (const r of seq) {
     const n = String(r['套装名'] || '').trim()
@@ -659,10 +615,7 @@ export function formOptions() {
 
 /* ────────────────────────────── 执行 ────────────────────────────── */
 
-/**
- * 应用一个任务。
- * p = { job, fields, files[{slot, src, name, setIndex}], snap, log }
- */
+/** 应用一个任务 */
 export async function applyJob({ job, fields, files = [], snap, log = () => {} }) {
   const def = JOBS[job]
   if (!def) throw new Error('未知任务：' + job)
@@ -794,7 +747,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
         }
       }
       notes.push(`服装阁编号 ${oldKey} → ${gachaKey}`)
-      // 产物是按**编号**命名的（`banners/bg/<key>.webp`、`video/<key>.mp4`…），
+      // 产物是按**编号**命名的（`banners/bg/<key>.webp`、`video/<key>.mp4`…）
       // 换了编号就必须重转一遍，否则新编号在成品里一个文件都没有 → 前端 404
       mediaTouched = true
     }
@@ -859,7 +812,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
           if (exists(to)) throw new Error(`本阁已有同名套装：${addName}`)
           const moved = moveTree(snap, from, to)
           if (!moved) fs.mkdirSync(to, { recursive: true })
-          // 换阁要走 moveSetToPool：upsertSet 会把「来源变了」判成复刻，
+          // 换阁要走 moveSetToPool：upsertSet 会把「来源变了」判成复刻
           // 来源那一格原地不动，图鉴里这套仍然挂在旧阁下
           const hit = moveSetToPool(addName, name, `${version}${versionName}`)
           notes.push(`追加套装「${addName}」← 「${owner.name}」（${moved} 个文件${hit ? '' : '，序列里没找到初始行'}）`)
@@ -905,8 +858,8 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       notes.push(`服装阁编号留空 → 自动取 ${gachaKey}`)
     }
 
-    // 素材已按「实体」重构：一座阁就是一个目录，
-    // 背景 / 缩略图 / 艺术字 / 深海回响 / 套装全在同一层。
+    // 素材已按「实体」重构：一座阁就是一个目录
+    // 背景 / 缩略图 / 艺术字 / 深海回响 / 套装全在同一层
     const poolDir = poolDirOf(version, versionName, name, { create: true, standard: isStandard })
 
     snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
@@ -1030,10 +983,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       poolDirOf(destPool.version, destPool.versionName || destPool.version, destPool.name,
         { standard: (destPool.type || 'limited') === 'standard' }), setName)
 
-    /**
-     * 源目录可能**本来就不存在**：发行版直转模式下工坊数据目录里只有空壳。
-     * 只要 pool-map 认识这套，就照样能改元数据 / 换图。
-     */
+    /** 源目录可能**本来就不存在**：发行版直转模式下工坊数据目录里只有空壳。只要 pool-map 认识这套，就照样能改元数据 / 换图 */
     const hasSourceDir = exists(fromDir)
     if (!hasSourceDir && !ownerFromMap) throw new Error(`找不到套装目录：${rel(fromDir)}`)
 
@@ -1061,7 +1011,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       const hit = renameSetSeqName(target, setName)
       touchCustom(snap)
       renameCustom('sets', target, setName)
-      // 故事文件按「星级 + 套装名」命名，改名后不跟着搬就成了孤儿（故事图鉴会多一条解不开的）
       const oldStory = path.join(ASSET, '故事', `故事-${oldRow?.['星级']?.replace(/\D/g, '') || star}星-${safeName(target)}.md`)
       if (exists(oldStory)) {
         moveFile(snap, oldStory, path.join(ASSET, '故事', `故事-${star}星-${safeName(setName)}.md`))
@@ -1081,7 +1030,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       mediaTouched = true
     }
 
-    // ③ 序列：星级 / 来源 / 首发都按新值写；换阁要走 moveSetToPool，
+    // ③ 序列：星级 / 来源 / 首发都按新值写；换阁要走 moveSetToPool
     //    否则 upsertSet 会把它当成「复刻」，来源那一格不动
     upsertSet({ id: setId, star: `${star}★`, name: setName, pool: poolName, versionLabel })
     if (owner.name !== poolName) {
@@ -1134,8 +1083,8 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     const gachaKey = String(banner?.gachaKey || '')
     const isStandard = banner?.type === 'standard'
 
-    // 保证 build-pool-map 认得出这座阁：没登记过 卡池索引.json 的阁，
-    // source 扫描会给它一个「banner-<版本>」的错 id。
+    // 保证 build-pool-map 认得出这座阁：没登记过 卡池索引.json 的阁
+    // source 扫描会给它一个「banner-<版本>」的错 id
     if (banner) {
       snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
       upsertPool(poolName, { version, gachaKey, type: banner.type || 'limited' })
@@ -1230,9 +1179,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     log({ kind: 'ok', text: `阅读物已写入：${r.dist ? `《${title.replace(/^《|》$/g, '')}》` : title}` })
   }
 
-  /**
-   * 转码那一趟要不要跑：给了媒体文件、或新建版本 / 阁 / 套装、或整套导入时要；只改元数据不用。
-   */
+  /** 转码那一趟要不要跑：给了媒体文件、或新建版本 / 阁 / 套装、或整套导入时要；只改元数据不用 */
   const createdSomething = versionCreated || job === 'bundle'
     || (job === 'pool' && String(fields.mode || 'new') !== 'edit')
     || (job === 'suit' && String(fields.mode || 'new') !== 'edit')

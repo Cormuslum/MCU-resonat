@@ -1,28 +1,4 @@
-/**
- * 验收 · 服装图鉴的版本分组与大版本名
- *
- * 用户报的两件事，根因完全不同：
- *
- * A. 大版本「奇迹传说」在服装图鉴里**不显示名字**，只剩一个「0」。
- * 根因：`MuseumClothes.vue` 里写死 `{ 1: 心愿原野, 2: 伊赞之土 }`，
- * 版本名也写死 24 个官方版本 —— 工坊新建的 0.1 只能显示成「0.1」。
- *
- * B. 0.1「祈愿星」的两套被归到 1.0「探索季」，于是 0.1 整版空白。
- * 根因有两层：
- * ① 工坊早期把这两套的 `首发` 记成了 `1.0探索季`；
- * ② `meta.upsertSet` 的更新分支**从不刷新 `首发`**，再导一次也改不回来；
- * ③ `build-pool-map.load_set_info` 虽然注释写「CSV 优先」，
- * 实际 xlsx 后读且会覆盖初始行 —— CSV 改对了也被旧值顶回去。
- *
- * 所以本脚本三层都验：数据自洽 → 页面渲染 → 采集脚本的优先级。
- *
- * ⚠️ 起图鉴**分组口径变了**：不再按「套装首发版本」分组，改按「阁所在版本」分组
- * （0.1 / 0.2 是工坊自建阁，里面的套装首发都在正式版本 —— 用户要的是「这些阁里有什么」）。
- * 因此本脚本的 K2 / U7 判据同步改成「每个有阁的版本，套装栏 = 该版本各阁的套装并集」，
- * 原来那句「纯复刻版本为空属正常」不再成立。
- *
- * 用法：先 `npx vite`（5178），再 `node tools/verify-v2812.mjs`
- */
+/** 验收 · 服装图鉴的版本分组与大版本名 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -61,13 +37,7 @@ function verOfLabel(label) {
   return (String(label).match(/^\d+\.\d+/) || [''])[0]
 }
 
-/**
- * 图鉴里某版本能看到多少套。
- *
- * ⚠ 改了分组口径：以前按**套装首发版本**分组，现在按**阁所在版本**分组
- * （0.1 祈愿星 / 0.2 魂灵生 是工坊自建阁，阁里的套装首发都在正式版本）。
- * 所以这里直接把「该版本的阁里出现过的套装」按 id 去重。
- */
+/** 图鉴里某版本能看到多少套 */
 function suitsOfVersion(v) {
   const out = []
   const seen = new Set()
@@ -86,14 +56,7 @@ function suitsOfVersion(v) {
 
 head('【一、数据：套装的首发版本必须自洽】')
 
-/**
- * 1. 「首发阁」与「首发版本」必须自洽。
- *
- * 判据不是「首发不能晚于所在阁」——那会把**常驻/兑换套装被放进限时阁**误判成错
- * （用户样本里 0.1 的阁放的是 1.5 首发的星之海，来源写的是「无限之心」，完全合法）。
- * 真正的不自洽只有一种：**这套的来源阁就是它现在这座阁，但首发版本却不是这座阁的版本**。
- * 2026-11-05 那次「0.1 两套挂到 1.0」正是这个形态（来源=心愿栖金蕊，首发=1.0探索季）。
- */
+/** 1. 「首发阁」与「首发版本」必须自洽。真正的不自洽只有一种：**这套的来源阁就是它现在这座阁，但首发版本却不是这座阁的版本**。2026-11-05 那次「0.1 两套挂到 1.0」正是这个形态（来源=心愿栖金蕊，首发=1.0探索季） */
 {
   const bannerByName = new Map(manifest.banners.map((b) => [b.name, b]))
   const bad = []
@@ -114,9 +77,9 @@ head('【一、数据：套装的首发版本必须自洽】')
     bad.length ? bad.slice(0, 3).join('；') : `校验 ${checked} 套（来源=本阁的那些）`)
 }
 
-// 2. 每个「有阁」的版本在图鉴里都不能空 —— 否则那一版就是空白页（用户 11-05 报的就是这个）。
-// 起分组口径改成「阁所在版本」，所以**任何有阁的版本都必然有内容**，
-//    「纯复刻版本为空」这个借口不再成立。
+// 2. 每个「有阁」的版本在图鉴里都不能空 —— 否则那一版就是空白页
+// 起分组口径改成「阁所在版本」，所以**任何有阁的版本都必然有内容**
+// 「纯复刻版本为空」这个借口不再成立
 {
   const vers = [...new Set(manifest.banners.map((b) => b.version))].sort(cmpVer)
   const empty = vers.filter((v) => suitsOfVersion(v).length === 0)
@@ -187,7 +150,7 @@ const majors = await page.$$eval('.cl-vmajor', (els) =>
 
 // 期望：每个大版本 id 的名称 = manifest 里该组第一个带 majorName 的版本
 // 大版本 id 取**版本号首位**（0.1 → 0），不看 `major` 列：
-// 该列是冗余数据，曾经被填错（0.2 写成大版本 2），按它取会把「伊赞之土」的标签弄丢。
+// 该列是冗余数据，曾经被填错（0.2 写成大版本 2），按它取会把「伊赞之土」的标签弄丢
 const wantMajors = new Map()
 for (const m of VERSIONS) {
   const id = String(m.v || '').split('.')[0]
@@ -199,7 +162,7 @@ const wantLabels = [...wantMajors.values()]
   ok(missing.length === 0, 'U1 大版本按钮显示 manifest 里的 majorName',
     missing.length ? `缺：${missing.join(' / ')}（实际 ${JSON.stringify(majors)}）` : majors.join(' / '))
 }
-// 纯数字标签 = 没取到名字（用户截图里的那个「0」）
+// 纯数字标签 = 没取到名字
 {
   const numeric = majors.filter((l) => /^\d+$/.test(l))
   ok(numeric.length === 0, 'U2 没有只剩数字的大版本标签', numeric.length ? `纯数字：${numeric.join(',')}` : '全部有名字')
@@ -230,7 +193,7 @@ const minors = await page.$$eval('.cl-vminor', (els) => els.map((e) => ({
     bad.length ? bad.slice(0, 3).map((m) => `${m.ver} 显示「${m.name}」应为「${nameOf.get(m.ver)}」`).join('；') : `${minors.length} 个版本`)
 }
 {
-  // 版本号本身必须出现在列表里（不能因为没版本卡素材就整行消失）
+  // 版本号本身必须出现在列表里
   const vers = [...new Set(manifest.banners.map((b) => b.version))]
   const miss = vers.filter((v) => !minors.some((m) => m.ver === v))
   ok(miss.length === 0, 'U5 有阁的版本都出现在赛季栏', miss.length ? `缺：${miss.join(',')}` : `${vers.length} 个`)
@@ -243,9 +206,8 @@ const minors = await page.$$eval('.cl-vminor', (els) => els.map((e) => ({
 }
 
 // 点进每个版本，确认套装栏出来的正好是「该版本的阁里出现过的套装」
-// ⚠ 用小版本在列表里的**下标**点（`page.evaluate` 里直接 `.click()`）：
 //    三个大版本组同时展开时，小版本行会互相压住，Playwright 的真实鼠标点击
-//    会被上层 `.vm-bg` 拦住（报 "intercepts pointer events"）。
+// 会被上层 `.vm-bg` 拦住（报 "intercepts pointer events"）
 {
   const vers = [...new Set(manifest.banners.map((b) => b.version))].sort(cmpVer)
   const bad = []

@@ -1,5 +1,5 @@
-// 验证工坊前端字段 hint 的 **粗体** 是否渲染成 <b>（而非字面星号）。
-// 连已在跑的工坊 5199；不依赖构建。
+// 验证工坊前端字段 hint 的 **粗体** 是否渲染成 <b>（而非字面星号）
+// 连已在跑的工坊 5199；不依赖构建
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'

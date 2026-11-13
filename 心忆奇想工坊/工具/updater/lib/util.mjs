@@ -1,40 +1,23 @@
-/**
- * 基础工具：路径、文件读写、图片尺寸、CSV。零依赖，不需要安装任何 npm 包。
- */
+/** 基础工具：路径、文件读写、图片尺寸、CSV。零依赖，不需要安装任何 npm 包 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const HERE = path.dirname(fileURLToPath(import.meta.url))
-/**
- * 工具根：`updater/` 与 `tools/` 所在的目录。
- * 开发版 = `<仓库根>/心忆奇想工坊/工具`，发行版 = `<发行根>/心忆奇想工坊/工具`（两者同构）。
- */
+/** 工具根：`updater/` 与 `tools/` 所在的目录。开发版 = `<仓库根>/心忆奇想工坊/工具`，发行版 = `<发行根>/心忆奇想工坊/工具`（两者同构） */
 export const TOOL_ROOT = path.resolve(HERE, '..', '..')
-/**
- * 工作区根：`心忆奇想工坊/` 与 `心忆共鸣/` 的公共父目录。
- * 开发版 = 仓库根，发行版 = 发行根。开发期产物（归档素材 / .dev-guard.json）落在它下面。
- */
+/** 工作区根：`心忆奇想工坊/` 与 `心忆共鸣/` 的公共父目录。开发版 = 仓库根，发行版 = 发行根。开发期产物（归档素材 / .dev-guard.json）落在它下面 */
 export const WORKSPACE = path.resolve(TOOL_ROOT, '..', '..')
-/**
- * 成品根：`public/assets` 与 `src/` 所在的目录（= 心忆共鸣/）。
- * 开发版与发行版同构；发行版启动器也可用 `NIKKI_ROOT` 显式覆盖。
- */
+/** 成品根：`public/assets` 与 `src/` 所在的目录（= 心忆共鸣/）。开发版与发行版同构；发行版启动器也可用 `NIKKI_ROOT` 显式覆盖 */
 export const ROOT = process.env.NIKKI_ROOT
   ? path.resolve(process.env.NIKKI_ROOT)
   : path.join(WORKSPACE, '心忆共鸣')
-/**
- * 编辑数据根（信息表 / 套装库 / 故事 / 阅读物 / pool-map）。
- * 开发版在 `<仓库根>/素材/`；发行版由启动器设 `NIKKI_DATA_DIR` 指到工坊工具目录下的 `data/`。
- */
+/** 编辑数据根（信息表 / 套装库 / 故事 / 阅读物 / pool-map） */
 export const ASSET = process.env.NIKKI_DATA_DIR
   ? path.resolve(process.env.NIKKI_DATA_DIR)
   : path.join(WORKSPACE, '素材')
-/**
- * 成品根 `public/`。发行版里成品在**模拟器**目录，由 `NIKKI_OUT_DIR`
- * （= 模拟器/public/assets，给 Python 管线用）反推上一级。
- */
+/** 成品根 `public/` */
 export const PUBLIC = process.env.NIKKI_OUT_DIR
   ? path.dirname(path.resolve(process.env.NIKKI_OUT_DIR))
   : path.join(ROOT, 'public')
@@ -48,10 +31,7 @@ function commonAncestor(a, b) {
   return as.slice(0, i).join(path.sep) || path.sep
 }
 
-/**
- * 「发行根」：数据根与成品根的公共祖先，所有展示路径都相对于它。
- * 开发版 = 项目根；发行版 = `无限暖暖发行版/`。
- */
+/** 「发行根」：数据根与成品根的公共祖先，所有展示路径都相对于它。开发版 = 项目根；发行版 = `无限暖暖发行版/` */
 const DISPLAY_ROOT = commonAncestor(ASSET, path.join(PUBLIC, 'assets'))
 
 /** 项目内相对路径（统一正斜杠，方便展示与写进 JSON） */
@@ -69,25 +49,18 @@ export function outLabel() {
   return path.relative(DISPLAY_ROOT, path.join(PUBLIC, 'assets')).split(path.sep).join('/')
 }
 
-/**
- * 工具根的展示前缀。归档目录（`jobs.mjs` 的 `归档素材/`）落在工具根而非数据根，
- * 文案里用 `{T}` 占位符。开发版返回空串，发行版返回 `心忆奇想工坊/工具/`。
- */
+/** 工具根的展示前缀。归档目录（`jobs.mjs` 的 `归档素材/`）落在工具根而非数据根， 文案里用 `{T}` 占位符。开发版返回空串，发行版返回 `心忆奇想工坊/工具/` */
 export function toolLabel() {
   const r = path.relative(DISPLAY_ROOT, TOOL_ROOT).split(path.sep).join('/')
   return r ? `${r}/` : ''
 }
 
-/**
- * 素材根内的相对路径 —— 写进 pool-map / overrides 的键必须用这个（相对素材根，如 `服装阁/…`）。
- */
+/** 素材根内的相对路径 —— 写进 pool-map / overrides 的键必须用这个（相对素材根，如 `服装阁/…`） */
 export function assetRel(p) {
   return path.relative(ASSET, p).split(path.sep).join('/')
 }
 
-/**
- * UI 整包根目录名。探测顺序：`界面/UI整包` → `0主素材` → `朋友分享素材`；新写入一律落 `界面/UI整包`。
- */
+/** UI 整包根目录名。探测顺序：`界面/UI整包` → `0主素材` → `朋友分享素材`；新写入一律落 `界面/UI整包` */
 export function uiRoot() {
   for (const name of ['界面/UI整包', '0主素材', '朋友分享素材']) {
     if (exists(path.join(ASSET, name))) return name
@@ -138,10 +111,7 @@ export function stamp() {
 
 /* ────────────────────────────── 图片尺寸 ────────────────────────────── */
 
-/**
- * 读图片宽高（PNG / JPEG / WebP / GIF / BMP），读不出来返回 null。
- * 只解析文件头，不解码像素。
- */
+/** 读图片宽高（PNG / JPEG / WebP / GIF / BMP），读不出来返回 null。只解析文件头，不解码像素 */
 export function imageSize(file) {
   let fd
   try {
@@ -255,10 +225,7 @@ export function toCsv(headers, rows) {
 
 /* ────────────────────────────── 其它 ────────────────────────────── */
 
-/**
- * 版本号排序键：0.1 < 0.2 < 1.0 < 1.1 < 1.10 < 2.11。
- * 既接受字符串（`'1.10'`）也接受版本行对象（`{ v: '1.10', ... }`）。
- */
+/** 版本号排序键：0.1 < 0.2 < 1.0 < 1.1 < 1.10 < 2.11。既接受字符串（`'1.10'`）也接受版本行对象（`{ v: '1.10', ... }`） */
 export function verKey(v) {
   const s = (v && typeof v === 'object') ? (v.v ?? v.version ?? '') : v
   return String(s).split('.').map((n) => Number(n) || 0)
@@ -295,10 +262,7 @@ function probe(cmd, args) {
   }
 }
 
-/**
- * 该用哪个 python 解释器。
- * 取值优先级：`NIKKI_PY` → `NIKKI_RUNTIME_DIR` 下的 `python.exe` → `python` / `py` / `python3`。
- */
+/** 该用哪个 python 解释器 */
 export function pythonBin() {
   if (PY) return PY
   const builtin = process.env.NIKKI_PY
@@ -314,10 +278,7 @@ export function pythonBin() {
   return PY
 }
 
-/**
- * 把 `spawnSync` 的失败结果翻成一句人话。
- * `ENOENT` 与退出码 `9009` 表示进程根本没跑起来，不是脚本报错。
- */
+/** 把 `spawnSync` 的失败结果翻成一句人话。`ENOENT` 与退出码 `9009` 表示进程根本没跑起来，不是脚本报错 */
 export function pyFailText(prefix, r, extra = '') {
   if (r?.error?.code === 'ENOENT') {
     return `${prefix}：找不到 Python（${r.error.spawnargs?.[0] || 'python'}）。`

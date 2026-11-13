@@ -1,8 +1,5 @@
 <script setup lang="ts">
-/**
- * 博物图鉴 · 主界面：背景图烘焙标题/选项卡/返回图标/入口物体，这里只叠透明热区。
- * 热区轮廓来自 `src/data/museum-hits.ts`；热区按钮须撑满 1920×1080（`clip-path` 用绝对坐标）。
- */
+/** 博物图鉴 · 主界面 */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -30,9 +27,7 @@ const bgOf = (r: Region) => asset(r === 'wish' ? ui.value?.museum.bgWish : ui.va
 const splitOf = (r: Region, k: MuseumHitKey) => asset(ui.value?.museum.split[`${r}-${k}`])
 
 /* ══════════════════════════════════════════ 热区 */
-/**
- * 入口物体：label 只用于无障碍（`aria-label`）。
- */
+/** 入口物体：label 只用于无障碍（`aria-label`） */
 const ITEMS: { key: MuseumHitKey; label: string }[] = [
   { key: 'clothes', label: '服装图鉴' },
   { key: 'story', label: '故事图鉴' },
@@ -54,9 +49,7 @@ function unlight(k: MuseumHitKey) {
 }
 
 /* ══════════════════════════════════════════ 区域切换：整屏碎裂 → 粒子重构 */
-/**
- * 切换特效时间轴（总 1100ms）：0ms 块状飞散 + 虚空淡入 → 420ms 换底图 → 520ms 虚空淡出 → 1100ms 清空小块。
- */
+/** 切换特效时间轴（总 1100ms）：0ms 块状飞散 + 虚空淡入 → 420ms 换底图 → 520ms 虚空淡出 → 1100ms 清空小块 */
 const TILE_W = 64
 const TILE_H = 54
 const SWAP_MS = 1100
@@ -231,7 +224,7 @@ function goBack() {
   router.push(parentOf(route.path))
 }
 
-/* 返回键：与烘焙图标等大重合（65×65 @35,16） */
+/* 返回键 */
 const BACK = { x: 35, y: 16, w: 65, h: 65 }
 /* 顶栏选项卡热区（烘焙图实测） */
 const TABS: Record<Region, { x: number; y: number; w: number; h: number }> = {
@@ -405,7 +398,7 @@ onBeforeUnmount(() => {
   user-select: none;
 }
 
-/* ---------- 切换特效：虚空 + 整屏小块 ---------- */
+/* 切换特效 */
 .mz-void {
   position: absolute;
   inset: 0;
@@ -434,7 +427,7 @@ onBeforeUnmount(() => {
   background-repeat: no-repeat;
   animation-fill-mode: both;
 }
-/* 破碎：原地飞散 + 旋转 + 缩小 */
+/* 破碎 */
 .mz-cell.break {
   animation-name: mzBreak;
   animation-timing-function: cubic-bezier(0.32, 0, 0.68, 0.42);
@@ -449,7 +442,7 @@ onBeforeUnmount(() => {
     transform: translate3d(var(--tx), var(--ty), 0) rotate(var(--rot)) scale(0.28);
   }
 }
-/* 重构：从散乱位置聚回原位 */
+/* 重构 */
 .mz-cell.rebuild {
   animation-name: mzRebuild;
   animation-timing-function: cubic-bezier(0.16, 0.9, 0.3, 1);
@@ -496,7 +489,7 @@ onBeforeUnmount(() => {
   }
 }
 
-/* ---------- 悬停金光 ---------- */
+/* 悬停金光 */
 .mz-split {
   position: absolute;
   inset: 0;
@@ -534,7 +527,7 @@ onBeforeUnmount(() => {
   opacity: 0.44;
 }
 
-/* ---------- 轮廓热区 ---------- */
+/* 轮廓热区 */
 .mz-hit {
   position: absolute;
   left: 0;
@@ -550,7 +543,7 @@ onBeforeUnmount(() => {
   cursor: default;
 }
 
-/* ---------- 顶栏选项卡热区 ---------- */
+/* 顶栏选项卡热区 */
 .mz-tab {
   position: absolute;
   padding: 0;
@@ -570,7 +563,7 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-/* 返回键：`T_UI_btn_common_back_h` 是悬停/选中高亮态，常态透明 */
+/* 返回键 */
 .mz-back {
   position: absolute;
   padding: 0;
@@ -592,7 +585,7 @@ onBeforeUnmount(() => {
   transform: scale(1.06);
 }
 
-/* ---------- 轻提示 ---------- */
+/* 轻提示 */
 .mz-toast {
   position: absolute;
   left: 50%;
