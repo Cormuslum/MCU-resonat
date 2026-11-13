@@ -1,13 +1,9 @@
 /**
- * 《无限暖暖》共鸣抽卡模拟器 · Electron 主进程（自包含发行版）
- *
- * 设计要点（v2.0.10 起）：
- *  1) **固定端口**：localStorage 按 origin 隔离，端口一变就是新域名、存档全丢。
- *     这里固定 51800（可用 NIKKI_SIM_PORT 覆盖），保证存档跨启动保留。
- *  2) **素材与代码分离**：打包后 dist 只放编译产物（js/css/html），
- *     素材（webp/ogg/mp4/manifest）放在同级 `public/assets`。
- *     `/assets/x` 先查 public/assets（工坊写入处，改了立即生效），再回落 dist/assets（js/css）。
- *  3) 数据根：打包版 = exe 所在目录（发行根）；开发版 = 项目根。
+ * 《无限暖暖》共鸣抽卡模拟器 · Electron 主进程（自包含发行版）。
+ * 1) 固定端口 51800（`NIKKI_SIM_PORT` 可覆盖）：localStorage 按 origin 隔离，端口一变就是新域名、存档全丢。
+ * 2) 素材与代码分离：dist 只放编译产物（js/css/html），素材（webp/ogg/mp4/manifest）在同级 `public/assets`；
+ *    `/assets/x` 先查 public/assets（工坊写入处，改了立即生效），再回落 dist/assets。
+ * 3) 数据根：打包版 = exe 所在目录（发行根），开发版 = 项目根。
  */
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import http from 'node:http'

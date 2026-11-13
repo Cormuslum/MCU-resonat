@@ -3,7 +3,7 @@ node_modules/
 dist/
 _build/
 
-# —— 素材库：媒体文件体积极大（无限暖暖模拟器/public/assets 约 341MB）——
+# —— 素材库：媒体文件体积极大（心忆共鸣/public/assets 约 341MB）——
 # 但运行时必需的 4 个 JSON 必须保留，否则克隆后模拟器读不到数据：
 #   manifest.json            ← src/stores/game.ts 启动时 fetch
 #   data/stories.json        ← src/core/museum-stories.ts
@@ -11,19 +11,18 @@ _build/
 #   data/mail-changelog.json ← src/components/MailPopup.vue（信封的版本日志）
 # 注意：父目录被整体排除时，子文件的 `!` 规则不生效，
 # 所以这里用逐层排除（`public/assets/*` 而非 `public/assets/**`）。
-无限暖暖模拟器/public/assets/*
-!无限暖暖模拟器/public/assets/manifest.json
-!无限暖暖模拟器/public/assets/data/
-无限暖暖模拟器/public/assets/data/*
-!无限暖暖模拟器/public/assets/data/mail-changelog.json
-!无限暖暖模拟器/public/assets/data/stories.json
-!无限暖暖模拟器/public/assets/data/readings.json
+心忆共鸣/public/assets/*
+!心忆共鸣/public/assets/manifest.json
+!心忆共鸣/public/assets/data/
+心忆共鸣/public/assets/data/*
+!心忆共鸣/public/assets/data/mail-changelog.json
+!心忆共鸣/public/assets/data/stories.json
+!心忆共鸣/public/assets/data/readings.json
 
 # 素材源目录（管线输入，约 56GB）
 素材/
 原始素材/
 归档素材/
-解包/
 
 # 发行版产物（约 2.6GB，内含 237.8MB 的 exe，超 GitHub 单文件 100MB 限制）
 release/
@@ -53,17 +52,6 @@ __pycache__/
 心忆奇想工坊/工具/updater/.inbox/
 心忆奇想工坊/工具/updater/.snapshots/
 
-# 布局坐标/：只收 Markdown / JSON 文档（与 tools/backup.py 的既有约定一致）。
-# .pxdesk（3 个共 24MB）与 .png（111 个）是设计源文件，体积大且可再生，
-# 代码里引用的坐标依据都是 .md / .json，不需要入库。
-# 注意：Git 的 `!` 否定规则在父目录被排除时对子文件无效，
-# 所以这里先 `!布局坐标/*/` 放行子目录，再逐层放行 md / json。
-布局坐标/**
-!布局坐标/*.md
-!布局坐标/*/
-!布局坐标/*/*.md
-!布局坐标/*/*.json
-
 # 备份包
 备份/
 
@@ -81,3 +69,9 @@ Thumbs.db
 
 # 开发期产出的清单与报告（过时且冗余，不入库；归档在本地 开发期文档归档/）
 开发期文档归档/
+
+# 开发期文档：界面规格笔记、实机反推的布局坐标表、版本更新日志
+# 都不随源码分发，本地保留即可。
+notes/
+布局坐标/
+CHANGELOG.md

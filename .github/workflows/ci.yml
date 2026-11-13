@@ -34,10 +34,10 @@ jobs:
         shell: pwsh
         run: |
           $need = @(
-            '无限暖暖模拟器/public/assets/manifest.json',
-            '无限暖暖模拟器/public/assets/data/stories.json',
-            '无限暖暖模拟器/public/assets/data/readings.json',
-            '无限暖暖模拟器/public/assets/data/mail-changelog.json'
+            '心忆共鸣/public/assets/manifest.json',
+            '心忆共鸣/public/assets/data/stories.json',
+            '心忆共鸣/public/assets/data/readings.json',
+            '心忆共鸣/public/assets/data/mail-changelog.json'
           )
           $missing = $need | Where-Object { -not (Test-Path $_) }
           if ($missing) { Write-Error ("缺少运行时数据：{0}" -f ($missing -join ', ')); exit 1 }
@@ -47,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: simulator-dist
-          path: 无限暖暖模拟器/dist
+          path: 心忆共鸣/dist
           retention-days: 14

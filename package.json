@@ -7,17 +7,17 @@
   "author": "Nikki Fan (personal, non-commercial)",
   "license": "GPL-3.0",
   "workspaces": [
-    "无限暖暖模拟器",
+    "心忆共鸣",
     "心忆奇想工坊"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace 无限暖暖模拟器",
-    "build": "npm run build --workspace 无限暖暖模拟器",
-    "preview": "npm run preview --workspace 无限暖暖模拟器",
-    "typecheck": "npm run typecheck --workspace 无限暖暖模拟器",
+    "dev": "npm run dev --workspace 心忆共鸣",
+    "build": "npm run build --workspace 心忆共鸣",
+    "preview": "npm run preview --workspace 心忆共鸣",
+    "typecheck": "npm run typecheck --workspace 心忆共鸣",
     "up": "node 心忆奇想工坊/工具/tools/up.mjs",
     "changelog": "node 心忆奇想工坊/工具/tools/gen-mail-changelog.mjs",
-    "pack:sim": "npm run pack --workspace 无限暖暖模拟器",
+    "pack:sim": "npm run pack --workspace 心忆共鸣",
     "pack:updater": "npm run pack --workspace 心忆奇想工坊"
   },
   "dependencies": {

@@ -1,9 +1,0 @@
-{
-  "widgetTree": "WidgetTree",
-  "rootWidgetIndex": "1 name=CanvasPanel_35",
-  "rootWidget": {
-    "name": "CanvasPanel_35",
-    "class": "CanvasPanel",
-    "visibility": "ESlateVisibility::Visible"
-  }
-}
