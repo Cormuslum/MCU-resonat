@@ -354,7 +354,7 @@ const JOBS = {
     ],
     summary: { 服装阁: 'name', 版本: 'version' },
     writes: [
-      `${D}信息表/卡池索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）`,
+      `${D}信息表/服装阁索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）`,
       `${D}信息表/自建内容.json（登记为自建；只有自建内容能在工坊里改）`,
       `${D}信息表/套装序列.csv（阁内每套追加一行）`,
       `${D}服装阁/{version}·…/{name}/（背景图 / 列表缩略图 / 艺术字 / 深海回响 / 套装）`,
@@ -461,7 +461,7 @@ const JOBS = {
     summary: { 导入: 'root' },
     writes: [
       `${D}信息表/版本表.csv（版本 + 大版本名）`,
-      `${D}信息表/卡池索引.json（服装阁 → 编号）`,
+      `${D}信息表/服装阁索引.json（服装阁 → 编号）`,
       `${D}信息表/套装序列.csv（每套追加一行）`,
       `${D}服装阁/{版本}·{版本名}/{阁}/（背景 / 缩略图 / 艺术字 / 深海回响）`,
       `${D}服装阁/{版本}·{版本名}/{阁}/{套装}/（整体图 / 半身像 / 图标）`,
@@ -763,7 +763,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     }
 
     // ④ 索引 / 序列 / 自建名录
-    snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
+    snap.touch(path.join(ASSET, '信息表', '服装阁索引.json'))
     if (name !== target) {
       renamePoolIndex(target, name)
       touchCustom(snap)
@@ -858,7 +858,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     // 背景 / 缩略图 / 艺术字 / 深海回响 / 套装全在同一层
     const poolDir = poolDirOf(version, versionName, name, { create: true, standard: isStandard })
 
-    snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
+    snap.touch(path.join(ASSET, '信息表', '服装阁索引.json'))
     upsertPool(name, { version, gachaKey, star: '', type: poolType })
     log({ kind: 'ok', text: `服装阁索引：${name} → 编号 ${gachaKey}（id banner-${gachaKey}）` })
 
@@ -1053,7 +1053,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     }
 
     // ⑤ 换阁时，新阁必须还在（否则管线不知道往哪挂）
-    snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
+    snap.touch(path.join(ASSET, '信息表', '服装阁索引.json'))
     upsertPool(poolName, { version: destPool.version, gachaKey: destPool.gachaKey, type: destPool.type || 'limited' })
 
     poolIds.push(destPool.id || '')
@@ -1076,10 +1076,10 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     const gachaKey = String(banner?.gachaKey || '')
     const isStandard = banner?.type === 'standard'
 
-    // 保证 build-pool-map 认得出这座阁：没登记过 卡池索引.json 的阁
+    // 保证 build-pool-map 认得出这座阁：没登记过 服装阁索引.json 的阁
     // source 扫描会给它一个「banner-<版本>」的错 id
     if (banner) {
-      snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
+      snap.touch(path.join(ASSET, '信息表', '服装阁索引.json'))
       upsertPool(poolName, { version, gachaKey, type: banner.type || 'limited' })
     }
 

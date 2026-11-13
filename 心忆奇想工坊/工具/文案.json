@@ -471,7 +471,7 @@
           }
         },
         "writes": [
-          "{D}信息表/卡池索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）",
+          "{D}信息表/服装阁索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）",
           "{D}信息表/自建内容.json（登记为自建；只有自建内容能在工坊里改）",
           "{D}信息表/套装序列.csv（阁内每套追加一行）",
           "{D}服装阁/{version}·…/{name}/（背景图 / 列表缩略图 / 艺术字 / 深海回响 / 套装）",
@@ -481,7 +481,7 @@
           "{O}manifest.json · {O}**（转码）"
         ],
         "writesDist": [
-          "{D}信息表/卡池索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）",
+          "{D}信息表/服装阁索引.json（{name} → 版本 {version} / 编号 {gachaKey} / 阁型 {type}）",
           "{D}信息表/自建内容.json（登记为自建）",
           "{D}信息表/套装序列.csv（阁内每套追加一行）",
           "{O}banners/ · {O}video/（背景 / 缩略图 / 艺术字 / 动态背景，转码）",
@@ -617,7 +617,7 @@
         "groups": {},
         "writes": [
           "{D}信息表/版本表.csv（版本 + 大版本名）",
-          "{D}信息表/卡池索引.json（服装阁 → 编号）",
+          "{D}信息表/服装阁索引.json（服装阁 → 编号）",
           "{D}信息表/套装序列.csv（每套追加一行）",
           "{D}服装阁/{版本}·{版本名}/{阁}/（背景 / 缩略图 / 艺术字 / 深海回响）",
           "{D}服装阁/{版本}·{版本名}/{阁}/{套装}/（整体图 / 半身像 / 图标）· {D}视频/服装阁动态/ · {D}音频/服装阁进入音/",
@@ -625,7 +625,7 @@
           "一次「写入并更新」跑完整条管线"
         ],
         "writesDist": [
-          "{D}信息表/版本表.csv · 卡池索引.json · 套装序列.csv",
+          "{D}信息表/版本表.csv · 服装阁索引.json · 套装序列.csv",
           "{O}banners/ · {O}sets/ · {O}video/（转码）",
           "{O}data/stories.json · {O}data/readings.json（直写成品）",
           "{O}manifest.json",

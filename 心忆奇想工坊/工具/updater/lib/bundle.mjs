@@ -601,7 +601,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
           if (String(prev?.gachaKey || '').trim()) rekeyFrom = String(prev.gachaKey)
           gachaKey = nextFreeGacha()
         }
-        snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
+        snap.touch(path.join(ASSET, '信息表', '服装阁索引.json'))
         upsertPool(pool.name, {
           version: ver.v, gachaKey,
           star: pool.sets.map((s) => `${s.star}★`).filter((x, i, a) => a.indexOf(x) === i).join('+'),

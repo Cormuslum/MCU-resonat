@@ -112,8 +112,8 @@ export function listMajors() {
 
 /* ────────────────────────────── 服装阁索引 ────────────────────────────── */
 
-/** `素材/信息表/卡池索引.json` */
-const POOL_INDEX = path.join(INFO, '卡池索引.json')
+/** `素材/信息表/服装阁索引.json` */
+const POOL_INDEX = path.join(INFO, '服装阁索引.json')
 
 export function readPoolIndex() {
   return readJson(POOL_INDEX, {}) || {}
@@ -132,7 +132,7 @@ export function normalizeGacha(raw) {
   return n < 1000 ? String(n).padStart(3, '0') : String(n)
 }
 
-/** 已被占用的编号集合（卡池索引 + pool-map 都算，后者含旧数据） */
+/** 已被占用的编号集合（服装阁索引 + pool-map 都算，后者含旧数据） */
 function usedGachaSet() {
   const set = new Set()
   for (const v of Object.values(readPoolIndex())) {
@@ -274,7 +274,7 @@ export function renameCustom(kind, from, to) {
   return readCustom()
 }
 
-/** 卡池索引里换一个键名（阁改名时用） */
+/** 服装阁索引里换一个键名（阁改名时用） */
 export function renamePoolIndex(from, to) {
   const idx = readPoolIndex()
   if (!idx[from] || from === to) return idx
