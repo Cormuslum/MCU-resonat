@@ -158,7 +158,16 @@ def main():
             merged[r["id"]] = r          # 源覆盖基线
         rows = list(merged.values())
         for r in rows:
-            # 基线条目来自 JSON，排序用的 `_num` 已被剥掉 → 按 setId 补算
+            # 基线条目可能是在 pool-map 更新前写入的（setId 空、major 落到 0）→ 按当前 pool-map 回填
+            info = setmap.get(str(r.get("setName") or r.get("id") or ""))
+            if info:
+                sid_now, star_now, major_now = info
+                if sid_now:
+                    r["setId"] = sid_now
+                if star_now:
+                    r["star"] = star_now
+                r["major"] = major_now
+            # 排序用的 `_num` 从 JSON 读回时已被剥掉 → 按（回填后的）setId 补算
             if "_num" not in r:
                 sid = str(r.get("setId") or "")
                 r["_num"] = int(sid[1:]) if sid[1:].isdigit() else 9999

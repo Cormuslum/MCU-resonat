@@ -523,26 +523,32 @@ export function upsertStoryJson({ name, star, body }) {
   const nStar = Number(String(star || '').replace(/\D/g, '')) || 5
   const hit = list.find((s) => s.setName === setName)
 
+  // 按当前 pool-map 解析归属；查不到（套装还没进索引）时保留原值，交给管线回填
+  const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
+  let setId = ''
+  let major = 0
+  for (const b of pm.banners || []) {
+    const s = (b.sets || []).find((x) => x.name === setName)
+    if (!s) continue
+    setId = s.id || ''
+    major = Number(String(b.version || '').split('.')[0]) || 0
+    break
+  }
+
   if (hit) {
     hit.text = clean
     hit.title = setName
     hit.star = nStar
-  } else {
-    const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
-    let setId = ''
-    let major = 0
-    for (const b of pm.banners || []) {
-      const s = (b.sets || []).find((x) => x.name === setName)
-      if (!s) continue
-      setId = s.id || ''
-      major = Number(String(b.version || '').split('.')[0]) || 0
-      break
+    if (setId) {
+      hit.setId = setId
+      hit.major = major
     }
+  } else {
     list.push({ id: setName, setId, setName, star: nStar, major, title: setName, text: clean })
   }
 
   fs.writeFileSync(file, JSON.stringify(list), 'utf8')
-  return { file, created: !hit }
+  return { file, created: !hit, resolved: !!setId }
 }
 
 /* ────────────────────────────── 阅读物 ────────────────────────────── */

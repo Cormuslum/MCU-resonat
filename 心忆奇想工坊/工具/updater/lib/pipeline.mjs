@@ -71,10 +71,10 @@ export function buildSteps({
   const pureReading = job === 'reading' && !poolIds.length
 
   if (pureStory) {
-    if (DIST) return []       // 已经直写成品 stories.json，管线无事可做
+    // 发行版虽已直写成品，仍要跑一趟：基线合并会按 pool-map 回填 setId / major
     return [{
       key: 'stories',
-      label: '生成故事图鉴数据（只重算故事）',
+      label: DIST ? '校正故事图鉴数据' : '生成故事图鉴数据（只重算故事）',
       cmd: py,
       args: ['tools/gen-stories.py'],
       optional: true,
@@ -92,7 +92,7 @@ export function buildSteps({
   }
 
   // 没有 job（撤回后的全量兜底）→ 老行为，两步都跑
-  const needStories = !job || (storyWritten && !DIST)
+  const needStories = !job || storyWritten
   const needReadings = !job || (readingWritten && !DIST)
 
   steps.push({
