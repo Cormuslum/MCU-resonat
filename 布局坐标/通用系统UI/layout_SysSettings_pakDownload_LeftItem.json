@@ -1,0 +1,544 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "2 name=CanvasPanel_31",
+  "rootWidget": {
+    "name": "CanvasPanel_31",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "CanvasPanel_Bg",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "504",
+              "Bottom": "115.50893"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Normal_Img",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Right": "772.84",
+                  "Bottom": "132"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_task_btn_list_item_xy_n_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysChallenge/Textures/Entrance_2_0/__Frames/T_UI_task_btn_list_item_xy_n_PNG.T_UI_task_btn_list_item_xy_n_PNG"
+            }
+          },
+          {
+            "name": "Normal_Img_1",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Right": "772.84",
+                  "Bottom": "132"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_task_btn_list_item_xy_n_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysChallenge/Textures/Entrance_2_0/__Frames/T_UI_task_btn_list_item_xy_n_PNG.T_UI_task_btn_list_item_xy_n_PNG"
+            }
+          },
+          {
+            "name": "Normal_Img_2",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Right": "772.84",
+                  "Bottom": "132"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_task_btn_list_item_xy_n_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysChallenge/Textures/Entrance_2_0/__Frames/T_UI_task_btn_list_item_xy_n_PNG.T_UI_task_btn_list_item_xy_n_PNG"
+            }
+          },
+          {
+            "name": "Select_Img",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_task_btn_list_item_xy_s_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysChallenge/Textures/Entrance_2_0/__Frames/T_UI_task_btn_list_item_xy_s_PNG.T_UI_task_btn_list_item_xy_s_PNG"
+            }
+          },
+          {
+            "name": "Press_Img",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "2",
+              "layout": {
+                "Offsets": {
+                  "Right": "772.84",
+                  "Bottom": "132"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_task_btn_list_item_xy_n_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysChallenge/Textures/Entrance_2_0/__Frames/T_UI_task_btn_list_item_xy_n_PNG.T_UI_task_btn_list_item_xy_n_PNG"
+            }
+          },
+          {
+            "name": "Hover_Img",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Left": "-11.900002",
+                  "Top": "-13.333334",
+                  "Right": "-12.466669",
+                  "Bottom": "-13"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            },
+            "image": {
+              "texture": "T_UI_common_btn_option_h",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_option_h.T_UI_common_btn_option_h"
+            }
+          }
+        ]
+      },
+      {
+        "name": "VerticalBox_Info",
+        "class": "VerticalBox",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Top": "3",
+              "Right": "490",
+              "Bottom": "83"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "SizeBox_Name",
+            "class": "SizeBox",
+            "visibility": "",
+            "slot": {
+              "type": "VerticalBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "ScaleBox_Name",
+                "class": "ScaleBox",
+                "visibility": "",
+                "slot": {
+                  "type": "SizeBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "TextBlock_Name",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "ScaleBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Spacer_87",
+            "class": "Spacer",
+            "visibility": "",
+            "slot": {
+              "type": "VerticalBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          },
+          {
+            "name": "SizeBox_Tips",
+            "class": "SizeBox",
+            "visibility": "",
+            "slot": {
+              "type": "VerticalBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "WidgetSwitcher_0",
+                "class": "WidgetSwitcher",
+                "visibility": "",
+                "slot": {
+                  "type": "SizeBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "HorizontalBox_DownLoad",
+                    "class": "HorizontalBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "WidgetSwitcher_Icon",
+                        "class": "WidgetSwitcher",
+                        "visibility": "",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Image_Paush",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "WidgetSwitcherSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_login_Card_icon_pause",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysSettings/Texture/T_UI_login_Card_icon_pause.T_UI_login_Card_icon_pause"
+                            }
+                          },
+                          {
+                            "name": "Image_Continue",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "WidgetSwitcherSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_login_Card_icon_start",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysSettings/Texture/T_UI_login_Card_icon_start.T_UI_login_Card_icon_start"
+                            }
+                          },
+                          {
+                            "name": "Image_Wait",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "WidgetSwitcherSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_login_Card_icon_wait",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysSettings/Texture/T_UI_login_Card_icon_wait.T_UI_login_Card_icon_wait"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "TextBlock_Size",
+                        "class": "TextBlock",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "HorizontalBox_Finish",
+                    "class": "HorizontalBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "Image_Icon_Finish",
+                        "class": "Image",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "image": {
+                          "texture": "T_UI_login_Card_icon_Finish",
+                          "textureClass": "Texture2D",
+                          "texturePath": "/Game/UI/SysSettings/Texture/T_UI_login_Card_icon_Finish.T_UI_login_Card_icon_Finish"
+                        }
+                      },
+                      {
+                        "name": "TextBlock_Finish",
+                        "class": "TextBlock",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "HorizontalBox_Relogin",
+                    "class": "HorizontalBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "Image_Icon_Relogin",
+                        "class": "Image",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "image": {
+                          "texture": "T_UI_login_Card_icon_Failure",
+                          "textureClass": "Texture2D",
+                          "texturePath": "/Game/UI/SysSettings/Texture/T_UI_login_Card_icon_Failure.T_UI_login_Card_icon_Failure"
+                        }
+                      },
+                      {
+                        "name": "TextBlock_Relogin",
+                        "class": "TextBlock",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "HorizontalBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Text_Estimate",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Btn_Touch",
+        "class": "Button",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

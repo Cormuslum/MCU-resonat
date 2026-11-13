@@ -1,0 +1,232 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "20 name=InvalidationBox_0",
+  "rootWidget": {
+    "name": "InvalidationBox_0",
+    "class": "InvalidationBox",
+    "visibility": "",
+    "children": [
+      {
+        "name": "WidgetSwitcher_Key",
+        "class": "WidgetSwitcher",
+        "visibility": "",
+        "slot": {
+          "type": "PanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "children": [
+          {
+            "name": "Label",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "ControlButtonBg_Img",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Right": "0",
+                      "Bottom": "0"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_tipbg_01",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/Common/Textures/T_UI_tipbg_01.T_UI_tipbg_01"
+                }
+              },
+              {
+                "name": "Text_KeyName",
+                "class": "TextBlock",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Icon",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "Image_Icon",
+                "class": "Image",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Bottom": "26.8"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_KeyTips_Left_Mouse",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/Common/Textures/T_UI_KeyTips_Left_Mouse.T_UI_KeyTips_Left_Mouse"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Space_Press",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "Progress_bg",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-3",
+                      "Top": "1",
+                      "Right": "-3",
+                      "Bottom": "2"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_KeyTips_Space_bar",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/Common/Textures/KeyTips/T_UI_KeyTips_Space_bar.T_UI_KeyTips_Space_bar"
+                }
+              },
+              {
+                "name": "Progress_bar",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-4.437805",
+                      "Top": "-0.241302",
+                      "Right": "-3.977193",
+                      "Bottom": "0.086719"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "MI_UI_Keytips_Progress",
+                  "textureClass": "MaterialInstanceConstant",
+                  "texturePath": "/Game/UI/Common/PC/Material/MI_UI_Keytips_Progress.MI_UI_Keytips_Progress"
+                }
+              },
+              {
+                "name": "Img_Icon",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Bottom": "38"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_KeyTips_Space",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/Common/Textures/T_UI_KeyTips_Space.T_UI_KeyTips_Space"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,594 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "3 name=CanvasPanel_1",
+  "rootWidget": {
+    "name": "CanvasPanel_1",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "ButtonArea",
+        "class": "X6MultiPlatformButton",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "2"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "SizeBox_2",
+            "class": "SizeBox",
+            "visibility": "",
+            "slot": {
+              "type": "ButtonSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "ScaleBox_0",
+                "class": "ScaleBox",
+                "visibility": "ESlateVisibility::HitTestInvisible",
+                "slot": {
+                  "type": "SizeBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Content",
+                    "class": "WidgetSwitcher",
+                    "visibility": "",
+                    "slot": {
+                      "type": "ScaleBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "SingleTx",
+                        "class": "TextBlock",
+                        "visibility": "ESlateVisibility::HitTestInvisible",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      },
+                      {
+                        "name": "HorizontalBox_1",
+                        "class": "HorizontalBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "SizeBox_4",
+                            "class": "SizeBox",
+                            "visibility": "",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "children": [
+                              {
+                                "name": "Icon_Img",
+                                "class": "Image",
+                                "visibility": "",
+                                "slot": {
+                                  "type": "SizeBoxSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                },
+                                "image": {
+                                  "texture": "T_Icon_quest_0004",
+                                  "textureClass": "Texture2D",
+                                  "texturePath": "/Game/UI/Image/IconQuest/T_Icon_quest_0004.T_Icon_quest_0004"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "name": "IconTx",
+                            "class": "TextBlock",
+                            "visibility": "ESlateVisibility::HitTestInvisible",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "CanvasPanel",
+                        "class": "CanvasPanel",
+                        "visibility": "",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "ConsoleTx",
+                            "class": "TextBlock",
+                            "visibility": "ESlateVisibility::HitTestInvisible",
+                            "slot": {
+                              "type": "CanvasPanelSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": "",
+                              "layout": {
+                                "Anchors": {
+                                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                },
+                                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "CanvasPanel_3",
+                        "class": "CanvasPanel",
+                        "visibility": "",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "HorizontalBox_0",
+                            "class": "HorizontalBox",
+                            "visibility": "",
+                            "slot": {
+                              "type": "CanvasPanelSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": "",
+                              "layout": {
+                                "Anchors": {
+                                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                },
+                                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                              }
+                            },
+                            "children": [
+                              {
+                                "name": "SizeBox_1",
+                                "class": "SizeBox",
+                                "visibility": "",
+                                "slot": {
+                                  "type": "HorizontalBoxSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                },
+                                "children": [
+                                  {
+                                    "name": "ConsoleIcon",
+                                    "class": "Image",
+                                    "visibility": "",
+                                    "slot": {
+                                      "type": "SizeBoxSlot",
+                                      "slotName": "",
+                                      "anchors": "",
+                                      "offsets": "",
+                                      "alignment": "",
+                                      "zorder": ""
+                                    },
+                                    "image": {
+                                      "texture": "T_Icon_quest_0004",
+                                      "textureClass": "Texture2D",
+                                      "texturePath": "/Game/UI/Image/IconQuest/T_Icon_quest_0004.T_Icon_quest_0004"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "name": "ConsoleIconTx",
+                                "class": "TextBlock",
+                                "visibility": "ESlateVisibility::HitTestInvisible",
+                                "slot": {
+                                  "type": "HorizontalBoxSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "IconTips",
+        "class": "WidgetSwitcher",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "34",
+              "Top": "-3"
+            },
+            "Anchors": {
+              "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.000 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Overlay_141",
+            "class": "Overlay",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          },
+          {
+            "name": "Overlay",
+            "class": "Overlay",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          },
+          {
+            "name": "WBP_UI_Common_KeyTips",
+            "class": "WBP_UI_Common_KeyTips_C",
+            "visibility": "",
+            "slot": {
+              "type": "WidgetSwitcherSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          }
+        ]
+      },
+      {
+        "name": "Hover_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "image": {
+          "texture": "T_UI_common_btn_h",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_h.T_UI_common_btn_h"
+        }
+      },
+      {
+        "name": "Pressed_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "image": {
+          "texture": "T_UI_common_btn_golden_n",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_golden_n.T_UI_common_btn_golden_n"
+        }
+      },
+      {
+        "name": "Fx_Effect",
+        "class": "CanvasPanel",
+        "visibility": "ESlateVisibility::Collapsed",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Top": "-1",
+              "Right": "0",
+              "Bottom": "-1"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Fx_Edge_Sweep_01",
+            "class": "Image",
+            "visibility": "ESlateVisibility::HitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "2"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Achievenment_Reward_Item_edge_02",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysAreaAchievement/Material/MI_UI_Achievenment_Reward_Item_edge_02.MI_UI_Achievenment_Reward_Item_edge_02"
+            }
+          },
+          {
+            "name": "Fx_Edge_Sweep_02",
+            "class": "Image",
+            "visibility": "ESlateVisibility::HitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Top": "-5.5",
+                  "Right": "0",
+                  "Bottom": "7.5"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Achievenment_Reward_Item_edge_02",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysAreaAchievement/Material/MI_UI_Achievenment_Reward_Item_edge_02.MI_UI_Achievenment_Reward_Item_edge_02"
+            }
+          },
+          {
+            "name": "Fx_Glow",
+            "class": "Image",
+            "visibility": "ESlateVisibility::HitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Common_Button_Glow",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/Common/Material/MI_UI_Common_Button_Glow.MI_UI_Common_Button_Glow"
+            }
+          },
+          {
+            "name": "Fx_Sweep",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "82"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                  "Maximum": "X=1.000 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Common_Button_Confirm_Sweep",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/UIParticle/UI_Material/Reward/MI_UI_Common_Button_Confirm_Sweep.MI_UI_Common_Button_Confirm_Sweep"
+            }
+          },
+          {
+            "name": "Fx_Light_01",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "-60",
+                  "Top": "-30",
+                  "Right": "160",
+                  "Bottom": "50"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "MI_UI_ParticleBase_01_10",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/UIParticle/UI_Material/MI_UI_ParticleBase_01_10.MI_UI_ParticleBase_01_10"
+            }
+          },
+          {
+            "name": "Fx_Light_02",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "40",
+                  "Top": "23",
+                  "Right": "106",
+                  "Bottom": "16"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "MI_UI_ParticleBase_03",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/UIParticle/UI_Material/MI_UI_ParticleBase_03.MI_UI_ParticleBase_03"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

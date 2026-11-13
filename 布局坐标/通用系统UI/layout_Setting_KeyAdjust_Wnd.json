@@ -1,0 +1,190 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "1 name=CanvasPanel_0",
+  "rootWidget": {
+    "name": "CanvasPanel_0",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "WBP_ClickClose_Tip_PC",
+        "class": "WBP_ClickClose_Tip_PC_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        }
+      },
+      {
+        "name": "WBP_Common_Wnd_ScaleLocate_Large",
+        "class": "WBP_Common_Wnd_ScaleLocate_Large_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        }
+      },
+      {
+        "name": "CanvasPanel_33",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "2",
+          "layout": {
+            "Offsets": {
+              "Right": "880",
+              "Bottom": "410"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "VerticalBox_151",
+            "class": "VerticalBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Top": "2",
+                  "Right": "850",
+                  "Bottom": "214"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "KeyAdjust1",
+                "class": "WBP_Setting_KeyAdjust_Item_C",
+                "visibility": "",
+                "slot": {
+                  "type": "VerticalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              },
+              {
+                "name": "KeyAdjust2",
+                "class": "WBP_Setting_KeyAdjust_Item_C",
+                "visibility": "",
+                "slot": {
+                  "type": "VerticalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              },
+              {
+                "name": "KeyAdjust3",
+                "class": "WBP_Setting_KeyAdjust_Item_C",
+                "visibility": "",
+                "slot": {
+                  "type": "VerticalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              }
+            ]
+          },
+          {
+            "name": "ScaleBox_0",
+            "class": "ScaleBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "8.5",
+                  "Top": "69",
+                  "Right": "840",
+                  "Bottom": "120"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "TxtOption",
+                "class": "TextBlock",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "ScaleBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

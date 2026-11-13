@@ -1,0 +1,179 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "3 name=CanvasPanel_0",
+  "rootWidget": {
+    "name": "CanvasPanel_0",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "BtnSelect",
+        "class": "Button",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "62"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "CanvasPanel_2",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "ButtonSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            },
+            "children": [
+              {
+                "name": "PanelSelect",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Right": "0",
+                      "Bottom": "64"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "name": "SelectBg",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Right": "0",
+                          "Bottom": "0"
+                        },
+                        "Anchors": {
+                          "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                        }
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_Settings_btn_Mobile_options",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_btn_Mobile_options.T_UI_Settings_btn_Mobile_options"
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "HorizontalBox_0",
+                "class": "HorizontalBox",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Top": "5"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Key_Confirm",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "TxtName",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Image_Hover",
+        "class": "Image",
+        "visibility": "ESlateVisibility::HitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "62"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+            }
+          }
+        },
+        "image": {
+          "texture": "T_UI_sort_btn_content_h",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_sort_btn_content_h.T_UI_sort_btn_content_h"
+        }
+      }
+    ]
+  }
+}

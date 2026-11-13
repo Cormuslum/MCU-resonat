@@ -1,0 +1,154 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "1 name=CanvasPanel_0",
+  "rootWidget": {
+    "name": "CanvasPanel_0",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Title",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "399",
+              "Bottom": "55"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "Image_366",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "10.928573",
+                  "Top": "6.071429",
+                  "Right": "113.07143",
+                  "Bottom": "41.92857"
+                }
+              }
+            },
+            "image": {
+              "texture": "T_UI_Settings_bg_title",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_bg_title.T_UI_Settings_bg_title"
+            }
+          },
+          {
+            "name": "Image_367",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "34.785713",
+                  "Top": "17",
+                  "Right": "97.21429",
+                  "Bottom": "43"
+                }
+              }
+            },
+            "image": {
+              "texture": "T_UI_Settings_img_titledec",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_img_titledec.T_UI_Settings_img_titledec"
+            }
+          },
+          {
+            "name": "TxtName",
+            "class": "TextBlock",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "63.000004",
+                  "Top": "15.642858",
+                  "Right": "97",
+                  "Bottom": "24.732143"
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "VerticalBox_0",
+        "class": "VerticalBox",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "45",
+              "Top": "61.142853",
+              "Right": "1271.8572",
+              "Bottom": "337.85715"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "EntryItem",
+            "class": "DynamicEntryBox",
+            "visibility": "",
+            "slot": {
+              "type": "VerticalBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          },
+          {
+            "name": "Spacer_84",
+            "class": "Spacer",
+            "visibility": "",
+            "slot": {
+              "type": "VerticalBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

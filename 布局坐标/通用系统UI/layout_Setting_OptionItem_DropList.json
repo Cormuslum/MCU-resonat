@@ -1,0 +1,575 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "8 name=CanvasPanel_2",
+  "rootWidget": {
+    "name": "CanvasPanel_2",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "CanvasPanel_1",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "1227.5925",
+              "Bottom": "64"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "PanelNormal",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "1229.7142",
+                  "Bottom": "66"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Image_3",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "11.4375",
+                      "Top": "4.125",
+                      "Right": "1203.3125",
+                      "Bottom": "56"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_Settings_bg_option_01_PNG",
+                  "textureClass": "PaperSprite",
+                  "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysSettings/Texture/__Frames/T_UI_Settings_bg_option_01_PNG.T_UI_Settings_bg_option_01_PNG"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Hover",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "1229.7142",
+                  "Bottom": "66"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Image_1",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "11.4375",
+                      "Top": "4.125",
+                      "Right": "1203.3125",
+                      "Bottom": "56"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_Settings_bg_option_01_h_PNG",
+                  "textureClass": "PaperSprite",
+                  "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysSettings/Texture/__Frames/T_UI_Settings_bg_option_01_h_PNG.T_UI_Settings_bg_option_01_h_PNG"
+                }
+              }
+            ]
+          },
+          {
+            "name": "CanvasPanel_108",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Left": "508",
+                  "Top": "-1.7",
+                  "Right": "224.41667",
+                  "Bottom": "31.571428"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Btn_N",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "image": {
+                  "texture": "T_UI_Settings_btn_goto_n",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_btn_goto_n.T_UI_Settings_btn_goto_n"
+                }
+              },
+              {
+                "name": "Btn_H",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "image": {
+                  "texture": "T_UI_Settings_btn_goto_h",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_btn_goto_h.T_UI_Settings_btn_goto_h"
+                }
+              },
+              {
+                "name": "Img_Arrow",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-34"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=1.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=1.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_Settings_img_Mobile_arrow_02_PNG",
+                  "textureClass": "PaperSprite",
+                  "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysSettings/Texture/__Frames/T_UI_Settings_img_Mobile_arrow_02_PNG.T_UI_Settings_img_Mobile_arrow_02_PNG"
+                }
+              }
+            ]
+          },
+          {
+            "name": "PanelSelect",
+            "class": "CanvasPanel",
+            "visibility": "ESlateVisibility::Collapsed",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Left": "508",
+                  "Top": "-1.7"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Image_6",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Right": "0",
+                      "Bottom": "0"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                    }
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_Settings_btn_goto_h",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/SysSettings/Texture/T_UI_Settings_btn_goto_h.T_UI_Settings_btn_goto_h"
+                }
+              },
+              {
+                "name": "Img_Arrow_s",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-34"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=1.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=1.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_Settings_img_Mobile_arrow_02_PNG",
+                  "textureClass": "PaperSprite",
+                  "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysSettings/Texture/__Frames/T_UI_Settings_img_Mobile_arrow_02_PNG.T_UI_Settings_img_Mobile_arrow_02_PNG"
+                }
+              }
+            ]
+          },
+          {
+            "name": "PanelList_P",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Left": "511.8772",
+                  "Top": "0.4158554",
+                  "Right": "10.122803",
+                  "Bottom": "312.04523"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=1.000 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "PanelList",
+                "class": "CanvasPanel",
+                "visibility": "ESlateVisibility::Collapsed",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "16.666475",
+                      "Top": "57.690865",
+                      "Right": "17",
+                      "Bottom": "0"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Button_group",
+            "class": "Overlay",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "4",
+              "layout": {
+                "Offsets": {
+                  "Left": "15.415185",
+                  "Top": "32",
+                  "Right": "1230",
+                  "Bottom": "68"
+                },
+                "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "Button_ShowTip",
+                "class": "Button",
+                "visibility": "",
+                "slot": {
+                  "type": "OverlaySlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Button_DropList",
+                    "class": "Button",
+                    "visibility": "",
+                    "slot": {
+                      "type": "ButtonSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "ScaleBox_0",
+            "class": "ScaleBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "2",
+              "layout": {
+                "Offsets": {
+                  "Left": "0.6852417",
+                  "Top": "18.657143",
+                  "Right": "568",
+                  "Bottom": "28"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.700 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.700 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "TxtOption",
+                "class": "TextBlock",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "ScaleBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              }
+            ]
+          },
+          {
+            "name": "ScaleBox_2",
+            "class": "ScaleBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "2",
+              "layout": {
+                "Offsets": {
+                  "Left": "0.6852417",
+                  "Top": "18.657143",
+                  "Right": "568",
+                  "Bottom": "28"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.700 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.700 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "TxtOption_1",
+                "class": "TextBlock",
+                "visibility": "ESlateVisibility::Collapsed",
+                "slot": {
+                  "type": "ScaleBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              }
+            ]
+          },
+          {
+            "name": "CanvasPanel_0",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "5",
+              "layout": {
+                "Offsets": {
+                  "Left": "34",
+                  "Right": "457.18182",
+                  "Bottom": "25.96212"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.000 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "SizeBox_0",
+                "class": "SizeBox",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Anchors": {
+                      "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "ScaleBox_1",
+                    "class": "ScaleBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "SizeBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "TxtName",
+                        "class": "TextBlock",
+                        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                        "slot": {
+                          "type": "ScaleBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Btn_Tips",
+                "class": "Button",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "4",
+                      "Top": "-2"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=1.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=1.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

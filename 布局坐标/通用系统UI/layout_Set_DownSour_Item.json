@@ -1,0 +1,206 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "1 name=CanvasPanel_16",
+  "rootWidget": {
+    "name": "CanvasPanel_16",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Image_Bg",
+        "class": "Image",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            }
+          }
+        },
+        "image": {
+          "texture": "T_UI_download_img_sort",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/SysSettings/Texture/T_UI_download_img_sort.T_UI_download_img_sort"
+        }
+      },
+      {
+        "name": "ProgressBg_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "67",
+              "Top": "81",
+              "Right": "0",
+              "Bottom": "0"
+            }
+          }
+        },
+        "image": {
+          "texture": "T_UI_login_slider_empty",
+          "textureClass": "Texture2D",
+          "texturePath": "/PaperLuaFramework/HotUpdate/HotUpdateLevel/Textures/T_UI_login_slider_empty.T_UI_login_slider_empty"
+        }
+      },
+      {
+        "name": "ProgDownload",
+        "class": "ProgressBar",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "70",
+              "Top": "87",
+              "Right": "841",
+              "Bottom": "12"
+            }
+          }
+        }
+      },
+      {
+        "name": "SliderDownload",
+        "class": "Slider",
+        "visibility": "ESlateVisibility::HitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "2",
+          "layout": {
+            "Offsets": {
+              "Left": "62",
+              "Top": "87",
+              "Right": "856",
+              "Bottom": "11"
+            }
+          }
+        }
+      },
+      {
+        "name": "UI_NS_LoginUpdate_Trail",
+        "class": "NiagaraSystemWidget",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Left": "330",
+              "Top": "82",
+              "Bottom": "22"
+            }
+          }
+        }
+      },
+      {
+        "name": "SizeBox_0",
+        "class": "SizeBox",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "70",
+              "Top": "32",
+              "Right": "644",
+              "Bottom": "42"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "Text_SourceName",
+            "class": "TextBlock",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "SizeBoxSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": ""
+            }
+          }
+        ]
+      },
+      {
+        "name": "Txet_BtnType",
+        "class": "TextBlock",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "-201",
+              "Top": "44",
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Minimum": "X=1.000 Y=0.000 (FVector2D)",
+              "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+            },
+            "Alignment": "X=1.000 Y=0.000 (FVector2D)"
+          }
+        }
+      },
+      {
+        "name": "Common_SmallButton",
+        "class": "WBP_Common_SmallButton_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "949",
+              "Top": "16",
+              "Right": "0",
+              "Bottom": "0"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "4 name=CanvasPanel_20",
+  "rootWidget": {
+    "name": "CanvasPanel_20",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Button_PV",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "88",
+              "Bottom": "88"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "Wants",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "88",
+                  "Bottom": "88"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "WidgetSwitcher_Btn_Wants",
+                "class": "WidgetSwitcher",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Top": "-4",
+                      "Right": "88",
+                      "Bottom": "88"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Button_Wants_Suit",
+                    "class": "Button",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Button_Wants_Suit_Active",
+                    "class": "Button",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WidgetSwitcherSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "WBP_UI_RedPoint_1",
+                "class": "WBP_UI_RedPoint_C",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "8",
+                      "Top": "4",
+                      "Right": "32",
+                      "Bottom": "32"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                    }
+                  }
+                }
+              },
+              {
+                "name": "ScaleBox_BtnText_Wants",
+                "class": "ScaleBox",
+                "visibility": "ESlateVisibility::HitTestInvisible",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Top": "64",
+                      "Right": "180",
+                      "Bottom": "32"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "TextBlock_6",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "ScaleBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "KeyTips_PV",
+            "class": "WBP_UI_Common_KeyTips_C",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Left": "64",
+                  "Top": "-7"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

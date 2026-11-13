@@ -1,0 +1,395 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "5 name=CanvasPanel_30",
+  "rootWidget": {
+    "name": "CanvasPanel_30",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Gift_Pack",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "150",
+              "Bottom": "150"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Icon",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "CanvasPanel_1",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "99",
+                      "Top": "10"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Image_82",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "-65",
+                          "Top": "-29",
+                          "Right": "-50",
+                          "Bottom": "-10"
+                        },
+                        "Anchors": {
+                          "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                        },
+                        "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_resonance_gift_bg02_PNG",
+                      "textureClass": "PaperSprite",
+                      "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysResonance/Texture/__Frames/T_UI_resonance_gift_bg02_PNG.T_UI_resonance_gift_bg02_PNG"
+                    }
+                  },
+                  {
+                    "name": "SizeBox_0",
+                    "class": "SizeBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "ScaleBox_1",
+                        "class": "ScaleBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "SizeBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "TextBlock",
+                            "class": "TextBlock",
+                            "visibility": "",
+                            "slot": {
+                              "type": "ScaleBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "CanvasPanel_2",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Right": "82",
+                      "Bottom": "82"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Image_Bg_Preview",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Right": "120",
+                          "Bottom": "120"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                        },
+                        "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_shop_img_mark_donate",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysSupplyStation/Texture/New/T_UI_shop_img_mark_donate.T_UI_shop_img_mark_donate"
+                    }
+                  },
+                  {
+                    "name": "SizeBox_1",
+                    "class": "SizeBox",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Anchors": {
+                          "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                        },
+                        "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "XingShiIcon_2",
+                        "class": "Image",
+                        "visibility": "",
+                        "slot": {
+                          "type": "SizeBoxSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "image": {
+                          "texture": "T_Icon_mall_0109",
+                          "textureClass": "Texture2D",
+                          "texturePath": "/Game/UI/Image/IconMall/T_Icon_mall_0109.T_Icon_mall_0109"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Image_Bg_H",
+                "class": "Image",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-11.901096",
+                      "Top": "-10",
+                      "Right": "-50",
+                      "Bottom": "-10"
+                    },
+                    "Anchors": {
+                      "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_resonance_gift_btn_h_PNG",
+                  "textureClass": "PaperSprite",
+                  "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysResonance/Texture/__Frames/T_UI_resonance_gift_btn_h_PNG.T_UI_resonance_gift_btn_h_PNG"
+                }
+              },
+              {
+                "name": "Time",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "63",
+                      "Top": "-36.362278",
+                      "Right": "260",
+                      "Bottom": "36"
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Border_0",
+                    "class": "Border",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Top": "18"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.000 Y=0.500 (FVector2D)"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "HorizontalBox_0",
+                        "class": "HorizontalBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "BorderSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Image_97",
+                            "class": "Image",
+                            "visibility": "",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T__UI_checkin_img_time_PNG",
+                              "textureClass": "PaperSprite",
+                              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysActivity/Textures/__Frames/T__UI_checkin_img_time_PNG.T__UI_checkin_img_time_PNG"
+                            }
+                          },
+                          {
+                            "name": "LastTime",
+                            "class": "TextBlock",
+                            "visibility": "",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "TouchArea",
+            "class": "X6MultiPlatformButton",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

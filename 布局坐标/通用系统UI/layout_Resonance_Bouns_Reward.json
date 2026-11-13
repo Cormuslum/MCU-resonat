@@ -1,0 +1,542 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "2 name=CanvasPanel_25",
+  "rootWidget": {
+    "name": "CanvasPanel_25",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "CanvasPanel_90",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Image_84",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_resonance_reward_giftbox_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysResonance/Texture/Bonus/__Frames/T_UI_resonance_reward_giftbox_PNG.T_UI_resonance_reward_giftbox_PNG"
+            }
+          },
+          {
+            "name": "Overlay_0",
+            "class": "Overlay",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "4.392159",
+                  "Top": "-34.187984"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "Image",
+                "class": "Image",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "OverlaySlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "image": {
+                  "texture": "T_UI_resonance_reward_giftbg",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/SysResonance/Texture/Bonus/T_UI_resonance_reward_giftbg.T_UI_resonance_reward_giftbg"
+                }
+              },
+              {
+                "name": "SizeBox_0",
+                "class": "SizeBox",
+                "visibility": "",
+                "slot": {
+                  "type": "OverlaySlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Icon_Reward",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "SizeBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "image": {
+                      "texture": "T_UI_icon_027",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/Common/Textures/Material_Icon/T_UI_icon_027.T_UI_icon_027"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "WidgetSwitcher_Reward",
+            "class": "WidgetSwitcher",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "39.30541",
+                  "Top": "-112.81247",
+                  "Right": "202",
+                  "Bottom": "145.5"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "CanvasPanel_28",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "WidgetSwitcherSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Overlay_1",
+                    "class": "Overlay",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Top": "8"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "SizeBox",
+                        "class": "SizeBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Icon_Reward_S",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "SizeBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_icon_027",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/Common/Textures/Material_Icon/T_UI_icon_027.T_UI_icon_027"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "ScaleBox_0",
+                        "class": "ScaleBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Image_1",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "ScaleBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_resonance_reward_giftbg",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysResonance/Texture/Bonus/T_UI_resonance_reward_giftbg.T_UI_resonance_reward_giftbg"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Overlay_2",
+                    "class": "Overlay",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "104",
+                          "Top": "40"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "SizeBox_1",
+                        "class": "SizeBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Icon_Reward_S_1",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "SizeBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_icon_027",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/Common/Textures/Material_Icon/T_UI_icon_027.T_UI_icon_027"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "ScaleBox",
+                        "class": "ScaleBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Image_2",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "ScaleBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_resonance_reward_giftbg",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysResonance/Texture/Bonus/T_UI_resonance_reward_giftbg.T_UI_resonance_reward_giftbg"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "CanvasPanel_29",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "WidgetSwitcherSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Overlay_3",
+                    "class": "Overlay",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "25.463184",
+                          "Top": "-3.585708"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                        },
+                        "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "SizeBox_2",
+                        "class": "SizeBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Icon_Reward_S_2",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "SizeBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_icon_027",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/Common/Textures/Material_Icon/T_UI_icon_027.T_UI_icon_027"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "ScaleBox_1",
+                        "class": "ScaleBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "Image_4",
+                            "class": "Image",
+                            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                            "slot": {
+                              "type": "ScaleBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "image": {
+                              "texture": "T_UI_resonance_reward_giftbg",
+                              "textureClass": "Texture2D",
+                              "texturePath": "/Game/UI/SysResonance/Texture/Bonus/T_UI_resonance_reward_giftbg.T_UI_resonance_reward_giftbg"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "Canvas_Glow",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Fx_Glow_01",
+                "class": "Image",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-70.282776",
+                      "Top": "102.37022",
+                      "Right": "230",
+                      "Bottom": "130"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "MI_UI_Glow_BG_02",
+                  "textureClass": "MaterialInstanceConstant",
+                  "texturePath": "/Game/UI/Common/Material/MI_UI_Glow_BG_02.MI_UI_Glow_BG_02"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Img_Done",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "5",
+              "layout": {
+                "Offsets": {
+                  "Left": "-24",
+                  "Top": "46"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_resonance_reward_tuning_hook_PNG",
+              "textureClass": "PaperSprite",
+              "texturePath": "/Game/__ExternalPaper2dAtlas__/SaveAtlas/UI/SysResonance/Texture/V2/__Frames/T_UI_resonance_reward_tuning_hook_PNG.T_UI_resonance_reward_tuning_hook_PNG"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

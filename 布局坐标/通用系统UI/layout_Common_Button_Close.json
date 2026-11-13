@@ -1,0 +1,89 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "2 name=CanvasPanel_30",
+  "rootWidget": {
+    "name": "CanvasPanel_30",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Normal_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::HitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "image": {
+          "texture": "T_UI_common_btn_close_02_n",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_close_02_n.T_UI_common_btn_close_02_n"
+        }
+      },
+      {
+        "name": "Hover_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::HitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "image": {
+          "texture": "T_UI_common_btn_back_h",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_back_h.T_UI_common_btn_back_h"
+        }
+      },
+      {
+        "name": "Pressed_Img",
+        "class": "Image",
+        "visibility": "ESlateVisibility::HitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "image": {
+          "texture": "T_UI_common_btn_close_02_n",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_btn_close_02_n.T_UI_common_btn_close_02_n"
+        }
+      },
+      {
+        "name": "Close_Btn",
+        "class": "Button",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "80",
+              "Bottom": "80"
+            },
+            "Anchors": {
+              "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+              "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        }
+      }
+    ]
+  }
+}

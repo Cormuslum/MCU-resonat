@@ -1,0 +1,526 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "1 name=CanvasPanel_5",
+  "rootWidget": {
+    "name": "CanvasPanel_5",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "WBP_Back",
+        "class": "WBP_Common_backbtn_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "319.6667",
+              "Bottom": "88.666664"
+            }
+          }
+        }
+      },
+      {
+        "name": "HandlePanel",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "HandleImage",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Top": "14",
+                  "Right": "48.057144",
+                  "Bottom": "40.085712"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_control_img_ps5_gamepad",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/SysSettings/Texture/handle/T_UI_control_img_ps5_gamepad.T_UI_control_img_ps5_gamepad"
+            }
+          },
+          {
+            "name": "Labels",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "1920",
+                  "Bottom": "1080"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "TextBlock_1",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "-267",
+                      "Right": "107.169235",
+                      "Bottom": "37.4989"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_4",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "-127",
+                      "Right": "82",
+                      "Bottom": "-191.1857"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_2",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "-4",
+                      "Right": "82",
+                      "Bottom": "-227.5607"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_19",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "57",
+                      "Right": "82",
+                      "Bottom": "-323.3107"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_6",
+                "class": "TextBlock",
+                "visibility": "ESlateVisibility::Collapsed",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "117",
+                      "Right": "99",
+                      "Bottom": "-282.3857"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_8",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "234",
+                      "Right": "101.18182",
+                      "Bottom": "-323.24542"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-511",
+                      "Top": "299",
+                      "Right": "101.18182",
+                      "Bottom": "-323.24542"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_10",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "-266",
+                      "Right": "95.545204",
+                      "Bottom": "38.415134"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_11",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "-185",
+                      "Right": "123.85714",
+                      "Bottom": "-115.32445"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_12",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "-125",
+                      "Right": "123",
+                      "Bottom": "-126.93808"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_13",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "-35",
+                      "Right": "122.333336",
+                      "Bottom": "-192.6857"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_14",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "24",
+                      "Right": "121",
+                      "Bottom": "-231.7139"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_15",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "86",
+                      "Right": "119.25",
+                      "Bottom": "-266.7511"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_16",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "146",
+                      "Right": "118.5",
+                      "Bottom": "-298.65878"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_17",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "234",
+                      "Right": "121.90909",
+                      "Bottom": "-363.00027"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              },
+              {
+                "name": "TextBlock_18",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "511",
+                      "Top": "299",
+                      "Right": "119.41558",
+                      "Bottom": "-405.02463"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

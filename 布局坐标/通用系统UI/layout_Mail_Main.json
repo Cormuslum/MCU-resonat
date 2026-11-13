@@ -1,0 +1,1407 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "7 name=CanvasPanel_41",
+  "rootWidget": {
+    "name": "CanvasPanel_41",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "WBP_BackgroundBlur",
+        "class": "WBP_BackgroundBlur_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "-1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        }
+      },
+      {
+        "name": "BG",
+        "class": "Image",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Left": "-10",
+              "Top": "-10",
+              "Right": "-10",
+              "Bottom": "-10"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "image": {
+          "texture": "T_UI_common_bg_01",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_bg_01.T_UI_common_bg_01"
+        }
+      },
+      {
+        "name": "BG_1",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "Img_Deco",
+            "class": "Image",
+            "visibility": "ESlateVisibility::HitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "-260",
+                  "Top": "-135",
+                  "Right": "1940",
+                  "Bottom": "1100"
+                }
+              }
+            },
+            "image": {
+              "texture": "T_UI_common_img_pattern_01",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/Common/Textures/T_UI_common_img_pattern_01.T_UI_common_img_pattern_01"
+            }
+          },
+          {
+            "name": "Fx_Img_Deco",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "-260",
+                  "Top": "-134",
+                  "Right": "1072",
+                  "Bottom": "856"
+                }
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Task_Mask_01",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysTask/Material/MI_UI_Task_Mask_01.MI_UI_Task_Mask_01"
+            }
+          },
+          {
+            "name": "Fx_Img_Deco_1",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "-260",
+                  "Top": "-134",
+                  "Right": "1072",
+                  "Bottom": "856"
+                }
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Task_Mask_02",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysTask/Material/MI_UI_Task_Mask_02.MI_UI_Task_Mask_02"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Button_Instruction",
+        "class": "Button",
+        "visibility": "ESlateVisibility::Collapsed",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Left": "-109.17857",
+              "Top": "16.57143",
+              "Right": "60",
+              "Bottom": "60"
+            },
+            "Anchors": {
+              "Minimum": "X=1.000 Y=0.000 (FVector2D)",
+              "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+            }
+          }
+        }
+      },
+      {
+        "name": "TL",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "2"
+        },
+        "children": [
+          {
+            "name": "HorizontalBox_2",
+            "class": "HorizontalBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "117",
+                  "Bottom": "110"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "WBP_BackBtn",
+                "class": "WBP_Common_backbtn_C",
+                "visibility": "",
+                "slot": {
+                  "type": "HorizontalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              },
+              {
+                "name": "TxtMailNum",
+                "class": "RichTextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "HorizontalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              },
+              {
+                "name": "Button_Info",
+                "class": "Button",
+                "visibility": "",
+                "slot": {
+                  "type": "HorizontalBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Center",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "CanvasPanel_1",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "204",
+                  "Top": "90",
+                  "Right": "48",
+                  "Bottom": "28"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.030 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.400 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=1.000 Y=0.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "HorizontalBox_1",
+                "class": "HorizontalBox",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-5",
+                      "Top": "-12",
+                      "Right": "-5",
+                      "Bottom": "950"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=1.000 Y=0.000 (FVector2D)",
+                      "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+                    },
+                    "Alignment": "X=1.000 Y=0.000 (FVector2D)"
+                  }
+                },
+                "children": [
+                  {
+                    "name": "Overlay_0",
+                    "class": "Overlay",
+                    "visibility": "",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "WidgetSwitcher_Show",
+                        "class": "WidgetSwitcher",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        },
+                        "children": [
+                          {
+                            "name": "CanvasPanel_0",
+                            "class": "CanvasPanel",
+                            "visibility": "",
+                            "slot": {
+                              "type": "WidgetSwitcherSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "children": [
+                              {
+                                "name": "Normal",
+                                "class": "Image",
+                                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                                "slot": {
+                                  "type": "CanvasPanelSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": "",
+                                  "layout": {
+                                    "Anchors": {
+                                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                    },
+                                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                                  }
+                                },
+                                "image": {
+                                  "texture": "T_UI_mail_unshown_btn_n",
+                                  "textureClass": "Texture2D",
+                                  "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_unshown_btn_n.T_UI_mail_unshown_btn_n"
+                                }
+                              },
+                              {
+                                "name": "Normal_h",
+                                "class": "Image",
+                                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                                "slot": {
+                                  "type": "CanvasPanelSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": "",
+                                  "layout": {
+                                    "Anchors": {
+                                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                    },
+                                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                                  }
+                                },
+                                "image": {
+                                  "texture": "T_UI_mail_unshown_btn_h",
+                                  "textureClass": "Texture2D",
+                                  "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_unshown_btn_h.T_UI_mail_unshown_btn_h"
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "name": "CanvasPanel_88",
+                            "class": "CanvasPanel",
+                            "visibility": "",
+                            "slot": {
+                              "type": "WidgetSwitcherSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "children": [
+                              {
+                                "name": "Select",
+                                "class": "Image",
+                                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                                "slot": {
+                                  "type": "CanvasPanelSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": "",
+                                  "layout": {
+                                    "Anchors": {
+                                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                    },
+                                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                                  }
+                                },
+                                "image": {
+                                  "texture": "T_UI_mail_shown_btn_n",
+                                  "textureClass": "Texture2D",
+                                  "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_shown_btn_n.T_UI_mail_shown_btn_n"
+                                }
+                              },
+                              {
+                                "name": "Select_h",
+                                "class": "Image",
+                                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                                "slot": {
+                                  "type": "CanvasPanelSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": "",
+                                  "layout": {
+                                    "Anchors": {
+                                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                                    },
+                                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                                  }
+                                },
+                                "image": {
+                                  "texture": "T_UI_mail_shown_btn_h",
+                                  "textureClass": "Texture2D",
+                                  "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_shown_btn_h.T_UI_mail_shown_btn_h"
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "name": "Btn_Show",
+                        "class": "Button",
+                        "visibility": "",
+                        "slot": {
+                          "type": "OverlaySlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "TxtMailInfo_1",
+                    "class": "TextBlock",
+                    "visibility": "",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Icon_Collect",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_collect_img",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_collect_img.T_UI_mail_collect_img"
+                    }
+                  },
+                  {
+                    "name": "TxtFull",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::Collapsed",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "TxtMailInfo",
+                    "class": "TextBlock",
+                    "visibility": "ESlateVisibility::Collapsed",
+                    "slot": {
+                      "type": "HorizontalBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "name": "WidgetSwitcher_Mail",
+            "class": "WidgetSwitcher",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            },
+            "children": [
+              {
+                "name": "Empty",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "WidgetSwitcherSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Image_Paper",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "3",
+                          "Top": "32",
+                          "Right": "50",
+                          "Bottom": "-12"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.400 Y=0.000 (FVector2D)",
+                          "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                        }
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_img_01",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_img_01.T_UI_mail_img_01"
+                    }
+                  },
+                  {
+                    "name": "Image_light",
+                    "class": "Image",
+                    "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "1",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "772",
+                          "Top": "-5",
+                          "Right": "68",
+                          "Bottom": "102"
+                        },
+                        "Anchors": {
+                          "Maximum": "X=1.000 Y=0.000 (FVector2D)"
+                        },
+                        "Alignment": "X=1.000 Y=0.000 (FVector2D)"
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_img_02",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_img_02.T_UI_mail_img_02"
+                    }
+                  },
+                  {
+                    "name": "Image_128",
+                    "class": "Image",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "-97.27648",
+                          "Top": "-88"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.685 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.685 Y=0.500 (FVector2D)"
+                        }
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_img_08",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_img_08.T_UI_mail_img_08"
+                    }
+                  },
+                  {
+                    "name": "Image",
+                    "class": "Image",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "-410.9436",
+                          "Top": "-346.6667",
+                          "Right": "518",
+                          "Bottom": "376.6667"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.685 Y=0.500 (FVector2D)",
+                          "Maximum": "X=0.685 Y=0.500 (FVector2D)"
+                        }
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_img_07",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_img_07.T_UI_mail_img_07"
+                    }
+                  },
+                  {
+                    "name": "Image_226",
+                    "class": "Image",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Top": "-28",
+                          "Right": "163.80951",
+                          "Bottom": "-74.66667"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.200 Y=0.519 (FVector2D)",
+                          "Maximum": "X=0.200 Y=0.519 (FVector2D)"
+                        },
+                        "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+                      }
+                    },
+                    "image": {
+                      "texture": "T_UI_mail_img_09",
+                      "textureClass": "Texture2D",
+                      "texturePath": "/Game/UI/SysMail/Texture/T_UI_mail_img_09.T_UI_mail_img_09"
+                    }
+                  },
+                  {
+                    "name": "TextBlock_0",
+                    "class": "TextBlock",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Top": "-70",
+                          "Bottom": "40"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.200 Y=0.520 (FVector2D)",
+                          "Maximum": "X=0.200 Y=0.520 (FVector2D)"
+                        },
+                        "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "NotEmpty",
+                "class": "CanvasPanel",
+                "visibility": "",
+                "slot": {
+                  "type": "WidgetSwitcherSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "LetterPanel",
+                    "class": "CanvasPanel",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Right": "0",
+                          "Bottom": "0"
+                        },
+                        "Anchors": {
+                          "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "WBP_Content",
+                        "class": "WBP_Mail_RightPanel_C",
+                        "visibility": "",
+                        "slot": {
+                          "type": "CanvasPanelSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": "",
+                          "layout": {
+                            "Offsets": {
+                              "Right": "0",
+                              "Bottom": "0"
+                            },
+                            "Anchors": {
+                              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "MailList",
+                    "class": "CanvasPanel",
+                    "visibility": "",
+                    "slot": {
+                      "type": "CanvasPanelSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": "",
+                      "layout": {
+                        "Offsets": {
+                          "Left": "-19",
+                          "Top": "-11",
+                          "Right": "-3.675904",
+                          "Bottom": "0"
+                        },
+                        "Anchors": {
+                          "Minimum": "X=0.029 Y=0.000 (FVector2D)",
+                          "Maximum": "X=0.400 Y=1.000 (FVector2D)"
+                        }
+                      }
+                    },
+                    "children": [
+                      {
+                        "name": "RetainerBox_0",
+                        "class": "RetainerBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "CanvasPanelSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": "",
+                          "layout": {
+                            "Offsets": {
+                              "Left": "22",
+                              "Top": "125",
+                              "Right": "20",
+                              "Bottom": "171"
+                            },
+                            "Anchors": {
+                              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                            }
+                          }
+                        },
+                        "children": [
+                          {
+                            "name": "ListMail",
+                            "class": "X6ListView",
+                            "visibility": "",
+                            "slot": {
+                              "type": "PanelSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "name": "HorizontalBox_0",
+                        "class": "HorizontalBox",
+                        "visibility": "",
+                        "slot": {
+                          "type": "CanvasPanelSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": "",
+                          "layout": {
+                            "Offsets": {
+                              "Left": "-15",
+                              "Top": "-90"
+                            },
+                            "Anchors": {
+                              "Minimum": "X=0.500 Y=1.000 (FVector2D)",
+                              "Maximum": "X=0.500 Y=1.000 (FVector2D)"
+                            },
+                            "Alignment": "X=0.500 Y=1.000 (FVector2D)"
+                          }
+                        },
+                        "children": [
+                          {
+                            "name": "Overlay_1",
+                            "class": "Overlay",
+                            "visibility": "",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "children": [
+                              {
+                                "name": "Button_DeleteReadMail",
+                                "class": "WBP_Common_Button_Cancel_C",
+                                "visibility": "",
+                                "slot": {
+                                  "type": "OverlaySlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                }
+                              },
+                              {
+                                "name": "WBP_UI_RedPoint",
+                                "class": "WBP_UI_RedPoint_C",
+                                "visibility": "ESlateVisibility::Collapsed",
+                                "slot": {
+                                  "type": "OverlaySlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                }
+                              }
+                            ]
+                          },
+                          {
+                            "name": "WidgetSwitcher_ReceiveAll",
+                            "class": "WidgetSwitcher",
+                            "visibility": "",
+                            "slot": {
+                              "type": "HorizontalBoxSlot",
+                              "slotName": "",
+                              "anchors": "",
+                              "offsets": "",
+                              "alignment": "",
+                              "zorder": ""
+                            },
+                            "children": [
+                              {
+                                "name": "WBP_Common_Button_Grey_1",
+                                "class": "WBP_Common_Button_Grey_C",
+                                "visibility": "",
+                                "slot": {
+                                  "type": "WidgetSwitcherSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                }
+                              },
+                              {
+                                "name": "Button_ReceiveAll",
+                                "class": "WBP_Common_Button_Confirm_C",
+                                "visibility": "",
+                                "slot": {
+                                  "type": "WidgetSwitcherSlot",
+                                  "slotName": "",
+                                  "anchors": "",
+                                  "offsets": "",
+                                  "alignment": "",
+                                  "zorder": ""
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "UI_NS_BG",
+        "class": "NiagaraSystemWidget",
+        "visibility": "ESlateVisibility::Collapsed",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        }
+      },
+      {
+        "name": "Fx_SkyLight",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Fx_Glow_01",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Left": "-470.51355",
+                  "Top": "500.79935",
+                  "Right": "1212.6381",
+                  "Bottom": "662.946"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                }
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Mail_SkyLight_01",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysMail/Material/MI_UI_Mail_SkyLight_01.MI_UI_Mail_SkyLight_01"
+            }
+          },
+          {
+            "name": "Fx_Glow_02",
+            "class": "Image",
+            "visibility": "ESlateVisibility::SelfHitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "",
+              "layout": {
+                "Offsets": {
+                  "Left": "-535.90405",
+                  "Top": "610",
+                  "Right": "1518",
+                  "Bottom": "520"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                }
+              }
+            },
+            "image": {
+              "texture": "MI_UI_Mail_SkyLight_02",
+              "textureClass": "MaterialInstanceConstant",
+              "texturePath": "/Game/UI/SysMail/Material/MI_UI_Mail_SkyLight_02.MI_UI_Mail_SkyLight_02"
+            }
+          },
+          {
+            "name": "UI_NS_Particle",
+            "class": "NiagaraSystemWidget",
+            "visibility": "ESlateVisibility::HitTestInvisible",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Right": "1920",
+                  "Bottom": "1080"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=0.000 (FVector2D)",
+                  "Maximum": "X=0.500 Y=0.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=0.000 (FVector2D)"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "PanelKey",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "90"
+            },
+            "Anchors": {
+              "Minimum": "X=0.000 Y=1.000 (FVector2D)",
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            },
+            "Alignment": "X=1.000 Y=1.000 (FVector2D)"
+          }
+        },
+        "children": [
+          {
+            "name": "Image_Down",
+            "class": "Image",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "84"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.000 Y=1.000 (FVector2D)",
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                },
+                "Alignment": "X=0.000 Y=1.000 (FVector2D)"
+              }
+            },
+            "image": {
+              "texture": "T_UI_pc_img_tab_s",
+              "textureClass": "Texture2D",
+              "texturePath": "/Game/UI/Common/Textures/T_UI_pc_img_tab_s.T_UI_pc_img_tab_s"
+            }
+          },
+          {
+            "name": "ScaleBox_1",
+            "class": "ScaleBox",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "2",
+              "layout": {
+                "Offsets": {
+                  "Top": "-10",
+                  "Right": "80",
+                  "Bottom": "128"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.000 Y=1.000 (FVector2D)",
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                },
+                "Alignment": "X=1.000 Y=1.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "KeyTips",
+                "class": "WrapBox",
+                "visibility": "",
+                "slot": {
+                  "type": "ScaleBoxSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": ""
+                },
+                "children": [
+                  {
+                    "name": "Keytips_Back",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_OK",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "WidgetSwitcher",
+                    "class": "WidgetSwitcher",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    },
+                    "children": [
+                      {
+                        "name": "Keytips_Get",
+                        "class": "WBP_UI_Common_KeyTips_C",
+                        "visibility": "",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      },
+                      {
+                        "name": "Keytips_Delete",
+                        "class": "WBP_UI_Common_KeyTips_C",
+                        "visibility": "",
+                        "slot": {
+                          "type": "WidgetSwitcherSlot",
+                          "slotName": "",
+                          "anchors": "",
+                          "offsets": "",
+                          "alignment": "",
+                          "zorder": ""
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Keytips_Collect",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "ESlateVisibility::Collapsed",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_ViewReward",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_ViewContent",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "ESlateVisibility::Collapsed",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_Link",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "ESlateVisibility::Collapsed",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_GetAll",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_DeleteAll",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  },
+                  {
+                    "name": "Keytips_Instruction",
+                    "class": "WBP_UI_Common_KeyTips_C",
+                    "visibility": "",
+                    "slot": {
+                      "type": "WrapBoxSlot",
+                      "slotName": "",
+                      "anchors": "",
+                      "offsets": "",
+                      "alignment": "",
+                      "zorder": ""
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

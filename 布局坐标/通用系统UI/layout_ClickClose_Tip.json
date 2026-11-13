@@ -1,0 +1,157 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "2 name=CanvasPanel_1",
+  "rootWidget": {
+    "name": "CanvasPanel_1",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Image_BgMask_Black",
+        "class": "Image",
+        "visibility": "ESlateVisibility::SelfHitTestInvisible",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "1",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "image": {
+          "brushType": "CUE4Parse.UE4.Assets.Objects.FScriptStruct"
+        }
+      },
+      {
+        "name": "CanvasPanel_ClickClose",
+        "class": "CanvasPanel",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": "3",
+          "layout": {
+            "Offsets": {
+              "Right": "0",
+              "Bottom": "0"
+            },
+            "Anchors": {
+              "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+            }
+          }
+        },
+        "children": [
+          {
+            "name": "CanvasPanel_Text",
+            "class": "CanvasPanel",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "1",
+              "layout": {
+                "Offsets": {
+                  "Top": "-31"
+                },
+                "Anchors": {
+                  "Minimum": "X=0.500 Y=1.000 (FVector2D)",
+                  "Maximum": "X=0.500 Y=1.000 (FVector2D)"
+                },
+                "Alignment": "X=0.500 Y=1.000 (FVector2D)"
+              }
+            },
+            "children": [
+              {
+                "name": "Image_TextBg",
+                "class": "Image",
+                "visibility": "ESlateVisibility::SelfHitTestInvisible",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "",
+                  "layout": {
+                    "Offsets": {
+                      "Left": "-24",
+                      "Right": "-24",
+                      "Bottom": "56"
+                    },
+                    "Anchors": {
+                      "Minimum": "X=0.000 Y=0.500 (FVector2D)",
+                      "Maximum": "X=1.000 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.000 Y=0.500 (FVector2D)"
+                  }
+                },
+                "image": {
+                  "texture": "T_UI_common_img_textbase_01",
+                  "textureClass": "Texture2D",
+                  "texturePath": "/Game/UI/Common/Textures/T_UI_common_img_textbase_01.T_UI_common_img_textbase_01"
+                }
+              },
+              {
+                "name": "Txt_Content",
+                "class": "TextBlock",
+                "visibility": "",
+                "slot": {
+                  "type": "CanvasPanelSlot",
+                  "slotName": "",
+                  "anchors": "",
+                  "offsets": "",
+                  "alignment": "",
+                  "zorder": "1",
+                  "layout": {
+                    "Anchors": {
+                      "Minimum": "X=0.500 Y=0.500 (FVector2D)",
+                      "Maximum": "X=0.500 Y=0.500 (FVector2D)"
+                    },
+                    "Alignment": "X=0.500 Y=0.500 (FVector2D)"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "Button_Close",
+            "class": "Button",
+            "visibility": "",
+            "slot": {
+              "type": "CanvasPanelSlot",
+              "slotName": "",
+              "anchors": "",
+              "offsets": "",
+              "alignment": "",
+              "zorder": "3",
+              "layout": {
+                "Offsets": {
+                  "Right": "0",
+                  "Bottom": "0"
+                },
+                "Anchors": {
+                  "Maximum": "X=1.000 Y=1.000 (FVector2D)"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

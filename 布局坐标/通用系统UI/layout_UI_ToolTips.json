@@ -1,0 +1,24 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "1 name=CanvasPanel",
+  "rootWidget": {
+    "name": "CanvasPanel",
+    "class": "CanvasPanel",
+    "visibility": "",
+    "children": [
+      {
+        "name": "WBP_UI_InfoTooltip",
+        "class": "WBP_UI_InfoTooltip_C",
+        "visibility": "",
+        "slot": {
+          "type": "CanvasPanelSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        }
+      }
+    ]
+  }
+}

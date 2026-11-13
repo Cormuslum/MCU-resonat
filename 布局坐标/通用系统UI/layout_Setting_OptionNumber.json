@@ -1,0 +1,47 @@
+{
+  "widgetTree": "WidgetTree",
+  "rootWidgetIndex": "5 name=SwitchState",
+  "rootWidget": {
+    "name": "SwitchState",
+    "class": "WidgetSwitcher",
+    "visibility": "",
+    "children": [
+      {
+        "name": "Normal",
+        "class": "Image",
+        "visibility": "",
+        "slot": {
+          "type": "WidgetSwitcherSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "image": {
+          "texture": "T_UI_common_littleCircle_img_01",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_littleCircle_img_01.T_UI_common_littleCircle_img_01"
+        }
+      },
+      {
+        "name": "Select",
+        "class": "Image",
+        "visibility": "",
+        "slot": {
+          "type": "WidgetSwitcherSlot",
+          "slotName": "",
+          "anchors": "",
+          "offsets": "",
+          "alignment": "",
+          "zorder": ""
+        },
+        "image": {
+          "texture": "T_UI_common_littleCircle_img_01",
+          "textureClass": "Texture2D",
+          "texturePath": "/Game/UI/Common/Textures/T_UI_common_littleCircle_img_01.T_UI_common_littleCircle_img_01"
+        }
+      }
+    ]
+  }
+}
