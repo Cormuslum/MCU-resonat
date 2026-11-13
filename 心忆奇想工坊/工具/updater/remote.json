@@ -1,0 +1,17 @@
+{
+  "active": "local",
+  "remotes": {
+    "local": {
+      "dir": "D:\\电脑美化\\文档\\无限暖暖\\DLC仓库"
+    },
+    "http": {
+      "base": "",
+      "token": ""
+    },
+    "git": {
+      "repo": "",
+      "branch": "main",
+      "dir": "dlc"
+    }
+  }
+}

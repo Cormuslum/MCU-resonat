@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>心忆奇想工坊 · 无限暖暖抽卡模拟器</title>
+<link rel="icon" href="/assets/ui/updater/seal.webp" />
+<link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<div id="app" class="boot">
+  <!-- 背景：直接复用「玄学运势」那间书房的羊皮纸底 -->
+  <img class="bg" src="/assets/ui/almanac/bg.webp" alt="" draggable="false" />
+  <div class="bg-veil"></div>
+
+  <!--
+    顶栏文案：真源是项目根的 `文案.json`（这里的中文只是加载失败时的兜底）。
+    改字只改那个 json —— app.js 会按 data-copy 的路径覆盖回来。
+  -->
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand-seal" src="/assets/ui/updater/seal.webp" alt="" draggable="false" />
+      <div class="brand-text">
+        <h1 data-copy="updater.topbar.title">心忆奇想工坊</h1>
+        <p data-copy="updater.topbar.subtitle">把素材拖进来 —— 服装阁、版本、图鉴一起更新</p>
+      </div>
+    </div>
+
+    <div class="status" id="status">
+      <span class="dot"></span><span id="status-text" data-copy="updater.topbar.statusLoading">正在读取素材库…</span>
+    </div>
+
+    <div class="top-actions">
+      <!-- v2.2.04：清理临时文件（打包输出 / 拖入中转 / 写入快照），二级确认防误删 -->
+      <button class="round" id="btn-clean" data-copy-title="updater.topbar.actions.clean.title" title="清理临时文件（打包输出 / 拖入中转 / 写入快照）">
+        <img src="/trash.png" alt="清理临时文件" data-copy-alt="updater.topbar.actions.clean.alt" />
+      </button>
+      <!-- v1.6.00：DLC 分发（上传 / 下载），图标用游戏 SuitShow 里的那两张 -->
+      <button class="round" id="btn-upload" data-copy-title="updater.topbar.actions.upload.title" title="上传 DLC（打包后发到云端 / 网盘）">
+        <img src="/assets/ui/updater/upload.webp" alt="上传" data-copy-alt="updater.topbar.actions.upload.alt" />
+      </button>
+      <button class="round" id="btn-download" data-copy-title="updater.topbar.actions.download.title" title="下载 DLC（从远端拉包并安装）">
+        <img src="/assets/ui/updater/download.webp" alt="下载" data-copy-alt="updater.topbar.actions.download.alt" />
+      </button>
+      <!-- v2.7.02：改用游戏自己的 Common 图标（常态 / 高亮两张，CSS 切） -->
+      <button class="round" id="btn-help" data-copy-title="updater.topbar.actions.help.title" title="怎么用">
+        <img class="ic-n" src="/assets/ui/updater/rule-n.webp" alt="帮助" data-copy-alt="updater.topbar.actions.help.alt" />
+        <img class="ic-h" src="/assets/ui/updater/rule-h.webp" alt="" />
+      </button>
+      <button class="round" id="btn-reload" data-copy-title="updater.topbar.actions.reload.title" title="重新读取素材库">
+        <img class="ic-n" src="/assets/ui/updater/reset-n.webp" alt="刷新" data-copy-alt="updater.topbar.actions.reload.alt" />
+        <img class="ic-h" src="/assets/ui/updater/reset-h.webp" alt="" />
+      </button>
+      <button class="round" id="btn-close" data-copy-title="updater.topbar.actions.close.title" title="关闭（直接关掉这个标签页即可）">
+        <img src="/assets/ui/updater/close.webp" alt="关闭" data-copy-alt="updater.topbar.actions.close.alt" />
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <nav class="rail">
+      <div class="rail-title" data-copy="updater.rail.jobs">要更新什么</div>
+      <div id="rail-jobs"></div>
+      <div class="rail-sep"></div>
+      <div class="rail-title small" data-copy="updater.rail.history">最近改动</div>
+      <div id="rail-history" class="history"></div>
+    </nav>
+
+    <section class="stage">
+      <div class="stage-head">
+        <h2 id="job-title">版本</h2>
+        <p id="job-sub"></p>
+      </div>
+      <div class="panel" id="panel"></div>
+    </section>
+  </main>
+
+  <footer class="console">
+    <div class="log-head">
+      <span id="log-title" data-copy="updater.console.idle">等待开始</span>
+      <span class="log-tools">
+        <button class="link" id="btn-clear-log" data-copy="updater.console.clear">清空</button>
+      </span>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="actions">
+      <label class="check"><input type="checkbox" id="opt-force" /><span data-copy="updater.console.force">强制重转已有素材</span></label>
+      <button class="btn ghost" id="btn-check" data-copy="updater.console.check">预检</button>
+      <button class="btn primary" id="btn-apply" data-copy="updater.console.apply">写入并更新</button>
+    </div>
+  </footer>
+
+  <!-- 拖拽遮罩 -->
+  <div class="drop-veil" id="drop-veil">
+    <div class="drop-card">
+      <div class="drop-icon">⇩</div>
+      <div class="drop-t" data-copy="updater.drop.title">松手就好</div>
+      <div class="drop-s" data-copy="updater.drop.sub">图片会按尺寸自动归位，文件名会当部件名用</div>
+    </div>
+  </div>
+
+  <!-- 通用提示弹窗（v2.2.00）：整套导入只给散文件时用 -->
+  <div class="modal" id="modal-tip">
+    <div class="modal-card">
+      <h3 id="modal-tip-title" data-copy="updater.tip.title">提示</h3>
+      <p class="muted" id="modal-tip-body" style="font-size:13px;line-height:1.85"></p>
+      <button class="btn primary" id="modal-tip-ok" data-copy="updater.tip.ok">知道了</button>
+    </div>
+  </div>
+
+  <!-- 清理临时文件（v2.2.04）：二级确认，勾选项决定删哪些 -->
+  <div class="modal" id="modal-clean">
+    <div class="modal-card">
+      <h3 data-copy="updater.clean.title">清理临时文件</h3>
+      <p class="muted" data-copy="updater.clean.lead">这些是工坊自己的中转与历史目录，删掉不会影响已经写进模拟器的内容。</p>
+      <div id="clean-list" class="clean-list"></div>
+      <p class="muted" id="clean-total"></p>
+      <div class="modal-actions">
+        <button class="btn" id="modal-clean-cancel" data-copy="updater.clean.cancel">取消</button>
+        <button class="btn danger" id="modal-clean-ok" data-copy="updater.clean.ok">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通用确认弹窗（v2.2.05）：替掉 window.confirm —— 原生白框和这套羊皮纸美术不搭 -->
+  <div class="modal" id="modal-confirm">
+    <div class="modal-card">
+      <h3 id="modal-confirm-title">确认</h3>
+      <p class="muted confirm-body" id="modal-confirm-body"></p>
+      <div class="modal-actions">
+        <button class="btn" id="modal-confirm-cancel" data-copy="updater.confirm.cancel">取消</button>
+        <button class="btn danger" id="modal-confirm-ok" data-copy="updater.confirm.ok">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 帮助（正文同顶栏：真源是 `文案.json`，这里只是兜底；条数可增删） -->
+  <div class="modal" id="modal-help">
+    <div class="modal-card">
+      <h3 data-copy="updater.help.title">怎么用</h3>
+      <ol id="help-steps">
+        <li><b>选一件事</b>：左边挑「版本 / 服装阁 / 套装 / 故事 / 阅读物」。</li>
+        <li><b>填几个字</b>：版本号、服装阁名、套装名 —— 只有这些没法从图里猜出来。</li>
+        <li><b>把素材拖进来</b>：整套图可以直接从资源管理器拖到页面上；也可以把完整路径粘进「按路径读取」。</li>
+        <li><b>预检</b>：看看必填项和缺图；<b>写入并更新</b>：读素材 → 跑管线 → 写进模拟器（写完回到模拟器刷新一下就能看到）。</li>
+      </ol>
+      <div id="help-notes">
+        <p class="muted">写错了不要紧：每次写入都会存快照，右边「最近改动」里可以一键撤回。</p>
+        <p class="muted"><b>扩展包（DLC）</b>：左栏最后一项。更新做成一个自包含的包，
+          包自己声明提供哪些接口（服装阁 / 套装 / 故事 / 阅读物 / 版本），
+          每个接口都能单独开关 —— 装上不挂载就完全不生效。顶栏的
+          <b>上传 / 下载</b> 用来把包发到云端、网盘或 git 仓库，或从那里取回来。</p>
+      </div>
+      <button class="btn primary" id="btn-help-ok" data-copy="updater.help.ok">知道了</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
