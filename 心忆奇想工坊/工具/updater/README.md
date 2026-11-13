@@ -126,8 +126,9 @@ public/dlc/index.json    已装包索引 + 挂载开关
 |---|---|
 | `local` | 本地目录（网盘同步盘 / 共享盘 / U 盘）。文件拷过去 + 自动维护 `index.json` |
 | `http` | 通用 HTTP 端点：POST `/upload`、GET `/index.json`、GET `/<id>.dlc.zip` |
-| `git` | git 仓库：`git add / commit / push` |
+| `git` | 本仓库的 `dlc` 分支：包与 `index.json` 提交进 `dlc/`，主分支不装包 |
 
+默认远端就是 `git`：地址 `https://github.com/Cormuslum/MCU-resonat.git`、分支 `dlc`。
 配置存 `updater/remote.json`（面板里可改）。
 
 ### 删除目录的正确姿势

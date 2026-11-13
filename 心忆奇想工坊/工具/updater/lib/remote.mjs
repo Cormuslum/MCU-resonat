@@ -23,7 +23,7 @@ export function readConfig() {
     remotes: {
       local: { dir: path.join(WORKSPACE, 'DLC仓库') },
       http: { base: '', token: '' },
-      git: { repo: '', branch: 'main', dir: 'dlc' },
+      git: { repo: 'https://github.com/Cormuslum/MCU-resonat.git', branch: 'dlc', dir: 'dlc' },
     },
   }
 }
@@ -91,6 +91,36 @@ export function gitInfo() {
   }
 }
 
+/* ────────────────────────────── git 分发用的临时工作区 ────────────────────────────── */
+
+/** 推送/拉取时临时检出的工作区：包只在分支里提交，主工作区不落文件、不产生改动 */
+const GIT_WT = path.join(TOOL_ROOT, 'updater', '.dist', 'dlc-wt')
+
+/** 清掉临时工作区（没注册成 worktree 时只删目录） */
+function gitDropWorktree() {
+  const r = git(['worktree', 'remove', '--force', GIT_WT])
+  if (r.code !== 0) fs.rmSync(GIT_WT, { recursive: true, force: true })
+}
+
+/** 检出 `origin/<branch>` 到临时工作区；分支不存在就在那里开一条空的 */
+function gitPrepareWorktree(branch) {
+  gitDropWorktree()
+  git(['fetch', 'origin', branch])
+  const has = git(['rev-parse', '--verify', `refs/remotes/origin/${branch}`]).code === 0
+  const add = has
+    ? git(['worktree', 'add', '--force', '--detach', GIT_WT, `origin/${branch}`])
+    : git(['worktree', 'add', '--force', '--orphan', GIT_WT])
+  if (add.code !== 0) throw new Error('git 临时工作区创建失败：' + (add.err || add.out))
+  return GIT_WT
+}
+
+/** 读分支里某个文件的原始字节（不 checkout，主工作区不受影响） */
+function gitBlob(spec) {
+  const r = spawnSync('git', ['show', spec], { cwd: ROOT, encoding: 'buffer', timeout: 60000 })
+  if (r.status !== 0) return null
+  return r.stdout
+}
+
 /* ────────────────────────────── 打包 ────────────────────────────── */
 
 /** 把源包打成 zip */
@@ -143,19 +173,42 @@ export async function upload(type, id, cfg = readConfig()) {
       throw new Error('本项目尚未关联 git 仓库 —— 先执行：git remote add origin <仓库地址>，再重试')
     }
     const sub = r.dir || 'dlc'
-    const dstDir = path.join(ROOT, sub)
-    fs.mkdirSync(dstDir, { recursive: true })
-    fs.copyFileSync(zip, path.join(dstDir, base))
-    const add = git(['add', path.join(sub, base)])
-    if (add.code !== 0) throw new Error('git add 失败：' + add.err)
     const branch = r.branch || 'main'
-    const commit = git(['commit', '-m', `dlc: ${id} ${new Date().toISOString()}`])
-    if (commit.code !== 0 && !/nothing to commit/i.test(commit.out + commit.err)) {
-      throw new Error('git commit 失败：' + (commit.err || commit.out))
+    const wt = gitPrepareWorktree(branch)
+    try {
+      const dstDir = path.join(wt, sub)
+      fs.mkdirSync(dstDir, { recursive: true })
+      const dst = path.join(dstDir, base)
+      fs.copyFileSync(zip, dst)
+      const st = fs.statSync(dst)
+      let name = id
+      let version = ''
+      const nm = readZipEntry(dst, 'dlc.json')
+      if (nm) {
+        try {
+          const j = JSON.parse(nm)
+          name = j.name || id
+          version = j.version || ''
+        } catch { /* 读不出来就用文件名 */ }
+      }
+      const idxFile = path.join(dstDir, 'index.json')
+      const idx = readJson(idxFile, { packages: [] }) || { packages: [] }
+      const pkgs = (idx.packages || []).filter((p) => p.id !== id)
+      pkgs.push({ id, name, version, file: base, size: st.size, updatedAt: new Date().toISOString() })
+      pkgs.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))
+      writeJson(idxFile, { updatedAt: new Date().toISOString(), packages: pkgs })
+      const add = git(['add', '-A'], wt)
+      if (add.code !== 0) throw new Error('git add 失败：' + add.err)
+      const commit = git(['commit', '-m', `dlc: ${id} ${new Date().toISOString()}`], wt)
+      if (commit.code !== 0 && !/nothing to commit/i.test(commit.out + commit.err)) {
+        throw new Error('git commit 失败：' + (commit.err || commit.out))
+      }
+      const push = git(['push', 'origin', `HEAD:${branch}`], wt)
+      if (push.code !== 0) throw new Error('git push 失败：' + push.err)
+      return { ok: true, target: `${repo}#${branch}/${sub}/${base}`, message: `已推送到 ${branch}/${sub}/${base}` }
+    } finally {
+      gitDropWorktree()
     }
-    const push = git(['push', 'origin', `HEAD:${branch}`])
-    if (push.code !== 0) throw new Error('git push 失败：' + push.err)
-    return { ok: true, target: `${repo}#${branch}/${sub}/${base}`, message: `已推送到 ${branch}/${sub}/${base}` }
   }
 
   throw new Error('未知远端类型：' + type)
@@ -189,6 +242,7 @@ export async function listRemote(type, cfg = readConfig()) {
     if (!info.repo || !info.remote) return []
     const branch = r.branch || 'main'
     const sub = r.dir || 'dlc'
+    git(['fetch', 'origin', branch])
     const show = git(['show', `origin/${branch}:${sub}/index.json`])
     if (show.code !== 0) return []
     try { return JSON.parse(show.out).packages || [] } catch { return [] }
@@ -233,7 +287,7 @@ function readZipEntry(zip, entry) {
   ].join('\n')
   const r = spawnSync(pythonBin(), ['-c', py, zip, entry], { encoding: 'utf8', timeout: 20000 })
   if (r.status !== 0) return ''
-  return r.stdout || ''
+  return (r.stdout || '').replace(/^\uFEFF/, '')
 }
 
 /* ────────────────────────────── 下载 ────────────────────────────── */
@@ -267,16 +321,9 @@ export async function download(type, id, cfg = readConfig()) {
     const sub = r.dir || 'dlc'
     const fetch = git(['fetch', 'origin', branch])
     if (fetch.code !== 0) throw new Error('git fetch 失败：' + fetch.err)
-    const show = git(['show', `origin/${branch}:${sub}/${id}.dlc.zip`])
-    if (show.code !== 0) throw new Error(`远端分支 ${branch} 里没有 ${id}.dlc.zip`)
-    // git show 是二进制，stdout 会按 utf8 损字节
-    const co = spawnSync('git', ['checkout', `origin/${branch}`, '--', `${sub}/${id}.dlc.zip`], {
-      cwd: ROOT, encoding: 'buffer',
-    })
-    if (co.status !== 0) throw new Error('git checkout 失败')
-    const got = path.join(ROOT, sub, `${id}.dlc.zip`)
-    if (!exists(got)) throw new Error('git checkout 后找不到文件')
-    fs.copyFileSync(got, zip)
+    const blob = gitBlob(`origin/${branch}:${sub}/${id}.dlc.zip`)
+    if (!blob) throw new Error(`远端分支 ${branch} 里没有 ${id}.dlc.zip`)
+    fs.writeFileSync(zip, blob)
   } else {
     throw new Error('未知远端类型：' + type)
   }

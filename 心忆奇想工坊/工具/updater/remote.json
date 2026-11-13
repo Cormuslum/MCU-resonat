@@ -1,5 +1,5 @@
 {
-  "active": "local",
+  "active": "git",
   "remotes": {
     "local": {
       "dir": "D:\\电脑美化\\文档\\无限暖暖\\DLC仓库"
@@ -9,8 +9,8 @@
       "token": ""
     },
     "git": {
-      "repo": "",
-      "branch": "main",
+      "repo": "https://github.com/Cormuslum/MCU-resonat.git",
+      "branch": "dlc",
       "dir": "dlc"
     }
   }
