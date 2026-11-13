@@ -11,10 +11,10 @@ import fs from 'node:fs'
 
 /** 工具根：`updater/` 与 `tools/` 的公共父目录（心忆奇想工坊/工具/） */
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-/** 工作区根：仓库根（开发版）/ 发行根 —— 「心忆奇想工坊」与「无限暖暖模拟器」的公共父 */
+/** 工作区根：仓库根（开发版）/ 发行根 —— 「心忆奇想工坊」与「心忆共鸣」的公共父 */
 const WORKSPACE = path.resolve(ROOT, '..', '..')
 /** 模拟器根：vite 的工程目录（vite.config.ts / index.html 在这） */
-const SIM_ROOT = path.join(WORKSPACE, '无限暖暖模拟器')
+const SIM_ROOT = path.join(WORKSPACE, '心忆共鸣')
 /** 工坊根：server.mjs 所在目录（updater/ 的父） */
 const UPDATER_ROOT = path.join(ROOT, 'updater')
 /** vite 入口：npm workspaces 把依赖提升到了工作区根 */

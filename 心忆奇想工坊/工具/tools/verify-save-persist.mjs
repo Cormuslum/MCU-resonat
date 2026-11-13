@@ -8,7 +8,7 @@ import http from 'node:http'
 import { chromium } from 'playwright-core'
 
 const ROOT = process.cwd()
-const EXE = path.join(ROOT, 'release', '无限暖暖发行版', '无限暖暖模拟器', '无限暖暖模拟器.exe')
+const EXE = path.join(ROOT, 'release', '无限暖暖发行版', '心忆共鸣', '无限暖暖模拟器.exe')
 const CDP = 9338
 const ORIGIN_PORT = 51800
 const KEY = 'nikki-save-persist-test'

@@ -10,7 +10,7 @@ import path from 'node:path'
 
 const ROOT = process.cwd()
 const RELEASE = path.join(ROOT, 'release', '无限暖暖发行版')
-const SIM = path.join(RELEASE, '无限暖暖模拟器')
+const SIM = path.join(RELEASE, '心忆共鸣')
 const PACK = path.join(ROOT, 'release', '无限暖暖视频包')
 
 const isRelease = process.argv.includes('--release')
@@ -105,7 +105,7 @@ fs.writeFileSync(readme, [
   '不装也能玩：模拟器会静默退回静态背景，不报错、不影响任何功能。',
   '',
   '想看动态背景？',
-  '  ① 把本文件夹里的【public】整个拖进【无限暖暖模拟器】文件夹；',
+  '  ① 把本文件夹里的【public】整个拖进【心忆共鸣】文件夹；',
   '  ② Windows 问「是否合并」时选「是」—— 文件会自动归位到 public/assets 里；',
   '  ③ 重新打开模拟器即可。',
   '',
@@ -122,7 +122,7 @@ fs.writeFileSync(bat, [
   '@echo off',
   'chcp 65001 >nul',
   'set "SRC=%~dp0public"',
-  'set "DST=%~dp0..\\无限暖暖发行版\\无限暖暖模拟器\\public"',
+  'set "DST=%~dp0..\\无限暖暖发行版\\心忆共鸣\\public"',
   'if not exist "%DST%" (',
   '  echo [x] 找不到模拟器目录，请把本文件夹放到「无限暖暖发行版」旁边再运行',
   '  pause',

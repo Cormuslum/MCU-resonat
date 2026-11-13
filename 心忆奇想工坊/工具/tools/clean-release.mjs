@@ -194,7 +194,7 @@ for (const f of ['.last-apply.json', '.write-cache.json', '.passthrough.json']) 
 
 // ── ④ dist 里的空壳目录 + Python 缓存 ─────────────────
 console.log('\n[4] 空目录与缓存')
-const simDist = path.join(ROOT, 'release', '无限暖暖发行版', '无限暖暖模拟器', 'dist')
+const simDist = path.join(ROOT, 'release', '无限暖暖发行版', '心忆共鸣', 'dist')
 const pruned = pruneEmpty(simDist)
 if (pruned) console.log('    - dist/ 空目录', pruned, '个（robocopy 排文件却留的空壳）')
 

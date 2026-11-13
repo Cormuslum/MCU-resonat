@@ -29,8 +29,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import part_code  # noqa: E402  部位代号（读 素材/信息表/部位代号对照表.csv）
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-# 成品根：无限暖暖模拟器（开发版 = 项目根下的它；发行版 = 发行版根下的它）
-SIM = os.path.join(ROOT, "无限暖暖模拟器")
+# 成品根：心忆共鸣（开发版 = 项目根下的它；发行版 = 发行版根下的它）
+SIM = os.path.join(ROOT, "心忆共鸣")
 # 工具根：心忆奇想工坊/工具（开发版与发行版同构）
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 

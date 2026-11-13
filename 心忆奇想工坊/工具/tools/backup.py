@@ -18,8 +18,8 @@ import zipfile
 from datetime import date, datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-# 成品根：无限暖暖模拟器（开发版 = 项目根下的它；发行版 = 发行版根下的它）
-SIM = os.path.join(ROOT, "无限暖暖模拟器")
+# 成品根：心忆共鸣（开发版 = 项目根下的它；发行版 = 发行版根下的它）
+SIM = os.path.join(ROOT, "心忆共鸣")
 # 工具根：心忆奇想工坊/工具（开发版与发行版同构）
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 
@@ -27,19 +27,19 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 TOP_FILES = [
     "package.json",
     "package-lock.json",
-    "无限暖暖模拟器/tsconfig.json",
-    "无限暖暖模拟器/tsconfig.node.json",
-    "无限暖暖模拟器/vite.config.ts",
-    "无限暖暖模拟器/index.html",
-    "无限暖暖模拟器/package.json",
-    "无限暖暖模拟器/electron-builder-sim.yml",
+    "心忆共鸣/tsconfig.json",
+    "心忆共鸣/tsconfig.node.json",
+    "心忆共鸣/vite.config.ts",
+    "心忆共鸣/index.html",
+    "心忆共鸣/package.json",
+    "心忆共鸣/electron-builder-sim.yml",
     "心忆奇想工坊/package.json",
     "心忆奇想工坊/electron-builder-updater.yml",
 ]
 # 收「少量文件」的目录（按下面的扩展名过滤）
 TOP_DIRS = [
-    "无限暖暖模拟器/src",
-    "无限暖暖模拟器/electron",
+    "心忆共鸣/src",
+    "心忆共鸣/electron",
     "心忆奇想工坊/工具/tools",
     "心忆奇想工坊/工具/updater",
     "心忆奇想工坊/electron",
@@ -48,7 +48,7 @@ TOP_DIRS = [
     ".workbuddy/memory",
 ]
 EXTRA = [
-    "无限暖暖模拟器/public/assets/manifest.json",
+    "心忆共鸣/public/assets/manifest.json",
     # 固定文案（信封欢迎语 / 工坊顶栏 / 帮助弹窗的唯一真源）
     "心忆奇想工坊/工具/文案.json",
     # 玄学运势的规格/笔记（纯 Markdown，体积小；素材二进制不收）
@@ -67,8 +67,8 @@ LAYOUT_EXT = {".md"}
 
 # 目录 → 允许的扩展名（None = 全收）
 DIR_EXT = {
-    "无限暖暖模拟器/src": None,
-    "无限暖暖模拟器/electron": {".mjs"},
+    "心忆共鸣/src": None,
+    "心忆共鸣/electron": {".mjs"},
     "心忆奇想工坊/工具/tools": TOOLS_EXT,
     "心忆奇想工坊/工具/updater": None,
     "心忆奇想工坊/electron": {".mjs", ".cjs"},

@@ -9,15 +9,15 @@ import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
 // 三个根（开发版与发行版同构）：
-//   ROOT      = 仓库根（开发版）/ 发行版根（发行版）—— 两者都含「无限暖暖模拟器」与「心忆奇想工坊」
-//   SIM_ROOT  = 成品根：无限暖暖模拟器/（public/assets 与 src/ 在这）
+//   ROOT      = 仓库根（开发版）/ 发行版根（发行版）—— 两者都含「心忆共鸣」与「心忆奇想工坊」
+//   SIM_ROOT  = 成品根：心忆共鸣/（public/assets 与 src/ 在这）
 //   TOOL_ROOT = 工具根：心忆奇想工坊/工具/（updater 与 tools 在这）
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
-const SIM_ROOT = path.join(ROOT, '无限暖暖模拟器')
+const SIM_ROOT = path.join(ROOT, '心忆共鸣')
 const TOOL_ROOT = path.join(ROOT, '心忆奇想工坊', '工具')
 const TOOLS_DIR = path.join(TOOL_ROOT, 'tools')
 const OUT = path.join(ROOT, 'release', '无限暖暖发行版')
-const SIM = path.join(OUT, '无限暖暖模拟器')
+const SIM = path.join(OUT, '心忆共鸣')
 const UPD = path.join(OUT, '心忆奇想工坊')
 const BUILD = path.join(ROOT, 'release', '_build')
 
@@ -217,7 +217,7 @@ console.log('  ✓ userdata/（空存档目录）')
       '不装也能玩：模拟器会静默退回静态背景，不报错、不影响任何功能。',
       '',
       '想看动态背景？',
-      '  ① 把本文件夹里的【public】整个拖进【无限暖暖模拟器】文件夹；',
+      '  ① 把本文件夹里的【public】整个拖进【心忆共鸣】文件夹；',
       '  ② Windows 问「是否合并」时选「是」—— 文件会自动归位到 public/assets 里；',
       '  ③ 重新打开模拟器即可。',
       '',
@@ -229,7 +229,7 @@ console.log('  ✓ userdata/（空存档目录）')
       '@echo off',
       'chcp 65001 >nul',
       'set "SRC=%~dp0public"',
-      'set "DST=%~dp0..\\无限暖暖发行版\\无限暖暖模拟器\\public"',
+      'set "DST=%~dp0..\\无限暖暖发行版\\心忆共鸣\\public"',
       'if not exist "%DST%" (',
       '  echo [x] 找不到模拟器目录，请把本文件夹放到「无限暖暖发行版」旁边再运行',
       '  pause',

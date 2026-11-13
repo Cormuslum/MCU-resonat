@@ -13,7 +13,7 @@ const BASE = `http://127.0.0.1:${PORT}`
 
 const ROOT = process.cwd()
 const OUT = path.join(ROOT, 'release', '无限暖暖发行版')
-const SIM = path.join(OUT, '无限暖暖模拟器')
+const SIM = path.join(OUT, '心忆共鸣')
 const TOOL = path.join(OUT, '心忆奇想工坊', '工具')
 const DATA = path.join(TOOL, 'data')
 
