@@ -1,0 +1,511 @@
+.readings {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  color: #4a3618;
+  user-select: none;
+}
+/* 层：素材按 pxdesk 盒子 object-fit:fill（素材 alpha 满，无留白） */
+.rd-bg,
+.rd-layer,
+.rd-dec {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+  object-fit: fill;
+}
+.rd-bg {
+  z-index: 0;
+}
+.rd-dec,
+.rd-layer {
+  z-index: 1;
+}
+
+/* 返回箭头：arrowN 打底 + arrowH 悬停发光 */
+.rd-back {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: var(--nk-cursor, auto), pointer;
+  z-index: 20;
+}
+.rd-back img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+}
+.rd-back .bh {
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+.rd-back:hover .bh,
+.rd-back:focus-visible .bh {
+  opacity: 1;
+}
+
+.rd-key {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.95;
+  z-index: 18;
+}
+
+/* 分区选项卡：容器 = common_img_menu_s（金底），仅高亮时出现；常态只有文字 */
+.rd-tab {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: var(--nk-cursor, auto), pointer;
+  overflow: visible;
+  z-index: 19;
+}
+.rd-tab .tb-hi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  opacity: 0;
+}
+.rd-tab.on .tb-hi {
+  opacity: 1;
+}
+.rd-tab:hover:not(.on) .tb-hi {
+  animation: tab-breathe 0.4s ease-in-out infinite;
+}
+.rd-tab .tb-txt {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 白色文字 30px，容器内居中；不加描边/投影 */
+  font-size: 30px;
+  letter-spacing: 1px;
+  color: #ffffff;
+  pointer-events: none;
+}
+.rd-tab.on .tb-txt,
+.rd-tab:hover .tb-txt {
+  font-weight: 600;
+}
+
+/* 左缘放大镜（搜索入口） */
+.rd-mag {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: var(--nk-cursor, auto), pointer;
+  z-index: 15;
+}
+.rd-mag img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  transition: filter 0.16s ease;
+}
+.rd-mag:hover img {
+  filter: brightness(1.06) drop-shadow(0 0 10px rgba(255, 226, 150, 0.55));
+}
+
+/* ── 列表（行高 71.5 / 首行顶 188.8 / 高亮框 410×72.2） ── */
+.rd-list {
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 250, 235, 0.72) transparent;
+  /* 底部 18px 渐隐：行高 71.5 不是列表高的整数倍，静止时会露半行残影 */
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 18px), transparent 100%);
+  z-index: 12;
+}
+.rd-list::-webkit-scrollbar {
+  width: 5px;
+}
+.rd-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rd-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 250, 235, 0.72);
+  border-radius: 3px;
+}
+.rd-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding-left: 48px;
+  padding-right: 14px;
+  cursor: var(--nk-cursor, auto), pointer;
+}
+.rd-hi {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 0;
+}
+.rd-line {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 1;
+}
+.rd-title {
+  position: relative;
+  z-index: 2;
+  flex: 0 1 auto;
+  min-width: 0; /* flex 子项允许收缩，text-overflow 才生效 */
+  font-size: 23px;
+  line-height: 1.2;
+  color: #5a4426;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.5px;
+}
+.rd-row.sel .rd-title {
+  color: #3d2a0f;
+  font-weight: 600;
+}
+
+/* 未获取：锁框 + 斜向链条 + 挂锁
+   —— 靠 margin-left:auto 推到行右端（滚动条左侧） */
+.rd-lock {
+  position: relative;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  margin-right: 2px;
+  z-index: 3;
+  pointer-events: none;
+}
+.rd-lock img {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+}
+.lk-frame {
+  left: 3px;
+  top: 2px;
+  width: 20px;
+  height: 24px;
+  opacity: 0.9;
+}
+.lk-chain {
+  left: -4px;
+  top: 10px;
+  width: 38px;
+  height: 8px;
+  transform: rotate(-42deg);
+  opacity: 0.85;
+}
+.lk-pad {
+  left: 3px;
+  top: 2px;
+  width: 20px;
+  height: 24px;
+}
+
+/* 解锁三阶段：锁扣翘起(180ms) → 链条对角消失(200~500) → 锁框淡出(520~720) */
+.rd-unlock {
+  position: relative;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  margin-left: auto;
+  margin-right: 2px;
+  z-index: 4;
+  pointer-events: none;
+}
+.rd-unlock img {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+}
+.u-frame {
+  left: 3px;
+  top: 2px;
+  width: 20px;
+  height: 24px;
+  animation: unlock-frame 0.2s ease-out 0.52s both;
+}
+.u-chain {
+  left: -4px;
+  top: 10px;
+  width: 38px;
+  height: 8px;
+  transform: rotate(-42deg);
+  animation: unlock-chain 0.3s ease-out 0.2s both;
+}
+.u-pad {
+  left: 3px;
+  top: 2px;
+  width: 20px;
+  height: 24px;
+  transform-origin: 50% 12%;
+  animation: unlock-shackle 0.18s ease-out both;
+}
+
+/* 标签头（-3.33° 旋转，文字同步旋转） */
+.rd-label,
+.rd-label-shadow {
+  position: absolute;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  z-index: 16;
+}
+.rd-label-shadow {
+  z-index: 15;
+  opacity: 0.75;
+}
+.rd-labeltxt {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 34px;
+  font-size: 25px;
+  color: #4a3613;
+  letter-spacing: 1px;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  z-index: 17;
+}
+
+/* 随机彩蛋 */
+.rd-egg {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 14;
+}
+
+/* ── 正文（纸面右页）：标题固定不动，仅正文区滚动 ── */
+.rd-content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 10;
+}
+.rd-ctitle {
+  flex: 0 0 auto;
+  font-size: 34px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: #3d2a0f;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+/* 正文滚动容器：滚动条收细到 4px（原 6px 太宽、顶到纸鹤） */
+.rd-cbody-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(150, 120, 70, 0.42) transparent;
+  padding-right: 8px;
+}
+.rd-cbody-wrap::-webkit-scrollbar {
+  width: 4px;
+}
+.rd-cbody-wrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rd-cbody-wrap::-webkit-scrollbar-thumb {
+  background: rgba(150, 120, 70, 0.42);
+  border-radius: 2px;
+}
+.rd-cbody-wrap::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 120, 70, 0.65);
+}
+.rd-cbody {
+  font-size: 20px;
+  line-height: 1.85;
+  color: #4a3618;
+  white-space: pre-wrap;
+  opacity: 0;
+  transition: opacity 0.16s ease-out;
+}
+.rd-cbody.show {
+  opacity: 1;
+}
+
+/* 空态贴纸：绝对定位，紧贴纸面下边缘，opacity 0.15（pxdesk「伊赞之土2」） */
+.rd-empty-sticker {
+  position: absolute;
+  max-width: none;
+  object-fit: contain;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9;
+  animation: rd-fadein-15 0.2s ease-out 0.1s both;
+}
+
+/* 空态提示文字 */
+.rd-empty {
+  position: absolute;
+  left: 64%;
+  top: 480px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 12;
+}
+.rd-empty-txt {
+  text-align: center;
+  font-size: 36px;
+  color: rgba(90, 68, 38, 0.62);
+  letter-spacing: 1px;
+  animation: rd-fadein 0.15s ease-out 0.1s both;
+}
+
+/* 黑屏过渡（切换大版本） */
+.rd-blackout {
+  position: absolute;
+  inset: 0;
+  background: #05060c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+  z-index: 400;
+}
+.rd-blackout.on {
+  opacity: 1;
+}
+
+
+/* 顶部压暗层：分割线以上整条 27% 纯黑，底边柔化过渡 */
+.rd-dim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 100px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.27) 0%,
+    rgba(0, 0, 0, 0.27) 78%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+/* 分割线压在压暗层之上（也高于纸鹤），保证不被遮挡 */
+.rd-topline {
+  z-index: 6;
+}
+
+/* 提示条：容器 = common_bg_placename（872×264），文字居中；定位见各自视图 */
+.rd-toast {
+  position: absolute;
+  left: 760px;
+  top: 200px;
+  width: 872px;
+  height: 264px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  pointer-events: none;
+}
+.rd-toast-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  /* placename 素材本身很淡（深色区 alpha 低），在浅色纸面上几乎看不出 → 压暗提对比 */
+  filter: brightness(0.62) contrast(1.25) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
+}
+.rd-toast-txt {
+  position: relative;
+  /* 素材的内容条在 264 高的中间偏下（y≈100~160），文字需下移 40px 才压在条中心 */
+  margin-top: 40px;
+  padding: 0 40px;
+  font-size: 30px;
+  letter-spacing: 1px;
+  color: #fdf3dc;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes tab-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes rd-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* 空态贴纸专用：淡入到 15%（pxdesk「伊赞之土2」标注 op 0.15） */
+@keyframes rd-fadein-15 {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+/* 空态贴纸专用：淡入到 13%（不能复用 rd-fadein，其 to{opacity:1} 会覆盖 0.13） */
+@keyframes rd-fadein-13 {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.13;
+  }
+}
+@keyframes unlock-shackle {
+  to {
+    transform: rotate(-18deg) translateY(-2px);
+    opacity: 0;
+  }
+}
+@keyframes unlock-chain {
+  to {
+    transform: rotate(-42deg) translate(10px, 10px);
+    opacity: 0;
+  }
+}
+@keyframes unlock-frame {
+  to {
+    opacity: 0;
+  }
+}
