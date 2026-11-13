@@ -1,0 +1,51 @@
+name: CI
+
+# main 分支只放源码，产物由 CI 构建 —— 与 Krita / Synfig / Joplin / Element 同款做法。
+# 触发：推 main / 提 PR / 手动触发。
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 类型检查 + 前端构建
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 类型检查
+        run: npm run typecheck
+
+      - name: 构建前端
+        run: npm run build
+
+      - name: 校验运行时必需的数据文件在位
+        shell: pwsh
+        run: |
+          $need = @(
+            '无限暖暖模拟器/public/assets/manifest.json',
+            '无限暖暖模拟器/public/assets/data/stories.json',
+            '无限暖暖模拟器/public/assets/data/readings.json',
+            '无限暖暖模拟器/public/assets/data/mail-changelog.json'
+          )
+          $missing = $need | Where-Object { -not (Test-Path $_) }
+          if ($missing) { Write-Error ("缺少运行时数据：{0}" -f ($missing -join ', ')); exit 1 }
+          Write-Host "运行时数据齐全"
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-dist
+          path: 无限暖暖模拟器/dist
+          retention-days: 14
