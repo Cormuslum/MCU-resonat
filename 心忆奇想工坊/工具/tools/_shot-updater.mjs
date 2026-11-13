@@ -1,0 +1,16 @@
+import { chromium } from 'playwright-core'
+const b = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true })
+const p = await b.newPage({ viewport: { width: 1600, height: 1000 } })
+const errs = []
+p.on('pageerror', (e) => errs.push('PAGE ' + e.message))
+p.on('response', (r) => { if (r.status() >= 400) errs.push(`HTTP${r.status()} ${r.url()}`) })
+await p.goto('http://localhost:5199/', { waitUntil: 'networkidle' })
+await p.waitForTimeout(1500)
+await p.screenshot({ path: '.shots/up-01-version.png' })
+await p.click('[data-job="pool"]'); await p.waitForTimeout(600)
+await p.screenshot({ path: '.shots/up-02-pool.png' })
+await p.click('[data-job="story"]'); await p.waitForTimeout(400)
+await p.click('#btn-check'); await p.waitForTimeout(500)
+await p.screenshot({ path: '.shots/up-03-check.png' })
+console.log('errs', JSON.stringify(errs, null, 1))
+await b.close()

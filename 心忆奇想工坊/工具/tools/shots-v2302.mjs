@@ -1,0 +1,41 @@
+/** v1.2.02 截图巡检：主页（动态/静态）、图鉴赛季栏、共鸣页 */
+import { chromium } from 'playwright-core'
+const b = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true })
+const p = await b.newPage({ viewport: { width: 1920, height: 1080 } })
+const SAVE = { version: 1, selectedVersion: '2.10', pity: {}, codex: {}, milestoneClaimed: {}, history: [],
+  settings: { skipAnim: false, volume: 0.7, bgm: true, bgmVol: 0.7, uiVol: 0.8, skipSingleAnim: true, skipReward: false, skipOpening: true, skipGacha: false, lucky: false } }
+await p.goto('http://localhost:5178/', { waitUntil: 'domcontentloaded' })
+await p.evaluate(([k, v]) => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem(k, JSON.stringify(v)) }, ['nikki-resonance-save-v1', SAVE])
+await p.goto('about:blank')
+await p.goto('http://localhost:5178/#/', { waitUntil: 'domcontentloaded' })
+await p.waitForTimeout(3000)
+await p.evaluate(() => { const v = document.querySelector('.hm-bg-video'); if (v) { v.pause(); v.currentTime = 42 } })
+await p.waitForTimeout(700)
+await p.screenshot({ path: '.shots/v2302-home-video.png' })
+await p.hover('.dy-btn >> nth=1')
+await p.waitForTimeout(600)
+await p.screenshot({ path: '.shots/v2302-home-hover.png' })
+await p.mouse.move(400, 900)
+await p.click('.hm-switch')
+await p.waitForTimeout(1100)
+await p.screenshot({ path: '.shots/v2302-home-still.png' })
+// 图鉴赛季栏（下边界 1030）
+await p.goto('about:blank')
+await p.goto('http://localhost:5178/#/codex/clothes', { waitUntil: 'domcontentloaded' })
+await p.waitForTimeout(1800)
+await p.screenshot({ path: '.shots/v2302-clothes.png' })
+// 共鸣页（星级 + 首池）
+await p.goto('about:blank')
+await p.goto('http://localhost:5178/#/banner', { waitUntil: 'domcontentloaded' })
+await p.waitForTimeout(2000)
+await p.evaluate(() => document.querySelector('video')?.pause())
+await p.click('.pool-item >> nth=0')
+await p.waitForTimeout(500)
+await p.screenshot({ path: '.shots/v2302-banner.png' })
+// 纯四星池概率面板
+await p.click('.pool-item >> nth=3')
+await p.waitForTimeout(600)
+await p.click('.detail-btn')
+await p.waitForTimeout(600)
+await p.screenshot({ path: '.shots/v2302-pure4.png' })
+await b.close()
