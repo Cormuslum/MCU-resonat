@@ -1,5 +1,5 @@
 /**
- * v1.9.04 验收：动态背景（首页轮播 / 服装阁去音轨 / 缺失兜底）
+ * 验收：动态背景（首页轮播 / 服装阁去音轨 / 缺失兜底）
  *
  * A. 首页两条动态背景各约 50%：多次冷启动统计出现次数
  * B. 抽到的那条能真正解码播放（videoWidth > 0、非 paused、muted）
@@ -113,7 +113,7 @@ ok(`首页 ${homeVids.length} 条视频各配了独立音轨`, homeAudio.length 
   homeVids.map((v) => `${v.video}+${v.audio}`).join(' | '))
 ok('首页音轨文件都在', homeAudioMiss.length === 0, homeAudioMiss.join(', '))
 
-/* 首帧 poster（v1.9.05）：视频几十 MB，解码出首帧前那块区域是黑的 */
+/* 首帧 poster：视频几十 MB，解码出首帧前那块区域是黑的 */
 const posterMiss = homeVids.filter((v) => !v.poster || !fs.existsSync(path.join(ASSETS, v.poster)))
 ok('首页每条都带首帧 poster', posterMiss.length === 0,
   homeVids.map((v) => v.poster || '（无）').join(' | '))
@@ -143,7 +143,7 @@ console.log('\n════ D 视频缺失兜底 ════')
   const errs = []
   page.on('pageerror', (e) => errs.push(e.message))
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
-  // v1.9.06 起开屏阶段不挂载视频（避免后台抢跑导致音画错位），
+  // 起开屏阶段不挂载视频（避免后台抢跑导致音画错位），
   // 所以要等开屏结束、视频真正起来之后再看，不能再固定等几秒
   await page.waitForFunction(
     () => (document.querySelector('.hm-bg-video')?.videoWidth || 0) > 0,

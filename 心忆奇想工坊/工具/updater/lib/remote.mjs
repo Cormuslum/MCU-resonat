@@ -1,25 +1,7 @@
 /**
- * 远端适配器：DLC 包的**上传 / 下载 / 列包**。
- *
- * 三种远端，同一套接口：
- *
- *   local  本地目录（网盘同步盘、共享盘、U 盘落地点都行）
- *   http   通用 HTTP 端点（云盘 / 网盘分享链接的 POST + GET）
- *   git    git 仓库（用 git push / pull 分发，仓库当"包仓库"）
- *
- * 配置存在 `updater/remote.json`，格式：
- *
- *   {
- *     "active": "local",
- *     "remotes": {
- *       "local": { "dir": "D:/DLC仓库" },
- *       "http":  { "base": "https://example.com/dlc", "token": "" },
- *       "git":   { "repo": "", "branch": "main", "dir": "dlc" }
- *     }
- *   }
- *
- * ⚠ git 远端**代码已经写好**，但本项目当前还没有关联 git 仓库（`git remote -v` 为空），
- *   所以实际调用会明确报「尚未关联 git 仓库」并提示怎么关联 —— 而不是静默失败。
+ * 远端适配器：DLC 包的上传 / 下载 / 列包，三种远端同一套接口 —— local（本地目录，网盘同步盘也行）、
+ * http（通用端点）、git（push / pull 分发）。配置在 `updater/remote.json`：
+ * `{ active, remotes: { local{dir}, http{base,token}, git{repo,branch,dir} } }`；git 远端需已关联仓库（`git remote -v` 非空）。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -117,9 +99,7 @@ export function gitInfo() {
 
 /**
  * 把源包打成 zip。
- *
  * 包目录里只留「该发的」：dlc.json + data/ + assets/。
- * 源包区的其它文件（编辑用的临时物）一律不发。
  */
 export function pack(id) {
   const dir = srcDir(id)
@@ -191,12 +171,8 @@ export async function upload(type, id, cfg = readConfig()) {
 /* ────────────────────────────── 列出远端可下载的包 ────────────────────────────── */
 
 /**
- * 列远端上有哪些包。
- *
- * 统一读远端根目录下的 `index.json`：
- *   { "packages": [ { "id", "name", "version", "file", "size", "updatedAt" } ] }
- * 本地远端直接扫目录；HTTP 远端 GET `<base>/index.json`；
- * git 远端从仓库里 `git show origin/<branch>:<dir>/index.json` 读。
+ * 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`）——
+ * 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json`。
  */
 export async function listRemote(type, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
@@ -273,10 +249,7 @@ function readZipEntry(zip, entry) {
 /* ────────────────────────────── 下载 ────────────────────────────── */
 
 /**
- * 从远端下载一个包并装进运行区。
- *
- * 下载的是 zip → 解到临时目录 → 校验 dlc.json → 装进 `public/dlc/<id>/`。
- * 校验不过就整个丢弃，不留半拉子包在运行区。
+ * 从远端下载一个包并装进运行区：zip → 临时目录 → 校验 dlc.json → 装进 `public/dlc/<id>/`，校验不过整个丢弃。
  */
 export async function download(type, id, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
@@ -335,9 +308,7 @@ export async function download(type, id, cfg = readConfig()) {
 
 /**
  * 生成一个「别人能拿到的」引用。
- *
- * 本地远端给的是文件路径（网盘同步盘里就是这个文件的相对位置）；
- * HTTP 远端给的是下载 URL；git 远端给的是仓库地址 + 路径。
+ * 本地远端给文件路径；HTTP 远端给下载 URL；git 远端给仓库地址 + 路径。
  */
 export function shareRef(type, id, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}

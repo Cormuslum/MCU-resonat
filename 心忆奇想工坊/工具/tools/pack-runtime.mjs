@@ -1,17 +1,7 @@
 /**
- * 准备「工坊运行时」：一个自带 Python + Pillow + ffmpeg 的便携目录。v2.1.00
- *
- *   node tools/pack-runtime.mjs          # 已就绪就跳过
- *   node tools/pack-runtime.mjs --force  # 重新组装
- *
- * 为什么工坊要自带：发行版用户电脑上的 `python` 很可能是 Microsoft Store 的
- * 假存根（运行即 exit 9009），而素材转码必须真的跑 Python。把解释器、Pillow、
- * ffmpeg 一起塞进工坊目录，双击就能用，也不用污染系统环境。
- *
- * 产物：electron/runtime/python/  （python.exe + PIL + ffmpeg.exe，约 133MB）
- *
- * Pillow 与 ffmpeg 取自**本机**已有的安装 —— 这里只是把它们搬进便携目录，
- * 不联网装包。Python 用官方 embeddable zip（体积小、免安装）。
+ * 准备「工坊运行时」：自带 Python + Pillow + ffmpeg 的便携目录（`node tools/pack-runtime.mjs`，`--force` 重新组装）。
+ * 产物 `electron/runtime/python/`（python.exe + PIL + ffmpeg.exe，约 133MB）；Pillow / ffmpeg 搬本机已有安装，
+ * Python 用官方 embeddable zip，全部不联网装包。
  */
 import fs from 'node:fs'
 import path from 'node:path'

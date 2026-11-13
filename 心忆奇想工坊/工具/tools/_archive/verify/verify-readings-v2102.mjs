@@ -1,9 +1,9 @@
 import { chromium } from 'playwright-core'
 
-/* ⚠ v1.6.00 现状口径：本脚本是「博物图鉴重构」之前的旧巡检，
- *   断言的入口（`.mz-hit` / `.rd-collect` 等）在重构后已不存在，跑起来只会报超时。
- *   现行验收统一看 tools/verify-readings.mjs（按《博物图鉴重构计划书.md》§8 M3）。
- *   文件保留仅作历史参考，不再执行。 */
+/* ⚠ 现状口径：本脚本是「博物图鉴重构」之前的旧巡检，
+ * 断言的入口（`.mz-hit` / `.rd-collect` 等）在重构后已不存在，跑起来只会报超时。
+ * 现行验收统一看 tools/verify-readings.mjs（按《博物图鉴重构计划书.md》§8 M3）。
+ * 文件保留仅作历史参考，不再执行。 */
 console.log('[已并入 verify-readings.mjs] 本脚本为重构前的旧巡检，不再执行。')
 process.exit(0)
 
@@ -20,7 +20,7 @@ const errs = []
 p.on('pageerror', (e) => errs.push(e.message))
 p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()) })
 
-  // v1.6.00 现状口径：主页自 v2.3.x 起循环播 bg-video.webm + bg-audio.ogg，
+  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg，
   // 网络永远不会「空闲」→ waitUntil 必须用 domcontentloaded，不能用 networkidle
 await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 await p.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))

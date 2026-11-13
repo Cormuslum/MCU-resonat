@@ -1,16 +1,12 @@
 /**
  * 管线执行：把素材变成前端能读的数据。
- *
- * 更新程序不重写素材处理逻辑 —— 那套东西（艺术字居中、铭牌编号、四星池背景裁切）
- * 都是踩过坑的，重写一遍只会把坑再踩一遍。这里只负责「按正确顺序、正确参数」
- * 调用既有的 python 脚本，并把日志实时吐给界面。
+ * 这里只负责「按正确顺序、正确参数」调用既有的 python 脚本，并把日志实时吐给界面。
  */
 import { spawn, spawnSync } from 'node:child_process'
 import path from 'node:path'
 import { ROOT, WORKSPACE, TOOL_ROOT, ASSET, readJson, pythonBin } from './util.mjs'
 
-// `pythonBin()` 的实现搬到了 util.mjs（v2.2.02）：dlc / archive / remote 三处也要用它，
-// 让它们反过来 import pipeline 会把依赖方向搞乱。这里只是原样再导出，保持旧调用点不变。
+// 原样再导出，保持旧调用点不变
 export { pythonBin }
 
 /** 借一个已存在的池 id 当「引子」（只为触发版本卡 / 大图转码段，那一池的素材已转好会被跳过） */
@@ -67,17 +63,8 @@ function run(cmd, args, { cwd = TOOL_ROOT, onLog = () => {}, timeoutMs = 600000 
 }
 
 /**
- * 组装本次更新要跑的步骤。
- *
- * 关键在 collect-assets 的两段式：
- *   1. `--pool <id>` 只转这座阁的素材（几秒），但它的 manifest 只含这一座阁
- *   2. `--all --manifest-only` 用全量重建 manifest（不转码，几秒）覆盖回去
- * 两段加起来十几秒；直接 `--all` 要把 8000+ 个素材全量比对一遍，几分钟。
- *
- * 纯版本更新（没有新池）也要跑一次非 manifest-only 的 collect：
- * 版本卡 / 版本大图的转码在 collect 主流程里、不在服装阁循环里，
- * `--manifest-only` 会整体跳过转码 → 不跑的话新版本的图鉴素材永远不会出现。
- * 这时借一个已存在的池 id 当「引子」——那一池的素材都已转好，只会被跳过。
+ * 组装本次更新要跑的步骤。collect-assets 两段式：`--pool <id>` 只转这座阁，再 `--all --manifest-only` 全量重建 manifest；
+ * 纯版本更新（没有新池）借一个已存在的池 id 当引子跑一次非 manifest-only 的 collect（版本卡转码在 collect 主流程里）。
  */
 export function buildSteps({
   job = '', poolIds = [], force = false, story = false, reading = false,
@@ -88,22 +75,9 @@ export function buildSteps({
   const steps = []
   const DIST = !!process.env.NIKKI_DIST_MODE
 
-  /* ── 按任务裁剪（v2.2.00，v2.2.01 再收紧）──
-   *
-   * 以前不管改什么都跑满全套：pool-map（扫全部服装阁）→ collect-assets --all
-   * （比对 8000+ 素材）→ gen-stories → gen-readings。改一篇故事里十几个字，
-   * 也要等这几分钟 —— 用户报的就是这个。
-   *
-   * 依赖关系其实很干净：
-   *   · 故事正文只进 `stories.json`（gen-stories.py 读 md 生成），不碰 pool-map
-   *   · 阅读物只进 `readings.json`
-   *   · 版本 / 服装阁 / 套装才会改 pool-map 与 manifest
-   *
-   * v2.2.01 再收紧两处：
-   *   1. `gen-stories` / `gen-readings` 只在**这次真的写了故事 / 阅读物**时才跑
-   *      （版本、改套装星级、改名这些任务以前会白跑这两步）。
-   *   2. `transcode` 由 `applyJob` 判定：这次没给媒体文件、也没新建东西
-   *      → 转码那趟必然全 skipped，直接不跑（纯元数据编辑）。
+  /* ── 按任务裁剪 ──
+   * 故事只进 `stories.json`、阅读物只进 `readings.json`，版本 / 服装阁 / 套装才改 pool-map 与 manifest；
+   * `gen-stories` / `gen-readings` 只在这批真的写了对应内容时跑，纯元数据编辑不跑转码。
    */
   const pureStory = job === 'story' && !poolIds.length
   const pureReading = job === 'reading' && !poolIds.length
@@ -226,18 +200,9 @@ export async function devServerAlive(port = 5178) {
 }
 
 /**
- * 重启 dev server。
- *
- * 为什么必须重启：vite.config.ts 的 `watch.ignored` 把 `public/assets/**` 排除了
- * （素材 470MB，不排除会把文件监听打爆），所以新转的 webp **不会**触发页面更新，
- * 表现为「艺术字只剩 alt 文字 / 立绘是裂图」。每次更新完都得重启一次。
- *
- * ⚠ 杀掉 vite 之后有两种收尾，必须先分清楚再动手（2026-11-08）：
- *   · 模拟器是 `npm run up` 起的 → 那边有守护，杀掉后 1 秒内会自己拉回来。
- *     这时**不能再 spawn 一个**，否则两个进程抢 5178，其中一个因 --strictPort 直接失败，
- *     日志里就是「已启动 vite」+「等了 20s 端口仍未就绪」。
- *   · 模拟器是单独 `npm run dev` 起的 → 没有守护，得自己拉。
- * 所以顺序是：停 → 等端口释放 → 先等守护 → 等不到才自己拉。
+ * 重启 dev server（vite 的 `watch.ignored` 排除了 `public/assets/**`，新转的 webp 不会触发刷新）。
+ * ⚠ 杀 vite 后先分清：`npm run up` 起的有守护、1 秒内自愈（不能重复 spawn，会抢 5178）；单独 `npm run dev` 起的没有守护。
+ * 顺序：停 → 等端口释放 → 先等守护 → 等不到才自己拉。
  */
 async function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms))
@@ -257,9 +222,7 @@ function portListening(port) {
 
 /**
  * `npm run up` 是否正在守着？
- *
- * 用 pid 探活而不是只看文件在不在：守护被强杀时它的 exit 处理器不一定跑得到，
- * 留一个旧标记下来就会让我们永远在等一个不存在的守护。
+ * 用 pid 探活而不是只看文件在不在。
  */
 function guardAlive() {
   try {
@@ -274,9 +237,7 @@ function guardAlive() {
 
 export async function restartDevServer({ port = 5178, onLog = () => {} } = {}) {
   // ⚠ 先后顺序很要紧：**先判断有没有守护，再决定杀完要不要自己拉**。
-  //   反过来做（先杀、等几秒、等不到就自己 spawn）会在机器忙的时候双开：
-  //   守护那边的 vite 只是启动慢了点，我们以为没人接手又起一个，两个抢 5178，
-  //   输的那个 exit 1，守护再重启，再撞 —— 五轮后守护放弃，工坊一起没。
+  //   反过来做会在机器忙的时候双开：两个 vite 抢 5178，输的那个 exit 1。
   const guarded = guardAlive()
 
   // ① 停掉占着端口的进程（杀的是 vite 本身）
@@ -292,7 +253,7 @@ export async function restartDevServer({ port = 5178, onLog = () => {} } = {}) {
   // ② 交给守护：只等，**绝不自己 spawn**
   if (guarded) {
     onLog({ kind: 'out', text: '检测到 npm run up 守护，由它重启（这里只等）' })
-    for (let i = 0; i < 60; i++) {          // 最多 30s，机器忙时 vite 也可能要 5~10s
+    for (let i = 0; i < 60; i++) {          // 最多 30s
       await sleep(500)
       if (await devServerAlive(port)) {
         onLog({ kind: 'ok', text: `dev server 已由守护进程拉起：http://localhost:${port}` })
@@ -311,7 +272,7 @@ export async function restartDevServer({ port = 5178, onLog = () => {} } = {}) {
 
   // 直接跑 vite 的入口，不经 npx（Windows 上 npx 会多一层 cmd，
   // kill 不干净，还容易留一个只回 502 的空壳）
-  const simRoot = path.join(WORKSPACE, '无限暖暖模拟器')
+  const simRoot = path.join(WORKSPACE, '心忆共鸣')
   // vite 的依赖被 npm workspaces 提升到了工作区根，子目录里没有 node_modules
   const viteBin = path.join(WORKSPACE, 'node_modules', 'vite', 'bin', 'vite.js')
   const child = spawn(process.execPath, [viteBin, '--port', String(port), '--strictPort', '--host', '127.0.0.1'], {

@@ -1,13 +1,8 @@
 /**
- * v2.1.00 验收：发行版工坊「外部源 → 成品」直转（不落内部源）
- *
- *   node tools/verify-v2929-write.mjs [端口]
- *
- * 前置：发行版工坊 exe 已启动（默认 5200），模拟器目录在旁边。
- * 干什么：对「心愿栖金蕊」换一张背景图，然后核对
- *   ① 服务没报 9009（自带 Python 生效）
- *   ② public/assets/banners/bg/1000.webp 的内容确实变了
- *   ③ 工坊的数据目录里**没有**多出 `服装阁/` 或任何图片副本
+ * 验收：发行版工坊「外部源 → 成品」直转（不落内部源）：`node tools/verify-v2929-write.mjs [端口]`。
+ * 前置：发行版工坊 exe 已启动（默认 5200）、模拟器目录在旁边。对「心愿栖金蕊」换一张背景图后核对：
+ * ① 服务没报 9009（自带 Python 生效） ② `public/assets/banners/bg/1000.webp` 内容确实变了
+ * ③ 工坊数据目录里没有多出 `服装阁/` 或任何图片副本。
  */
 import fs from 'node:fs'
 import path from 'node:path'

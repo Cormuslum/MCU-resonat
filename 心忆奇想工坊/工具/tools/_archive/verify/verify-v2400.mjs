@@ -1,13 +1,13 @@
 /**
- * verify-v2400.mjs —— v1.3.00 六项改动验收
+ * verify-v2400.mjs —— 六项改动验收
  *
  * 覆盖：
- *   1 侧边栏       常态隐藏 / 左缘 100px 唤起 / 移开收起 / 左下角切换键不误触
- *   2 主页 LOGO    动态背景只有「心忆共鸣」/ 静态背景双 LOGO 恢复
- *   3 套装名版式   星级 32.4（54 的 3/5）/ 间距 −3（−6 的 1/2）/ 名称牌 300×86
- *   4 图鉴切换     整屏碎裂（600 块）→ 虚空 → 重构
- *   5 加载过渡     三类跳转触发 / 进度条 bottom 100 / 装饰底边 932 / 结束后销毁
- *   6 套装名列表   常驻池 8 套全列出 / 同屏 3 套 / 滚轮与拖动都能滚
+ * 1 侧边栏 常态隐藏 / 左缘 100px 唤起 / 移开收起 / 左下角切换键不误触
+ * 2 主页 LOGO 动态背景只有「心忆共鸣」/ 静态背景双 LOGO 恢复
+ * 3 套装名版式 星级 32.4（54 的 3/5）/ 间距 −3（−6 的 1/2）/ 名称牌 300×86
+ * 4 图鉴切换 整屏碎裂（600 块）→ 虚空 → 重构
+ * 5 加载过渡 三类跳转触发 / 进度条 bottom 100 / 装饰底边 932 / 结束后销毁
+ * 6 套装名列表 常驻池 8 套全列出 / 同屏 3 套 / 滚轮与拖动都能滚
  *
  * 运行：node tools/verify-v2400.mjs（需 dev server 在 5178）
  */
@@ -32,7 +32,7 @@ const b = await chromium.launch({
 })
 const p = await b.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })
 
-/* v1.4.02 版本门禁：未选版本时 /banner 会被守卫打回版本页，这里预置一个当前版本 */
+/* 版本门禁：未选版本时 /banner 会被守卫打回版本页，这里预置一个当前版本 */
 await p.addInitScript(() => {
   try {
     const KEY = 'nikki-resonance-save-v1'
@@ -107,15 +107,15 @@ const starW = await p.evaluate(() => {
   return el ? getComputedStyle(el).width : null
 })
 ok('星级 32.4px（54 的 3/5）', Math.abs(parseFloat(starW) - 32.4) < 0.05, `实际 ${starW}`)
-// v1.5.02 期间用户手动把星间距从 −3 改成 −12（CSS 注释同步写着「原来 −24 的一半」）
+// 期间用户手动把星间距从 −3 改成 −12（CSS 注释同步写着「原来 −24 的一半」）
 ok('星间距 −12px（−24 的 1/2）', (await style('.sb-stars img', 'marginRight')) === '-12px')
 const plate = await rect('.sb-plate')
 ok('名称牌 300×86（按可见区放大）', Math.round(plate.w) === 300 && Math.round(plate.h) === 86,
   `实际 ${Math.round(plate.w)}×${Math.round(plate.h)}`)
 
 console.log('\n6) 套装名：多套 + 同屏 3 套 + 滚动')
-// v2.5.07：卡池列表改成 manifest 全量，`nth-child(6)` 不再等于常驻池 → 按名字点
-// v1.4.02：共鸣页只列**当前版本**的池，常驻池在 1.0 → 先把当前版本切到 1.0 再点
+// ：卡池列表改成 manifest 全量，`nth-child(6)` 不再等于常驻池 → 按名字点
+// ：共鸣页只列**当前版本**的池，常驻池在 1.0 → 先把当前版本切到 1.0 再点
 await p.evaluate(() => {
   const KEY = 'nikki-resonance-save-v1'
   const s = JSON.parse(localStorage.getItem(KEY) || '{}')
@@ -208,7 +208,7 @@ ok('已进入版本页', (await p.evaluate(() => location.hash)) === '#/versions
 
 // 二级 → 二级（侧栏）
 // 版本页左栏整列都是版本卡（button），压着按钮时侧栏会让位；
-// 必须进到最左 32px 的贴边死区才能强制叫出侧栏（v2.4.01 的导航兜底）
+// 必须进到最左 32px 的贴边死区才能强制叫出侧栏的导航兜底
 await p.mouse.move(24, 540)
 await p.waitForTimeout(500)
 await p.locator('.rail-btn').nth(2).click()

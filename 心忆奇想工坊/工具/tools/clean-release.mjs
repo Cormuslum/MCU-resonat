@@ -1,19 +1,8 @@
 /**
- * 清理发行版里的冗余文件。v2.1.01
- *
- *   node tools/clean-release.mjs
- *
- * 为什么需要：`pack-release.mjs` 已经改成只复制「管线依赖闭包」，但**已经打好的**
- * 发行目录里还留着上一版的全量 tools/（110 个文件、验收脚本、截图、Python 缓存）。
- * 这个脚本按同一套规则就地清理，不用重新打包（重新打包要重拷 2.6G）。
- *
- * 清理三类：
- *   ① 工具/tools/  → 只留管线依赖闭包（其余 99 个开发期脚本）
- *   ② 截图 / 缓存  → tools/shots/、tools/*.png、tools/__pycache__/
- *   ③ 开发期遗留   → data/信息表/前后名称对照表.md、updater/README.md
- *
- * 保留：数据（信息表 / 套装库 / 故事 / 阅读物 / pool-map.json）、
- *      运行时（python + Pillow + ffmpeg）、成品（public/assets）、存档（userdata）。
+ * 清理已打好的发行版里的冗余文件：`node tools/clean-release.mjs`。
+ * ① `工具/tools/` 只留管线依赖闭包；② 删 `tools/shots/`、`tools/*.png`、`__pycache__/`；
+ * ③ 删开发期遗留（`data/信息表/前后名称对照表.md`、`updater/README.md`）。
+ * 保留数据、运行时、成品 `public/assets`、存档 `userdata`。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -80,11 +69,7 @@ function countFiles(root) {
 }
 
 /**
- * 删掉一棵子树里的**空目录**（自底向上）。
- *
- * 为什么需要：`pack-release.mjs` 用 robocopy 的 /XF 排除媒体文件，但 robocopy
- * **只排文件、保留空目录** —— 于是发行版的 dist/ 里会留下 392 个空壳
- * （banners/bg、milestones/banner-001…），体积是 0 但纯属垃圾。
+ * 删掉一棵子树里的空目录（自底向上）：robocopy 的 /XF 只排文件、保留空目录，dist/ 里会留一堆空壳。
  */
 function pruneEmpty(root) {
   let n = 0
@@ -170,7 +155,7 @@ for (const p of legacy) {
   }
 }
 
-// v2.1.02：`故事/` `套装库/` `阅读物/` 不再随包 ——
+// ：`故事/` `套装库/` `阅读物/` 不再随包 ——
 // 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里，
 // 这三个目录在发行版只当「增量补丁」（用户拖进来的文件覆盖对应那一条）。
 // 用户在工坊里拖文件时目录会自动重建，所以这里删干净。

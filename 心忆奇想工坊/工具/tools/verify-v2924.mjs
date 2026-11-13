@@ -1,11 +1,6 @@
 /**
- * v2.0.06 验收 —— 版本序号覆盖修复 / 撤回含产物 / 拓展包四行四列 /
- *                 重复阅读物删除 / 写入只检验改动项
- *
- * 纯离线：不连 5178 / 5199（dev server 未启动也能跑）。
- * 浏览器只用 page.setContent 渲染工坊那段 CSS，测真实的 4×4 与滚动。
- *
- *   node tools/verify-v2924.mjs
+ * 验收 —— 版本序号覆盖修复 / 撤回含产物 / 拓展包四行四列 / 重复阅读物删除 / 写入只检验改动项。
+ * 纯离线（不连 5178 / 5199）：浏览器只用 `page.setContent` 渲染工坊那段 CSS，测真实的 4×4 与滚动。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -28,7 +23,7 @@ function ok(name, cond, extra = '') {
 const csv = read('素材/信息表/版本表.csv')
 const pm = JSON.parse(read('素材/pool-map.json'))
 const manifest = JSON.parse(read('public/assets/manifest.json'))
-// v2.1.05：`src/data/reading-titles.ts` 已删，改读运行时真源（标题在里面）
+// ：`src/data/reading-titles.ts` 已删，改读运行时真源（标题在里面）
 const titles = read('public/assets/data/readings.json')
 const readingsTs = read('src/data/readings.ts')
 const server = read('updater/server.mjs')

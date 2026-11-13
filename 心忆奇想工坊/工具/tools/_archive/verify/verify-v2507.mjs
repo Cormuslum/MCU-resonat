@@ -1,13 +1,13 @@
 /**
- * v2.5.07 验收 · 全量卡池 + 专属铭牌/艺术字 + 080 新池
+ * 验收 · 全量卡池 + 专属铭牌/艺术字 + 080 新池
  *
- * ⚠️ v1.4.02 起共鸣页**只列当前版本的卡池**，所以下面的断言按「当前版本的池」重写：
- *   A1/A2 在 2.10 上数（4 个池），A4 切 1.8（030）、A5 切 1.0（004）、A6/B1 切 2.11（080）。
+ * ⚠️ 起共鸣页**只列当前版本的卡池**，所以下面的断言按「当前版本的池」重写：
+ * A1/A2 在 2.10 上数（4 个池），A4 切 1.8（030）、A5 切 1.0（004）、A6/B1 切 2.11（080）。
  *
  * 覆盖用户这一批的三条要求：
- *   1. 补全所有版本的所有卡池（列表 6 项 → manifest 全量 80 项）
- *   2. 有专属套装铭牌就用专属：五星 `_name_01`、四星 `_name_02`，没有才用通用底框
- *   3. 有卡池名艺术字就必须用（不许退回纯文字）
+ * 1. 补全所有版本的所有卡池（列表 6 项 → manifest 全量 80 项）
+ * 2. 有专属套装铭牌就用专属：五星 `_name_01`、四星 `_name_02`，没有才用通用底框
+ * 3. 有卡池名艺术字就必须用（不许退回纯文字）
  *
  * 用法：先 `npx vite`（5178），再 `node tools/verify-v2507.mjs`
  */
@@ -28,7 +28,7 @@ const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, 
 const page = await ctx.newPage()
 
 /**
- * 版本门禁（v1.4.02）：未选版本时 /banner 会被守卫打回版本页。
+ * 版本门禁：未选版本时 /banner 会被守卫打回版本页。
  * 这里在存档里预置一个当前版本（只在「还没选过」时写，方便后面 useVersion 切换后不被覆盖）。
  */
 await page.addInitScript(() => {
@@ -106,7 +106,7 @@ console.log('\n=== v2.5.07 全量卡池 + 专属铭牌 + 080 ===')
 /* ── A1 列表 = 当前版本(2.10)的池 ── */
 await step('A1 列表按版本收窄', async () => {
   const n = await page.$$eval('.pool-item', (els) => els.length)
-  // v1.4.03：每个版本末尾再挂一个常驻池
+  // ：每个版本末尾再挂一个常驻池
   const want = manifest.banners.filter((b) => b.version === '2.10').length + 1
   check('A1 卡池列表 = 当前版本(2.10)的池数 + 常驻', n === want && want > 0,
     `列表 ${n} / 2.10 共 ${want} 个池（全库 ${manifest.banners.length}）`)
@@ -124,7 +124,7 @@ await step('A2 列表缩略图', async () => {
     `共 ${uniq.total} 项 / ${uniq.uniq} 张不同图`)
 })
 
-/* ── A3 艺术字：v1.6.06 补齐 058（简中素材）后，每池都有 title ── */
+/* ── A3 艺术字： 补齐 058（简中素材）后，每池都有 title ── */
 await step('A3 艺术字覆盖', async () => {
   const noTitle = manifest.banners.filter((b) => !b.assets.title).map((b) => b.gachaKey)
   check('A3 全部服装阁都有阁名艺术字（058 已于 v1.6.06 补齐）',
@@ -141,7 +141,7 @@ await step('A4 030 铭牌', async () => {
     title: document.querySelector('.title-art')?.getAttribute('src') ?? null,
   }))
   const star5 = r.names[0]
-  // v1.4.03：文件按「套装序号」命名（030-1 = 5★、030-2 = 4★），不再是 -5 / -4
+  // ：文件按「套装序号」命名（030-1 = 5★、030-2 = 4★），不再是 -5 / -4
   const ok5 = /030-1\.webp$/.test(r.plates[0] ?? '')
   const ok4 = /030-2\.webp$/.test(r.plates[1] ?? '')
   check('A4 030 五星用 name_01、四星用 name_02',
@@ -182,7 +182,7 @@ await step('B1 080 新池', async () => {
   check('B1 080 雪落颂愿时可选 + 艺术字',
     r.big.startsWith('雪落颂愿时') && /title\/080\.webp$/.test(r.title ?? '') && !r.titleText,
     `选中=${r.big} / title=${r.title}`)
-  // v1.4.02：080 的卡池背景已由用户补图（1000×500 列表图 → bg/），不再是渐变兜底
+  // ：080 的卡池背景已由用户补图（1000×500 列表图 → bg/），不再是渐变兜底
   const bg = await page.evaluate(() => ({
     src: document.querySelector('.bg-still')?.getAttribute('src') ?? '',
     none: !!document.querySelector('.bg-none'),
@@ -192,7 +192,7 @@ await step('B1 080 新池', async () => {
   check('B1 080 两套齐全（5★+4★）',
     r.names.join() === '绽若颂愿心,奶酪与剑', r.names.join(' / '))
   const wish = await page.$eval('.wc-txt ~ *, .wish-card', (el) => el.textContent?.replace(/\s+/g, '') ?? '')
-  // v1.5.05：080 已补齐深忆奖励素材（20~100 + 120~180 + 230 共 12 档）——
+  // ：080 已补齐深忆奖励素材（20~100 + 120~180 + 230 共 12 档）——
   // 提示从「奖励待收录」变成「深海回响 N 次后可领取」，且不能谎报「全部已领取」
   check('B1 080 有深忆奖励素材 → 提示「深海回响 N 次后可领取」',
     /深海回响\d+次后可领取/.test(wish) && !/全部已领取/.test(wish), wish.slice(0, 40))

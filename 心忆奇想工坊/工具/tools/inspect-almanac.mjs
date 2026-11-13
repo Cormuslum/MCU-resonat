@@ -1,8 +1,6 @@
 /**
- * inspect-almanac.mjs —— 玄学运势三态截图 + 几何检查
- *
- * 待机 → 点卷轴（收起）→ 快速展开（已展开）→ 快速收起 → 反拖回待机
- * 用法：npm run dev 后 node tools/inspect-almanac.mjs
+ * 玄学运势三态截图 + 几何检查：待机 → 点卷轴（收起）→ 快速展开（已展开）→ 快速收起 → 反拖回待机。
+ * 用法：`npm run dev` 后 `node tools/inspect-almanac.mjs`。
  */
 import { chromium } from 'playwright-core'
 

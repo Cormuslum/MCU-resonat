@@ -1,11 +1,5 @@
 /**
- * 辉煌心光截图巡检（v1.3.00）
- *
- * 产出：
- *   .shots/gl-idle.png      首页（图标全隐）
- *   .shots/gl-hover.png     悬停「音量」后的金环
- *   .shots/gl-panel-0~3.png 四类面板（评分板容器）
- *   .shots/gl-confirm.png   二级确认条
+ * 辉煌心光截图巡检，产物在 `.shots/`：`gl-idle.png` 首页 / `gl-hover.png` 悬停金环 / `gl-panel-0~3.png` 四类面板 / `gl-confirm.png` 二级确认条。
  */
 import { chromium } from 'playwright-core'
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'

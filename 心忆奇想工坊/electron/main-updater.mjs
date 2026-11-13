@@ -1,25 +1,7 @@
 /**
- * 心忆奇想工坊 · Electron 主进程（发行版启动器）· v2.1.00
- *
- * 发行版布局（**两个目录职责分离**，玩家可以只下载模拟器那一个）：
- *
- *   无限暖暖发行版/
- *     无限暖暖模拟器/      ← 纯静态：exe + dist + public + userdata
- *     心忆奇想工坊/        ← 本 exe 所在
- *       运行时/           python.exe + Pillow + ffmpeg.exe
- *       工具/updater/     工坊服务
- *       工具/tools/       Python 管线
- *       工具/data/        信息表/套装库/故事/阅读物/pool-map
- *
- * 三个根分别告诉 server：
- *   NIKKI_TOOLROOT  = exeDir/工具         （server.mjs / tools/ 在哪）
- *   NIKKI_DATA_DIR  = exeDir/工具/data    （编辑数据在哪）
- *   NIKKI_ROOT      = ../无限暖暖模拟器    （public/assets 在哪、往哪写成品）
- *
- * 老布局（updater/ 直接躺在模拟器目录里）仍然兼容：找不到 `工具/` 时退回旧逻辑。
- *
- * 起服务用 Electron 自带 Node（ELECTRON_RUN_AS_NODE=1），不依赖系统 node。
- * 传 UPDATER_NO_OPEN=1 关闭 server.mjs 的「自动开浏览器」——否则会同时弹窗 + 弹浏览器。
+ * 心忆奇想工坊 · Electron 主进程（发行版启动器）：`<发行版>/心忆共鸣/`（纯静态）与 `心忆奇想工坊/`（本 exe、运行时、工具）。
+ * 三个根：`NIKKI_TOOLROOT` = exeDir/工具、`NIKKI_DATA_DIR` = exeDir/工具/data、`NIKKI_ROOT` = ../心忆共鸣；找不到 `工具/` 时退回老布局。
+ * 起服务用 Electron 自带 Node（`ELECTRON_RUN_AS_NODE=1`）；`UPDATER_NO_OPEN=1` 关闭 server 的自动开浏览器。
  */
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import { spawn } from 'node:child_process'
@@ -31,14 +13,8 @@ import { fileURLToPath } from 'node:url'
 
 const BASE_PORT = Number(process.env.NIKKI_UPDATER_PORT || 5199)
 /**
- * 端口冲突时向后找几个（v2.1.05）。
- *
- * 以前只要 5199 有人监听就直接复用 —— 但**开发版工坊也是 5199**。
- * 开发版起在项目根（`npm run up`）时再双击发行版 exe，会静默连到开发版：
- * 界面「这次会写入」显示 `素材/信息表/版本表.csv`，写文件也写进项目根，
- * 而发行版根本没有 `素材/` 目录 —— 玩家看到的是「工坊在引用不存在的素材目录」。
- * 现在改为：先问对方一句「你是谁」（`/api/state` 的 toolRoot），
- * 只有同一个工具目录才复用，否则换端口起自己的实例。
+ * 端口冲突时向后找几个：先问对方一句「你是谁」（`/api/state` 的 toolRoot），
+ * 只有同一个工具目录才复用，否则换端口起自己的实例 —— 绝不连错数据根。
  */
 const PORT_SPAN = 8
 
@@ -57,8 +33,8 @@ function findLayout() {
   if (isFile(serverNew)) {
     const targetCands = [
       process.env.NIKKI_ROOT,
-      path.join(exeDir, '..', '无限暖暖模拟器'),
-      path.join(exeDir, '无限暖暖模拟器'),
+      path.join(exeDir, '..', '心忆共鸣'),
+      path.join(exeDir, '心忆共鸣'),
     ].filter(Boolean)
     const targetRoot = targetCands.find((p) => isDir(path.join(p, 'public'))) || targetCands[1]
     const rt = path.join(exeDir, '运行时')
@@ -126,11 +102,7 @@ function probeStudio(port, timeoutMs = 1200) {
 }
 
 /**
- * 选一个能用的端口。
- *
- *   · 空着        → 起新实例
- *   · 占着但是**自己这套布局**的工坊（toolRoot 相同）→ 复用它
- *   · 占着的是别人的工坊 / 别的程序 → 换下一个端口（绝不连错数据根）
+ * 选一个能用的端口：空着 → 起新实例；占着但是同一套布局（toolRoot 相同）→ 复用；占着别人的 → 换下一个。
  */
 async function pickPort(L) {
   const mine = path.resolve(L.toolRoot)
@@ -185,12 +157,8 @@ function spawnServer(L, port) {
   if (L.targetRoot) env.NIKKI_OUT_DIR = path.join(L.targetRoot, 'public', 'assets')
   // 发行版不落 `素材/`：用户选的图直接从原位置转进 public
   if (L.distMode) env.NIKKI_DIST_MODE = '1'
-  // v2.1.02：**基线模式**。
-  // 发行版不随包发 `数据/{故事,套装库,阅读物}`（4.5M 内置正文）——
-  // 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里。
-  // 这三个目录在发行版只当**增量补丁**：用户拖进来的新文件覆盖对应那一条，
-  // 其余内置内容原样保留。没有这个开关，管线会把 stories.json 写成空数组，
-  // 134 篇故事 + 593 篇阅读物当场清空。
+  // 基线模式：发行版不随包发 `数据/{故事,套装库,阅读物}`（成品已在模拟器里），这三个目录只当增量补丁；
+  // 少了 `NIKKI_JSON_BASELINE` 管线会把 stories.json 写成空数组。
   if (L.distMode) env.NIKKI_JSON_BASELINE = '1'
 
   child = spawn(process.execPath, [serverPath, String(port)], {
@@ -207,7 +175,7 @@ app.whenReady().then(async () => {
   if (!L) {
     dialog.showErrorBox(
       '找不到工坊数据目录',
-      '请把「心忆奇想工坊」与「无限暖暖模拟器」放在同一个发行文件夹里\n' +
+      '请把「心忆奇想工坊」与「心忆共鸣」放在同一个发行文件夹里\n' +
       '（工坊目录下应有 `工具/updater/server.mjs` 与 `运行时/python.exe`）。\n' +
       '也可以设置环境变量 NIKKI_ROOT 指向模拟器目录。'
     )

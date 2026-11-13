@@ -1,13 +1,13 @@
 /**
- * verify-v2302.mjs —— v1.2.02 十九项改动验收
+ * verify-v2302.mjs —— 十九项改动验收
  *
  * 覆盖：
- *   主页   双 LOGO 并存 / 动态背景与切换键 / 右缘系统图标（50% → 100%+放大 10px）
- *   全局   侧边栏（#C39C7A 圆角金边 + 系统图标）/ 二级界面 ESC 返回
- *   版本   1.0 大版本按钮 sticky
- *   共鸣   首末卡池放大不被裁 / 星级 3× / 纯 4★ 概率 / 十连「跳过全部只跳重复」
- *   图鉴   赛季栏下边界 1030 / 未获得容器背景灰
- *   辉煌   清空卡池记忆真正清部件（故事随之回锁）
+ * 主页 双 LOGO 并存 / 动态背景与切换键 / 右缘系统图标（50% → 100%+放大 10px）
+ * 全局 侧边栏（#C39C7A 圆角金边 + 系统图标）/ 二级界面 ESC 返回
+ * 版本 1.0 大版本按钮 sticky
+ * 共鸣 首末卡池放大不被裁 / 星级 3× / 纯 4★ 概率 / 十连「跳过全部只跳重复」
+ * 图鉴 赛季栏下边界 1030 / 未获得容器背景灰
+ * 辉煌 清空卡池记忆真正清部件（故事随之回锁）
  *
  * 运行：node tools/verify-v2302.mjs（需 dev server 在 5178）
  */
@@ -58,7 +58,7 @@ p.on('pageerror', (e) => errs.push('PAGEERR ' + e.message))
 p.on('console', (m) => m.type() === 'error' && errs.push('CONSOLE ' + m.text().slice(0, 120)))
 
 /**
- * 按名字点卡池（v2.5.07）。
+ * 按名字点卡池。
  * 卡池列表从硬编码 6 项改成 manifest 全量 80 项后，行号再也不能当身份用 ——
  * 以前 `nth=3` 是「不灭的幽旅」、`nth=1` 是「执律的流金」，现在分别是别的池。
  */
@@ -129,7 +129,7 @@ const logos = await p.evaluate(() =>
     }
   }),
 )
-// v1.3.00 起：动态背景**只留**竖版「心忆共鸣」，横版「无限暖暖」只在静态背景出现
+// 起：动态背景**只留**竖版「心忆共鸣」，横版「无限暖暖」只在静态背景出现
 ok(
   'R1 动态背景下只有竖版「心忆共鸣」',
   logos.length === 1 && logos[0].cls === 'hm-logo',
@@ -229,7 +229,7 @@ for (const [route, label] of escTargets) {
 console.log('\n【三、版本页】')
 await boot(SAVE, '/versions')
 const vTop0 = await box('.vr-major')
-// v1.4.02：版本页会记住「当前版本」并展开它所在的大版本（存档里是 2.10 → 展的是伊赞之土），
+// ：版本页会记住「当前版本」并展开它所在的大版本（存档里是 2.10 → 展的是伊赞之土），
 // 这条测的是 1.0 那颗按钮的 sticky，所以先把它那一组展开回来
 await p.evaluate(() => document.querySelectorAll('.vr-major')[0]?.click())
 await p.waitForTimeout(500)
@@ -291,7 +291,7 @@ const starW = await p.evaluate(() => {
   const i = document.querySelector('.sb-stars img')
   return i ? Number(i.getBoundingClientRect().width.toFixed(1)) : 0
 })
-// v1.3.00：54 → 32.4（缩回 3/5），名称牌同步放大到 300×86
+// ：54 → 32.4（缩回 3/5），名称牌同步放大到 300×86
 ok('R8 套装星级图标 32.4px / 间距 −3px', Math.abs(starW - 32.4) < 0.1, starW + 'px')
 
 /* 纯 4★ 池：不灭的幽旅（按名字点，别用行号） */
@@ -381,7 +381,7 @@ await p.click('.gm-row >> nth=0 >> .gm-btn')
 await p.waitForTimeout(2600)
 const before = await p.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('nikki-resonance-save-v1')).codex).length)
 // 关掉「快捷」面板，再开「存档」→ 按**行标题**找「当前服装阁记忆」
-// （v1.6.08 存档面板顶部多了「存档备份」一行，行下标不再固定）
+// 存档面板顶部多了「存档备份」一行，行下标不再固定
 await p.keyboard.press('Escape')
 await p.waitForTimeout(320)
 await p.click('.gl-hot >> nth=3')
@@ -407,7 +407,7 @@ const lockedStory = await (async () => {
   await p.goto(BASE + '/#/codex/stories', { waitUntil: 'domcontentloaded' })
   await p.waitForTimeout(1500)
   // 被清的池（执律的流金 / 2.10 金羽的裁决）属于伊赞之土，必须切到该区域再数。
-  // ⚠ 按**文本**定位，不要写死下标：v1.7.00 在顶部加了「奇迹传说」栏之后，
+  // ⚠ 按**文本**定位，不要写死下标： 在顶部加了「奇迹传说」栏之后，
   //   原来的 nth=1 从「伊赞之土」变成了「心愿原野」，断言会静默失效。
   await p.getByText('伊赞之土', { exact: true }).first().click()
   await p.waitForTimeout(700)

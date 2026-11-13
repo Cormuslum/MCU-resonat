@@ -1,17 +1,13 @@
 /**
- * 阅读物图鉴 · pxdesk 坐标一致性校验
- *
- * 依据：`素材/博物图鉴/子界面-故事&阅读物 图鉴（两个子界面，但素材相同）/图片工程-{心愿原野,伊赞之土}.pxdesk`
- *       → `tools/gen-readings-layout.py` → `src/data/readings-layout.ts`
- * 断言：每个素材层的渲染 bbox 必须与 RD_LAYOUT 声明值一致（容差 ±2px），
- *       层序/区域专属装饰/标签旋转/正文两步加载/区域瞬切/menu 不遮挡选项卡。
+ * 阅读物图鉴 pxdesk 坐标一致性校验：`图片工程-{心愿原野,伊赞之土}.pxdesk` → `tools/gen-readings-layout.py` → `src/data/readings-layout.ts`。
+ * 断言每个素材层渲染 bbox 与 `RD_LAYOUT` 声明一致（±2px），另含层序 / 区域专属装饰 / 标签旋转 / 正文两步加载 / 区域瞬切 / menu 不遮挡选项卡。
  */
 import { chromium } from 'playwright-core'
 
-/* ⚠ v1.6.00 现状口径：本脚本是「博物图鉴重构」之前的旧巡检，
- *   断言的入口（`.mz-hit` / `.rd-collect` 等）在重构后已不存在，跑起来只会报超时。
- *   现行验收统一看 tools/verify-readings.mjs（按《博物图鉴重构计划书.md》§8 M3）。
- *   文件保留仅作历史参考，不再执行。 */
+/* ⚠ 现状口径：本脚本是「博物图鉴重构」之前的旧巡检，
+ * 断言的入口（`.mz-hit` / `.rd-collect` 等）在重构后已不存在，跑起来只会报超时。
+ * 现行验收统一看 tools/verify-readings.mjs（按《博物图鉴重构计划书.md》§8 M3）。
+ * 文件保留仅作历史参考，不再执行。 */
 console.log('[已并入 verify-readings.mjs] 本脚本为重构前的旧巡检，不再执行。')
 process.exit(0)
 
@@ -30,7 +26,7 @@ const errs = []
 p.on('pageerror', (e) => errs.push(e.message))
 p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.text()) })
 
-  // v1.6.00 现状口径：主页自 v2.3.x 起循环播 bg-video.webm + bg-audio.ogg，
+  // 现状口径：主页自 .x 起循环播 bg-video.webm + bg-audio.ogg，
   // 网络永远不会「空闲」→ waitUntil 必须用 domcontentloaded，不能用 networkidle
 await p.goto(BASE + '/', { waitUntil: 'domcontentloaded' })
 await p.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))
@@ -137,7 +133,7 @@ ok(near(listGeo.lx, 243) && near(listGeo.ly, 189), `[wish] 列表原点 (${listG
 ok(near(listGeo.lw, 410), `[wish] 列表宽 ${listGeo.lw} ≈ 410`)
 ok(near(listGeo.rh, 72), `[wish] 行高 ${listGeo.rh} ≈ 71.5`)
 
-// v1.0.04：右上角 menu 已移除（与返回键功能重合）；选项卡容器改为 common_img_menu_s，仅高亮时出现
+// ：右上角 menu 已移除（与返回键功能重合）；选项卡容器改为 common_img_menu_s，仅高亮时出现
 const menuGone = await p.evaluate(() => !document.querySelector('.rd-menu'))
 ok(menuGone, '[wish] 右上角 menu 已移除（与返回键重合）')
 
@@ -214,7 +210,7 @@ ok(emptyOp !== null && Math.abs(parseFloat(emptyOp) - 0.15) < 0.02, `[空态] �
 ok(emptyTxt === '暂未获得阅读物，快去世界探索吧~', `[空态] 提示文字 = "${emptyTxt}"`)
 
 // 彩蛋 opacity
-// v1.0.04：彩蛋仅在「已获取的阅读物」展示时出现；空态隐藏
+// ：彩蛋仅在「已获取的阅读物」展示时出现；空态隐藏
 const eggEmpty = await p.$('.rd-egg')
 ok(eggEmpty === null, '[彩蛋] 空态不显示（未获取阅读物）')
 await p.click('.rd-row')

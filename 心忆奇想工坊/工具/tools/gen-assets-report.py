@@ -91,7 +91,7 @@ KEY_NOTES: dict[str, str] = {
     "ui/btn/mouseclick.webp": "「鼠标左键」键帽图标",
     "ui/btn/key-f.webp": "「F」键帽图标",
     "ui/btn/key-mouse.webp": "左键提示图标",
-    # 深海回响 V2（v0.9.11）
+    # 深海回响 V2
     "ui/deepsea/bg.webp": "全屏背景 2731×1535（源素材库缺失，从素材副本补入）",
     "ui/deepsea/scene.webp": "「万金之上」摆饰展示大图 1264×728（唯一显示大图的档）",
     "ui/deepsea/track.webp": "主进度轨道波形（黑底白线，振幅 99px → 只能当 screen 柔光叠层）",

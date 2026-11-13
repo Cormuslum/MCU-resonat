@@ -1,7 +1,5 @@
 /**
- * 基础工具：路径、文件读写、图片尺寸、CSV。
- *
- * 零依赖 —— 「心忆奇想工坊」要能在没装任何 npm 包的情况下 `node updater/server.mjs` 起来。
+ * 基础工具：路径、文件读写、图片尺寸、CSV。零依赖，不需要安装任何 npm 包。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -11,28 +9,24 @@ import { fileURLToPath } from 'node:url'
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 /**
  * 工具根：`updater/` 与 `tools/` 所在的目录。
- *
- * 开发版 = `<仓库根>/心忆奇想工坊/工具`，发行版 = `<发行根>/心忆奇想工坊/工具` ——
- * **两者同构**，所以下面所有 `TOOL_ROOT/updater/...` 的拼法在两个环境里都成立。
+ * 开发版 = `<仓库根>/心忆奇想工坊/工具`，发行版 = `<发行根>/心忆奇想工坊/工具`（两者同构）。
  */
 export const TOOL_ROOT = path.resolve(HERE, '..', '..')
 /**
- * 工作区根：`心忆奇想工坊/` 与 `无限暖暖模拟器/` 的公共父目录。
+ * 工作区根：`心忆奇想工坊/` 与 `心忆共鸣/` 的公共父目录。
  * 开发版 = 仓库根，发行版 = 发行根。开发期产物（归档素材 / .dev-guard.json）落在它下面。
  */
 export const WORKSPACE = path.resolve(TOOL_ROOT, '..', '..')
 /**
- * 成品根：`public/assets` 与 `src/` 所在的目录（= 无限暖暖模拟器/）。
+ * 成品根：`public/assets` 与 `src/` 所在的目录（= 心忆共鸣/）。
  * 开发版与发行版同构；发行版启动器也可用 `NIKKI_ROOT` 显式覆盖。
  */
 export const ROOT = process.env.NIKKI_ROOT
   ? path.resolve(process.env.NIKKI_ROOT)
-  : path.join(WORKSPACE, '无限暖暖模拟器')
+  : path.join(WORKSPACE, '心忆共鸣')
 /**
  * 编辑数据根（信息表 / 套装库 / 故事 / 阅读物 / pool-map）。
- *
- * 开发版在 `<仓库根>/素材/`；发行版由启动器设 `NIKKI_DATA_DIR` 指到**工坊工具目录**下的
- * `data/` —— 玩家只下载模拟器时，编辑数据不会跟着走。
+ * 开发版在 `<仓库根>/素材/`；发行版由启动器设 `NIKKI_DATA_DIR` 指到工坊工具目录下的 `data/`。
  */
 export const ASSET = process.env.NIKKI_DATA_DIR
   ? path.resolve(process.env.NIKKI_DATA_DIR)
@@ -55,15 +49,8 @@ function commonAncestor(a, b) {
 }
 
 /**
- * 「发行根」：数据根与成品根的公共祖先。
- *
- * 开发版 = 项目根（`素材/` 与 `public/assets/` 都在它下面）；
- * 发行版 = `无限暖暖发行版/`（工坊的 `工具/data/` 与模拟器的 `public/assets/` 是兄弟）。
- *
- * 所有**给人看的路径**都相对于它 ——
- * 于是开发版显示 `素材/信息表/版本表.csv`、`public/assets/manifest.json`，
- * 发行版显示 `心忆奇想工坊/工具/data/信息表/版本表.csv`、`无限暖暖模拟器/public/assets/manifest.json`，
- * 两边都是磁盘上的真实位置，不会误导。
+ * 「发行根」：数据根与成品根的公共祖先，所有展示路径都相对于它。
+ * 开发版 = 项目根；发行版 = `无限暖暖发行版/`。
  */
 const DISPLAY_ROOT = commonAncestor(ASSET, path.join(PUBLIC, 'assets'))
 
@@ -77,18 +64,14 @@ export function dataLabel() {
   return path.relative(DISPLAY_ROOT, ASSET).split(path.sep).join('/')
 }
 
-/** 成品根的展示前缀（开发版 `public/assets`，发行版 `无限暖暖模拟器/public/assets`） */
+/** 成品根的展示前缀（开发版 `public/assets`，发行版 `心忆共鸣/public/assets`） */
 export function outLabel() {
   return path.relative(DISPLAY_ROOT, path.join(PUBLIC, 'assets')).split(path.sep).join('/')
 }
 
 /**
- * 工具根的展示前缀。
- *
- * 只有**归档目录**（移出套装 / 删掉的素材）落在工具根而不是数据根
- * （`jobs.mjs` 的 `归档素材/`），所以文案里需要一个 `{T}` 占位符。
- * 开发版工具根 = 展示根 → 返回空串（`{T}归档素材/` 就显示 `归档素材/`）；
- * 发行版 → `心忆奇想工坊/工具/`。
+ * 工具根的展示前缀。归档目录（`jobs.mjs` 的 `归档素材/`）落在工具根而非数据根，
+ * 文案里用 `{T}` 占位符。开发版返回空串，发行版返回 `心忆奇想工坊/工具/`。
  */
 export function toolLabel() {
   const r = path.relative(DISPLAY_ROOT, TOOL_ROOT).split(path.sep).join('/')
@@ -96,21 +79,14 @@ export function toolLabel() {
 }
 
 /**
- * 素材根内的相对路径 —— 写进 pool-map / overrides 的键必须用这个。
- *
- * 不能用 `rel()`：发行版的数据根在工坊目录，`rel()` 会得到 `../../心忆奇想工坊/data/…`，
- * 而管线那边算出来的键是 `服装阁/…`（相对素材根），两边对不上，重定向就全落空。
+ * 素材根内的相对路径 —— 写进 pool-map / overrides 的键必须用这个（相对素材根，如 `服装阁/…`）。
  */
 export function assetRel(p) {
   return path.relative(ASSET, p).split(path.sep).join('/')
 }
 
 /**
- * UI 整包根目录名。探测顺序：`界面/UI整包` → `0主素材` → `朋友分享素材`。
- *
- * 三代名字都出现过：最早 `朋友分享素材/UI/...`，2026-11-02 并进 `0主素材/`，
- * 之后用户又把整包归位到 `素材/界面/UI整包/`（v1.9.07 起是**唯一正确**的位置）。
- * 前两代已废弃，这里保留只为了老素材包还能跑；新写入一律落 `界面/UI整包`。
+ * UI 整包根目录名。探测顺序：`界面/UI整包` → `0主素材` → `朋友分享素材`；新写入一律落 `界面/UI整包`。
  */
 export function uiRoot() {
   for (const name of ['界面/UI整包', '0主素材', '朋友分享素材']) {
@@ -164,9 +140,7 @@ export function stamp() {
 
 /**
  * 读图片宽高（PNG / JPEG / WebP / GIF / BMP），读不出来返回 null。
- *
- * 只解析文件头，不解码像素 —— 拖进几百张图做归类时这是唯一现实的方案
- * （sharp / jimp 都要装包，而更新工坊的第一步「识别」必须秒回）。
+ * 只解析文件头，不解码像素。
  */
 export function imageSize(file) {
   let fd
@@ -177,12 +151,12 @@ export function imageSize(file) {
     const buf = Buffer.alloc(Math.min(65536, st.size))
     fs.readSync(fd, buf, 0, buf.length, 0)
 
-    // PNG：8 字节签名后是 IHDR，宽高各 4 字节大端
+    // PNG
     if (buf.readUInt32BE(0) === 0x89504e47) {
       return { w: buf.readUInt32BE(16), h: buf.readUInt32BE(20), type: 'png' }
     }
 
-    // GIF：逻辑屏幕宽高各 2 字节小端
+    // GIF
     if (buf.toString('ascii', 0, 3) === 'GIF') {
       return { w: buf.readUInt16LE(6), h: buf.readUInt16LE(8), type: 'gif' }
     }
@@ -192,7 +166,7 @@ export function imageSize(file) {
       return { w: buf.readInt32LE(18), h: Math.abs(buf.readInt32LE(22)), type: 'bmp' }
     }
 
-    // WebP：RIFF....WEBP + 子块（VP8X 有显式画布尺寸；VP8 / VP8L 要挖帧头）
+    // WebP
     if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
       const chunk = buf.toString('ascii', 12, 16)
       if (chunk === 'VP8X') {
@@ -201,7 +175,6 @@ export function imageSize(file) {
         return { w, h, type: 'webp' }
       }
       if (chunk === 'VP8 ') {
-        // 帧头：起始码 9d 01 2a 之后 2 字节宽、2 字节高（各 14 位有效）
         const i = buf.indexOf(Buffer.from([0x9d, 0x01, 0x2a]), 20)
         if (i > 0) {
           return {
@@ -212,14 +185,13 @@ export function imageSize(file) {
         }
       }
       if (chunk === 'VP8L') {
-        // 无损：14 位宽、14 位高，紧跟在 0x2f 之后
         const b = buf.readUInt32LE(21)
         return { w: (b & 0x3fff) + 1, h: ((b >> 14) & 0x3fff) + 1, type: 'webp' }
       }
       return null
     }
 
-    // JPEG：扫段找 SOFn
+    // JPEG
     if (buf[0] === 0xff && buf[1] === 0xd8) {
       let i = 2
       while (i < buf.length - 9) {
@@ -285,12 +257,7 @@ export function toCsv(headers, rows) {
 
 /**
  * 版本号排序键：0.1 < 0.2 < 1.0 < 1.1 < 1.10 < 2.11。
- *
- * 既接受字符串（`'1.10'`）也接受版本行对象（`{ v: '1.10', ... }`）——
- * v1.9.07 之前只认字符串，而 `sortVersions()` 传进来的全是对象，
- * `String(obj)` 得到 `"[object Object]"` → 解析成 `[0]`，
- * 于是所有键相等、排序成了空操作，CSV 一直保持写入顺序（0.1 / 0.2 被追加在末尾，
- * 工坊下拉也就把 0.2 排到了 2.11 后面）。
+ * 既接受字符串（`'1.10'`）也接受版本行对象（`{ v: '1.10', ... }`）。
  */
 export function verKey(v) {
   const s = (v && typeof v === 'object') ? (v.v ?? v.version ?? '') : v
@@ -330,11 +297,7 @@ function probe(cmd, args) {
 
 /**
  * 该用哪个 python 解释器。
- *
- * 发行版自带运行时（`工坊目录/运行时/python.exe`）**优先**。系统 PATH 上的 `python`
- * 在很多 Windows 上是 Microsoft Store 的假存根 —— 一跑就 exit 9009 且 **stderr 为空**。
- * 这就是「打包 zip 失败：」（冒号后面什么都没有）的真因（v2.2.02）：
- * 那时 dlc/archive/remote 三处还在裸调 `python`，而管线早就走这个函数了。
+ * 取值优先级：`NIKKI_PY` → `NIKKI_RUNTIME_DIR` 下的 `python.exe` → `python` / `py` / `python3`。
  */
 export function pythonBin() {
   if (PY) return PY
@@ -353,10 +316,7 @@ export function pythonBin() {
 
 /**
  * 把 `spawnSync` 的失败结果翻成一句人话。
- *
- * `status === 9009` / `error.code === 'ENOENT'` 都不是「脚本报错」，而是
- * 「根本没跑起来」—— 以前统一拼 `'…失败：' + stderr`，stderr 为空时界面上就只剩
- * 一个孤零零的冒号，用户无从下手。
+ * `ENOENT` 与退出码 `9009` 表示进程根本没跑起来，不是脚本报错。
  */
 export function pyFailText(prefix, r, extra = '') {
   if (r?.error?.code === 'ENOENT') {

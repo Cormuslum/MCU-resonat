@@ -1,18 +1,7 @@
 /**
- * 把 `CHANGELOG.md` 最近三次更新，抽成主页信封弹窗用的**运行时 JSON**。
- *
- * 为什么生成而不是运行时解析：
- *   CHANGELOG 已经 300KB+，整份塞进前端不现实；这里只取
- *   「版本号 / 日期 / 标题 / 最多 5 条要点」，产物 1~2KB。
- *
- * 为什么是 JSON 而不是 .ts（v2.2.03）：
- *   以前写 `src/data/mail-changelog.ts`，内容会被编译进 JS —— 改一段版本说明
- *   就得回项目 `npm run build`，发行版里（没有 vite）根本做不到。
- *   现在写成 `public/assets/data/mail-changelog.json`，模拟器运行时 fetch，
- *   **改这份 JSON 刷新页面就生效**，信封验收只动这一个文件。
- *
- * 用法：node tools/gen-mail-changelog.mjs
- * 已挂到 `prebuild`，`npm run build` 会自动重生成。
+ * 把 `CHANGELOG.md` 最近三次更新抽成主页信封弹窗用的运行时 JSON（只取版本号 / 日期 / 标题 / 最多 5 条要点）。
+ * 产物 `public/assets/data/mail-changelog.json`，模拟器运行时 fetch —— 改完刷新页面即生效（发行版没有 vite，改不了 .ts）。
+ * 用法：`node tools/gen-mail-changelog.mjs`，已挂到 `prebuild`。
  */
 import fs from 'node:fs'
 import path from 'node:path'

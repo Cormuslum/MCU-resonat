@@ -117,7 +117,7 @@ def main():
         return f"ui/loading/{name}" if os.path.isfile(os.path.join(OUT, name)) else None
 
     # ⚠ 必须 merge 而不是整段覆盖：`ui.loading` 里还有别的脚本/手工维护的键
-    # （比如 v1.3.01 加的 `bg` 整屏底图），写成 `= {...}` 会把它悄悄抹掉。
+    # （比如加的 `bg` 整屏底图），写成 `= {...}` 会把它悄悄抹掉。
     ld = man.setdefault("ui", {}).setdefault("loading", {})
     ld.update({
         "sliderOff": rel("slider-off.webp"),

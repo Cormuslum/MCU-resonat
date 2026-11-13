@@ -1,5 +1,5 @@
 /**
- * v1.6.07 验收：工坊批量/导入能力 + 铭牌与缩略图修复。
+ * 验收：工坊批量/导入能力 + 铭牌与缩略图修复。
  *
  * A. 铭牌：`plateIdx` 正确（5★ 在前），且不合法编号不会串到别的阁
  * B. 缩略图：缺缩略图的阁用自己的背景，不借别的阁的图
@@ -100,7 +100,7 @@ console.log('\n【B. 列表缩略图】')
     shared.map(([f, l]) => `${f}:${l.join('/')}`).join(' , ') || '一阁一图')
 
   const p081 = manifest.banners.find((b) => b.name === '心愿栖金蕊')
-  // v1.9.03：编号 081 改成了 1000，缩略图文件名跟着编号走
+  // ：编号 081 改成了 1000，缩略图文件名跟着编号走
   ok('示例阁的缩略图来自它自己的背景', !!p081 && p081.assets.thumb === 'banners/thumb/1000.webp',
     p081?.assets.thumb)
 }
@@ -200,7 +200,7 @@ console.log('\n【D. 工坊任务与槽位】')
   ok('服装阁任务有 整体图 / 半身像 / 套装数据 / 动态背景 / 故事 槽位',
     ['ov', 'bust', 'suitLib', 'video', 'story'].every((k) => poolSlots.includes(k)), poolSlots.join(','))
 
-  // v1.9.03：立绘/整体图/进化立绘合并、属性文件/套装文案合并、标题横幅删除、池型→阁型
+  // ：立绘/整体图/进化立绘合并、属性文件/套装文案合并、标题横幅删除、池型→阁型
   ok('立绘类已合并成 1 个槽位（不再有 portrait / evo / awaken）',
     !['portrait', 'evo', 'awaken'].some((k) => poolSlots.includes(k)), poolSlots.join(','))
   ok('属性文件与套装文案已合并（不再有 yaml / suitText）',
@@ -257,7 +257,7 @@ console.log('\n【F. 模拟器（0.1 版本）】')
   ok('共鸣页列出 0.1 的阁 + 常驻', list.names.includes('心愿栖金蕊'), list.names.join(' / '))
   ok('列表缩略图一阁一图', new Set(list.srcs).size === list.srcs.length, list.srcs.join(' , '))
 
-  // ① 第一座阁「心愿栖金蕊」有动态背景（v1.9.03）→ 应该直接播视频
+  // ① 第一座阁「心愿栖金蕊」有动态背景→ 应该直接播视频
   await page.locator('.pool-item').first().click()
   await page.waitForFunction(
     () => (document.querySelector('video.bg-video')?.videoWidth || 0) > 0,
@@ -287,7 +287,7 @@ console.log('\n【F. 模拟器（0.1 版本）】')
     title: document.querySelector('.title-art')?.getAttribute('src') || '',
     video: !!document.querySelector('video.bg-video'),
   }))
-  // v1.9.02：背景目录 `bg-clean/` 改名为 `bg/`，源图直接是 2560×1440 的 jpg，
+  // ：背景目录 `bg-clean/` 改名为 `bg/`，源图直接是 2560×1440 的 jpg，
   // 所以宽度断言用 >=1920（不再要求正好 1920）。
   ok('无动态背景的阁退回静态底图且已加载',
     scene.bg.endsWith('/bg/001.webp') && scene.bgW >= 1920 && !scene.video,

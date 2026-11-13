@@ -1,9 +1,6 @@
 /**
- * 素材识别：拖进来的文件属于哪一类、大概是什么、建议归档到哪。
- *
- * 原则：**只做建议，不做决定**。
- *   尺寸/文件名能 90% 猜准（游戏素材规格极其规整），但「这是哪个套装」「哪个池」
- *   必须由表单字段提供 —— 猜错一个字就会写进错误目录，比让用户点一下下拉贵得多。
+ * 素材识别：拖进来的文件属于哪一类、建议归档到哪。**只做建议，不做决定** ——
+ * 「这是哪个套装」「哪个池」必须由表单字段提供。
  */
 import path from 'node:path'
 import { imageSize } from './util.mjs'
@@ -23,7 +20,7 @@ export const KINDS = {
   setPortrait: { label: '套装立绘', group: '套装', hint: '448×656 竖图' },
   setBust: { label: '部件试穿图（半身像）', group: '套装', hint: '520×724（2 倍图也行），文件名 = 部位-部件名' },
   // 「立绘 / 整体图 / 进化立绘」在素材侧已合并成同一类（OV），
-  // 三个 kind 都指向「整体图（OV）」这一个槽位，识别时按文件名区分阶段即可。
+  // 三个 kind 都指向「整体图（OV）」这一个槽位，识别时按文件名区分阶段。
   setCardEvo: { label: '整体图（OV）', group: '套装', hint: '整体-初始/焕新/一进/二进/满进.png' },
   awaken: { label: '进化立绘（并入整体图）', group: '套装', hint: '进化LV1~n.png → 折算成焕新/一进/二进/满进' },
   partIcon: { label: '部件图标', group: '套装', hint: '256×256，文件名 = 部件名' },
@@ -37,9 +34,7 @@ export const KINDS = {
 const PIC = /\.(png|jpe?g|webp|gif|bmp)$/i
 
 /**
- * 猜类别。
- * @param {{name:string,w?:number,h?:number}} f  文件名与尺寸
- * @returns {{kind:string, confidence:'high'|'mid'|'low', note:string}}
+ * 猜类别：f = { name, w?, h? } → { kind, confidence:'high'|'mid'|'low', note }
  */
 function classify(f) {
   const name = f.name
@@ -63,8 +58,7 @@ function classify(f) {
   // 动态背景：视频文件（webm / mp4）
   if (/\.(webm|mp4)$/i.test(ext)) return hit('bannerVideo', 'high', '视频文件 = 服装阁动态背景')
 
-  // 进入音：音频文件。服装阁任务里拖音频进来，语义就是「这座阁的进入音」。
-  // 给 mid 而不是 high —— .ogg/.mp3 也可能是别处的音效，允许手动改回去。
+  // 进入音：音频文件。给 mid 而不是 high —— 也可能是别处的音效，允许手动改回去。
   if (/\.(mp3|ogg|wav|m4a|flac)$/i.test(ext)) return hit('bannerEnter', 'mid', '音频文件 = 服装阁进入音')
 
   if (/\.ya?ml$/i.test(ext)) return hit('suitYaml', 'high', 'YAML = 套装数据（属性 + 文案）')
@@ -72,7 +66,7 @@ function classify(f) {
   if (/\.md$/i.test(ext)) return hit('story', 'high', 'Markdown 文本')
 
   if (/\.txt$/i.test(ext)) {
-    // 老式「X星-限定共鸣-《套装》.txt」已并入套装库 YAML（v1.9.03），这里只提示、不再自动归类
+    // 老式「X星-限定共鸣-《套装》.txt」已并入套装库 YAML，这里只提示、不再自动归类
     if (/^\d星-/.test(base) || /共鸣/.test(base)) {
       return hit('unknown', 'mid', '套装文案已并入 套装库 YAML，这份 txt 不会单独登记')
     }
@@ -102,7 +96,6 @@ function classify(f) {
   if (/深海回响|深忆|^\d+抽/.test(base)) return hit('milestone', 'mid', '文件名像深海回响奖励')
 
   // ── 比例兜底
-  // 16:9 但明显比版本大图（1532×860）大 → 只能是服装阁背景（4K 源图很常见）
   if (ar >= 1.7 && ar <= 1.85 && w >= 1900) return hit('bannerBg', 'high', `${w}×${h} 16:9 大图 = 服装阁背景`)
   if (ar >= 1.7 && ar <= 1.85 && w >= 1400) return hit('versionBig', 'mid', `${w}×${h} 接近 16:9 大图`)
   if (ar >= 1.7 && ar <= 1.85 && w >= 900) return hit('bannerBg', 'mid', `${w}×${h} 接近 16:9`)
@@ -116,10 +109,7 @@ function classify(f) {
 }
 
 /**
- * 识别一个磁盘文件。
- * @param {string} file        绝对路径
- * @param {string} [displayName] 展示名（默认取文件名）
- * @param {string} [relPath]     相对路径（「已整理好的文件夹」里靠它判断半身像/图标/进化等阶）
+ * 识别一个磁盘文件：`file` 绝对路径 / `displayName` 展示名 / `relPath` 相对路径（判半身像、图标、进化等阶用）。
  */
 export function inspectFile(file, displayName, relPath) {
   const size = imageSize(file)

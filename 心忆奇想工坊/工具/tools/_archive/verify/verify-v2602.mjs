@@ -1,16 +1,16 @@
 /**
- * v1.4.02 验收 · 共鸣页按版本收窄 + 首次必须选版本 + 080 卡池背景
+ * 验收 · 共鸣页按版本收窄 + 首次必须选版本 + 080 卡池背景
  *
  * 覆盖用户这一批的两条要求：
- *   1. 共鸣页只显示**当前版本**的卡池；首次进入必须先在「时隙遗光」选一次版本，
- *      没选之前主页的共鸣入口与侧栏共鸣项都置灰不可点。
- *   2. 「雪落颂愿时」（080）的卡池背景用用户补的图（`bg/080.webp`）。
+ * 1. 共鸣页只显示**当前版本**的卡池；首次进入必须先在「时隙遗光」选一次版本，
+ * 没选之前主页的共鸣入口与侧栏共鸣项都置灰不可点。
+ * 2. 「雪落颂愿时」（080）的卡池背景用用户补的图（`bg/080.webp`）。
  *
  * 用法：先 `npx vite`（5178），再 `node tools/verify-v2602.mjs`
  *
- * ⚠ v1.5.03 现状口径（2026-11-03 改）：卡池主键 = **官方 gachaKey**（`banner-076`），
- *   版本内按官方号排序 → 2.10 的第一池是 076 执律的流金；常驻池 id = `banner-001`。
- *   旧写法「版本内序号」只剩 legacyId。
+ * ⚠ 现状口径（2026-11-03 改）：卡池主键 = **官方 gachaKey**（`banner-076`），
+ * 版本内按官方号排序 → 2.10 的第一池是 076 执律的流金；常驻池 id = `banner-001`。
+ * 旧写法「版本内序号」只剩 legacyId。
  */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
@@ -73,7 +73,7 @@ async function pickVersion(ver) {
   await page.waitForTimeout(500)
   return page.evaluate(() => {
     const t = document.querySelector('.vr-pool')?.textContent?.trim() ?? ''
-    // v1.6.06 起界面称呼由「卡池」改为「服装阁」，前缀跟着改
+    // 起界面称呼由「卡池」改为「服装阁」，前缀跟着改
     return t.replace(/^服装阁\s*/, '')
   })
 }
@@ -112,7 +112,7 @@ check('A2 主页右缘竖排「心忆共鸣」置灰 + disabled',
 const others = gate.nav.filter((x) => !x.cls.includes('nv-banner'))
 check('A3 其余入口不受影响（4 个都还能点）',
   others.length === 4 && others.every((x) => !x.dis), `${others.length} 个正常`)
-// v1.6.06 起主页**不再有侧边栏**（信封移到左上角、左缘感应区一并撤掉），
+// 起主页**不再有侧边栏**（信封移到左上角、左缘感应区一并撤掉），
 // 置灰这道闸只剩「居中星芒 + 右缘竖排」两套入口（见 A1/A2）。
 check('A4 主页已无侧栏（v1.6.06 删除），闸门只由星芒 + 右缘承担',
   gate.rail.length === 0,
@@ -160,13 +160,13 @@ const manifest = await page.evaluate(async () => await (await fetch('/assets/man
 
 await step('B 2.10', async () => {
   const cap = await pickVersion('2.10')
-  // v1.5.03 起版本内按**官方编号**排序（不再是目录顺序）：
+  // 起版本内按**官方编号**排序（不再是目录顺序）：
   // 2.10 的第一池是 076 执律的流金（原目录顺序里是「在属于孩子的故事里」）。
   const first210 = manifest.banners.find((b) => b.version === '2.10')?.name ?? ''
   check('B1 2.10 进入键标签 = 该版本第一池（官方编号序）', cap === first210, `${cap}（期望 ${first210}）`)
   await enterPool()
   const names = await poolNames()
-  // v1.4.03 起每个版本末尾都挂常驻池 → 期望 = 2.10 的 4 个 + 遥远之海
+  // 起每个版本末尾都挂常驻池 → 期望 = 2.10 的 4 个 + 遥远之海
   const want = [...manifest.banners.filter((b) => b.version === '2.10').map((b) => b.name), '遥远之海']
   check('B2 共鸣页只列 2.10 的池 + 常驻（5 个，顺序一致）',
     names.length === want.length && names.every((n, i) => n.startsWith(want[i])),
@@ -215,7 +215,7 @@ await step('B7 持久化', async () => {
   await page.waitForSelector('.pool-item', { timeout: 20000 })
   await page.waitForTimeout(900)
   const names = await poolNames()
-  // 1.8 的 4 个池 + 常驻（v1.4.03）
+  // 1.8 的 4 个池 + 常驻
   check('B7 刷新后仍是 1.8 的池（版本记在存档里）', names.length === 5, `${names.length} 个`)
 })
 

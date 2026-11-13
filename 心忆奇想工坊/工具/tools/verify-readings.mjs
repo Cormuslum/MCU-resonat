@@ -1,15 +1,6 @@
 /**
- * M3 阅读物图鉴 Playwright 验收脚本（开发期巡检，不打包进应用）
- *
- * 覆盖 博物图鉴重构计划书.md §8 M3 验收：
- *  - 列表进度（书籍 (n/m)）
- *  - 区域切换（Q/E，心愿原野 / 伊赞之土的条数从 src/data/readings.ts 现算）
- *  - 解锁三阶段动画时序 + 播放后锁消失
- *  - 空态贴纸 13% + 提示文字；随机彩蛋 opacity 0.25（仅已获取时显示，切书/切区域刷新）
- *  - 深链 ?name=、搜索弹窗命中 ≤6 条、ESC/空白关闭
- *  - 无 console / 资源加载报错
- *
- * 用法：node tools/verify-readings.mjs
+ * M3 阅读物图鉴 Playwright 验收（开发期巡检，不打包进应用）：`node tools/verify-readings.mjs`。
+ * 覆盖列表进度、区域切换（Q/E）、解锁三阶段动画、空态贴纸与随机彩蛋、深链 `?name=`、搜索弹窗、无报错。
  */
 import fs from 'node:fs'
 import { chromium } from 'playwright-core'
@@ -78,7 +69,7 @@ check('空态贴纸存在', emptyOp !== null)
 check('空态贴纸 opacity≈0.15', emptyOp !== null && Math.abs(parseFloat(emptyOp) - 0.15) < 0.02, `实际 ${emptyOp}`)
 check('空态提示文字存在', emptyTxt === '暂未获得阅读物，快去世界探索吧~', `实际 "${emptyTxt}"`)
 
-// 3) 随机彩蛋：v1.0.04 起「未获取阅读物不显示」→ 空态必须没有
+// 3) 随机彩蛋： 起「未获取阅读物不显示」→ 空态必须没有
 const eggEmpty = await page.$('.rd-egg')
 check('空态不显示随机彩蛋（未获取阅读物）', eggEmpty === null)
 
@@ -124,7 +115,7 @@ check(`Q 切回心愿原野 ${WISH} 行`, backRows === WISH, `实际 ${backRows}
 // 7) 深链 ?name=
 await gotoReadings('name=' + encodeURIComponent('恩泽纪·卷七'))
 await page.waitForTimeout(500)
-// v1.0.05：未解锁不显示正文，深链只做「定位到该行」
+// ：未解锁不显示正文，深链只做「定位到该行」
 const deepTitle = await page.$eval('.rd-row.sel .rd-title', (e) => e.textContent.trim()).catch(() => '')
 check('深链 ?name= 定位到对应阅读物', deepTitle.includes('恩泽纪·卷七'), `选中行="${deepTitle}"`)
 await page.screenshot({ path: `${OUT}/readings-deeplink.png` })

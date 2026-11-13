@@ -41,7 +41,7 @@ READING_ROOT = os.path.join(ASSET, '阅读物')
 pub = os.environ.get('NIKKI_OUT_DIR') or os.path.join(SIM, 'public', 'assets')
 OUT_PATH = os.path.join(pub, 'data', 'readings.json')
 
-# v2.1.02：**基线模式**（发行版）。
+# ：**基线模式**（发行版）。
 #
 # 发行版不再随包发 `素材/阅读物/`（2.6M 的内置正文）——
 # 阅读物的主数据源变成 `readings.json` 本身，`素材/阅读物/` 只当**增量补丁**：
@@ -53,7 +53,7 @@ OUT_PATH = os.path.join(pub, 'data', 'readings.json')
 BASELINE_MODE = os.environ.get('NIKKI_JSON_BASELINE') == '1'
 
 # ⚠ 非基线模式下找不到源目录必须报错退出，否则会把 readings.ts 写成空数组、
-#    悄悄丢掉全部阅读物（v1.9.00 踩过这个坑）。基线模式下目录可以不存在。
+# 悄悄丢掉全部阅读物（ 踩过这个坑）。基线模式下目录可以不存在。
 if not BASELINE_MODE and not os.path.isdir(READING_ROOT):
     raise SystemExit(f'✗ 找不到阅读物源目录：{READING_ROOT}')
 
@@ -119,7 +119,7 @@ def parse_file(path: str) -> dict | None:
         # 兜底：用「目录+文件名」拼一个稳定且唯一的 id
         rid = f"{region or 'wish'}/{os.path.basename(os.path.dirname(path))}/{os.path.splitext(os.path.basename(path))[0]}"
 
-    # series = 父目录名（v1.9.03 起允许直接放在分区根下，此时没有系列）
+    # series = 父目录名（ 起允许直接放在分区根下，此时没有系列）
     parent = os.path.basename(os.path.dirname(path))
     series = '' if parent in REGION_DIRS else parent
 
@@ -154,7 +154,7 @@ def load_baseline() -> list:
 
 def main() -> None:
     entries = []
-    # v1.9.03：工坊不再收「系列」，新文件直接落在分区根下（`<分区>/<书名>.txt`）。
+    # ：工坊不再收「系列」，新文件直接落在分区根下（`<分区>/<书名>.txt`）。
     # 老的 `<分区>/<系列>/<书名>.txt` 仍要认，两种层级一起扫。
     for pat in ('*/*.txt', '*/*/*.txt'):
         for p in sorted(glob.glob(os.path.join(READING_ROOT, pat))):
@@ -171,7 +171,7 @@ def main() -> None:
         seen.add(e['id'])
         uniq.append(e)
 
-    # v2.1.02 基线模式：把源目录当**增量补丁**，不是全集。
+    # 基线模式：把源目录当**增量补丁**，不是全集。
     #   源里有同 id 的 → 用源的（用户改过/新建的）
     #   基线里有源没有的 → 保留（内置阅读物不受影响）
     # 源目录为空或不存在 → 结果就是基线本身，一条都不丢。
@@ -184,7 +184,7 @@ def main() -> None:
             if old is not None and (old.get('title') or '').strip() != (e.get('title') or '').strip():
                 # ⚠ 撞号：源里的 id 与基线重了、但书名不同。
                 #    通常是「用户想新建，工坊却把编号分配到了已占用的号」
-                #    （v2.1.02 实测：《安隙炉操作指引》就是这样被顶掉的）。
+                # （ 实测：《安隙炉操作指引》就是这样被顶掉的）。
                 #    静默覆盖会**毁掉别人的书** —— 这里保留基线那条并报出来。
                 collided.append((e['id'], old.get('title'), e.get('title')))
                 continue
@@ -198,7 +198,7 @@ def main() -> None:
         print('  [基线] 无基线 JSON（首次生成），本次完全由源目录决定')
     uniq.sort(key=lambda x: x['id'])
 
-    # 同名不同正文 → 标题加 ·01 / ·02（v2.0.05）。
+    # 同名不同正文 → 标题加 ·01 / ·02。
     # 比对用归一化哈希 + TF-IDF 余弦 + 行级/字符级相似度，只有确实不同才编号；
     # 完全相同的重复件（或只差一两个错别字的近似重复）保持原名。
     uniq, suffix_report = disambiguate_rows(uniq, label='阅读物')
@@ -230,7 +230,7 @@ def main() -> None:
         '}\n\n'
         f'export const readings: ReadingEntry[] = [\n{rows}\n]\n'
     )
-    # v2.1.00：输出改成运行时 JSON（`public/assets/data/readings.json`）。
+    # ：输出改成运行时 JSON（`public/assets/data/readings.json`）。
     # 以前写 `src/data/readings.ts`，正文被编译进 JS —— 发行版没有 vite，
     # 工坊改完阅读物永远不会生效。
     os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)

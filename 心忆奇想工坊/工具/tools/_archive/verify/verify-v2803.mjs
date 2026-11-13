@@ -1,16 +1,16 @@
 /**
- * v1.6.00 DLC 验收脚本（v2.0.04 / v2.0.05 已适配当前架构）。
+ * DLC 验收脚本/ 已适配当前架构。
  *
  * ⚠ 会清空源包区与运行区 —— 别在放着真实 DLC 包的机器上跑。
- * v2.0.04 起拓展包「只装自建内容」，测试样本一律从 exportCandidates() 现取；
- * v2.0.05 起每个接口的数据文件是数组，下面的断言都按数组读（兼容单对象）。
+ * 起拓展包「只装自建内容」，测试样本一律从 exportCandidates 现取；
+ * 起每个接口的数据文件是数组，下面的断言都按数组读（兼容单对象）。
  *
  * 覆盖五组：
- *   A. 契约      两端接口表一致；包格式字段齐全
- *   B. 导出      五类内容都能切出自包含的包（素材路径已改写）
- *   C. 安装/挂载 运行区拷贝正确；开关能改；卸载能撤
- *   D. 前端      模拟器启动后 DLC 内容真的进了 manifest / 图鉴
- *   E. 分发      打包 zip → 上传到本地远端 → 从远端下载并装回
+ * A. 契约 两端接口表一致；包格式字段齐全
+ * B. 导出 五类内容都能切出自包含的包（素材路径已改写）
+ * C. 安装/挂载 运行区拷贝正确；开关能改；卸载能撤
+ * D. 前端 模拟器启动后 DLC 内容真的进了 manifest / 图鉴
+ * E. 分发 打包 zip → 上传到本地远端 → 从远端下载并装回
  */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
@@ -146,7 +146,7 @@ ok('素材文件确实复制进包里',
 
 const setPkg = pkgs[1]
 const setData = JSON.parse(fs.readFileSync(path.join(dlc.srcDir(setPkg.id), 'data', 'pool.set.json'), 'utf8'))
-// v2.0.05：接口数据统一是数组；老包单对象也兼容
+// ：接口数据统一是数组；老包单对象也兼容
 const setPayload = Array.isArray(setData) ? setData[0] : setData
 const SET_ID = setPayload?.set?.id
 ok('套装包数据是数组', Array.isArray(setData), Array.isArray(setData) ? `${setData.length} 项` : '单对象')
@@ -319,7 +319,7 @@ try {
 ok('git 远端未关联仓库时给出明确提示',
   /尚未关联 git 仓库|不在 git 仓库里/.test(gitMsg), gitMsg.slice(0, 90))
 
-/* ────────────────────────────── F. 删除可靠性（v1.6.01 修的坑） ────────────────────────────── */
+/* ────────────────────────────── F. 删除可靠性修的坑 ────────────────────────────── */
 section('F. 删除可靠性')
 
 // 背景：某些运行环境（WorkBuddy 的 safe-delete shim 通过 NODE_OPTIONS 注入）

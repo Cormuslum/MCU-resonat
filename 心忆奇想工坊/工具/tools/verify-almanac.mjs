@@ -1,13 +1,7 @@
 /**
- * verify-almanac.mjs —— 玄学运势（v1.1.00）全流程验收
- *
- * 覆盖《玄学运势-详细设定》§10 第 1/1a/2/3/7 条：
- *  ① 侧边栏文案改名 ② 待机几何对齐 pxdesk ③ alpha 轮廓热区（实体命中/空白不命中）
- *  ④ 待机→收起→展开→收起→待机 全状态 ⑤ 书写逐字 + 跳过 ⑥ 书签三段式
- *  ⑦ 时间范围（过往无限 / 今日仅当天 / 未来 5 天） ⑧ 无退出键 + 点空白不退 + ESC
- *  ⑨ 首登免责声明 → 引导卷轴 ④ → 生辰弹窗 → 解锁
- *
- * 用法：npm run dev 后 node tools/verify-almanac.mjs
+ * 玄学运势全流程验收：`npm run dev` 后 `node tools/verify-almanac.mjs`。
+ * 覆盖侧边栏改名 / 待机几何对齐 / alpha 轮廓热区 / 全状态流转 / 书写逐字 + 跳过 / 书签三段式 /
+ * 时间范围 / 无退出键 + 点空白不退 + ESC / 首登免责 → 引导卷轴 → 生辰弹窗 → 解锁。
  */
 import { chromium } from 'playwright-core'
 
@@ -92,7 +86,7 @@ const SNAP = () => {
 
 async function gotoAlmanac() {
   await p.goto(BASE + '/#/almanac', { waitUntil: 'domcontentloaded' })
-  // v1.3.00 起一级 ↔ 二级切换会铺 1.4s 黑屏加载层（整屏拦截指针），
+  // 起一级 ↔ 二级切换会铺 1.4s 黑屏加载层（整屏拦截指针），
   // 等待时间必须盖过它，否则悬停检测全落空
   await p.waitForTimeout(1900)
 }
@@ -351,7 +345,7 @@ await p.click('.qa-open')
 await p.waitForTimeout(1500)
 const withBazi = await p.evaluate(() => !!document.querySelector('.pz'))
 ok(withBazi, '填了生辰 → 八字区显示四柱')
-// v2.4.01 起「问过没」单独记在 nikki-almanac-bazi-asked-v1 上：
+// 起「问过没」单独记在 nikki-almanac-bazi-asked-v1 上：
 // 只删 birth 不再算首登（用户主动清生辰不该被重新盘问一遍），要模拟真首登得连标记一起删
 await p.evaluate(() => {
   localStorage.removeItem('nikki-almanac-birth-v1')

@@ -1,10 +1,10 @@
 /**
- * v2.0.04 验收
+ * 验收
  *
- *   A. 故事分区归位：0 号「奇迹传说」= 0.1 / 0.2 两版 8 座阁的 14 篇
- *      （这 14 套里有 10 套是从官方旧版本借调的，按「套装首发版本」归区会散掉）
- *   B. 故事图鉴 / 阅读物图鉴：换一条就回到正文开头
- *   C. 拓展包只装自建内容：内置 88 座阁 / 134 篇故事 / 596 篇阅读物都不进候选
+ * A. 故事分区归位：0 号「奇迹传说」= 0.1 / 0.2 两版 8 座阁的 14 篇
+ * （这 14 套里有 10 套是从官方旧版本借调的，按「套装首发版本」归区会散掉）
+ * B. 故事图鉴 / 阅读物图鉴：换一条就回到正文开头
+ * C. 拓展包只装自建内容：内置 88 座阁 / 134 篇故事 / 596 篇阅读物都不进候选
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -280,7 +280,7 @@ ok('C11 /api/state 里没有内置阁（雪落颂愿时不在候选里）',
   await page.waitForSelector('#dlc-kind', { timeout: 30000 })
   await page.waitForTimeout(800)
   const ui = await page.evaluate(() => {
-    // v2.0.05 起候选从单选下拉改成多选复选框
+    // 起候选从单选下拉改成多选复选框
     const picks = [...document.querySelectorAll('[data-pick]')].map((el) => ({
       v: el.dataset.pick || '',
       t: el.closest('label')?.textContent?.trim() || '',

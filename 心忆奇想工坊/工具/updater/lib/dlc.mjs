@@ -1,26 +1,7 @@
 /**
- * DLC（延迟包）核心库。
- *
- * 「延迟」是相对于老流程说的：以前工坊把素材直接写进 `素材/`，然后跑一次
- * 全量 python 管线重建 manifest —— 新内容必须等整条管线跑完才看得见，而且
- * 一改就是全局改动，没法「先打个包给别人用」。
- *
- * DLC 把这件事拆成两层：
- *
- *   源包区   updater/dlc/<id>/          —— 工坊在这里编辑 / 打包 / 上传
- *   运行区   public/dlc/<id>/           —— 模拟器运行时读这里（静态资源，直接可 fetch）
- *
- * 一个包长这样：
- *
- *   dlc.json          包清单：身份、版本、**提供哪些接口**、以及挂载决策
- *   data/*.json       每个接口一份结构化数据
- *   assets/**         素材（已转码的 webp），路径与基础库保持同样的相对结构
- *
- * 「接口」是包与模拟器之间的唯一契约。模拟器只认接口名，不认包的内部结构；
- * 包只声明接口，不直接改模拟器。于是包可以自由决定**挂不挂**、挂到哪，
- * 也可以被别人原样拿走再挂一次。
- *
- * 零依赖（只用 node 内置模块 + 项目本来就有的 python）。
+ * DLC（延迟包）核心库：源包区 `updater/dlc/<id>/`（工坊编辑 / 打包 / 上传）、运行区 `public/dlc/<id>/`（模拟器直接 fetch）。
+ * 一个包 = `dlc.json`（清单 + 提供哪些接口）+ `data/*.json`（每接口一份）+ `assets/**`（已转码 webp）。
+ * 「接口」是包与模拟器之间唯一的契约：模拟器只认接口名，包不直接改模拟器。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -56,12 +37,8 @@ function writeLiveIndex(idx) {
 /* ────────────────────────────── 包身份 ────────────────────────────── */
 
 /**
- * 包 id：只允许小写字母 / 数字 / 短横线。
- *
- * id 会进 URL（`/dlc/<id>/…`）与文件名，所以**必须能转写成 ASCII**。
- * 中文没法音译（没装 pinyin 库），所以调用方要传一个稳定的 ASCII 底名
- * （服装阁用 `banner-080`、套装用 `set-s0438`…），
- * 只有实在拿不到时才退回「内容的稳定短 hash」。
+ * 包 id：只允许小写字母 / 数字 / 短横线（会进 URL `/dlc/<id>/…` 与文件名，必须能转写成 ASCII）；
+ * 调用方传稳定 ASCII 底名（`banner-080` / `set-s0438`），拿不到时才退回内容短 hash。
  */
 export function slugId(name) {
   const base = String(name || '')
@@ -128,10 +105,7 @@ function isInstalled(id) {
 /* ────────────────────────────── 安装 / 卸载 ────────────────────────────── */
 
 /**
- * 把源包（或任意目录）安装进运行区。
- *
- * 「安装」只是拷贝 —— 运行区是静态目录，模拟器 fetch 得到的就是最新内容，
- * 不需要重跑 python 管线。这是 DLC 相对老流程最大的差别。
+ * 把源包（或任意目录）安装进运行区：只是拷贝，运行区是静态目录，模拟器 fetch 到的就是最新内容。
  */
 export function install(id, { from = null, log = () => {} } = {}) {
   const src = from || srcDir(id)
@@ -168,8 +142,7 @@ export function install(id, { from = null, log = () => {} } = {}) {
 /** 卸载：运行区删掉 + 索引移除。源包区保留（还能再装回去） */
 export function uninstall(id, { log = () => {} } = {}) {
   const dst = liveDir(id)
-  // 运行区目录删不掉时也要把索引条目摘掉 ——
-  // 否则模拟器还会读到一个「装了但文件不在」的包。
+  // 运行区目录删不掉时也要把索引条目摘掉
   let dirError = null
   try {
     if (exists(dst)) rmTree(dst)
@@ -216,17 +189,12 @@ export function packZip(dir, outZip) {
     'zf.close()',
   ].join('\n')
   const r = spawnSync(pythonBin(), ['-c', py, dir, outZip], { encoding: 'utf8' })
-  // 报错要说清「是脚本报错」还是「python 根本没跑起来」——
-  // 以前固定拼 `'打包失败：' + stderr`，PATH 上是 Store 假存根时 stderr 为空，
-  // 界面上就只剩一个「打包失败：」，用户无从下手（v2.2.02）。
   if (r.status !== 0) throw new Error(pyFailText('打包失败', r, `（源：${path.basename(dir)}）`))
   return outZip
 }
 
 /**
- * 解包到目标目录。
- *
- * 成员名逐个校验 —— zip 里可以写 `../../evil` 这种路径，解压不拦就是任意写文件。
+ * 解包到目标目录；成员名逐个校验（zip 里可以写 `../../evil`，不拦就是任意写文件）。
  */
 export function unpackZip(zipFile, destDir) {
   const py = [
@@ -271,24 +239,7 @@ function sleep(ms) {
 }
 
 /**
- * 递归删除（只对包目录用，不碰别处）。
- *
- * 这台机器上有两个坑，都会让「直接删」看起来像失败：
- *
- * ① 某些运行环境（WorkBuddy 的 safe-delete shim 通过 NODE_OPTIONS 注入）
- *    会把 fs.rm / fs.rmSync / fs.unlink 改成**回收站**语义 ——
- *    删除变成异步的：刚调完 `exists()` 目录还在，代码就误判成「删不掉」；
- *    而且回收站操作很慢（每个文件 ~260ms，一个 66 文件的包要 17 秒）。
- *
- * ② 回收站操作偶尔整批失败（"Some operations were aborted"），
- *    目录原封不动留在那儿。
- *
- * 解法（按快 → 慢三级）：
- *   ① **原生子进程**：清空 NODE_OPTIONS 起一个 node 子进程做 rmSync。
- *      绕开 shim 的包装，拿回原生语义 —— 实测 66 个文件 280ms（vs 24 秒）。
- *   ② 直接 fs.rmSync：正常环境走这条，毫秒级。
- *   ③ 手写逐层 unlink/rmdir：前两条都不行时的兜底，慢但最终能删干净。
- * 每一级之后都轮询确认目录**真的**消失才算成功。
+ * 递归删除（只对包目录用）：原生子进程 → `fs.rmSync` → 手写逐层 unlink/rmdir 三级兜底，每级之后轮询确认目录真的消失。
  */
 export function rmTree(dir, { budgetMs = 60000 } = {}) {
   if (!exists(dir)) return

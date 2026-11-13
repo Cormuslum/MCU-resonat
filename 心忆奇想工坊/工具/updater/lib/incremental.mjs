@@ -1,19 +1,7 @@
 /**
- * 增量写入判定（v2.0.06）。
- *
- * 工坊每次点「写入并更新」都会把用户拖进来的**整批**素材重新识别、校验、复制，
- * 再跑一遍管线；可多数时候这批素材和上一次写入是同一份，纯属重复劳动。
- *
- * 这里把「有没有改动」收敛成两个可复用的判据：
- *   1. `applyFingerprint()` —— 整次写入的内容指纹（任务 + 字段 + 每个源文件的内容哈希）。
- *      完全一致的写入直接短路，连检验都不做。
- *   2. `isUnchangedWrite()` —— 单个素材的「上次写入结果」缓存。
- *      源文件没变、目标文件也没变 → 这一项跳过，不检验、不复制、不进快照。
- *
- * 指纹只看**内容**，不看路径与时间：用户把同一份素材重新拖一次（.inbox 路径变了、
- * mtime 变了）仍算「与前一次完全一致」。勾了「强制重转已有素材」时不短路。
- *
- * 状态落在 updater/ 下，不是素材，不参与管线；删掉这两个 json 只是让下次全量跑一遍。
+ * 增量写入判定：`applyFingerprint()` 是整次写入的内容指纹（任务 + 字段 + 每个源文件的内容哈希），
+ * `isUnchangedWrite()` 是单个素材的「上次写入结果」缓存；指纹只看内容，不看路径与时间。
+ * 状态落在 `updater/` 下、不参与管线，删掉这两个 json 只是让下次全量跑一遍。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -57,9 +45,7 @@ function contentSig(abs) {
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex')
 
 /**
- * 一次写入的内容指纹。
- * `files` 里每项都带源文件的内容签名，所以「同一批素材重新拖一次」指纹相同；
- * 换了任何一张图、改了任何一个字段，指纹就变。
+ * 一次写入的内容指纹：`files` 每项都带源文件的内容签名，换了任何一张图或一个字段，指纹就变。
  */
 export function applyFingerprint({ job, fields = {}, files = [], options = {} }) {
   const normFields = Object.fromEntries(

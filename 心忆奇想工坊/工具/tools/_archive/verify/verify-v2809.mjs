@@ -1,5 +1,5 @@
 /**
- * v1.6.06 验收：改名 / 素材换源 / 主页侧栏 / 归档 / 合成背景 / 进入音 / 版本点击音。
+ * 验收：改名 / 素材换源 / 主页侧栏 / 归档 / 合成背景 / 进入音 / 版本点击音。
  *
  * A. 改名：界面不再出现「卡池」，改为「服装阁」
  * B. 主页不显示侧边栏（左缘悬停也不唤出）
@@ -146,9 +146,9 @@ console.log('\n【C. 素材换源（078~080 高清 / 简中艺术字）】')
         vid: v ? { src: v.getAttribute('src') || '', w: v.videoWidth } : null,
       }
     })
-    // v1.9.02：`banners/bg-clean/` 改名为 `banners/bg/`；源图直接是 2560×1440 的 jpg，
+    // ：`banners/bg-clean/` 改名为 `banners/bg/`；源图直接是 2560×1440 的 jpg，
     // 不再经过「裁 16:9 缩到 1920」那条路，所以宽度期望放宽到 ≥1920。
-    // v1.9.03：接了动态背景的阁直接播视频，静态底图不再渲染 —— 两种都算「铺满」。
+    // ：接了动态背景的阁直接播视频，静态底图不再渲染 —— 两种都算「铺满」。
     const bgOk = r.vid
       ? (r.vid.src.endsWith(`/video/${key}.mp4`) || r.vid.src.endsWith(`/video/${key}.webm`)) && r.vid.w >= 1920
       : r.bg.endsWith(`/bg/${key}.webp`) && r.bgW >= 1920
@@ -204,7 +204,7 @@ console.log('\n【E. 各阁进入音】')
 {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/assets/manifest.json'), 'utf8'))
   const enter = manifest.bannerEnter || {}
-  // v1.6.07：用户自建的阁可能还没有音频（示例文件夹不带音频），只要**官方 001~080** 齐全即可
+  // ：用户自建的阁可能还没有音频（示例文件夹不带音频），只要**官方 001~080** 齐全即可
   const official = manifest.banners.filter((b) => Number(b.gachaKey) >= 1 && Number(b.gachaKey) <= 80)
   const missOfficial = official.filter((b) => !enter[b.id])
   ok('官方 001~080 都有进入音', missOfficial.length === 0,
@@ -235,7 +235,7 @@ console.log('\n【F. 版本页点击音】')
   const majors = await page.locator('.vr-major').count()
   ok('大版本分组已渲染', majors >= 2, `${majors} 组`)
 
-  // 展开「心愿原野」（大版本 1）那一组：v1.6.07 之后前面还可能有「奇迹传说」（0）
+  // 展开「心愿原野」（大版本 1）那一组： 之后前面还可能有「奇迹传说」（0）
   const groups = await page.$$eval('.vr-major .vm-txt', (els) => els.map((e) => e.textContent.trim()))
   const g1 = groups.findIndex((t) => t.includes('心愿原野'))
   await page.locator('.vr-major').nth(g1 >= 0 ? g1 : 0).click({ force: true })

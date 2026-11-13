@@ -35,7 +35,7 @@ fail = 0
 checked = 0
 n_parts = 0
 
-# v1.8.01 起被删掉的字段（不该再出现在任何文件里）
+# 起被删掉的字段（不该再出现在任何文件里）
 DEAD_TOP = ("复刻版本", "文案来源", "妆容")
 DEAD_PART = ("标签", "形态")
 
@@ -55,7 +55,7 @@ dirs = [d for d in os.listdir(LIB) if os.path.isdir(os.path.join(LIB, d))]
 if dirs:
     bad(f"套装库里还有 {len(dirs)} 个子目录（应平铺）：{dirs[:3]}")
 
-# v1.8.02：套装库只保留模拟器 86 座阁里的套装，其余在归档目录
+# ：套装库只保留模拟器 86 座阁里的套装，其余在归档目录
 ARCHIVE = os.path.join(ROOT, "归档素材", "2026-11-06-非模拟器套装")
 arch_files = sorted(f for f in os.listdir(ARCHIVE) if f.lower().endswith(".yaml")) \
     if os.path.isdir(ARCHIVE) else []
@@ -101,7 +101,7 @@ for fname in files:
             bad(f"{name}: 属性标签往返不一致")
 
         # ── 逐部位：部件名 / 文案 ──
-        # 妆容两部位（妆容-原色 / 妆容-进化）v1.8.01 起**不写**（前端零引用）
+        # 妆容两部位（妆容-原色 / 妆容-进化） 起**不写**（前端零引用）
         for slot, forms in (txt.get("形态") or {}).items():
             named = [f for f in forms if f.get("名称")]
             if not named:

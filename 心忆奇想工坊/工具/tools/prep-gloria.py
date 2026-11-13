@@ -38,7 +38,7 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import ASSET, resolve, resolve_file  # noqa: E402
 
-# v1.9.00 素材重构后：
+# 素材重构后：
 #   - 目录名 `辉煌心光` → `素材/界面/辉煌心光`
 #   - 源文件（1-演出.png 等）只留在 `原始素材/辉煌心光/`，`素材/` 里只留「工程产出」
 #   - `朋友分享素材/` 已并入 `素材/界面/UI整包/`

@@ -1,12 +1,12 @@
 /**
- * v1.4.01 验收 · 三个页面改名 + 「时隙遗光」每个版本都能进到自己的卡池
+ * 验收 · 三个页面改名 + 「时隙遗光」每个版本都能进到自己的卡池
  *
  * 覆盖用户这一批的两条要求：
- *   1. 改名：主页 → 心绮之启；版本 → 时隙遗光；共鸣 → 心忆共鸣
- *   2. 每个版本都有对应卡池，右下进入键点下去要**落到那个版本的池**
+ * 1. 改名：主页 → 心绮之启；版本 → 时隙遗光；共鸣 → 心忆共鸣
+ * 2. 每个版本都有对应卡池，右下进入键点下去要**落到那个版本的池**
  *
  * 做法：24 个版本逐个走真实 UI —— 点小版本 → 读进入键旁的「对应卡池」标签
- *       → 点进入键 → 在卡池页读当前大图卡池名 → 回 manifest 里的 version 核对。
+ * → 点进入键 → 在卡池页读当前大图卡池名 → 回 manifest 里的 version 核对。
  *
  * 用法：先 `npx vite`（5178），再 `node tools/verify-v2601.mjs`
  */
@@ -27,7 +27,7 @@ const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, 
 const page = await ctx.newPage()
 
 const pageErrors = []
-/** `ERR_ABORTED` 同 v2.5.07：BGM / 卡池 PV / 主页背景视频切页时被回收，Chrome 会报 aborted —— 与代码无关 */
+/** `ERR_ABORTED` 同 ：BGM / 卡池 PV / 主页背景视频切页时被回收，Chrome 会报 aborted —— 与代码无关 */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t)
   && (/\/assets\/(sfx|bgm|video)\//.test(t) || /bg-video(-\d+)?\.(webm|mp4)/.test(t) || /bg-audio(-\d+)?\.ogg/.test(t))
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
@@ -52,7 +52,7 @@ async function step(name, fn) {
 /* ══════════════════════════ 一、导航改名 */
 
 console.log('\n【一、侧边栏三处改名】')
-// v1.6.06 起**主页不再显示侧边栏**（App.vue 的 HIDE_RAIL_ROUTES 含 home），
+// 起**主页不再显示侧边栏**（App.vue 的 HIDE_RAIL_ROUTES 含 home），
 // 导航文案要去二级页面取；主页另有一条「不该有侧栏」的断言。
 await page.goto(`${BASE}/#/codex`, { waitUntil: 'domcontentloaded' })
 await page.waitForSelector('.rail', { timeout: 20000 })
@@ -76,7 +76,7 @@ const navFits = await page.$$eval('.rb-txt', (els) =>
 )
 check('A3 四个字的标签不溢出侧栏（158px 内一行）', navFits)
 
-// 主页不显示侧边栏（v1.6.06 用户要求）
+// 主页不显示侧边栏用户要求
 await page.goto(`${BASE}/#/`, { waitUntil: 'domcontentloaded' })
 await page.waitForTimeout(900)
 const homeRail = await page.evaluate(() => document.querySelectorAll('.rail').length)
@@ -101,8 +101,8 @@ const manifest = await page.evaluate(async () => {
   return { firstOf, verOf, versions: [...new Set(m.banners.map((b) => b.version))] }
 })
 
-/* 版本清单**从 manifest 现算**：素材库会不断增长（v1.6.07 用户自建了 0.1 大版本），
-   写死 24 个版本会在新数据进来后误报。 */
+/* 版本清单**从 manifest 现算**：素材库会不断增长用户自建了 0.1 大版本，
+ 写死 24 个版本会在新数据进来后误报。 */
 const VERS = manifest.versions.slice().sort((a, b) => {
   const na = a.split('.').map(Number)
   const nb = b.split('.').map(Number)
@@ -122,7 +122,7 @@ await page.goto(`${BASE}/#/versions`, { waitUntil: 'domcontentloaded' })
 await page.waitForSelector('.vr-minor', { timeout: 20000 })
 await page.waitForTimeout(900)
 
-/* 大版本组名 → 下标（按名字找，不写下标：v1.6.07 前面多了 0 奇迹传说） */
+/* 大版本组名 → 下标（按名字找，不写下标： 前面多了 0 奇迹传说） */
 const majorName = { 0: '奇迹传说', 1: '心愿原野', 2: '伊赞之土' }
 const groupIdx = async (ver) => {
   const labels = await page.$$eval('.vr-major .vm-txt', (els) => els.map((e) => e.textContent.trim()))
@@ -155,7 +155,7 @@ for (const ver of VERS) {
 
     const caption = await page.evaluate(() => {
       const t = document.querySelector('.vr-pool')?.textContent?.trim() ?? ''
-      // 标签前缀是 <i> 里的量词（v1.6.06 起为「服装阁」，旧版是「卡池」），不算名字
+      // 标签前缀是 <i> 里的量词起为「服装阁」，旧版是「卡池」，不算名字
       return t.replace(/^(卡池|服装阁)\s*/, '')
     })
     if (caption !== manifest.firstOf[ver].name) {

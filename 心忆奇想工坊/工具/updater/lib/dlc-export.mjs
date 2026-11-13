@@ -1,27 +1,7 @@
 /**
- * DLC 导出器：把库里的自建内容切成一个**自包含**的包。
- *
- * 「自包含」是关键词：包里带自己的素材副本，路径改写成 `/dlc/<id>/assets/...`。
- * 所以这个包拷给任何装了本模拟器的人都能直接用 —— 不依赖对方机器上的素材库。
- *
- * 五个挂载接口，各自对应包里 `data/` 下的一个 JSON 文件：
- *
- *   服装阁     pool.banner    整座阁（含套装）→ 共鸣页多一座阁
- *   套装       pool.set       一套服装 → 挂进指定服装阁
- *   故事       codex.story    一篇套装故事 → 故事图鉴
- *   阅读物     codex.reading  一篇 → 阅读物图鉴
- *   版本       version.banner 一个小版本（含缩略图 / 大图）→ 版本页
- *
- * v2.0.05：一次导出可以**多选**，所有选中的同类内容装进**同一个包**；
- * 每个接口的数据文件统一是**数组**（兼容老包里的单对象，见 src/core/dlc.ts）。
- * 另外三条关联规则：
- *   - 打包服装阁 / 套装 → 自动附带这些套装的故事（故事与套装强关联）；
- *   - 打包版本 → 自动附带该版本内的自建服装阁，以及这些阁里套装的故事；
- *   - 故事仍可**单独打包**（kind = 'story'，不附带阁）。
- * 「附带」找不到内容一律跳过、不报错（用户明确要求版本里没有阁也要能打包）。
- *
- * 素材从 `public/assets/` 里取**已转码好的 webp** —— 不重新转码，包里直接就是
- * 模拟器能用的格式。
+ * DLC 导出器：把库里的自建内容切成一个**自包含**的包（包内带素材副本，路径改写为 `/dlc/<id>/assets/...`）。
+ * 五个挂载接口各对应 `data/` 下一个 JSON 文件（统一为数组）：pool.banner / pool.set / codex.story / codex.reading / version.banner。
+ * 一次导出可多选、同类装同一包；打包阁与套装自动附带其故事，打包版本自动附带该版本内的自建阁。素材取 `public/assets/` 里已转码的 webp。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -47,11 +27,7 @@ const IFACE_ORDER = Object.keys(IFACE_FILE)
 const KIND_LABEL = { banner: '服装阁', set: '套装', story: '故事', reading: '阅读物', version: '版本' }
 
 /**
- * 自建编号段的起点（v2.0.04）。
- *
- * 编号区间是既定约定：`001~099` 官方、`100~499` 留给未来官方、`500+` 自建/DLC
- * （工坊 `nextFreeGacha()` 从 500 起取空号，见 meta.mjs）。所以「编号 ≥ 500」
- * 就是一套可靠的「不是内置内容」判据，不用依赖白名单是否登记过。
+ * 自建编号段的起点：编号 ≥ 500 即「不是内置内容」（001~099 官方、100~499 留给官方、500+ 自建 / DLC）。
  */
 const DLC_GACHA_FROM = 500
 
@@ -74,9 +50,7 @@ function isAssetPath(v) {
 }
 
 /**
- * 递归改写 JSON 里的素材路径，并把文件复制进包内。
- *
- *   `sets/S0438/portrait.webp` → `/dlc/<id>/assets/sets/S0438/portrait.webp`
+ * 递归改写 JSON 里的素材路径，并把文件复制进包：`sets/S0438/portrait.webp` → `/dlc/<id>/assets/sets/S0438/portrait.webp`。
  */
 function rewire(node, pkgId, stats) {
   if (typeof node === 'string') {
@@ -108,17 +82,8 @@ function readManifestJson() {
 /* ────────────────────────────── 自建内容范围 ────────────────────────────── */
 
 /**
- * 算出「哪些内容算自建（可进拓展包）」（v2.0.04，用户要求）。
- *
- * 内置的 88 座服装阁、134 篇故事、595 篇阅读物本来就随模拟器一起发布，
- * 把它们再切进包里没有意义：包体积暴涨、接收方装上会多出一份重复的阁。
- *
- * 判据（能反推的用结构，反推不了的用白名单）：
- *   阁     编号 ≥ 500（自建段）**或** 登记在 `自建内容.json` 的 pools
- *   套装   属于上面这些阁 **或** 在 sets 白名单里
- *   故事   它的套装是自建套装
- *   阅读物 在 readings 白名单里（工坊写入时自动登记）
- *   版本   该版本下的阁**全部**是自建阁（0.x 这种整版自建的情况）
+ * 算出「哪些内容算自建（可进拓展包）」：阁看编号 ≥ 500 或 `自建内容.json` 的 pools；套装随阁或在 sets 白名单；
+ * 故事随自建套装；阅读物看 readings 白名单；版本看「该版本下的阁全是自建阁」。
  */
 function dlcScope(m) {
   const custom = readCustom()
@@ -164,7 +129,7 @@ function findSet(m, name) {
   return null
 }
 
-/** 故事源目录：v1.9.00 素材重构把 `套装故事/` 改名成 `故事/`，两者都认。 */
+/** 故事源目录：`故事/` 与 `套装故事/` 两者都认 */
 function storyRoot() {
   for (const n of ['故事', '套装故事']) {
     const d = path.join(ASSET, n)
@@ -174,10 +139,7 @@ function storyRoot() {
 }
 
 /**
- * 读一篇套装故事（`素材/故事/故事-{星级}-{套装名}.md`）。
- *
- * 找不到 md 时返回 **null** —— 这是「附带」路径的正常情况，不该让整包导出失败。
- * 与 gen-stories.py 同源：第一行标题、跳过 `---`、正文压缩 3 个以上空行。
+ * 读一篇套装故事（`素材/故事/故事-{星级}-{套装名}.md`）；找不到 md 时返回 **null**（「附带」路径的正常情况）。
  */
 function storyEntry(setName, m) {
   const src = storyRoot()
@@ -201,7 +163,7 @@ function storyEntry(setName, m) {
     setId: found?.set?.id || '',
     setName,
     star: Number(found?.set?.star || 5),
-    // 故事的分区跟着**阁**走（v2.0.04），不跟套装首发版本
+    // 故事的分区跟着**阁**走，不跟套装首发版本
     major: Number(String(found?.pool?.version || '1').split('.')[0]) || 1,
     title: title || setName,
     text,
@@ -292,9 +254,7 @@ function multiPackageId(kind, keys) {
 
 /**
  * 选中项的**纯校验**，必须在建目录 / 复制素材之前跑完。
- *
- * 否则「前 3 项合法、第 4 项是内置阁」这种混合选择，会在第 4 项抛错时
- * 留下一个已经复制了几百个素材却没有 dlc.json 的残包。
+ * 否则混合选择里只要有一项不合法，就会留下一个已经复制了几百个素材却没有 dlc.json 的残包。
  */
 function validateSelection(kind, list, m, scope) {
   for (const key of list) {
@@ -330,16 +290,8 @@ function validateSelection(kind, list, m, scope) {
 }
 
 /**
- * 一次导出**一个包**（v2.0.05 主入口）。
- *
- * @param {object} p
- * @param {string} p.kind  banner | set | story | reading | version
- * @param {string[]} p.keys 选中的键（多选）
- * @param {string} [p.name] 包名；留空自动生成
- * @param {string} [p.author]
- * @param {string} [p.description]
- * @param {string} [p.poolId] kind=set 时的目标阁
- * @param {string} [p.legacyId] 单选时强制使用的旧包 id（一般不用传）
+ * 一次导出一个包。
+ * p = { kind(banner|set|story|reading|version), keys[], name, author, description, poolId(kind=set 的目标阁), legacyId }
  */
 export function exportMany({ kind, keys = [], name, author, description, poolId, legacyId } = {}) {
   if (!KIND_LABEL[kind]) throw new Error('未知的导出类型：' + kind)
@@ -484,9 +436,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
 
 /**
  * 库里能导出的东西 —— 界面拿它填候选列表。
- *
- * v2.0.04：**只列自建内容**。内置的 88 座服装阁以前会全部出现在这里，
- * 选一座就能打出一个「把官方内容重新分发一遍」的包 —— 用户明确不要这个。
+ * **只列自建内容**。
  */
 export function exportCandidates() {
   const m = readJson(MANIFEST, null)

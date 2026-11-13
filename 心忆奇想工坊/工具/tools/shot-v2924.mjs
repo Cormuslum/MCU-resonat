@@ -1,10 +1,7 @@
 /**
- * v2.0.06 真机截图（一次性验收用）
- *   1. 版本页：临时静态服务（5188）serve dist/，把折叠的大版本都展开，读 26 个版本号
- *   2. 工坊拓展包多选：直接渲染工坊 CSS 片段，看四行四列 + 滚动条
- *
- * 用法：先 `npm run build`，再起 `python -m http.server 5188 --directory dist --bind 127.0.0.1`，
- *      然后 `node tools/shot-v2924.mjs`。跑完把临时服务关掉即可。
+ * 真机截图（一次性验收用）：① 版本页用临时静态服务（5188）serve `dist/`，展开折叠的大版本读 26 个版本号；
+ * ② 工坊拓展包多选，直接渲染工坊 CSS 片段看四行四列 + 滚动条。
+ * 用法：先 `npm run build`，再起 `python -m http.server 5188 --directory dist --bind 127.0.0.1`，然后 `node tools/shot-v2924.mjs`。
  */
 import fs from 'node:fs'
 import path from 'node:path'

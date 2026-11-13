@@ -49,7 +49,7 @@ TOP_DIRS = [
 ]
 EXTRA = [
     "无限暖暖模拟器/public/assets/manifest.json",
-    # 固定文案（信封欢迎语 / 工坊顶栏 / 帮助弹窗的唯一真源，v2.0.00）
+    # 固定文案（信封欢迎语 / 工坊顶栏 / 帮助弹窗的唯一真源）
     "心忆奇想工坊/工具/文案.json",
     # 玄学运势的规格/笔记（纯 Markdown，体积小；素材二进制不收）
     "素材/玄学运势/玄学运势重构计划书.md",
@@ -60,7 +60,7 @@ EXTRA = [
 SKIP_DIRS = {".git", "node_modules", "dist", ".shots", ".workbuddy-ai", "备份", "素材", "解包", "shots"}
 # 工坊临时目录：.inbox（上传落地）/ .snapshots（回滚备份）都不收
 UPDATER_SKIP = {".inbox", ".snapshots"}
-# tools/ 只收脚本（沿用 v0.8.04 备份约定：不含 shots/*.png 截图产物）
+# tools/ 只收脚本（沿用备份约定：不含 shots/*.png 截图产物）
 TOOLS_EXT = {".py", ".mjs", ".sh", ".json"}
 # 布局坐标/ 只收 Markdown 文档（pxdesk / png 素材体积大且可再生）
 LAYOUT_EXT = {".md"}

@@ -1,10 +1,10 @@
 /**
- * v2.0.05 验收
+ * 验收
  *
- *   A. 同名内容消歧：比对方式真的可用 + 只对「确实不同」的重名条目加 ·NN
- *   B. 拓展包多选：一次多选打成一个包、每个接口的数据是数组
- *   C. 关联规则：服装阁/套装附带故事、版本附带阁与故事、故事仍可单独打包
- *   D. 工坊界面多选 + 两个图鉴真实显示
+ * A. 同名内容消歧：比对方式真的可用 + 只对「确实不同」的重名条目加 ·NN
+ * B. 拓展包多选：一次多选打成一个包、每个接口的数据是数组
+ * C. 关联规则：服装阁/套装附带故事、版本附带阁与故事、故事仍可单独打包
+ * D. 工坊界面多选 + 两个图鉴真实显示
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -54,7 +54,7 @@ console.log('\n════ A 同名内容消歧 ════')
 
 const storiesTs = read('src/data/stories.ts')
 const readingsTs = read('src/data/readings.ts')
-// v2.1.05：`src/data/reading-titles.ts` / `story-titles.ts` 已删（标题并入运行时 JSON），
+// ：`src/data/reading-titles.ts` / `story-titles.ts` 已删（标题并入运行时 JSON），
 // 改读现行真源 —— 否则 `read()` 直接 ENOENT，整份验收跑不起来。
 const readingTitles = read('public/assets/data/readings.json')
 const storyTitles = read('public/assets/data/stories.json')

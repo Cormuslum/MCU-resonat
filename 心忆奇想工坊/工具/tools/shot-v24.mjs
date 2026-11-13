@@ -1,12 +1,6 @@
 /**
- * v1.3.00 验收截图
- *
- * 用法：node tools/shot-v24.mjs <场景>
- *   banner      共鸣页（默认池）
- *   banner-std  共鸣页（常驻池，看多套装名）
- *   rail        侧边栏：常态 / 指针进左缘 100px
- *   home        主页（动态背景，看 LOGO）
- *   loading     主页 → 共鸣页的加载层（含进度条）
+ * 验收截图：`node tools/shot-v24.mjs <场景>`。
+ * 场景：`banner` 共鸣页（默认池）/ `banner-std` 共鸣页（常驻池）/ `rail` 侧边栏 / `home` 主页（动态背景）/ `loading` 加载层。
  */
 import { chromium } from 'playwright-core'
 

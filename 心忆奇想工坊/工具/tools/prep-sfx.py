@@ -24,7 +24,7 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import resolve  # noqa: E402
 
-# v1.9.00 素材重构：`卡池音频/` → `素材/音频/`（索引.csv 随之搬过来）
+# 素材重构：`卡池音频/` → `素材/音频/`（索引.csv 随之搬过来）
 IDX = resolve(os.path.join("音频", "索引.csv"))
 OUT = os.path.join(SIM, "public", "assets")
 MANIFEST = os.path.join(OUT, "manifest.json")

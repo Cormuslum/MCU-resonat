@@ -32,15 +32,15 @@ ASSET = _env_dir("NIKKI_DATA_DIR", os.path.join(ROOT, "素材"))
 # 成品根：public/assets（发行版由 NIKKI_OUT_DIR 指到模拟器目录）
 PUB = _env_dir("NIKKI_OUT_DIR", os.path.join(SIM, "public", "assets"))
 
-# v1.9.00 素材重构：旧目录名 `套装故事` → 新结构 `故事`
+# 素材重构：旧目录名 `套装故事` → 新结构 `故事`
 SRC = os.path.join(ASSET, "故事")
 POOL = os.path.join(ASSET, "pool-map.json")
-# v2.1.00：输出改成运行时 JSON（`public/assets/data/stories.json`）。
+# ：输出改成运行时 JSON（`public/assets/data/stories.json`）。
 # 以前写 `src/data/stories.ts`，正文被编译进 JS —— 发行版里没有 vite，
 # 工坊改完故事永远不会生效。改成 JSON 后刷新浏览器就能看到。
 OUT = os.path.join(PUB, "data", "stories.json")
 
-# v2.1.02：**基线模式**（发行版）。
+# ：**基线模式**（发行版）。
 #
 # 发行版不再随包发 `素材/故事/`（那是 1.2M 的内置正文）——
 # 故事的主数据源变成 `stories.json` 本身，`素材/故事/` 只当**增量补丁**：
@@ -52,7 +52,7 @@ OUT = os.path.join(PUB, "data", "stories.json")
 BASELINE_MODE = os.environ.get("NIKKI_JSON_BASELINE") == "1"
 
 # ⚠ 非基线模式下找不到源目录必须报错退出，否则会把数据写成空数组、
-#    悄悄丢掉全部故事（v1.9.00 踩过这个坑）。基线模式下目录可以不存在。
+# 悄悄丢掉全部故事（ 踩过这个坑）。基线模式下目录可以不存在。
 if not BASELINE_MODE and not os.path.isdir(SRC):
     raise SystemExit(f"✗ 找不到故事源目录：{SRC}")
 
@@ -151,7 +151,7 @@ def main():
             }
         )
 
-    # v2.1.02 基线模式：把源目录当**增量补丁**，不是全集。
+    # 基线模式：把源目录当**增量补丁**，不是全集。
     #   源里有同 id 的 → 用源的（用户改过/新建的）
     #   基线里有源没有的 → 保留（内置故事不受影响）
     # 源目录为空或不存在 → 结果就是基线本身，一条都不丢。
@@ -175,7 +175,7 @@ def main():
     # 排序：套装编号正序；未命中的按名排在最后
     rows.sort(key=lambda r: (r["_num"], r.get("setName") or ""))
 
-    # 同名不同正文 → 标题加 ·01 / ·02（v2.0.05）。
+    # 同名不同正文 → 标题加 ·01 / ·02。
     # 用内容比对确认「真的不同」，完全相同的重复件不编号。
     rows, suffix_report = disambiguate_rows(rows, label="故事")
     print_report(suffix_report, "故事")

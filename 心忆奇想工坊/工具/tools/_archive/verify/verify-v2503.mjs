@@ -1,15 +1,15 @@
 /**
- * v1.3.04 验收：共鸣页跳转 / 全局 ESC / 栖骨生花文案 / 深海回响视觉 / 抽取记录
+ * 验收：共鸣页跳转 / 全局 ESC / 栖骨生花文案 / 深海回响视觉 / 抽取记录
  *
- *   A 共鸣页套装详情：跳转按钮存在 + 点击后落到服装图鉴的对应对应套装
- *   B 套装详情弹窗按 ESC：只关弹窗，人还留在共鸣页（原来会直接退回主页）
- *   C 从共鸣页跳过去后按 ESC：回到共鸣页（跳转返回栈）
- *   D 搜索弹窗跳转 → 按 ESC 回来时搜索弹窗仍开着、关键词还在
- *   E 服装图鉴 → 故事图鉴（按钮跳转）→ ESC 回服装图鉴
- *   F 栖骨生花有整体文案，且服装图鉴能显示出来
- *   G 服装图鉴部件栏切换音效 = btn-ten-hover
- *   H 共鸣详情：左右切换键切到抽取记录 / 最多 50 条 / 新的在上 / 星级图标
- *   I 深海回响：已走过轨道有高亮 path、彩虹光带用径向遮罩柔化
+ * A 共鸣页套装详情：跳转按钮存在 + 点击后落到服装图鉴的对应对应套装
+ * B 套装详情弹窗按 ESC：只关弹窗，人还留在共鸣页（原来会直接退回主页）
+ * C 从共鸣页跳过去后按 ESC：回到共鸣页（跳转返回栈）
+ * D 搜索弹窗跳转 → 按 ESC 回来时搜索弹窗仍开着、关键词还在
+ * E 服装图鉴 → 故事图鉴（按钮跳转）→ ESC 回服装图鉴
+ * F 栖骨生花有整体文案，且服装图鉴能显示出来
+ * G 服装图鉴部件栏切换音效 = btn-ten-hover
+ * H 共鸣详情：左右切换键切到抽取记录 / 最多 50 条 / 新的在上 / 星级图标
+ * I 深海回响：已走过轨道有高亮 path、彩虹光带用径向遮罩柔化
  *
  * 用法：先 npm run dev（5178），再 node tools/verify-v2503.mjs
  */
@@ -81,7 +81,7 @@ async function drain() {
 const hash = () => page.evaluate(() => location.hash)
 
 // 造存档：每个池 108 抽 + 60 条记录（超过 50 上限，用来验截断）
-// ⚠ v1.3.05 起抽取记录**按池过滤**，流水必须挂在共鸣页默认选中的那个池上
+// ⚠ 起抽取记录**按池过滤**，流水必须挂在共鸣页默认选中的那个池上
 //    （store.bannerId 初值 = banner-2.10-02），否则打开详情是空列表
 await page.goto(`${BASE}/#/`)
 await page.waitForTimeout(2200)
@@ -188,7 +188,7 @@ await step('H 抽取记录', async () => {
   const t1 = await page.evaluate(() => document.querySelector('.pp-head h4')?.textContent?.trim())
   check('H 右键切到抽取记录', t1 === '抽取记录', t1)
   const rows = await page.$$eval('.ph-item', (els) => els.map((e) => e.querySelector('.ph-name')?.textContent?.trim()))
-  // v1.3.06：改为分页 —— 单页 10 条，50 条共 5 页
+  // ：改为分页 —— 单页 10 条，50 条共 5 页
   check('H 单页 10 条', rows.length === 10, `实测 ${rows.length} 行`)
   const pagerNum = await page.evaluate(() => document.querySelector('.hp-num')?.textContent?.replace(/\s+/g, ' ').trim())
   check('H 50 条分 5 页', /^1\s*\/\s*5$/.test(pagerNum ?? ''), pagerNum)

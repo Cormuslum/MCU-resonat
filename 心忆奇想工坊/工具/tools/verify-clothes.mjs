@@ -1,20 +1,7 @@
 /**
- * 服装图鉴子界面（M2）验收 · 断言式
- *
- * 覆盖 v0.9.09 的 10 项改动 + 2 项布局守护，全部红/绿判定，失败时非 0 退出。
- *
- * 演进记录：
- *  - v0.9.09 初版：`log()` 只打印实测值，人眼比对，没有 pass/fail、没有退出码。
- *  - v2.4.01（本次重写）：
- *    ① 选择器跟进 v0.9.09 的搜索弹窗抽离 —— `SearchPopup.vue` 把 `cl-*` 全部改成 `sp-*`
- *       （`.cl-sinput` → `.sp-sinput`、`.cl-sitem` → `.sp-sitem`、`.cl-sname` → `.sp-sname`、
- *        `.cl-snext` → `.sp-snext`、`.cl-sstar` → `.sp-sstar`、`.cl-mask` → `.sp-mask`）。
- *       旧脚本卡在 `page.fill('.cl-sinput')` 上等 30s 超时，Req9/Req10 从来没跑过。
- *    ② `fill` 之前不再盲等 —— 先等 `.sp-mask` 可见 + 搜索框底图 `.sp-sbg` 解码完成，
- *       再点一下输入框拿焦点（弹窗是 `v-if`，没有 CSS 入场过渡，所以「过渡帧」= 底图 decode）。
- *    ③ 每条都 try/catch 包裹，单点失败不中断后面所有项；末尾打印 PASS/FAIL 汇总并按失败数退出。
- *
- * 用法：先 `npm run dev`（5178），再 `node tools/verify-clothes.mjs`
+ * 服装图鉴子界面（M2）验收 · 断言式：先 `npm run dev`（5178），再 `node tools/verify-clothes.mjs`。
+ * 覆盖 10 项改动 + 2 项布局守护，逐条 try/catch 互不中断，末尾打印 PASS/FAIL 汇总并按失败数退出。
+ * 搜索弹窗用 `sp-*` 前缀选择器；`fill` 前先等 `.sp-mask` 可见 + `.sp-sbg` 解码，再点输入框拿焦点。
  */
 import { chromium } from 'playwright-core'
 import { mkdirSync } from 'node:fs'
@@ -34,8 +21,7 @@ const page = await ctx.newPage()
 
 const pageErrors = []
 /**
- * `ERR_ABORTED` 不算错：BGM 那两条长音频是 `new Audio(url)` 现造的离屏元素，
- * 页面收起 / 元素被回收时 Chrome 会把它报成 aborted，跟代码无关。
+ * `ERR_ABORTED` 不算错：BGM 是 `new Audio(url)` 现造的离屏元素，元素回收时会被报成 aborted；
  * 真正的坏请求（404 / 5xx）仍然照记。
  */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm)\//.test(t)
@@ -175,10 +161,10 @@ await step('R8 套装栏宽度', async () => {
   check('R8 套装栏 1045（3 格 + 2×2px）', near(w, 1045, 1), `实测 ${round(w)}`)
 })
 
-/* ── R8b 赛季栏：大版本 option 的可见实体与小版本底板等大（v1.3.07） ──
-   opt 素材 437×132、实体 (15,16)-(421,116)；title-panel 473×128、实体 (16,13)-(459,117)。
-   img 用 object-fit:fill 拉伸，所以实体尺寸 = img 尺寸 × 实体占比。
-   两者「可见实体」宽高必须相等（容差 1px），否则又会出现大版本小一圈。 */
+/* ── R8b 赛季栏：大版本 option 的可见实体与小版本底板等大 ──
+ opt 素材 437×132、实体 (15,16)-(421,116)；title-panel 473×128、实体 (16,13)-(459,117)。
+ img 用 object-fit:fill 拉伸，所以实体尺寸 = img 尺寸 × 实体占比。
+ 两者「可见实体」宽高必须相等（容差 1px），否则又会出现大版本小一圈。 */
 await step('R8b 赛季栏等大', async () => {
   const r = await page.evaluate(() => {
     const solid = (img, w, h, bx0, by0, bx1, by1) => {
@@ -268,7 +254,7 @@ await step('R10 跳转键生效', async () => {
   await page.screenshot({ path: `${OUT}/cl-04-after-jump.png` })
 })
 
-/* ── L1/L2 布局守护（v1.0.05 搜索框下移 20px 的成果别被改回去） ── */
+/* ── L1/L2 布局守护搜索框下移 20px 的成果别被改回去 ── */
 await step('L1 搜索框位置', async () => {
   const need = (await page.$('.sp-mask')) === null
   if (need) await openSearch()

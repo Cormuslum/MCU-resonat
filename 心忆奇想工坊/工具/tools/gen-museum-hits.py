@@ -30,9 +30,9 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import resolve  # noqa: E402
 
-# v1.9.00 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`。
+# 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`。
 # ⚠ 找不到源图时**必须直接报错退出**，否则会把 museum-hits.ts 写成空对象、
-#    悄悄丢掉图鉴的全部热区（v1.9.00 踩过这个坑）。
+# 悄悄丢掉图鉴的全部热区（ 踩过这个坑）。
 SRC = resolve(os.path.join("界面", "博物图鉴", "主界面", "拆分"))
 if not os.path.isdir(SRC):
     raise SystemExit(f"✗ 找不到热区拆分图目录：{SRC}")

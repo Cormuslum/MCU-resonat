@@ -1,8 +1,6 @@
 /**
- * 五类更新任务：版本 / 服装阁 / 套装 / 故事 / 阅读物。
- *
- * 一个任务 = 一组表单字段 + 若干素材槽位 + 一段「归档到哪、写哪张表」的逻辑。
- * 界面完全由这里的描述渲染（jobs 只描述，web/ 负责画），加一种更新只需要在这里加一项。
+ * 五类更新任务：版本 / 服装阁 / 套装 / 故事 / 阅读物。一个任务 = 表单字段 + 素材槽位 + 归档与写表逻辑；
+ * 界面完全由这里的描述渲染（jobs 只描述，web/ 负责画）。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -21,8 +19,7 @@ import {
 import { archive, walkFiles, isMedia } from './archive.mjs'
 import { readCopy } from './copy.mjs'
 
-// UI 整包根目录：现在是 `界面/UI整包`（`0主素材` / `朋友分享素材` 都是废弃老名）。
-// 用 uiRoot() 探测，避免写死一代名字后再次失效。
+// UI 整包根目录：用 uiRoot() 探测
 const UI = uiRoot()
 const CARD_DIR = path.join(ASSET, UI, 'UI', 'Image', 'Card')
 /** 自建名录：写它之前必须先 snap.touch，否则回滚不回来（改名/移出会留脏名单） */
@@ -31,24 +28,16 @@ function touchCustom(snap) { snap.touch(CUSTOM_FILE) }
 const PIC_DIR = path.join(ASSET, UI, 'UI', 'SysResonance', 'texture', 'Pic')
 
 /**
- * 「这次会写入」清单里的路径前缀。
- *
- * 开发版：D = `素材/`，O = `public/assets/`
- * 发行版：D = `心忆奇想工坊/工具/data/`，O = `无限暖暖模拟器/public/assets/`
- *
- * 清单必须显示**磁盘上的真实位置** —— 发行版里根本没有 `素材/` 这个目录，
- * 照旧写死会让玩家去找一个不存在的地方。
+ * 「这次会写入」清单里的路径前缀：开发版 D = `素材/`、O = `public/assets/`；
+ * 发行版 D = `心忆奇想工坊/工具/data/`、O = `心忆共鸣/public/assets/`。
  */
 const D = `${dataLabel()}/`
 const O = `${outLabel()}/`
-// 归档目录（移出套装 / 删掉的素材）落在**工具根**，不是数据根 —— 单独一个 `{T}`。
+// 归档目录（移出套装 / 删掉的素材）落在**工具根**，不是数据根 —— 单独一个 `{T}`
 const T = toolLabel()
 /**
- * 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）。
- *
- * 差别就一件事：**写不写「内部源」**。发行版的 `工具/data/` 是纯数据副本，
- * 玩家改一篇故事不该在工坊目录里留 md（他改的是模拟器里的图鉴）。
- * 所以这里直接改成品 `public/assets/data/stories.json`，一个中转文件都不落。
+ * 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）：差别只有一件事 —— 直接改成品 `public/assets/data/*.json`，
+ * 工坊数据目录里不落中转文件。
  */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 
@@ -86,9 +75,7 @@ function one(files, slot, setIndex = null) {
 
 /**
  * 这次给的文件里有没有媒体（图 / 视频 / 音频）。
- *
- * 没有就说明只是改了元数据（改名 / 星级 / 介绍），转码那一趟全是 skipped ——
- * 直接跳过，省十几秒。
+ * 没有就说明只是改了元数据，转码那一趟全是 skipped。
  */
 function hasMedia(files) {
   return (files || []).some((f) => isMedia(f.src || f.name))
@@ -107,11 +94,8 @@ function stripMd(s) {
 }
 
 /**
- * 现网 pool-map 里这一套的元数据（找不到返回 null）。
- *
- * 发行版的 `套装库/*.yaml` 是**中转文件**：管线把信息编进 pool-map 之后就删。
- * 所以生成「最小版 YAML」时必须把已有的文案 / 五维带上 —— 否则这份残缺 YAML
- * 会在这一轮把 pool-map 里的富数据覆盖成空，删掉之后还再也补不回来。
+ * 现网 pool-map 里这一套的元数据（找不到返回 null）；发行版的 `套装库/*.yaml` 是中转文件，
+ * 生成「最小版 YAML」时要把已有的文案 / 五维带上。
  */
 function poolMapSet(name) {
   const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
@@ -146,10 +130,7 @@ function partsFromIcons(icons, gachaKey, setName) {
 }
 
 /**
- * 写一篇套装故事。
- *
- * 发行版（`NIKKI_DIST_MODE=1`）**直写成品** `stories.json`，源目录里一个 md 都不留 ——
- * 玩家改的是模拟器里的图鉴，不是工坊的源。开发版仍写 md 交给 `gen-stories.py`。
+ * 写一篇套装故事：发行版直写成品 `stories.json`，开发版写 md 交给 `gen-stories.py`。
  * @returns {{file:string, dist:boolean, created?:boolean}}
  */
 function saveStory({ snap, name, star, body }) {
@@ -166,7 +147,7 @@ function saveStory({ snap, name, star, body }) {
 
 /** 写一篇阅读物。发行版直写成品 `readings.json`（理由同上）。 */
 function saveReading({ snap, region, title, type = '书籍', body }) {
-  // 两条路都会 markCustom（拓展包候选按它过滤）→ 自建名录也得进快照，否则撤回后留脏名单
+  // 两条路都会 markCustom（拓展包候选按它过滤）→ 自建名录也得进快照
   touchCustom(snap)
   if (DIST_MODE) {
     const r = upsertReadingJson({ region, title, body })
@@ -192,12 +173,7 @@ export function pruneEmpty(root) {
 }
 
 /**
- * 把目录搬走（`src` → `dst`），**并让快照能回滚**。
- *
- * 为什么不用 `fs.renameSync(src, dst)` 一步到位：快照只认「文件级」的
- * touch(path)，整目录改名之后回滚时它既不知道原路径在哪、也不知道新路径该删。
- * 所以这里逐文件记录两侧再搬 —— 原路径有备份（回滚能还原），新路径记为「原本不存在」
- * （回滚会删掉）。搬的是同一块数据，不是复制，不会临时翻倍占盘。
+ * 把目录搬走（`src` → `dst`）并让快照能回滚：快照只认文件级 touch(path)，逐文件记录两侧再搬。
  */
 function moveTree(snap, src, dst) {
   if (!exists(src)) return 0
@@ -227,9 +203,6 @@ function moveFile(snap, src, dst) {
 
 /**
  * 在磁盘上找一座阁 / 一套服装（pool-map 的兜底）。
- *
- * pool-map 是**上一次管线**的产物：刚新建完、还没跑管线的阁与套装不在里面，
- * 而「建完立刻想改个名字」正是最容易发生的操作。所以找不到就扫目录 ——
  * 服装阁的目录结构本身就是权威的（`<版本>/<阁>/<套装>/`）。
  */
 function findOnDisk(kind, name) {
@@ -252,10 +225,7 @@ function findOnDisk(kind, name) {
 }
 
 /**
- * 服装阁素材落盘：背景 / 缩略图 / 艺术字 / 动态背景 / 进入音 / 深海回响。
- *
- * 新建与修改共用 —— 修改时只是把 `poolDir` 指向已有的阁，
- * 给了哪张就覆盖哪张，没给的一律不动（这样「只改背景」不会顺手清掉视频）。
+ * 服装阁素材落盘：背景 / 缩略图 / 艺术字 / 动态背景 / 进入音 / 深海回响；给了哪张就覆盖哪张，没给的一律不动。
  */
 function writePoolAssets({ snap, poolDir, name, files, notes }) {
   const bg = one(files, 'bg')
@@ -280,7 +250,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     notes.push(`艺术字 → ${rel(dst)}`)
   }
 
-  // 动态背景（v1.9.03）：按**阁名**存，编号改了也不用改名
+  // 动态背景：按**阁名**存，编号改了也不用改名
   const video = one(files, 'video')
   if (video) {
     const ext = (path.extname(video.name || video.src) || '.webm').toLowerCase()
@@ -289,8 +259,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     notes.push(`动态背景 → ${rel(dst)}`)
   }
 
-  // 服装阁进入音（v1.9.04）：按**阁名**存（编号会改，阁名不会）。
-  // 管线里这一份优先于「卡池进入·<版本> <阁名>.mp3」的自动匹配。
+  // 服装阁进入音：按**阁名**存。管线里这一份优先于「卡池进入·<版本> <阁名>.mp3」的自动匹配。
   const enterSfx = one(files, 'enterSfx')
   if (enterSfx) {
     const ext = (path.extname(enterSfx.name || enterSfx.src) || '.mp3').toLowerCase()
@@ -308,22 +277,14 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
 }
 
 /**
- * 服装阁编号规范化（v1.9.03）。
- *
- * 「001~999 官方 + 1000~9999 自定义」两段并存，**允许不连续**，
- * 所以不再要求三位 —— 只要数值在 1~9999 就接受（见 meta.normalizeGacha）。
- * 历史上那次 `1001` 的铭牌错位，根因是前端把 4 位截成 3 位，已在前端修掉。
+ * 服装阁编号规范化：001~999 官方 + 1000~9999 自定义两段并存、允许不连续（见 `meta.normalizeGacha`）。
  */
 function normalizeGachaKey(raw) {
   return normalizeGacha(raw)
 }
 
 /**
- * 从 `部位-部件名.png` 拆出部件信息（套装 YAML 兜底用）。
- *
- * 部位优先按**文件名前缀**判（`发型-愿景回旋` → 发型），
- * 前缀不认识时退回图鉴固定的部位顺序 —— 比瞎猜一个固定值靠谱。
- * （v2.2.01 起合进 `partsFromIcons()`：那里还要把已有的五维/文案沿过来。）
+ * 从 `部位-部件名.png` 拆出部件信息：部位优先按文件名前缀判，不认识时退回图鉴固定的部位顺序。
  */
 
 /* ────────────────────────────── 任务定义 ────────────────────────────── */
@@ -352,8 +313,7 @@ const JOBS = {
         slots: [
           { key: 'card', label: '版本缩略图', kinds: ['versionCard'], hint: '672×188，版本栏与图鉴赛季栏都用它' },
           { key: 'big', label: '版本大图', kinds: ['versionBig'], hint: '1532×860，右侧大图' },
-          // v1.6.07：大版本图标（版本页左侧那座塔）。以前只有 1/2 两张内置图，
-          // 新增大版本时第 3 组没有图标可用，版本页直接空缺。
+          // 大版本图标（版本页左侧那座塔）
           { key: 'majorIcon', label: '大版本图标', kinds: ['majorIcon'], hint: '可选；只在该大版本新建时需要，之后同组共用' },
         ],
       },
@@ -424,7 +384,7 @@ const JOBS = {
           { key: 'icons', label: '部件图标', kinds: ['partIcon'], multiple: true, hint: '一次拖整个「图标」文件夹，文件名 = 部位-部件名' },
           { key: 'suitLib', label: '套装数据（YAML）', kinds: ['suitYaml'], hint: '属性 + 文案合并成的一份 YAML；不给则按图标生成最小版' },
           { key: 'plate', label: '专属铭牌', kinds: ['namePlate'], multiple: true, hint: '可选，按套装顺序编号' },
-          // v1.6.07：故事可以直接挂在这一套上，不用再单独跑一次「故事」任务
+          // 故事可以直接挂在这一套上，不用再单独跑一次「故事」任务
           { key: 'story', label: '套装故事 (.md)', kinds: ['story'], hint: '可选，拖 .md 进来就一并写入' },
         ],
       },
@@ -497,7 +457,7 @@ const JOBS = {
     fields: [
       { key: 'name', label: '套装名', required: true, type: 'sets', placeholder: '与套装名完全一致才能挂上' },
       { key: 'star', label: '星级', type: 'select', options: [['5', '5★'], ['4', '4★']], default: '5', width: 'short' },
-      // 搜索框（v2.2.00）：拖 md 进来或手动挑套装都行，放在「星级」右边。
+      // 搜索框：拖 md 进来或手动挑套装都行，放在「星级」右边。
       // 不是写入字段 —— 选中后只负责把 `name` / `star` 填好。
       { key: 'setSearch', label: '搜索套装', type: 'setsearch',
         placeholder: '套装名或星级（如 5、雪境）' },
@@ -518,7 +478,7 @@ const JOBS = {
     ],
   },
 
-  /* ── 5. 整套导入（v1.6.07） ─────────────────────────────── */
+  /* ── 5. 整套导入 ─────────────────────────────── */
   bundle: {
     id: 'bundle',
     icon: '⧉',
@@ -547,7 +507,7 @@ const JOBS = {
     ],
   },
 
-  /* ── 6. 阅读物 ─────────────────────────────────────────── */  /* ── 5. 阅读物 ─────────────────────────────────────────── */
+  /* ── 6. 阅读物 ─────────────────────────────────────────── */
   reading: {
     id: 'reading',
     icon: '❧',
@@ -578,16 +538,8 @@ const JOBS = {
 /* ────────────────────────────── 表单辅助数据 ────────────────────────────── */
 
 /**
- * 把 `文案.json` 的 `updater.jobs` 套到任务定义上（v2.0.03）。
- *
- * 界面文案的真源是项目根的 `文案.json`；这里只做**覆盖**：
- *   · `title` / `subtitle`
- *   · `fields.<key>.label|placeholder|hint`
- *   · `groups.<key>.label|hint`、`groups.<key>.slots.<slot>.label|hint`
- *   · `writes[]`（整段替换，条数可增删）
- *
- * 每次调用都从 `JOBS` 的深拷贝出发 —— 改 json 后刷新页面即可生效，
- * 也不会因为上一次覆盖过就把旧值留在内存里。json 缺某个键时保留代码里的原文。
+ * 把 `文案.json` 的 `updater.jobs` 覆盖到任务定义上（`title` / `subtitle` / `fields.*` / `groups.*` / `writes[]`），
+ * 每次从 `JOBS` 深拷贝出发，json 缺某个键时保留代码里的原文。
  */
 export function jobsWithCopy() {
   const jobs = structuredClone(JOBS)
@@ -624,11 +576,7 @@ export function jobsWithCopy() {
     else if (Array.isArray(over.writes) && over.writes.length) job.writes = over.writes
   }
   // 写入清单里的路径前缀：`{D}` / `{O}` 是**布局占位符**，在服务端换成真实目录名。
-  // 文案.json 里写的是 `{D}信息表/版本表.csv` 这种 —— 换掉后，开发版显示「素材/…」，
-  // 发行版显示「心忆奇想工坊/工具/data/…」，两边都是磁盘上的真实位置。
-  //
-  // ⚠ 必须**在服务端**替换：前端 `fillTemplate()` 只认表单字段，
-  // `{D}` / `{O}` 不是字段名，会被当成空值换成「…」。
+  // 必须在**服务端**替换：前端 `fillTemplate()` 只认表单字段。
   for (const job of Object.values(jobs)) {
     if (!Array.isArray(job.writes)) continue
     job.writes = job.writes.map((w) => String(w).replace(/\{D\}|\{O\}|\{T\}/g,
@@ -638,10 +586,7 @@ export function jobsWithCopy() {
 }
 
 /**
- * 给前端下拉用：版本列表 + 池列表 + **自建名单**。
- *
- * `customPools` / `customSets` 带上编辑表单要回填的字段，省得前端再问一次接口。
- * 只有这两份名单里的东西能进「修改」模式 —— 官方素材不该被就地改动。
+ * 给前端下拉用：版本列表 + 池列表 + 自建名单（带编辑表单要回填的字段）；只有自建名单里的能进「修改」模式。
  */
 export function formOptions() {
   const vers = readVersionTable()
@@ -656,12 +601,7 @@ export function formOptions() {
   const seq = readSetSeq()
 
   /**
-   * 套装清单（v2.2.00）：**按套装序号排列**，不再按字典序。
-   *
-   * 图鉴本身就是按序号排的（`套装序列.csv` 的「序号」列），下拉却按拼音排 ——
-   * 同一个套装的两种顺序，找起来很别扭。这里带上 `seq/id/star/version/pool`，
-   * 前端既能按序号排「套装名」下拉，也能让搜索框按名字或星级筛选。
-   * 没登记进 CSV 的自建套装 seq=0，统一排到最后。
+   * 套装清单：按套装序号排列（带 `seq/id/star/version/pool`）；未登记进 CSV 的自建套装 seq=0，统一排最后。
    */
   const seqOf = new Map()
   for (const r of seq) {
@@ -721,12 +661,7 @@ export function formOptions() {
 
 /**
  * 应用一个任务。
- * @param {object} p
- * @param {string} p.job      任务 id
- * @param {object} p.fields   表单字段
- * @param {Array}  p.files    [{slot, src, name, setIndex}]
- * @param {object} p.snap     Snapshot 实例
- * @param {Function} p.log    日志回调
+ * p = { job, fields, files[{slot, src, name, setIndex}], snap, log }
  */
 export async function applyJob({ job, fields, files = [], snap, log = () => {} }) {
   const def = JOBS[job]
@@ -970,7 +905,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       notes.push(`服装阁编号留空 → 自动取 ${gachaKey}`)
     }
 
-    // 素材已按「实体」重构（v1.9.02）：一座阁就是一个目录，
+    // 素材已按「实体」重构：一座阁就是一个目录，
     // 背景 / 缩略图 / 艺术字 / 深海回响 / 套装全在同一层。
     const poolDir = poolDirOf(version, versionName, name, { create: true, standard: isStandard })
 
@@ -1013,8 +948,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       } else if (icons.length) {
         const dst = path.join(SUIT_LIB, `${setId}.yaml`)
         snap.touch(dst)
-        // 已有的文案 / 五维沿着旧的走：这份 YAML 只是中转，写进 pool-map 后就被删，
-        // 缺了这几项这一轮的 pool-map 会把富数据覆盖成空，删完再也补不回来
+        // 已有的文案 / 五维沿着旧的走：这份 YAML 只是中转
         const prevSet = poolMapSet(setName)
         writeSuitLibYaml({
           setName, star, setId,
@@ -1097,9 +1031,8 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
         { standard: (destPool.type || 'limited') === 'standard' }), setName)
 
     /**
-     * 源目录可能**本来就不存在**：发行版直转模式下媒体从原位置直接进成品，
-     * 工坊数据目录里只有空壳（跑完还会被 pruneEmpty 清掉）。
-     * 只要 pool-map 认识这套，就照样能改元数据 / 换图 —— 别把「源不在」当故障。
+     * 源目录可能**本来就不存在**：发行版直转模式下工坊数据目录里只有空壳。
+     * 只要 pool-map 认识这套，就照样能改元数据 / 换图。
      */
     const hasSourceDir = exists(fromDir)
     if (!hasSourceDir && !ownerFromMap) throw new Error(`找不到套装目录：${rel(fromDir)}`)
@@ -1201,9 +1134,8 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     const gachaKey = String(banner?.gachaKey || '')
     const isStandard = banner?.type === 'standard'
 
-    // 保证 build-pool-map 认得出这座阁：
-    // 2.11 起（EXTRA_POOLS / 更新程序新建）的阁若没登记过 卡池索引.json，
-    // source 扫描会给它一个「banner-<版本>」的错 id，版本页出现重复服装阁。
+    // 保证 build-pool-map 认得出这座阁：没登记过 卡池索引.json 的阁，
+    // source 扫描会给它一个「banner-<版本>」的错 id。
     if (banner) {
       snap.touch(path.join(ASSET, '信息表', '卡池索引.json'))
       upsertPool(poolName, { version, gachaKey, type: banner.type || 'limited' })
@@ -1299,10 +1231,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
   }
 
   /**
-   * 转码那一趟要不要跑：
-   *   · 这次给了媒体文件 → 要
-   *   · 新建版本 / 新建阁 / 新建套装 / 整套导入 → 要（产物本来就不存在）
-   *   · 只改元数据（改名、星级、介绍、封面没动）→ **不用**，跑也是全 skipped
+   * 转码那一趟要不要跑：给了媒体文件、或新建版本 / 阁 / 套装、或整套导入时要；只改元数据不用。
    */
   const createdSomething = versionCreated || job === 'bundle'
     || (job === 'pool' && String(fields.mode || 'new') !== 'edit')

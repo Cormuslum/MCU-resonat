@@ -45,12 +45,12 @@ const info = await p.evaluate(() => {
     tab: [...document.querySelectorAll('.rd-tab')].map((e) => e.textContent.trim()),
   }
 })
-// v2.5.07：篇数随新版本增长，改为「列表条数 = 标签里的总数」自校验
+// ：篇数随新版本增长，改为「列表条数 = 标签里的总数」自校验
 const xyShown = Number((info.label || '').match(/\(0\/(\d+)\)/)?.[1] ?? -1)
 ok(info.count > 0 && info.count === xyShown, `心愿原野故事数与标签一致（${info.count} / "${info.label}"）`)
 ok(info.emptyTxt === '暂未获得故事书，快去收集套装吧～', `空态文案 = "${info.emptyTxt}"`)
 ok(!info.hasCollect, '无「收集全部」按钮')
-// v1.7.00：顶部改成三栏（奇迹传说 / 心愿原野 / 伊赞之土）
+// ：顶部改成三栏（奇迹传说 / 心愿原野 / 伊赞之土）
 ok(info.tab.length === 3 && info.tab.includes('奇迹传说'), `顶部三栏：${info.tab.join(' / ')}`)
 console.log('  前 4 条:', info.first4.join(' | '))
 
@@ -71,11 +71,11 @@ const afterClick = await p.evaluate(() => ({
 }))
 ok(!afterClick.hasTitle, '未集齐时点击不显示正文')
 ok((afterClick.toast || '').includes('集齐'), `点击提示集齐套装（"${afterClick.toast}"）`)
-// v2.5.07：故事总数会随新版本增长（116 → 120 篇），别再写死数字 —— 只校验格式与「未解锁不改数」
+// ：故事总数会随新版本增长（116 → 120 篇），别再写死数字 —— 只校验格式与「未解锁不改数」
 ok(/^故事 \(0\/\d+\)$/.test(afterClick.label || ''), `未解锁不改变计数（"${afterClick.label}"）`)
 
 /* ── 4. 伊赞之土分区（篇数随版本增长，按标签自校验） */
-// ⚠ 按**文字**找栏位，不按下标：v1.7.00 在左端插入了「奇迹传说」，
+// ⚠ 按**文字**找栏位，不按下标： 在左端插入了「奇迹传说」，
 //    原来的 nth(1) 已经从伊赞之土变成了心愿原野（会拿错分区还"通过"）
 await p.locator('.rd-tab', { hasText: '伊赞之土' }).first().click()
 await p.waitForTimeout(800)

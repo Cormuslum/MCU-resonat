@@ -1,28 +1,6 @@
 /**
- * 整套导入（v1.6.07）。
- *
- * 用户会把素材按固定结构整理好再丢进来：
- *
- *   素材/示例/
- *     奇迹传说/                       ← 大版本名
- *       0.1祈愿星/                    ← 版本号 + 版本名（点号紧挨着名字）
- *         心愿栖金蕊/                  ← 服装阁名
- *           S0062/                      ← 套装（官方 ID）
- *             半身像/发型-翠金花藤.png
- *             图标/发型-翠金花藤.png
- *             进化等阶/整体-初始.png
- *             属性-5星-心愿金蔷薇.yaml
- *             故事-5星-心愿金蔷薇.md
- *           列表缩略图.png / 背景图.jpeg / 艺术字.png / 深海回响/120抽-XXX.png
- *         阅读物/《书名》.txt
- *
- * 这个模块只做两件事：
- *   1. `scanBundle(path)`  把目录**读成一份计划**（不写任何文件）
- *   2. `applyBundle(...)`  按计划一次性写完全部内容（版本 + 大版本 + 阁 + 套装 + 故事 + 阅读物）
- *
- * 为什么要「一次写完」：以前版本、套装、故事分三次任务，每次都依赖上一次的结果
- * （套装要选已有阁、故事要选已有套装），完成一次更新要点三次「写入并更新」、
- * 重启三次模拟器 —— 这就是用户说的「写入操作过于繁琐」。
+ * 整套导入：素材按「大版本 / 版本号+版本名 / 服装阁 / S 编号套装 / 阅读物」的固定结构整理好再丢进来。
+ * 两个函数：`scanBundle(path)` 把目录读成一份计划（不写任何文件），`applyBundle(...)` 按计划一次性写完。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -38,7 +16,7 @@ import { archive } from './archive.mjs'
 
 /**
  * 发行版（启动器设 `NIKKI_DIST_MODE=1`）：故事 / 阅读物**直写成品 JSON**，
- * 不在 `工具/data/{故事,阅读物}/` 里留副本（理由见 meta.mjs 的 upsertStoryJson）。
+ * 不在 `工具/data/{故事,阅读物}/` 里留副本。
  */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 
@@ -76,9 +54,7 @@ function parseVersionDir(dirName) {
     return { v, name }
   }
   /**
-   * 兜底（v2.2.00）：版本号没写在开头也要认。
-   * 用户的真实写法经常是「探索季 1.0」「1.0 探索季（新）」「序列号+小版本名 1.0探索季」，
-   * 以前一律判「看不出是版本目录」整块跳过 —— 现在从名字里捞一个 `x.y` 出来。
+   * 兜底：版本号没写在开头也要认，从名字里捞一个 `x.y` 出来。
    */
   const m2 = /(\d+\.\d+)/.exec(dirName)
   if (m2) {
@@ -121,11 +97,8 @@ function collectReadingsDeep(dir) {
 }
 
 /**
- * 这个目录**自己**是哪一层？（v2.2.02）
- *
- * 以前只认「root 的下一层」，于是把 `…/示例/阅读物/阅读物` 拖进来时，
- * 顶层只有三个 txt → 被判成「散文件」直接拒绝。用户的意思是：
- * **路径末尾那一层对得上就该能认**，不该硬性要求再套一层。
+ * 这个目录**自己**是哪一层？
+ * 路径末尾那一层对得上就该能认，不硬性要求再套一层。
  */
 function classifySelf(dir) {
   const base = path.basename(dir)
@@ -140,7 +113,7 @@ function classifySelf(dir) {
   }
 
   // 套装要排在服装阁之前判：「进化等阶/整体-初始.png」这种顶层大图会被
-  // collectPool 当成「16:9 背景」认走，于是把一套服装误判成一座阁。
+  // collectPool 当成「16:9 背景」认走
   if (isSetDir(asDir)) {
     const set = collectSet(asDir)
     if (set) return { level: 'set', set }
@@ -153,10 +126,7 @@ function classifySelf(dir) {
 }
 
 /**
- * 往上找 1~2 层里有没有「版本目录名」→ 猜出版本号 / 版本名 / 大版本名。
- *
- * 只用来**预填表单**（跳去「服装阁」时省一次手敲），猜不到就留空，
- * 绝不拿它当写入依据 —— 归属最终仍由用户确认。
+ * 往上找 1~2 层里的「版本目录名」，猜出版本号 / 版本名 / 大版本名；只用于预填表单，绝不拿它当写入依据。
  */
 function guessContext(dir) {
   const parent = path.dirname(dir)
@@ -176,12 +146,8 @@ function guessContext(dir) {
 }
 
 /**
- * 扫描一个「整理好的」文件夹。
- *
- * 允许用户指到**任意一层**：大版本 / 版本 / 服装阁 / 套装 / 阅读物。
- * 指到哪层就认哪层，缺上级归属的收成 `orphans`（带上已经识别到的元数据与素材路径，
- * 界面可以一键把这些东西填进「服装阁」表单）。
- *
+ * 扫描一个整理好的文件夹：允许指到大版本 / 版本 / 服装阁 / 套装 / 阅读物任意一层，指到哪层就认哪层；
+ * 缺上级归属的收成 `orphans`（界面可一键填进「服装阁」表单）。
  * @returns {{ok:boolean, plan?:object, error?:string, code?:string}}
  */
 export function scanBundle(root) {
@@ -278,9 +244,8 @@ export function scanBundle(root) {
       (e) => !e.dir && PIC.test(e.name) && /^(大版本图标|版本塔|major)/i.test(stem(e.name)),
     )
 
-    // 「阅读物」目录不属于版本层级，单独收（否则会被当成版本目录报「看不出是版本目录」）
-    // 顺带按版本号数值排序：readdir 是文件系统顺序，`1.10` 会排在 `1.2` 前面，
-    // 于是「整套导入」的计划里版本顺序会乱（v1.9.07）。
+    // 「阅读物」目录不属于版本层级，单独收
+    // 顺带按版本号数值排序：readdir 是文件系统顺序，`1.10` 会排在 `1.2` 前面
     const verDirs = listDir(majorDir.path)
       .filter((e) => e.dir && !isReadingDirName(e.name))
       .sort((a, b) => {
@@ -440,21 +405,13 @@ function collectPool(poolDir) {
 
   const thumb = pickBy(/^(列表)?缩略图$/)
   const titleArt = pickBy(/^(艺术字|标题艺术字|titleart)$/i)
-  // 动态背景 / 进入音（v2.2.02）：以前整套导入完全不认这两种，拖进来就被静默丢掉，
-  // 于是「动态背景（视频）」那一格永远空着。
+  // 动态背景 / 进入音
   const video = entries.find((e) => !e.dir && VIDEO_RE.test(e.name)) || null
   const audio = entries.find((e) => !e.dir && AUDIO_RE.test(e.name)) || null
-  // v1.9.03：「标题横幅」已废弃（模拟器从不显示），不再识别、不再归档
+  // 「标题横幅」已废弃（模拟器从不显示），不再识别、不再归档
 
   /**
-   * 背景：先认文件名（`背景图.*` / `bg.*`），认不到再**按尺寸兜底**。
-   *
-   * 用户手上的原图经常叫 `无限暖暖-1.5星之海-020.JPEG` 这种名字 ——
-   * 只按文件名找会整张背景丢掉（连带 `collect-assets` 从背景裁的列表缩略图也没了，
-   * 2026-11-05 实测：示例阁「心轮曳星河」就踩了这个）。
-   * 阁根目录只放阁级素材，所以「16:9 且宽 ≥1900 的那张大图」只能是背景。
-   *
-   * ⚠ 必须排除已认出的缩略图 / 艺术字：艺术字常常也是 2730×1536 的 16:9 大图。
+   * 背景：先认文件名（`背景图.*` / `bg.*`），认不到再按尺寸兜底（16:9 且宽 ≥1900），必须排除已认出的缩略图 / 艺术字。
    */
   let bg = pickBy(/^(背景图?|bg)$/i)
   if (!bg) {
@@ -489,8 +446,7 @@ function collectPool(poolDir) {
     const set = collectSet(e)
     if (set) sets.push(set)
   }
-  // 一「阁」的判据放宽（v2.2.00）：只要看得出是阁级素材/套装，就认。
-  // 以前要求「有套装 或 有背景 或 有艺术字」，只丢了缩略图与深海回响的残缺目录会被整块跳过。
+  // 一「阁」的判据：只要看得出是阁级素材/套装，就认
   if (!sets.length && !bg && !titleArt && !thumb && !milestones.length && !video && !audio) return null
 
   return { name: poolDir.name, dir: poolDir.path, bg: bg?.path || null, thumb: thumb?.path || null,
@@ -499,14 +455,8 @@ function collectPool(poolDir) {
 }
 
 /**
- * 这个目录是不是「一套服装」（v2.2.00 放宽）。
- *
- * 认四种形态，允许残缺：
- *   1. 官方套装编号目录 `S0062`
- *   2. 目录里带 `属性-5星-XXX.yaml` / `故事-4星-XXX.md`（文件名里就有套名星级）
- *   3. 目录里带 `半身像/` `图标/` `进化等阶/` 子目录
- *   4. 目录里直接放 `整体-初始.png` 这类整体图
- * 示例结构（`素材/示例`）用的是「套装名」当目录名，第 3、4 条就是为它加的。
+ * 这个目录是不是「一套服装」：S 编号目录 / 带 `属性-5星-XXX.yaml`、`故事-*.md` / 带 `半身像/` `图标/` `进化等阶/`
+ * / 直接放 `整体-初始.png`。
  */
 function isSetDir(e) {
   if (/^S\d{2,}$/i.test(e.name)) return true
@@ -553,8 +503,7 @@ function collectSet(setDir) {
   if (/四星|4\s*星/.test(setDir.name)) set.star = '4'
   else if (/五星|5\s*星/.test(setDir.name)) set.star = '5'
 
-  // 目录名本身可能就是套装名（示例结构：`套装名/半身像|图标|进化等阶`）。
-  // `S0062` 这类编号目录不能当名字 —— 那是 ID，不是套名。
+  // 目录名本身可能就是套装名。`S0062` 这类编号目录不能当名字 —— 那是 ID，不是套名。
   if (!set.name && !/^S\d+$/i.test(setDir.name)) set.name = setDir.name
   if (!set.name) return null   // 没有 属性/故事 文件、目录名又是纯编号 → 认不出套装名，跳过
   // 一个素材都没有的空壳（或被 isSetDir 误判进来的普通目录）不算套装
@@ -583,7 +532,7 @@ function rekeyPool(snap, oldKey, newKey, log) {
       log({ kind: 'warn', text: `Pic 目录改名失败（不影响其余写入）：${e.message || e}` })
     }
   }
-  // v1.9.03：背景图已收进阁目录（`<阁>/背景图.jpg`），不再按编号命名；
+  // 背景图已收进阁目录（`<阁>/背景图.jpg`），不再按编号命名；
   // 视频是按阁名命名的 —— 两者都不用跟着编号搬。
 }
 
@@ -674,7 +623,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
       for (const pool of ver.pools) {
         const idx = readPoolIndex()
         const prev = idx[pool.name]
-        // v1.9.03：编号两段区间（001~999 官方 / 1000~9999 自定义）且允许不连续，
+        // 编号两段区间（001~999 官方 / 1000~9999 自定义）且允许不连续，
         // 只做数值规范化；真的不合法（空 / 0 / 5 位以上）才重新分配。
         let gachaKey = normalizeGacha(prev?.gachaKey)
         let rekeyFrom = ''
@@ -694,7 +643,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
         }
         log({ kind: 'ok', text: `服装阁：${pool.name} → ${gachaKey}` })
 
-        // 素材已按「实体」重构（v1.9.02）：一座阁一个目录，图片/文案都在里面
+        // 素材已按「实体」重构：一座阁一个目录，图片/文案都在里面。
         // 常驻阁的目录名带 `常驻·` 前缀（build-pool-map 靠它判 standard）；
         // 扫描结果里没有 type，沿用索引里已登记的阁型。
         const poolDir = poolDirOf(ver.v, ver.name, pool.name, {
@@ -716,7 +665,6 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
           archive(snap, [{ src: pool.titleArt, target: dst }])
         }
         // 动态背景 / 进入音：按**阁名**存（编号会变，阁名不会），与 jobs.mjs 的「服装阁」任务一致。
-        // 这两样以前整套导入会静默丢弃（认都不认）。
         if (pool.video) {
           const ext = (path.extname(pool.video) || '.webm').toLowerCase()
           const dst = path.join(ASSET, '视频', '服装阁动态', `${safeName(pool.name)}${ext === '.mp4' ? '.mp4' : '.webm'}`)
@@ -836,14 +784,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
 }
 
 /**
- * 决定这一套的套装 ID（v2.2.00）。
- *
- * 示例结构用「套装名」当目录名，没有 `S0062` 这种编号。直接拿目录名当 ID 会写进
- * `套装序列.csv`（图鉴按 ID 排/去重，中文 ID 会排在 S 编号后面变成一团）。
- * 规则：
- *   · 序列里已经有这套 → **沿用它原来的 ID**（绝不因为这次导入把老 ID 改坏）
- *   · 目录名是 S 编号 → 直接用
- *   · 都没有 → 取现有最大 S 编号 + 1
+ * 决定这一套的套装 ID：序列里已有则沿用原 ID、目录名是 S 编号则直接用、都没有则取现有最大 S 编号 + 1。
  */
 function resolveSetId(set) {
   const rows = readSetSeq()

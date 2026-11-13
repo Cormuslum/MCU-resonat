@@ -1,9 +1,6 @@
 /**
  * 归档：把用户给的素材搬到项目约定的位置，并记下「改了什么」以便一键回滚。
- *
- * 两条通道最后都汇到这里：
- *   - 拖拽/上传 → updater/.inbox/<jobId>/…（临时落地）
- *   - 粘贴路径   → 原地读取（不复制，直接复制到目标）
+ * 两条通道最后都汇到这里：拖拽 / 上传 → `updater/.inbox/<jobId>/…`（临时落地），粘贴路径 → 原地读取。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -23,10 +20,8 @@ export function inboxDir(jobId) {
 }
 
 /**
- * 这个路径是不是落在临时收件区里（v2.2.02）。
- *
- * 「拖文件夹」进工坊时，浏览器只给相对路径，所以先把整棵目录树落到 inbox 再扫描。
- * 写入成功后要把这份**中转拷贝**删掉 —— 否则大视频会被平白多存一份。
+ * 这个路径是不是落在临时收件区里。
+ * 写入成功后要把这份**中转拷贝**删掉。
  */
 export function isInInbox(p) {
   const abs = path.resolve(String(p || ''))
@@ -51,8 +46,7 @@ export function gc() {
 
 /**
  * Windows 上「刚写完就删/覆盖」很容易撞 EPERM / EBUSY：
- * 杀毒、索引器、或 ffmpeg 子进程还捏着句柄，几毫秒后才放。
- * 撤回操作是用户手点的，撞上这种瞬时锁不该直接判定失败 —— 重试几次即可。
+ * 杀毒、索引器、或 ffmpeg 子进程还捏着句柄。撤回撞上这种瞬时锁时重试几次即可。
  */
 function retry(fn, tries = 4, waitMs = 45) {
   for (let i = 0; ; i++) {
@@ -68,12 +62,8 @@ function retry(fn, tries = 4, waitMs = 45) {
 }
 
 /**
- * 删一个文件，**绕得开安全删除 shim**（v1.6.07）。
- *
- * 某些宿主（含本项目在 WorkBuddy 里自测时）会通过 `NODE_OPTIONS` 注入一个
- * 「删除=丢回收站」的 shim，`fs.unlinkSync` 于是变成异步语义甚至静默失败 ——
- * 表现是「撤回」时新加的文件删不掉，目录永远留着。
- * 这里先正常删，失败再起一个清空 NODE_OPTIONS 的原生子进程删。
+ * 删一个文件，绕得开安全删除 shim（某些宿主经 `NODE_OPTIONS` 注入「删除=丢回收站」，`unlinkSync` 会静默失败）：
+ * 先正常删，失败再起一个清空 `NODE_OPTIONS` 的原生子进程删。
  */
 function hardUnlink(file) {
   try {
@@ -95,9 +85,7 @@ function hardUnlink(file) {
 
 /**
  * 一次 apply 的全部写操作记录。
- *
- * 用「按需记录」而不是「预先把整个项目打包」：一次更新通常只碰几十个文件，
- * 全量打包 470MB 的 public/assets 会让每次点「写入」都卡半分钟。
+ * 用「按需记录」而不是「预先把整个项目打包」。
  */
 export class Snapshot {
   constructor(label = '') {
@@ -128,10 +116,7 @@ export class Snapshot {
 
   /**
    * 登记一个**新建的空目录**，回滚时若它还是空的就删掉。
-   *
-   * 为什么需要：`touch()` 只认文件。新建一座阁 / 一套衣服时，如果这次没塞素材，
-   * 目录里一个文件都没有，快照就完全不知道它的存在 —— 回滚后磁盘上留一个空壳，
-   * 管线下次会把空壳当成「一套没有素材的服装」收进图鉴。
+   * `touch()` 只认文件 —— 目录里一个文件都没有时，快照就完全不知道它的存在。
    */
   trackDir(abs) {
     let d = abs
@@ -146,8 +131,7 @@ export class Snapshot {
           id: this.id,
           at: new Date().toISOString(),
           items: this.items,
-          // 目录也要落盘：新建又没塞文件的阁 / 套装没有任何 items，
-          // 只靠 items 反推路径的话回滚后会在磁盘上留一个空壳
+          // 目录也要落盘：新建又没塞文件的阁 / 套装没有任何 items
           dirs: [...this.dirs],
         }, null, 2), 'utf8')
     } catch { /* 快照索引写失败不该阻断业务 */ }
@@ -222,9 +206,7 @@ export function restoreSnapshot(id) {
 
 /**
  * 统一落成 PNG。
- *
- * 下游脚本按扩展名硬编码找文件（`服装阁/<阁>/背景图.png`、`套装立绘.png`…），
- * 所以用户丢进来的 jpg/webp 必须先转成 png，否则「明明放了图却没生效」。
+ * 下游脚本按扩展名硬编码找文件（`服装阁/<阁>/背景图.png`、`套装立绘.png`…）。
  */
 function ensurePng(src, dst) {
   fs.mkdirSync(path.dirname(dst), { recursive: true })
@@ -262,24 +244,13 @@ function ensureCopy(src, dst) {
 const MEDIA_RE = /\.(png|jpe?g|webp|gif|bmp|tiff?|mp4|webm|mov|mkv|ogg|mp3|wav|flac|m4a)$/i
 /**
  * 是不是媒体文件（图片 / 视频 / 音频）。只有这些才值得转码，别的都是文本数据。
- *
- * 也用来判断「这次要不要跑转码那一趟」：只改元数据（改名 / 星级 / 介绍）时
- * 一个媒体文件都没有，`collect-assets` 那趟必然全 skipped，白等十几秒。
+ * 也用来判断「这次要不要跑转码那一趟」。
  */
 export const isMedia = (p) => MEDIA_RE.test(String(p || ''))
 
 /**
- * 直转模式（v2.1.00，发行版专用）。
- *
- * 以前是三级链路：外部源 → 复制进 `素材/`（内部源）→ Python 转码 → `public/assets`。
- * 内部源那 3.9G 是纯冗余 —— 用户给的文件、以及"这个文件演什么角色"，工坊本来就知道
- * （表单里的槽位 + pool-map 里的虚拟路径），不需要先在磁盘上排一遍目录结构。
- *
- * 打开后 `archive()` 不再复制媒体文件，只登记一条「虚拟素材路径 → 真实源文件」；
- * `collect-assets.py --overrides` 拿这张表直接把外部文件转进成品目录。
- * 磁盘上从头到尾只有用户原来那份文件 + 成品，没有中间副本。
- *
- * 注意只看**媒体**：`.yaml` / `.md` / `.txt` / `.csv` 是编辑数据，本来就要落盘。
+ * 直转模式（发行版专用）：`archive()` 不复制媒体文件，只登记「虚拟素材路径 → 真实源文件」，
+ * `collect-assets.py --overrides` 拿这张表直接转进成品目录；`.yaml/.md/.txt/.csv` 是编辑数据，照旧落盘。
  */
 const PASSTHROUGH = { enabled: false, map: {} }
 
@@ -294,17 +265,9 @@ export function passthroughMap() {
 }
 
 /**
- * 归档一批素材。
- *
- * v2.0.06：只处理**改动项**。源内容没变、且上次写完之后目标也没被动过的项，
- * 直接跳过 —— 不识别、不校验、不复制、也不进快照（它本来就没变，撤回不该碰它）。
- * 判据是内容哈希，不是文件名或时间戳，所以「同一份素材重新拖一次」也算未改动。
- *
- * v2.1.00：`PASSTHROUGH.enabled` 时媒体文件改走「登记重定向」而不是复制；
- * 数据文件（yaml/md/txt/csv/json）照旧复制 —— 它们是唯一真源，不能只留在用户机器上。
- *
- * @param {Snapshot} snap
- * @param {{src:string,target:string}[]} items
+ * 归档一批素材：只处理改动项（源内容没变、上次写完后目标也没被动过的直接跳过），判据是内容哈希。
+ * `PASSTHROUGH.enabled` 时媒体文件改走「登记重定向」，数据文件照旧复制。
+ * @param {Snapshot} snap  @param {{src:string,target:string}[]} items
  */
 export function archive(snap, items) {
   const cache = loadWriteCache()
@@ -314,8 +277,7 @@ export function archive(snap, items) {
     if (!exists(it.src)) { done.push({ ...it, ok: false, error: '源文件不存在' }); continue }
     try {
       if (PASSTHROUGH.enabled && isMedia(it.src)) {
-        // 不落盘：目标路径只作为「产物怎么算」的索引键，交给 collect 去转码。
-        // 也不 touch 快照 —— 磁盘上没有新文件，撤回没什么可还原的。
+        // 不落盘：目标路径只作为「产物怎么算」的索引键，交给 collect 去转码
         PASSTHROUGH.map[assetRel(it.target)] = it.src
         noteWrite(false)
         done.push({ ...it, ok: true, rel: rel(it.target), passthrough: true })

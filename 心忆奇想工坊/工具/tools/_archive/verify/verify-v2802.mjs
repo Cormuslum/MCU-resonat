@@ -1,10 +1,10 @@
 /**
- * v1.5.05 验收 —— 只覆盖本轮改动及其关联项。
+ * 验收 —— 只覆盖本轮改动及其关联项。
  *
- *   A. 2.11「雪落颂愿时」素材补齐（里程碑 / 立绘 / 图标 / 横幅）
- *   B. 套装详情弹窗：立绘按画框裁切（大图 + 形态卡）
- *   C. 主页左上角信封弹窗（信封 → 拆开 → 信纸翻页 → 滚动 → 点空白关闭）
- *   D. 全程无 JS 报错
+ * A. 2.11「雪落颂愿时」素材补齐（里程碑 / 立绘 / 图标 / 横幅）
+ * B. 套装详情弹窗：立绘按画框裁切（大图 + 形态卡）
+ * C. 主页左上角信封弹窗（信封 → 拆开 → 信纸翻页 → 滚动 → 点空白关闭）
+ * D. 全程无 JS 报错
  *
  * 用法：node tools/verify-v2802.mjs
  */
@@ -161,7 +161,7 @@ await page.waitForTimeout(2600)
   ok('形态卡裁切框与卡片画框对齐',
     !!r.formCard && ['x', 'y', 'w', 'h'].every((k) => Math.abs(r.formCard[k] - r.formClip[k]) <= 1),
     `${JSON.stringify(r.formClip)} vs ${JSON.stringify(r.formCard)}`)
-  // v1.6.05：底部装饰带原来 z-index:1，被立绘(2)/形态卡(4) 盖住，只露出中间拱形
+  // ：底部装饰带原来 z-index:1，被立绘(2)/形态卡(4) 盖住，只露出中间拱形
   ok('底部装饰带压在立绘与形态卡之上',
     r.z.band >= r.z.hero && r.z.band >= r.z.forms && r.z.bandW > 1000,
     `band z=${r.z.band} (${r.z.bandW}×${r.z.bandH}) / hero z=${r.z.hero} / forms z=${r.z.forms}`)
@@ -249,14 +249,14 @@ const bodyStyle = await page.evaluate(() => {
   const b = document.querySelector('.lt-body')
   return b ? { oy: getComputedStyle(b).overflowY, fs: getComputedStyle(b).fontSize } : null
 })
-// v1.6.05：不再自动降字号 —— 放不下就滚动
+// ：不再自动降字号 —— 放不下就滚动
 ok('正文容器是可滚动区（overflow-y:auto）', bodyStyle?.oy === 'auto', JSON.stringify(bodyStyle))
 ok('末页内容放得下或可滚动（不再裁字）', overflow <= 1 || (await page.evaluate(() => {
   const b = document.querySelector('.lt-body')
   return !!b && b.scrollHeight > b.clientHeight
 })), `超出 ${overflow}px`)
 
-// v1.6.05：日志再长也不缩字 —— 用「人为加长正文」验证滚动链路
+// ：日志再长也不缩字 —— 用「人为加长正文」验证滚动链路
 {
   await page.evaluate(() => {
     const b = document.querySelector('.lt-body')
@@ -303,8 +303,8 @@ ok('末页内容放得下或可滚动（不再裁字）', overflow <= 1 || (awai
   })
 }
 
-// v1.6.01：更新日志的长度随版本变化 —— 某一版变长就会把正文顶出容器。
-// v1.6.05 起改为滚动，所以每页只验「可读」：放得下、或能滚动到底。
+// ：更新日志的长度随版本变化 —— 某一版变长就会把正文顶出容器。
+// 起改为滚动，所以每页只验「可读」：放得下、或能滚动到底。
 {
   // 先回到第 1 页
   for (let i = 0; i < 3; i++) {
@@ -335,7 +335,7 @@ await page.keyboard.press('Escape')
 await page.waitForTimeout(320)
 ok('ESC 关闭信封弹窗', (await page.locator('.mail-mask').count()) === 0)
 
-// v1.6.05：主路径是「点空白处退出」（× 已删除）
+// ：主路径是「点空白处退出」（× 已删除）
 await page.locator('.hm-mail').click()
 await page.waitForTimeout(400)
 await page.mouse.click(120, 940)

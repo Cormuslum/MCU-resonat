@@ -1,32 +1,8 @@
 /**
- * 把 electron-builder 的产物 + 项目数据组装成「免安装发行版」。v2.1.00
- *
- *   node tools/pack-release.mjs
- *
- * 前置：先跑
- *   npx electron-builder --config electron-builder-sim.yml --win --dir
- *   npx electron-builder --config electron-builder-updater.yml --win --dir
- * 它们输出到 release/_build/{simulator,updater}/win-unpacked。
- *
- * 产出（两个目录**职责分离**）：
- *
- *   release/无限暖暖发行版/
- *     无限暖暖模拟器/          ← 纯静态，玩家只需要这一个
- *       无限暖暖模拟器.exe + resources/
- *       dist/                 只含代码（js/css/html/svg）
- *       public/               成品素材 + manifest + data/*.json
- *       userdata/             存档（跟着包走）
- *
- *     心忆奇想工坊/            ← 编辑器，运行时/工具/数据都在这里
- *       心忆奇想工坊.exe + resources/
- *       运行时/               python.exe + Pillow + ffmpeg.exe
- *       工具/updater/         工坊服务代码
- *       工具/tools/           Python 管线
- *       工具/data/            信息表 / 套装库 / 故事 / 阅读物 / pool-map.json
- *       工具/文案.json
- *
- * 为什么这么分：玩家可能只想玩（只下载「无限暖暖模拟器」），
- * Python/ffmpeg/编辑数据对他全是负担；反过来工坊要把成品写进模拟器的 public。
+ * 把 electron-builder 的产物 + 项目数据组装成「免安装发行版」：`node tools/pack-release.mjs`。
+ * 前置：`npx electron-builder --config electron-builder-{sim,updater}.yml --win --dir`，输出到 `release/_build/{simulator,updater}/win-unpacked`。
+ * 产出 `release/无限暖暖发行版/{心忆共鸣, 心忆奇想工坊}` —— 模拟器纯静态（exe + dist + public + userdata），
+ * 工坊带 `运行时/`、`工具/{updater,tools,data}`、`工具/文案.json`；玩家只想玩可只下载模拟器那一个。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -49,32 +25,20 @@ const BUILD = path.join(ROOT, 'release', '_build')
 const MEDIA = ['*.webp', '*.ogg', '*.mp4', '*.webm', '*.png', '*.jpg', '*.jpeg', '*.gif', '*.avif', '*.mp3', '*.wav', '*.m4a']
 
 /**
- * 编辑数据：只带这几样（约 0.3M）。
- *
- * v2.1.02 起**不再随包发 `故事/` `套装库/` `阅读物/`**（合计 4.5M）：
- * 它们的成品（stories.json / readings.json / pool-map 里的套装文案）已经在
- * 模拟器的 `public/assets/data/` 与 `data/pool-map.json` 里，而这三个目录在
- * 发行版只当**增量补丁** —— 用户拖进来的新文件覆盖对应那一条，其余原样保留。
- * 用户在工坊里拖文件时目录会自动重建（写入端 mkdir -p）。
+ * 编辑数据只带 `信息表`（约 0.3M）：`故事/` `套装库/` `阅读物/` 不随包发（成品已在模拟器里），
+ * 发行版只当增量补丁 —— 用户拖进来的新文件覆盖对应那一条，其余原样保留（写入端会自动 mkdir）。
  */
 const DATA_KEEP = ['信息表']
 
 /**
- * 信息表 / 阅读物里这些是**开发期遗留**，不进发行包：
- *   - `前后名称对照表.md`：v2.0.02 起管线已不再读它
- *   - `desktop.ini`：Windows 资源管理器自动生成的文件夹个性化文件（纯垃圾，40KB）
- *   - `系列分类说明.md`：描述的是早已不存在的「系列子目录」，已过时
- *   （`2872新增阅读物清单.txt` 是用户的工作清单，**保留**）
+ * 信息表 / 阅读物里的开发期遗留，不进发行包：`前后名称对照表.md`、`desktop.ini`、`系列分类说明.md`
+ * （`2872新增阅读物清单.txt` 是用户的工作清单，保留）。
  */
 const DATA_XF = ['前后名称对照表.md', 'desktop.ini', '系列分类说明.md']
 
 /**
- * 工坊代码里这些不进发行包：
- *   - 快照 / 缓存 / 扩展包源 / 临时重定向表：运行时状态，每次写入重新生成（实测快照能占 20M）
- *   - `dlc/`：扩展包源区，玩家自己的包不该随包分发
- * README 是**开发服务器版**的说明（端口 5178/5199、`node updater/server.mjs`），
- * 与发行版的双击 exe 启动方式不符，留着会误导 → 不进制发行包。
- * 发行版用户看的是工坊界面里的「帮助」弹窗。
+ * 工坊代码里这些不进发行包：快照 / 缓存 / 扩展包源 / 临时重定向表（运行时状态）、`dlc/`（玩家自己的包）、`node_modules`；
+ * README 是开发服务器版说明（端口 5178/5199），留着会误导。
  */
 const UPD_XD = ['.snapshots', '.inbox', '.dist', 'dlc', 'node_modules']
 const UPD_XF = [
@@ -83,9 +47,7 @@ const UPD_XF = [
 ]
 
 /**
- * 工坊「写入并更新」会跑的管线入口。
- * 发行版只带这些脚本**及其依赖闭包**，其余（验收脚本 / 截图 / 预处理工具 /
- * 打包工具 / 一次性探针）一律不进发行包 —— 它们对终端玩家是纯垃圾。
+ * 工坊「写入并更新」会跑的管线入口：发行版只带这些脚本及其依赖闭包，验收 / 截图 / 预处理 / 打包工具一律不进包。
  */
 const PIPELINE_ENTRIES = [
   'build-pool-map.py',   // 生成 pool-map（阁 / 套装清单）
@@ -139,11 +101,8 @@ function robocopy(args) {
 }
 
 /**
- * 删掉一棵目录树。
- *
- * 为什么不用 `fs.rmSync(p, { recursive: true })`：
- * 发行版目录里有 2.6G / 上万个文件，Node 的递归删在 Windows 上很慢且容易
- * 撞上「文件被占用」；robocopy 把它镜像到一个空目录再删，快且能重试。
+ * 删掉一棵目录树：不用 `fs.rmSync(recursive)`（2.6G / 上万个文件在 Windows 上很慢、易撞「文件被占用」），
+ * 改用 robocopy 镜像到空目录再删 —— 快且能重试。
  */
 function rmTree(p) {
   if (!fs.existsSync(p)) return
@@ -209,10 +168,8 @@ fs.mkdirSync(path.join(SIM, 'userdata'), { recursive: true })
 console.log('  ✓ userdata/（空存档目录）')
 
 // ───────────────────────── 可选视频包 ─────────────────────────
-// 大视频（服装阁动态背景 28 条 + 最大的主页轮播）拆成独立包，
-// 玩家自己决定下载不下载 —— 基础包能小 1.3 GB。
-// 拆走后 manifest 仍保留视频条目（collect-assets 有旧 manifest 基线），
-// 玩家把包里的 public 拖回模拟器目录即自动归位、立刻生效。
+// 大视频（服装阁动态背景 28 条 + 最大的主页轮播）拆成独立包，基础包小 1.3 GB；
+// manifest 仍保留视频条目，把包里的 public 拖回模拟器目录即自动归位生效。
 {
   const packRoot = path.join(ROOT, 'release', '无限暖暖视频包')
   const packAssets = path.join(packRoot, 'public', 'assets')

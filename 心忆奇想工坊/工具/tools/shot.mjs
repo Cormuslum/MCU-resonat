@@ -1,11 +1,5 @@
 /**
- * 开发期截图/巡检脚本（不打包进应用）
- *
- * 用法：
- *   node tools/shot.mjs banner
- *   node tools/shot.mjs codex
- *   node tools/shot.mjs gacha      # 会先点十连，再等演出
- *
+ * 开发期截图 / 巡检脚本（不打包进应用）：`node tools/shot.mjs {banner|codex|gacha}`，`gacha` 会先点十连再等演出。
  * 依赖本机 Chrome + playwright-core，不下载浏览器。
  */
 import { chromium } from 'playwright-core'

@@ -1,4 +1,4 @@
-/** v1.2.02 截图巡检：主页（动态/静态）、图鉴赛季栏、共鸣页 */
+/** 截图巡检：主页（动态/静态）、图鉴赛季栏、共鸣页 */
 import { chromium } from 'playwright-core'
 const b = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true })
 const p = await b.newPage({ viewport: { width: 1920, height: 1080 } })

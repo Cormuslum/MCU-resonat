@@ -33,7 +33,7 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import resolve  # noqa: E402
 
-# v1.9.00 素材重构后目录名变了：
+# 素材重构后目录名变了：
 #   `辉煌心光/` → `素材/界面/辉煌心光/`、`主页/` → `素材/界面/主页/`
 #   且源文件（彩蛋文本*.txt）留在 `原始素材/` 下，`素材/` 里只有工程产出。
 # 用 resolve() 逐个文件找，命中新结构就用新结构，否则回落原始素材。

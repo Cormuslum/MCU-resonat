@@ -17,7 +17,7 @@ TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asset_paths import resolve_file  # noqa: E402
 
-# v1.9.00 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`。
+# 素材重构：旧目录名 `博物图鉴` → 新结构 `界面/博物图鉴`。
 # ⚠ pxdesk 工程文件（图片工程-*.pxdesk）只在 `原始素材/` 里，`素材/` 下只有渲染好的 png，
 #    所以逐文件 resolve，命中新结构就用新结构，否则回落原始素材。
 BASE_REL = os.path.join("界面", "博物图鉴", "子界面-故事&阅读物 图鉴（两个子界面，但素材相同）")

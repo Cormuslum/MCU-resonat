@@ -1,4 +1,4 @@
-// 验证 服装图鉴子界面 + 主界面 的 8 项新改动（目标 v0.9.09）
+// 验证 服装图鉴子界面 + 主界面 的 8 项新改动（目标 ）
 import { chromium } from 'playwright-core'
 import { mkdirSync, readFileSync } from 'node:fs'
 

@@ -45,7 +45,7 @@ ITEMS = [
     ("nav-banner", os.path.join(TEX, "XHSY", "T_UI_XHSY_icon_star1.png"), 236, 243),
     ("nav-gloria", os.path.join(TEX, "Shell", "T_UI_NTASK_img_stars2.png"), 336, 268),
     ("logo", os.path.join(SRC, "主页", "LOGO-心忆共鸣 .png"), 313, 460),
-    # v1.2.02：回退「无限暖暖」横版 LOGO（原 1032×696 → 显示 460×310，居中偏上），与竖版并存
+    # ：回退「无限暖暖」横版 LOGO（原 1032×696 → 显示 460×310，居中偏上），与竖版并存
     ("logo-center", os.path.join(SRC, "主页", "主页面素材", "T_UI_img_LOGO1.png"), 460, 310),
 ]
 

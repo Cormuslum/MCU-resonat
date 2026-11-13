@@ -1,12 +1,12 @@
 /**
- * v1.3.01 验收：按界面分配背景音 + 音量总控修复 + 生辰弹窗 + 卷轴侧栏 + 加载底图
+ * 验收：按界面分配背景音 + 音量总控修复 + 生辰弹窗 + 卷轴侧栏 + 加载底图
  *
  * 覆盖这批 11 条需求里能自动化的部分：
- *   A 玄学·生辰：首次弹免责 → 默认 2020/2/20 → 点「不填写」落盘 → 二次进入不再打扰
- *   B 玄学·卷轴：待机有侧栏，点卷轴后（收起态）侧栏整块不出现，回待机恢复
- *   C 加载层：底图换成 `T_UI_loading_bg`（不再是纯黑），进度条距底 100、装饰距进度条 20
- *   D 背景音：五个界面各自的曲目、图鉴权重、主音量归零后换界面不复活、六根分界面滑杆
- *   E 主页：静态背景无音轨（video/audio 都不渲染），动态背景 video 常驻 muted、声音由独立 <audio> 承担
+ * A 玄学·生辰：首次弹免责 → 默认 2020/2/20 → 点「不填写」落盘 → 二次进入不再打扰
+ * B 玄学·卷轴：待机有侧栏，点卷轴后（收起态）侧栏整块不出现，回待机恢复
+ * C 加载层：底图换成 `T_UI_loading_bg`（不再是纯黑），进度条距底 100、装饰距进度条 20
+ * D 背景音：五个界面各自的曲目、图鉴权重、主音量归零后换界面不复活、六根分界面滑杆
+ * E 主页：静态背景无音轨（video/audio 都不渲染），动态背景 video 常驻 muted、声音由独立 <audio> 承担
  *
  * 用法：先 npm run dev（5178），再 node tools/verify-v2500.mjs
  */
@@ -41,7 +41,7 @@ const browser = await chromium.launch({
 const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })
 const page = await ctx.newPage()
 
-/* v1.4.02 版本门禁：未选版本时 /banner 会被守卫打回版本页，这里预置一个当前版本 */
+/* 版本门禁：未选版本时 /banner 会被守卫打回版本页，这里预置一个当前版本 */
 await page.addInitScript(() => {
   try {
     const KEY = 'nikki-resonance-save-v1'
@@ -222,7 +222,7 @@ await step('B4 版本页贴边死区能叫出侧栏', async () => {
 })
 
 await step('B5 回主页后侧栏保持隐藏', async () => {
-  // v1.6.06 起主页**不再有侧边栏**（信封入口在左上角，左缘感应区会让位），
+  // 起主页**不再有侧边栏**（信封入口在左上角，左缘感应区会让位），
   // 所以这里反过来验：从二级页 ESC 回主页后，`.rail` 必须不在。
   await go('/almanac', 2000)
   await page.keyboard.press('Escape')
@@ -378,7 +378,7 @@ await step('E 主页动态有音轨 / 静态静音', async () => {
     }, null, { timeout: 12000 })
     .catch(() => {})
   await page.waitForTimeout(400)
-  // v1.3.06：视频永远 muted，声音改由独立的 <audio> 承担（切回主页不必再点一次）
+  // ：视频永远 muted，声音改由独立的 <audio> 承担（切回主页不必再点一次）
   const dyn = await page.evaluate(() => {
     const v = document.querySelector('.hm-bg-video')
     const a = document.querySelector('.hm-bg-audio')

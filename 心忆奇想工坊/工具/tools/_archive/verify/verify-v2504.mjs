@@ -1,12 +1,12 @@
 /**
- * v1.3.05 验收：抽取记录持久化/分池 · 星级衬托 · 彩蛋文本3
+ * 验收：抽取记录持久化/分池 · 星级衬托 · 彩蛋文本3
  *
- *   A 抽取记录：限定池十连 → 10 条；常驻池单抽 → 1 条（互不串）
- *   B 刷新后仍在：各池条数保持不变，且仍是「各看各的」
- *   C 存档结构：history 里两条流水分属两个 banner
- *   D 星级衬托：星级有衬底 + 描边投影，图标 19px
- *   E 彩蛋：总条数 74；打开弹窗只抽 file1/2（页码 ≤ 44）
- *   F 彩蛋：页码跳转 45 命中彩蛋文本3；← → 在 44/45/46 间正常切换
+ * A 抽取记录：限定池十连 → 10 条；常驻池单抽 → 1 条（互不串）
+ * B 刷新后仍在：各池条数保持不变，且仍是「各看各的」
+ * C 存档结构：history 里两条流水分属两个 banner
+ * D 星级衬托：星级有衬底 + 描边投影，图标 19px
+ * E 彩蛋：总条数 74；打开弹窗只抽 file1/2（页码 ≤ 44）
+ * F 彩蛋：页码跳转 45 命中彩蛋文本3；← → 在 44/45/46 间正常切换
  *
  * 用法：先 npm run dev（5178），再 node tools/verify-v2504.mjs
  */
@@ -95,7 +95,7 @@ await page.waitForTimeout(2800)
 /* ═════════════ A 分池记录 ═════════════ */
 
 /**
- * 按名字点卡池（v2.5.07）。
+ * 按名字点卡池。
  * 卡池列表从硬编码 6 项变成 manifest 全量 80 项，`nth(5)` 不再等于「遥远之海」常驻池。
  */
 async function clickPoolByName(name) {
@@ -112,7 +112,7 @@ async function clickPoolByName(name) {
 }
 
 /**
- * 切当前版本（v1.4.02）：共鸣页只列当前版本的池，切版本 = 写存档 + reload。
+ * 切当前版本：共鸣页只列当前版本的池，切版本 = 写存档 + reload。
  * 跨版本造流水（限定池 2.10 ↔ 常驻池 1.0）必须经过它。
  */
 async function useVersion(v) {
@@ -183,7 +183,7 @@ await step('C 存档里两条流水分属两个 banner', async () => {
   })
   const keys = Object.keys(stored.by)
   check('C1 history 持久化在存档里', stored.total === 11, `总 ${stored.total} 条`)
-  // v1.5.03 起卡池主键是**官方号**（banner-076 / banner-001），流水里存的也是新 id
+  // 起卡池主键是**官方号**（banner-076 / banner-001），流水里存的也是新 id
   check('C2 分属两个卡池', keys.length === 2 && stored.by['banner-076'] === 10 && stored.by['banner-001'] === 1,
     JSON.stringify(stored.by))
 })
@@ -213,7 +213,7 @@ await step('D 星级有衬底 + 描边投影', async () => {
   check('D1 星级有深色衬底', /gradient|rgb/.test(st.bg) && st.bg !== 'none', st.bg.slice(0, 44))
   check('D2 衬底带内阴影', /inset/.test(st.shadow), st.shadow.slice(0, 40))
   check('D3 每颗星有描边投影', /drop-shadow/.test(st.filter), st.filter.slice(0, 44))
-  // v1.3.06：行高 34 → 33（10 行正好铺满 332px 的可视区，不出滚动条）
+  // ：行高 34 → 33（10 行正好铺满 332px 的可视区，不出滚动条）
   check('D4 星级图标 19px 且不撑破行高', st.w === 19 && st.h === 19 && st.rowH <= 34, `${st.w}×${st.h} / row ${st.rowH}`)
   await closeDetail()
 })
@@ -227,7 +227,7 @@ await step('E 随机池不含彩蛋文本3', async () => {
   await page.waitForTimeout(500)
   const totalText = await countText()
   const total = Number(totalText.split('/')[1].trim())
-  // v1.5.02：并入 10 段《奇迹之旅》/《番外》补充文本（原 74 → 84）
+  // ：并入 10 段《奇迹之旅》/《番外》补充文本（原 74 → 84）
   check('E1 彩蛋总条数 84', total === 84, totalText)
   await page.keyboard.press('Escape')
   await page.waitForTimeout(320)
@@ -240,7 +240,7 @@ await step('E 随机池不含彩蛋文本3', async () => {
     await page.keyboard.press('Escape')
     await page.waitForTimeout(300)
   }
-  // file 3 的条目下标从 easterEgg.ts 里读，不写死区间（v1.5.02 随机池变成 1..44 + 75..84 两段）
+  // file 3 的条目下标从 easterEgg.ts 里读，不写死区间随机池变成 1..44 + 75..84 两段
   const eggSrc = readFileSync('src/data/easterEgg.ts', 'utf8')
   const eggArr = JSON.parse(/export const EGG_ENTRIES: EggEntry\[\] = (\[[\s\S]*?\])\n\n/.exec(eggSrc)[1])
   const file3 = new Set(eggArr.flatMap((e, i) => (e.file === 3 ? [i + 1] : [])))

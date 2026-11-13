@@ -358,7 +358,7 @@ def main():
     print(f"源：txt {len(texts)} 套 / 属性 yaml {len(partyaml)} 套 / 套装序列 {len(seq)} 套")
     print(f"待合并：{len(names)} 套")
 
-    # v1.8.02：默认只生成模拟器里真实存在的套装（没有对应服装阁的已归档到 归档素材/）
+    # ：默认只生成模拟器里真实存在的套装（没有对应服装阁的已归档到 归档素材/）
     live = set()
     if not args.all:
         live = read_live_sets()
@@ -406,7 +406,7 @@ def main():
 
     # 目标目录不是默认的「素材/套装库」时**不清空**（如归档目录：清空会删掉
     # 用户自己补的文件）。只有默认目录才「先清后写」——
-    # 否则旧结构（v1.8.00 的 `<ID_套装名>/套装.yaml` 子目录）与过期文件会残留。
+    # 否则旧结构（ 的 `<ID_套装名>/套装.yaml` 子目录）与过期文件会残留。
     is_default_out = os.path.abspath(out) == os.path.abspath(os.path.join(ASSET, "套装库"))
     if is_default_out:
         for entry in os.listdir(out):

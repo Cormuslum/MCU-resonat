@@ -1,24 +1,9 @@
 #!/usr/bin/env node
 /**
- * 把大视频拆成**可选包**。v2.1.03
- *
- *   node tools/split-video-pack.mjs            # 拆开发版 public/assets → 视频包
- *   node tools/split-video-pack.mjs --release  # 拆发行版（模拟器目录 → 视频包目录）
- *
- * 拆走什么：
- *   · `public/assets/video/*.mp4`      —— 服装阁动态背景（编号命名）
- *   · `public/assets/ui/home/bg-video-2.mp4` —— 最大的那条主页轮播
- *   · `public/assets/ui/home/bg-audio-2.ogg` —— 上面那条的配套音轨
- *
- * 不拆走什么（体积小 / 核心体验）：
- *   · `video/*.webm`（login + 抽卡演出）· `ui/home/bg-video-1.mp4`
- *   · `ui/home/bg-poster-*.webp`（静态兜底图）
- *
- * **目录结构原样保留** → 玩家把视频包的 `public` 文件夹拖进「无限暖暖模拟器」
- * 目录，Windows 会自动合并，`public/assets/**` 直接归位，不用手动搬。
- *
- * manifest **不删视频条目**（collect-assets 有「旧 manifest 基线」兜底）：
- * 没装视频包时前端 404 → 静默退回静态背景；装上后立刻生效，不用重跑管线。
+ * 把大视频拆成可选包：`node tools/split-video-pack.mjs`（拆开发版 public/assets）/ `--release`（拆发行版目录）。
+ * 拆走：`assets/video/*.mp4`（服装阁动态背景，编号命名）、`assets/ui/home/bg-video-2.mp4` 与其配套 `bg-audio-2.ogg`；
+ * 不拆：`video/*.webm`（登录 + 抽卡演出）、`ui/home/bg-video-1.mp4`、`bg-poster-*.webp`（静态兜底图）。
+ * 目录结构原样保留，玩家把 `public` 拖进模拟器目录即自动合并归位；manifest 不删视频条目，没装时静默退回静态背景。
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -36,10 +21,8 @@ const SIM_ROOT = isRelease ? SIM : ROOT
 const PACK_ROOT = PACK
 
 /**
- * 要拆走的文件（相对成品根 `public/assets`）。
- *
- * 服装阁动态背景：`video/` 下**编号命名**的 mp4（`012.mp4`…`2233.mp4`）。
- * 抽卡演出是 `RPs-*.webm` / `RPm-*.webm`，登录是 `login.webm` —— 都是 webm，不碰。
+ * 要拆走的文件（相对成品根 `public/assets`）：服装阁动态背景 = `video/` 下编号命名的 mp4；
+ * 抽卡演出 `RPs-*.webm` / `RPm-*.webm` 与登录 `login.webm` 都是 webm，不碰。
  */
 function pickFiles(assetsDir) {
   const out = []

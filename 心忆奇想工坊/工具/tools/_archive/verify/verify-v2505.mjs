@@ -1,12 +1,12 @@
 /**
- * v1.3.06 验收：主页背景音独立播放 + 抽取记录分页
+ * 验收：主页背景音独立播放 + 抽取记录分页
  *
- *   A 主页音轨拆成独立 `<audio>`：manifest / 元素 / 静音视频
- *   B **切回主页立刻有声**（不需要再点一次）—— 这条是本次 bug 的主诉求，
- *     全程用真实自动播放策略（不加 --autoplay-policy=no-user-gesture-required）
- *   C 静态/动态来回切：静态时音轨消失，切回动态自动恢复
- *   D 抽取记录分页：单页 10 条 / 无序号 / 页码 / 翻页 / 末页禁用 / 切页签重置
- *   E 分页按钮造型：32px 圆钮 + 淡蓝底
+ * A 主页音轨拆成独立 `<audio>`：manifest / 元素 / 静音视频
+ * B **切回主页立刻有声**（不需要再点一次）—— 这条是本次 bug 的主诉求，
+ * 全程用真实自动播放策略（不加 --autoplay-policy=no-user-gesture-required）
+ * C 静态/动态来回切：静态时音轨消失，切回动态自动恢复
+ * D 抽取记录分页：单页 10 条 / 无序号 / 页码 / 翻页 / 末页禁用 / 切页签重置
+ * E 分页按钮造型：32px 圆钮 + 淡蓝底
  *
  * 用法：先 npm run dev（5178），再 node tools/verify-v2505.mjs
  */
@@ -112,7 +112,7 @@ await page.waitForTimeout(2800)
 
 await step('A 主页音轨是独立元素', async () => {
   const s = await audioState()
-  // v1.9.04 起首页是「两条动态背景轮播」（星海 / 伊始），音轨文件名带序号，
+  // 起首页是「两条动态背景轮播」（星海 / 伊始），音轨文件名带序号，
   // 具体抽到哪条由 sessionStorage 决定，所以这里只断言形态，不断言固定文件名
   check('A1 页面里有 .hm-bg-audio 且指向 bg-audio-N.ogg',
     s.hasAudio && /^ui\/home\/bg-audio-\d\.ogg$/.test(s.src || ''), `${s.src}`)
@@ -126,7 +126,7 @@ await step('A 主页音轨是独立元素', async () => {
 
 await step('B 从二级页返回主页后立刻有声', async () => {
   // ① 先离开主页（真实点击主页右缘入口 → 时隙遗光）
-  // v1.6.06 起主页不再有左侧栏，离开主页改走右缘的 `.dy-ver`（真实点击，一样能解锁自动播放）
+  // 起主页不再有左侧栏，离开主页改走右缘的 `.dy-ver`（真实点击，一样能解锁自动播放）
   await page.locator('.dy-ver').click()
   await page.waitForTimeout(2300)
   const left = await page.evaluate(() => location.hash)

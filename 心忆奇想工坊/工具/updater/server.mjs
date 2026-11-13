@@ -1,11 +1,6 @@
 /**
- * 心忆奇想工坊 · 本地服务
- *
- *   node updater/server.mjs          # 默认 http://localhost:5199
- *   node updater/server.mjs 5200     # 换端口
- *
- * 零依赖（只用 node 内置模块）。它独立于抽卡模拟器：自己的端口、自己的页面，
- * 只**读取**模拟器的 public/assets 当皮肤，并在写入后调用既有的 python 管线。
+ * 心忆奇想工坊 · 本地服务（零依赖，只用 node 内置模块）：`node updater/server.mjs [端口]`，默认 http://localhost:5199。
+ * 独立于抽卡模拟器：只读取模拟器的 public/assets 当皮肤，写入后调用既有的 python 管线。
  */
 import http from 'node:http'
 import fs from 'node:fs'
@@ -43,18 +38,14 @@ const WEB = path.join(HERE, 'web')
 const PORT = Number(process.argv[2] || process.env.UPDATER_PORT || 5199)
 
 /**
- * 管线产物也必须进快照（v2.0.06）。
- *
- * 以前快照只记「素材 + 元数据」，而 pool-map / manifest / 图鉴数据是②管线写的，
- * 撤回后没跟着回去 —— 用户看到的就是「版本表已经恢复了，版本页还是错乱」。
- * 现在写入前先把这些产物也备份一份，回滚时直接还原，不再全指望重跑管线成功。
+ * 管线产物也必须进快照（pool-map / manifest / 图鉴数据是管线写的，撤回后要跟着回去）。
  */
 const PIPELINE_OUTPUTS = [
   // 数据根的产物（开发版 = 素材/，发行版 = 工坊/data/）
   path.join(ASSET, 'pool-map.json'),
   // 成品根的产物（发行版 = 模拟器/public/assets）
   path.join(ROOT, 'public', 'assets', 'manifest.json'),
-  // 图鉴数据 v2.1.00 起是**运行时 JSON**（不再编译进前端），落在成品里，撤回要一起还原
+  // 图鉴数据是**运行时 JSON**（不编译进前端），落在成品里，撤回要一起还原
   path.join(ROOT, 'public', 'assets', 'data', 'stories.json'),
   path.join(ROOT, 'public', 'assets', 'data', 'readings.json'),
   // 开发版仍有源码形态的图鉴 TS（发行版没有这几个文件，touch 会跳过）
@@ -63,9 +54,8 @@ const PIPELINE_OUTPUTS = [
 ]
 
 /**
- * 直转模式（v2.1.00，发行版专用）：不落 `素材/`，用户选的外部文件经
+ * 直转模式（发行版专用）：不落 `素材/`，用户选的外部文件经
  * `--overrides` / `NIKKI_OVERRIDES` 直接转进 `public/assets`。
- * 开发服务器版不开这个开关，仍是原来的三级链路。
  */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 /** 本次写入的重定向表落地位置（管线跑完就删，不留痕） */
@@ -73,9 +63,7 @@ const OVERRIDES_FILE = path.join(HERE, '.passthrough.json')
 
 /**
  * 直转模式下，本次写入会覆盖哪些 **成品** 文件。
- *
- * 开发版撤回时「源恢复了 → 重跑管线能重建成品」；发行版源根本不在，成品被新图覆盖后
- * 就再也回不去了。所以写入前先把这些产物 touch 进快照，撤回才真的能退回去。
+ * 发行版源根本不在，成品被新图覆盖后就再也回不去了 —— 写入前先 touch 进快照。
  */
 function touchPoolOutputs(snap, poolIds = []) {
   const pm = readJson(path.join(ASSET, 'pool-map.json'), null)
@@ -114,12 +102,8 @@ function touchPoolOutputs(snap, poolIds = []) {
 }
 
 /**
- * 删掉本轮写出的 `套装库/*.yaml`（仅发行版）。
- *
- * 它们只是「把用户给的 YAML 交给管线」的**中转文件**：`build-pool-map` 读完就把
- * 文案 / 部件属性编进 `pool-map.json`，之后这份 YAML 不但没用，还会**帮倒忙** ——
- * 下一轮管线重建 pool-map 时会拿这份可能已过期的 YAML 去覆盖（`_refresh_set_from_data`
- * 是有值就覆盖），把新数据冲掉。所以管线一跑完就删；信息已经在 pool-map 里。
+ * 删掉本轮写出的 `套装库/*.yaml`（仅发行版）：它们只是把 YAML 交给管线的中转文件，
+ * 管线读完就删 —— 留着会让下一轮拿可能过期的 YAML 覆盖 `pool-map.json`。
  */
 function cleanSuitYamls(list, log) {
   let n = 0
@@ -136,12 +120,8 @@ function cleanSuitYamls(list, log) {
 }
 
 /**
- * 临时目录清单（v2.2.04）—— 顶栏垃圾桶按钮清的就是这三个。
- *
- * 只认这三个**固定**目录：别把它做成「传什么删什么」，那是拿着 rm -rf 到处跑。
- *   `.dist`      扩展包打包输出（`remote.mjs` 的 `<id>.dlc.zip`），随时可重打
- *   `.inbox`     拖入/上传中转（`archive.mjs`），写入成功后本就会自动删
- *   `.snapshots` 写入快照（`archive.mjs`），**删掉等于放弃「撤回」历史** → 界面要警告
+ * 临时目录清单（顶栏垃圾桶只清这三个固定目录，不做成「传什么删什么」）：
+ *   `.dist` 扩展包打包输出 / `.inbox` 拖入上传中转 / `.snapshots` 写入快照（删掉等于放弃「撤回」）。
  */
 const TEMP_DIRS = [
   {
@@ -231,20 +211,17 @@ async function apiCleanTemp(req, res) {
 }
 
 /**
- * 删掉「拖文件夹」时落下的中转目录树（v2.2.02）。
- *
- * 拖文件夹进工坊拿不到绝对路径，只能先把整棵树落进 `.inbox/` 再扫描；
+ * 删掉「拖文件夹」时落下的中转目录树。
  * 写入成功后这份拷贝就没用了 —— 不删的话大视频会平白多存一份。
  */
 function cleanStagedTree(root, log) {
   if (!root || !isInInbox(root)) return
   try {
-    // root 是「用户拖进来的那个文件夹」，它外面还套着一层 `<stamp>-<job>-tree` ——
-    // 那是我们造的壳，一并删掉，别在 .inbox 里留一堆空目录。
+    // root 是「用户拖进来的那个文件夹」，它外面还套着一层 `<stamp>-<job>-tree`，
+    // 那是我们造的壳，一并删掉。
     const shell = path.dirname(root)
     fs.rmSync(root, { recursive: true, force: true })
-    // 只删我们自己造的那层壳（名字带 `-tree`），绝不删 .inbox 根 ——
-    // 多个文件夹一起拖时 root 就是 .inbox 本身，那时 dirname 是收件区根目录。
+    // 只删我们自己造的那层壳（名字带 `-tree`），绝不删 .inbox 根
     if (/-tree$/.test(path.basename(shell)) && fs.existsSync(shell) && !fs.readdirSync(shell).length) {
       fs.rmSync(shell, { recursive: true, force: true })
     }
@@ -302,10 +279,7 @@ function readBody(req, limit = 200 * 1024 * 1024) {
 }
 
 /**
- * 极简 multipart/form-data 解析。
- *
- * 只支持本程序用到的形态：若干普通字段 + 若干文件，单层边界。
- * 不引 busboy —— 更新工坊的依赖越少，将来在别的机器上跑起来的概率越高。
+ * 极简 multipart/form-data 解析：只支持若干普通字段 + 若干文件、单层边界。
  */
 function parseMultipart(buf, contentType) {
   const m = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType || '')
@@ -346,10 +320,9 @@ async function apiState(res) {
   json(res, 200, {
     ok: true,
     root: ROOT,
-    // v2.1.05：把自己是谁报出去。
-    //   · 启动器（main-updater.mjs）用它判断「5199 上这个工坊是不是我这套布局」，
-    //     避免开发版工坊占着端口时 exe 静默连过去、显示 `素材/…` 这种发行版里不存在的路径；
-    //   · 前端顶栏用它显示真实数据根，用户一眼能看出正在改哪份数据。
+    // 把自己是谁报出去：
+    //   · 启动器（main-updater.mjs）用它判断「5199 上这个工坊是不是我这套布局」；
+    //   · 前端顶栏用它显示真实数据根。
     toolRoot: TOOL_ROOT,
     dataRoot: ASSET,
     labels: { data: dataLabel(), out: outLabel() },
@@ -400,8 +373,7 @@ async function apiInspect(req, res) {
     for (const f of walkFiles(abs)) {
       const ext = path.extname(f).toLowerCase()
       if (!/\.(png|jpe?g|webp|gif|bmp|webm|mp4|md|txt|yaml|yml)$/i.test(ext)) continue
-      // 相对路径必须带上：「半身像 / 图标 / 进化等阶」三个目录里的文件名长得一样，
-      // 只看文件名会把半身像当成部件图标
+      // 相对路径必须带上：「半身像 / 图标 / 进化等阶」三个目录里的文件名长得一样
       out.push(inspectFile(f, path.basename(f), path.relative(abs, f)))
     }
   }
@@ -409,15 +381,8 @@ async function apiInspect(req, res) {
 }
 
 /**
- * 拖进来的**文件夹**（v2.2.02）。
- *
- * 浏览器出于安全不给绝对路径，只给 `webkitGetAsEntry()` 拿到的相对目录树。
- * 所以这里按原样把树落到 `.inbox/<stamp>-<job>-tree/` 下，再把**落盘后的根**告诉前端 ——
- * 前端拿它去 `/api/scan-folder`，流程与「粘贴路径」完全一致。
- *
- * 以前拖文件夹会被当成「没有可用文件」直接拒绝（文件夹的 File 对象没有扩展名），
- * 而整套导入又要求「必须再套一层」才能认出阅读物目录 —— 两个坑叠在一起，
- * 用户拖 `…/示例/阅读物/阅读物` 只会看到一句「这批里没有可用的图片或文本」。
+ * 拖进来的文件夹：把 `webkitGetAsEntry()` 给出的相对目录树按原样落到 `.inbox/<stamp>-<job>-tree/`，
+ * 再把落盘后的根告诉前端。
  */
 async function apiUploadTree(req, res, url) {
   const jobId = url.searchParams.get('job') || 'bundle'
@@ -427,7 +392,7 @@ async function apiUploadTree(req, res, url) {
   let n = 0
   for (const f of files) {
     const relRaw = String(f.filename || 'file').replace(/\\/g, '/')
-    // 只保留相对段，`..` 一律丢掉（zip-slip 的老朋友，这里同样要防）
+    // 只保留相对段，`..` 一律丢掉
     const segs = relRaw.split('/').filter((s) => s && s !== '.' && s !== '..')
     if (!segs.length) continue
     const dst = path.join(base, ...segs)
@@ -450,7 +415,7 @@ async function apiUploadTree(req, res, url) {
 }
 
 /**
- * 扫描「整理好的文件夹」（v1.6.07）。
+ * 扫描「整理好的文件夹」。
  * 只读，不写任何文件 —— 先给用户看一眼计划，确认后再点写入。
  */
 async function apiScanFolder(req, res) {
@@ -487,13 +452,7 @@ async function apiUpload(req, res, url) {
 }
 
 /**
- * 故事预览（v2.2.00）。
- *
- * 拖入 `.md` 或在下拉里选中套装时，把正文取回来填进「故事正文」框，
- * 方便直接在工坊里改 —— 不用先记住它原来写了什么。
- *
- *   GET /api/story?src=<工坊 inbox 里的 md>   → 读文件（剥掉 `# 标题` 与 `---`）
- *   GET /api/story?name=<套装名>             → 从成品 `stories.json` 取这一篇
+ * 故事预览：`?src=<工坊 inbox 里的 md>` 读文件（剥掉 `# 标题` 与 `---`），`?name=<套装名>` 从成品 `stories.json` 取。
  */
 function apiStory(res, url) {
   /** 只留正文：md 的 `# 标题` 与分隔线不该出现在正文框里 */
@@ -604,8 +563,7 @@ async function apiApply(req, res) {
     log({ kind: 'ok', text: `快照已记录 ${snap.changed} 个文件（其中 ${PIPELINE_OUTPUTS.length} 个是管线产物，撤回时会一起还原）` })
 
     // 直转模式：把「外部源 → 虚拟素材路径」交给管线。build-pool-map 拿它把用户选的图
-    // 当成"已经在素材目录里"，collect-assets 拿它直接转码到 public —— 磁盘上从头到尾
-    // 只有用户原来那份文件 + 成品，中间不存在 `素材/` 副本。管线一跑完就删表。
+    // 当成"已经在素材目录里"，collect-assets 拿它直接转码到 public。
     if (DIST_MODE) {
       const ovMap = passthroughMap()
       const n = Object.keys(ovMap).length
@@ -639,9 +597,8 @@ async function apiApply(req, res) {
     if (DIST_MODE) {
       try { delete process.env.NIKKI_OVERRIDES } catch { /* ignore */ }
       try { fs.unlinkSync(OVERRIDES_FILE) } catch { /* ignore */ }
-      // 直转模式下 jobs 仍会按老逻辑 mkdir 出 `<数据根>/服装阁/<版本>/<阁>` 这类空壳
-      // （它本来是准备把文件复制进去的）。里面一个字节都没有，清掉 ——
-      // 不然用户会以为"内部源"又长回来了。
+      // 直转模式下 jobs 仍会按老逻辑 mkdir 出 `<数据根>/服装阁/<版本>/<阁>` 这类空壳，
+      // 里面一个字节都没有，清掉。
       for (const d of ['服装阁', '视频', '音频', '界面', '通用散件', '字体']) {
         try { pruneEmpty(path.join(ASSET, d)) } catch { /* ignore */ }
       }
@@ -660,18 +617,14 @@ async function apiApply(req, res) {
     if (DIST_MODE) cleanSuitYamls(result.suitYamls, log)
 
     // ③ 收尾：只在开发版重启 dev server。
-    //
-    // 发行版（`NIKKI_DIST_MODE=1`）里没有 vite，也没有 5178 —— 那段代码只会
-    // spawn 一个假进程、再空等 20s 报「端口仍未就绪」（v2.2.05 之前的日志）。
-    // 发行版模拟器是 Electron 静态壳（固定 51800），`public/` 里的文件换掉刷新即生效，
-    // 这一步本来就是开发版才需要的收尾。
+    // 发行版（`NIKKI_DIST_MODE=1`）里没有 vite，也没有 5178；
+    // 发行版模拟器是 Electron 静态壳，`public/` 里的文件换掉刷新即生效。
     if (DIST_MODE) {
       log({ kind: 'ok', text: '素材已写入：回到模拟器按 Ctrl+R（或 F5）刷新即可看到' })
     } else {
       log({ kind: 'step', text: '③ 重启模拟器 dev server（新素材不在 vite 的 watch 范围）' })
       const rr = await restartDevServer({ onLog: log })
-      // 重启失败不回滚：素材与管线产物都已经落盘写好了，为了一条 dev server 白撤回一遍不划算。
-      // 但要明确说出来，别让「页面没更新」被误判成「写入失败」。
+      // 重启失败不回滚：素材与管线产物都已经落盘写好了。
       if (!rr?.ok) log({ kind: 'warn', text: '模拟器未能自动拉起，请手动执行 npm run dev，或直接刷新页面' })
     }
 
@@ -698,9 +651,8 @@ async function apiRollback(req, res) {
     const r = restoreSnapshot(body.id)
     // 撤回之后上一次写入的指纹就失效了，否则用户改回同一批素材再写入会被误判成「没改动」。
     clearLastApply()
-    // pool-map / manifest / stories / readings 现在也在快照里（v2.0.06），
-    // 即使下面这次管线失败，产物也已经回到写入前的状态，版本页不会再「撤回却没回退」。
-    // 补跑一次是为了让产物与恢复后的源数据保持一致（例如又删掉一座阁）。
+    // pool-map / manifest / stories / readings 现在也在快照里，即使下面这次管线失败，
+    // 产物也已经回到写入前的状态。补跑一次是为了让产物与恢复后的源数据保持一致。
     const logs = []
     const steps = buildSteps({})
     const run = await runSteps(steps, (o) => logs.push(o.text || ''))
@@ -714,10 +666,8 @@ async function apiRollback(req, res) {
 }
 
 /**
- * 缩略图：把一个本地图片直接吐给 <img>。
- *
- * 用途是「按路径读取」的几个文件（没有 File 对象，前端拿不到 blob），
- * 以及回滚后重新渲染时看一眼原图。只放行图片扩展名，路径必须在项目内。
+ * 缩略图：把本地图片直接吐给 `<img>`（用于「按路径读取」、前端拿不到 File 对象的场景）；
+ * 只放行图片扩展名，路径必须在项目内。
  */
 async function apiThumb(req, res, url) {
   const p = url.searchParams.get('p') || ''
@@ -738,11 +688,8 @@ async function bodyOf(req) {
 }
 
 /**
- * 导出：从库里切一个自包含的包。
- *
- * kind = banner | set | story | reading | version
- * v2.0.05：一次可多选（`keys: []`），同类内容装进同一个包；
- * 老的 `key: string` 单选请求也照收，自动包成单元素数组。
+ * 导出：从库里切一个自包含的包。`kind` = banner | set | story | reading | version，
+ * `keys: []` 可多选（同类装同一包），老的 `key` 单选请求也照收。
  */
 async function apiDlcExport(req, res) {
   const b = await bodyOf(req)
@@ -798,8 +745,7 @@ async function apiDlcMount(req, res) {
 async function apiDlcDelete(req, res) {
   const b = await bodyOf(req)
   const notes = []
-  // 先卸运行区（这一步必须成 —— 源包删不掉不该让包继续挂在模拟器上），
-  // 再删源包。两个都尽力，失败的那步记进 notes 一起回。
+  // 先卸运行区，再删源包。两个都尽力，失败的那步记进 notes 一起回。
   try {
     uninstall(b.id)
   } catch (e) {
@@ -924,11 +870,9 @@ const server = http.createServer(async (req, res) => {
     if (p === '/api/clean' && req.method === 'POST') return await apiCleanTemp(req, res)
 
     // 固定文案：**工具根**下的 `文案.json`（发行版里在工坊目录，模拟器那边保持纯静态）。
-    // 工坊（顶栏 / 帮助）与模拟器（信封）共用这一份，改完刷新页面即生效 —— 不打包、不缓存。
     if (p === '/copy.json') {
       // ⚠ 不能直接 serveFile：文案里的 `{D}` / `{O}` 是**布局占位符**，
-      // 必须在这里换成磁盘上的真实目录（开发版 `素材/`、发行版 `工具/data/`），
-      // 否则发行版页面会提示玩家去找一个已被删掉的 `素材/`（v2.1.05 修）。
+      // 必须在这里换成磁盘上的真实目录（开发版 `素材/`、发行版 `工具/data/`）。
       const copy = copyWithPaths()
       if (copy) {
         const body = JSON.stringify(copy)

@@ -1,8 +1,5 @@
 /**
- * 深海回响界面截图（开发期巡检，不打包）
- *
- * 用法：node tools/shot-echo.mjs [pulls]
- *   pulls 可选，指定后先模拟抽卡把累计抽数推到该值再截图
+ * 深海回响界面截图（开发期巡检，不打包）：`node tools/shot-echo.mjs [pulls]` —— `pulls` 可选，先模拟抽卡推到该累计抽数再截图。
  */
 import { chromium } from 'playwright-core'
 

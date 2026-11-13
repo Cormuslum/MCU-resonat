@@ -1,12 +1,12 @@
 /**
- * v2.7.02 验收 —— 只覆盖本轮实际改动的项目及其关联项。
+ * 验收 —— 只覆盖本轮实际改动的项目及其关联项。
  *
- *   A. 卡池编号统一官方号（manifest id / 版本内 seq / 排序 / 20~100 抽共用图）
- *   B. （v2.0.02 起存档迁移已删除：目前没有老存档，manifest 不再出 legacyId）
- *   C. 版本页徽记已删
- *   D. 深海回响按池取摆饰（有图 / 只有文案 / 常驻无摆饰）
- *   E. 跳过全部只播「新部件 + 4★/5★ 第 1、2 份」+ 套装页不再有「跳过全部」文字
- *   F. 工坊：改名、图标、表单字段
+ * A. 卡池编号统一官方号（manifest id / 版本内 seq / 排序 / 20~100 抽共用图）
+ * B. 起存档迁移已删除：目前没有老存档，manifest 不再出 legacyId
+ * C. 版本页徽记已删
+ * D. 深海回响按池取摆饰（有图 / 只有文案 / 常驻无摆饰）
+ * E. 跳过全部只播「新部件 + 4★/5★ 第 1、2 份」+ 套装页不再有「跳过全部」文字
+ * F. 工坊：改名、图标、表单字段
  *
  * 用法：node tools/verify-v2702.mjs
  */
@@ -74,13 +74,13 @@ const vf = state.jobs.version.fields.map((f) => f.key)
 ok('版本表单已删上线/结束时间', !vf.includes('start') && !vf.includes('end'))
 ok('版本表单有大版本号 + 大版本名', vf.includes('major') && vf.includes('majorName'))
 ok('卡池表单已删「版本内序号」', !state.jobs.pool.fields.some((f) => f.key === 'seq'))
-// v1.9.03：立绘 / 整体图 / 进化立绘已合并成一个「整体图（OV）」槽位
+// ：立绘 / 整体图 / 进化立绘已合并成一个「整体图（OV）」槽位
 ok('套装槽位合并为「整体图（OV）」',
   state.jobs.suit.groups.some((g) => g.slots.some((s) => s.key === 'ov')))
 ok('卡池奖励槽位改名「深海回响奖励图」',
   state.jobs.pool.groups.some((g) => g.slots.some((s) => s.label === '深海回响奖励图')))
 ok('/api/state 带 majors 列表', (state.options.majors || []).length >= 2)
-// v1.9.07：版本下拉必须按版本号**数值**排序（0.1 < 0.2 < 1.0 < 1.10 < 2.11），
+// ：版本下拉必须按版本号**数值**排序（0.1 < 0.2 < 1.0 < 1.10 < 2.11），
 // 否则 readdir / 写表顺序会把 0.2 排到 2.11 后面，新建版本还会默认选中它。
 {
   const vs = (state.options.versions || []).map((v) => v.v)
@@ -131,7 +131,7 @@ async function loadWith(save, hash) {
   await page.waitForTimeout(1600)
 }
 
-/* ── B. 存档不再迁移（v2.0.02 删掉了 migrateBannerIds） ── */
+/* ── B. 存档不再迁移删掉了 migrateBannerIds ── */
 console.log('\nB. 存档 id 不做迁移（旧 key 原样留着，也不报错）')
 await loadWith(baseSave({
   selectedVersion: '2.10',
