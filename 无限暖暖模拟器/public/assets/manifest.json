@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-13 08:50:15",
+  "generatedAt": "2026-11-13 09:18:02",
   "rules": {
     "_comment": "概率参数由实机统计反解（不用公示值），改动前请跑 tools/verify-rates.py",
     "cost": {
