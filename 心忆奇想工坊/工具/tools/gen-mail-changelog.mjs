@@ -9,7 +9,13 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 const SRC = path.join(ROOT, 'CHANGELOG.md')
-const OUT = path.join(ROOT, '无限暖暖模拟器', 'public/assets/data/mail-changelog.json')
+const OUT = path.join(ROOT, '心忆共鸣', 'public/assets/data/mail-changelog.json')
+
+// CHANGELOG 不随源码分发：克隆 / CI 里没有它时沿用已提交的 JSON，不中断构建
+if (!fs.existsSync(SRC)) {
+  console.warn('[mail] 未找到 CHANGELOG.md，沿用现有 mail-changelog.json')
+  process.exit(0)
+}
 
 const md = fs.readFileSync(SRC, 'utf8')
 const lines = md.split(/\r?\n/)
