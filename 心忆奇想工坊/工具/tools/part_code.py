@@ -52,7 +52,17 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 SIM = os.path.join(ROOT, "心忆共鸣")
 # 工具根：心忆奇想工坊/工具（开发版与发行版同构）
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
-CSV_PATH = os.path.join(ROOT, "素材", "信息表", "部位代号对照表.csv")
+
+
+def _env_dir(name, default):
+    """目录可被环境变量覆盖（发行版：数据在工坊目录、成品在模拟器目录，不同根）。"""
+    v = os.environ.get(name)
+    return os.path.abspath(v) if v else default
+
+
+# 编辑数据根：发行版指向 `心忆奇想工坊/工具/data`，没有 `素材/`
+ASSET = _env_dir("NIKKI_DATA_DIR", os.path.join(ROOT, "素材"))
+CSV_PATH = os.path.join(ASSET, "信息表", "部位代号对照表.csv")
 
 # 整体阶段的文件名 → 代号
 # 4★ 的「进化」与 5★ 的「一进」同槽（都是 lv2），见模块 docstring

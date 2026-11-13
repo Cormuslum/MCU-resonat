@@ -53,6 +53,9 @@ const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 /** 本次写入的重定向表落地位置（管线跑完就删，不留痕） */
 const OVERRIDES_FILE = path.join(HERE, '.passthrough.json')
 
+/** 扫描文件夹时收哪些扩展名（与前端拖拽的 `ACCEPT_RE` 保持一致：图 / 视频 / 音频 / 文本） */
+const SCAN_EXT_RE = /\.(png|jpe?g|webp|gif|bmp|tiff?|webm|mp4|mov|mkv|ogg|mp3|wav|flac|m4a|md|txt|ya?ml)$/i
+
 /** 直转模式下，本次写入会覆盖哪些 **成品** 文件 */
 function touchPoolOutputs(snap, poolIds = []) {
   const pm = readJson(path.join(ASSET, 'pool-map.json'), null)
@@ -350,7 +353,7 @@ async function apiInspect(req, res) {
     if (!exists(abs)) { missing.push(p); continue }
     for (const f of walkFiles(abs)) {
       const ext = path.extname(f).toLowerCase()
-      if (!/\.(png|jpe?g|webp|gif|bmp|webm|mp4|md|txt|yaml|yml)$/i.test(ext)) continue
+      if (!SCAN_EXT_RE.test(ext)) continue
       // 相对路径必须带上：「半身像 / 图标 / 进化等阶」三个目录里的文件名长得一样
       out.push(inspectFile(f, path.basename(f), path.relative(abs, f)))
     }

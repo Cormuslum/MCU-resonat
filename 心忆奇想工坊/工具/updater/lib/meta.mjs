@@ -382,11 +382,16 @@ function resolveVerDirs(version, versionName, { createSource = false } = {}) {
 /** 套装素材落盘 */
 const EVOLVE_STAGES = ['焕新', '一进', '二进', '满进']
 
+/** `整体-<阶段>` 里的阶段名 → 内部阶段名（4★ 的「进化」与 5★ 的「一进」同一槽位） */
+const STAGE_ALIAS = {
+  初始: '初始', 焕新: '焕新', 一进: '一进', 二进: '二进', 满进: '满进', 进化: '一进',
+}
+
 /** 从一个文件名判断它属于哪个进化阶段 */
 function ovStageOf(filename) {
   const base = path.basename(String(filename || ''), path.extname(String(filename || '')))
-  const m = /^整体[-_]?\s*(初始|焕新|一进|二进|满进)/.exec(base)
-  if (m) return m[1]
+  const m = /^整体[-_]?\s*(初始|焕新|一进|二进|满进|进化)/.exec(base)
+  if (m) return STAGE_ALIAS[m[1]]
   const lv = /(?:觉醒|进化)\s*LV\s*(\d+)/i.exec(base)
   if (lv) return EVOLVE_STAGES[Math.min(Number(lv[1]), 4) - 1] || '满进'
   // 没有阶段信息的，一律当初始
@@ -423,6 +428,8 @@ export function writeSetImages({ snap, setDir, busts = [], icons = [], ovs = [],
   }
 
   if (bustCount) notes.push(`半身像 ${bustCount} 张`)
+  if (icons.length) notes.push(`部件图标 ${icons.length} 张`)
+  else notes.push('⚠ 没给部件图标：这套在模拟器里没有部件可抽，图鉴也会是空壳')
   if (stages.size) notes.push(`整体图 ${[...stages.keys()].join('/')}`)
   return { stageCount: stages.size, bustCount, iconCount: icons.length }
 }
