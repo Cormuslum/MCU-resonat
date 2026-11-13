@@ -2125,12 +2125,7 @@ def main():
             "star": b["star"],
             "gachaKey": gk,
             "assets": {
-                # ：`bg` / `layers` / `gifs` 三项已移除（前端从未取用，
-                # 素材随本轮归档；`.vue` 只认 bgClean / bgVideo）
-                # ：阁里没有背景图时，**直接指向默认背景** `ui/ver/bg.webp`
-                # （版本页那张整屏背景，前端 `ui.banner.fallbackBg` 也是它）
-                # 不再为「缺背景」的阁单独复制一份默认图 —— 复制出来的那些将来换默认图
-                # 不会跟着变，还会白白多占几百 KB
+                # 缺背景时直接指向默认背景 `ui/ver/bg.webp`（前端 `ui.banner.fallbackBg` 同款）
                 "bgClean": (f"banners/bg/{key}.webp" if a.get("bgClean")
                             else ("ui/ver/bg.webp" if os.path.exists(os.path.join(OUT, "ui/ver/bg.webp")) else None)),
                 # 没给缩略图时上面会从背景裁一张，所以按「文件存在」判定
@@ -2174,10 +2169,6 @@ def main():
                 "desc": s.get("desc", ""),
                 "styles": s.get("styles", []),
                 "textSource": s.get("textSource", ""),
-                # ：**不再**把 formTexts 写进 manifest
-                # 它在 pool-map 里存的是「每部位第 1 条 + 进化形态」的完整文案表
-                # 而第 1 条与 parts[].desc 重复 —— 前端零引用，却占 manifest 的 29%（385KB）
-                # 需要这份数据时读 素材/套装库/<套装ID_套装名>/套装.yaml（已按部件分好形态）
                 # 专属铭牌序号：前端按它去 ui.banner.namePlates[编号][序号] 取名牌
                 # 没有就别写这个键（前端类型是 `number | undefined`，null 会踩 TS）
                 **({"plateIdx": s["plateIdx"]} if s.get("plateIdx") else {}),
@@ -2248,12 +2239,7 @@ def main():
         vrel = f"ui/home/bg-video-{idx}.mp4"
         arel = f"ui/home/bg-audio-{idx}.ogg"
         prel = f"ui/home/bg-poster-{idx}.webp"
-        # 发行版没有视频源（省掉 2.4G）。只重建 manifest 时以**产物**为准 ——
-        # 否则这里 `源不存在 → continue`，首页轮播会被整块判成「没有视频」
-        #
-        # ：大视频拆成可选包后，`bg-video-2.mp4` 不在发行版里 →
-        # 光看「文件存在」会把这一条整个抹掉。退回**旧 manifest** 的记录保住条目
-        # 玩家把视频包装回去就直接生效；没装视频包时前端 404 → 静默退回静态底图
+        # manifest-only：视频源不在时沿用旧 manifest 的条目，前端 404 时回落静态底图
         if MANIFEST_ONLY:
             _hit = next((v for v in (prev_manifest.get("ui") or {}).get("home", {}).get("bgVideos") or []
                          if v.get("video") == vrel), None)
