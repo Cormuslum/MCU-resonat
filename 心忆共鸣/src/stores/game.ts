@@ -374,14 +374,14 @@ export const useGameStore = defineStore('game', () => {
 
   /* ---------------- 快捷：一键集齐 ---------------- */
 
-  /** 集齐全部套装（4★/5★ 部件，覆盖 manifest 里所有服装阁） */
+  /** 集齐全部服装部件（4★/5★ 套装部件 + 3★ 通用散件；3★ 也在收集进度分母里） */
   function collectAllSets(): number {
     const m = manifest.value
     if (!m) return 0
     let added = 0
     for (const b of m.banners) {
       const p = buildPool(b, m.stars3)
-      for (const star of ['5', '4'] as const) {
+      for (const star of ['5', '4', '3'] as const) {
         for (const part of p[star]) {
           if (!codex.value.has(part.id)) {
             codex.value.add(part.id)

@@ -117,7 +117,7 @@ function onUiVol(e: Event) {
 function doCollectSets() {
   const n = store.collectAllSets()
   play('set-complete', { volume: 0.8 })
-  toast(n > 0 ? `已集齐全部套装（新增 ${n} 件）` : '全部套装此前已集齐')
+  toast(n > 0 ? `已集齐全部服装（新增 ${n} 件）` : '全部服装此前已集齐')
 }
 
 async function doCollectReadings() {
@@ -480,7 +480,7 @@ onBeforeUnmount(() => {
             <div class="gm-row">
               <div class="gr-txt">
                 <b>集齐全部套装</b>
-                <span>一键解锁全部服装阁的 4★ / 5★ 套装部件</span>
+                <span>一键解锁全部服装阁的套装部件与 3★ 通用散件</span>
               </div>
               <button class="gm-btn" @click="doCollectSets">执行</button>
             </div>
