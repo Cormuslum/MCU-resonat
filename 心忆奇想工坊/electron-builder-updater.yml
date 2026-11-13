@@ -15,10 +15,15 @@ directories:
 # 用本地已解压的 Electron 运行时
 electronDist: ../node_modules/electron/dist
 
+# electron 在 package.json 里写的是版本范围（^45.3.0），builder 要求精确版本
+electronVersion: 45.3.0
+
 files:
   - electron/main-updater.mjs
   - electron/preload-updater.cjs
   - package.json
+  # 主进程只用 electron 内置模块：仓库根的 node_modules 不要打进来
+  - "!node_modules/**"
   - "!**/*.map"
 
 asar: true

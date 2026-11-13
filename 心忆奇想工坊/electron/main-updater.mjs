@@ -22,10 +22,20 @@ function findLayout() {
   const toolRootNew = path.join(exeDir, '工具')
   const serverNew = path.join(toolRootNew, 'updater', 'server.mjs')
   if (isFile(serverNew)) {
+    const near = (name) => [path.join(exeDir, '..', name), path.join(exeDir, name)]
     const targetCands = [
       process.env.NIKKI_ROOT,
-      path.join(exeDir, '..', '心忆共鸣'),
-      path.join(exeDir, '心忆共鸣'),
+      ...near('心忆共鸣'),
+      ...near('无限暖暖模拟器'),
+      // 模拟器目录被改过名：退一步，在发行根里找任何一个带 public/assets 的目录
+      ...(() => {
+        const parent = path.join(exeDir, '..')
+        try {
+          return fs.readdirSync(parent)
+            .filter((n) => isDir(path.join(parent, n, 'public', 'assets')))
+            .map((n) => path.join(parent, n))
+        } catch { return [] }
+      })(),
     ].filter(Boolean)
     const targetRoot = targetCands.find((p) => isDir(path.join(p, 'public'))) || targetCands[1]
     const rt = path.join(exeDir, '运行时')
