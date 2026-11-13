@@ -1,0 +1,142 @@
+/* ============ 字体 ============
+ * v1.2.01：全量 TTF（24MB）→ **按站内实际用字（4324 字）子集化的 WOFF**（2.9MB）。
+ * 生成脚本：tools/subset-fonts.py（改了文案/数据后要重跑一次）。
+ */
+/* 游戏正文字体：方正雅士黑（解包 UI 全篇使用，8371 字，缺字由 Noto 兜底） */
+@font-face {
+  font-family: 'NikkiYaHei';
+  src: url('/assets/fonts/yahei-bold.woff') format('woff');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikkiYaHei';
+  src: url('/assets/fonts/yahei-medium.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikkiBody';
+  src: url('/assets/fonts/body.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikkiBodyBold';
+  src: url('/assets/fonts/body-bold.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikkiNumber';
+  src: url('/assets/fonts/number.woff') format('woff');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'NikkiCurrency';
+  src: url('/assets/fonts/currency.woff') format('woff');
+  font-display: swap;
+}
+
+/* ============ 变量 ============ */
+:root {
+  /* 自定义鼠标指针。App.vue 会把 manifest 里的指针塞进这个变量，
+     所有 cursor 声明都写成 `var(--nk-cursor, auto), xxx` 才能全局生效 ——
+     只写在 body 上的话，一移到 button（自带 cursor:pointer）就变回系统箭头了。 */
+  --nk-cursor: auto;
+  --bg-deep: #070b16;
+  --bg: #0b1122;
+  --bg-soft: #131a30;
+  --panel: rgba(18, 25, 44, 0.86);
+  --panel-solid: #131a2c;
+  --line: rgba(232, 200, 122, 0.18);
+  --gold: #e8c87a;
+  --gold-dim: #b99a55;
+  --pink: #f0a8c8;
+  --purple: #a78bfa;
+  --blue: #7cc4f0;
+  --text: #e8ecf5;
+  --text-dim: #97a3bd;
+  --text-mute: #5f6b85;
+  --star5: #ffb547;
+  --star4: #c79bf0;
+  --star3: #7ea8d8;
+  --radius: 14px;
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+
+/* ============ 基础 ============ */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  /* 指针落在 body 上（空白处）时用自定义指针；可交互元素用 var 组合式声明 */
+  cursor: var(--nk-cursor, auto);
+  background: var(--bg-deep);
+  color: var(--text);
+  font-family: 'NikkiYaHei', 'NikkiBody', 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: var(--nk-cursor, auto), pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 200, 122, 0.25);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 200, 122, 0.4);
+}
+
+/* ============ 通用组件类 ============ */
+.num {
+  font-family: 'NikkiNumber', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 通用居中加载 */
+.center-box {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}

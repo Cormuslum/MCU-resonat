@@ -1,0 +1,444 @@
+import { ref } from 'vue'
+import type { BgmScene, BgmTrack } from '@/types'
+
+/**
+ * 音频系统
+ *
+ * 设计要点（对应《修改方案》第 1 条与《选定的音频》）：
+ *  - 抽卡动画音效在「跳过」时必须淡出，并让 BGM 淡回来 —— 不能硬切
+ *  - 共鸣演出音（perf-normal / perf-gold）与抽卡动画音效**叠加**，
+ *    音量取动画音效的一半，尾部对齐
+ *  - 翻牌星级音按星级响 3/4/5 次，每次间隔 100ms
+ *  - BGM 按界面分场景（v2.4.01），见下方 `SceneKey` 注释；音量一条链：
+ *    `BGM_BASE × 背景音总控 × 本界面滑杆 × 主音量 ×（演出压低）`
+ *
+ * 所有 sfx 键名与 manifest.sfx 一一对应（由 collect-assets.py 生成）
+ */
+export type SfxName =
+  // 共鸣页
+  | 'btn-res-hover' | 'btn-res-select'
+  | 'btn-ten-hover' | 'btn-ten-select'
+  | 'echo-open'
+  // 抽卡演出
+  | 'perf-normal' | 'perf-gold'
+  | 'flip-star' | 'flip-single'
+  | 'set-progress-loop' | 'set-progress-done' | 'set-complete'
+  | 'panel-fadein' | 'reward-a'
+  | 'draw-normal' | 'draw-gold'
+  // 弹窗出现（v1.3.03 拆开：以前全走 panel-fadein，21 处一个味）
+  | 'window-open' | 'unlock-big' | 'sendgift-popup'
+  // 纸质（图鉴）
+  | 'paper-book' | 'paper-envelope' | 'paper-fadein' | 'paper-slide' | 'paper-flip'
+  // 导航 / 通用
+  | 'nav-hover' | 'nav-select'
+  | 'thumb-hover' | 'thumb-select'
+  | 'echo-hover' | 'echo-select'
+  | 'codex-exit' | 'back-select'
+  | 'common-hover' | 'settings-hover'
+  | 'settings-btn-hover' | 'settings-btn-select'
+  | 'settings-open'
+  | 'btn-deny' | 'points-slide' | 'big-b-select'
+
+export interface PlayOpts {
+  volume?: number
+  loop?: boolean
+  /** 淡入毫秒 */
+  fadeIn?: number
+  /** 播放速率，>1 变快 */
+  rate?: number
+}
+
+const SFX_BASE = '/assets/'
+
+/**
+ * 背景音（BGM）按界面分场景（v2.4.01）
+ *
+ * 以前全局只有一首 BGM（服装阁曲），换个界面也照放。现在按界面分配：
+ *   主页    → 没有 BGM：静态背景静音，动态背景直接放视频自带的音轨（HomeView 自己控）
+ *   版本    → 奇迹大陆的起点
+ *   共鸣    → 服装阁 BGM（原全局那首，含抽卡演出的 duck 逻辑）
+ *   图鉴    → 5 首加权随机：奇想激化 40 / 浪花轻轻悄 20 / 交织的云海 20 / 梦境穿梭 15 / 千万次相逢 5
+ *   玄学    → 村中无事 50 / 缘起丹青 50
+ *   辉煌    → 万丈曙色
+ *
+ * 多曲界面的换曲时机就是用户要的两条：**进界面时**、**上一段播完时**。
+ * 单曲界面（共鸣 / 版本 / 辉煌）整轨 loop，多曲界面 loop=false、`ended` 里换下一首，
+ * 并且换的时候会避开刚放过的那一首，不会连着两遍同一曲。
+ */
+export type SceneKey = BgmScene
+
+/** 分场景音量面板的顺序（主页排第一，虽然它没有独立 BGM，但动态背景的视频音轨归它管） */
+export const SCENES: SceneKey[] = ['home', 'versions', 'banner', 'codex', 'almanac', 'gloria']
+export const SCENE_LABEL: Record<SceneKey, string> = {
+  home: '主页',
+  versions: '版本',
+  banner: '共鸣',
+  codex: '博物图鉴',
+  almanac: '玄学运势',
+  gloria: '辉煌心光',
+}
+
+export type SceneTrack = BgmTrack
+
+/** 全局状态（模块级单例，跨组件共享） */
+const loaded = ref(false)
+const masterVolume = ref(0.7)
+/** 背景音总控音量（0~1，乘在 BGM_BASE 上） */
+const bgmVolume = ref(0.7)
+/** UI 音效分轨音量（0~1，乘在每次 play 的 volume 上） */
+const uiVolume = ref(0.8)
+const bgmEnabled = ref(true)
+
+/** 当前场景 */
+const scene = ref<SceneKey>('home')
+
+/** 各界面背景音自己那根滑杆（0~1，默认 1；串在「背景音总控」下面） */
+const sceneVol = ref<Record<SceneKey, number>>({
+  home: 1, versions: 1, banner: 1, codex: 1, almanac: 1, gloria: 1,
+})
+
+/** 演出期间是否处于压低状态 */
+let bgmDucked = false
+
+const buffers = new Map<string, HTMLAudioElement>()
+const urlOf = new Map<string, string>()
+
+/** 场景 → 曲目表（由 App.vue 在 manifest 就绪后注册） */
+let sceneTracks: Partial<Record<SceneKey, SceneTrack[]>> = {}
+
+let bgmEl: HTMLAudioElement | null = null
+/** BGM 正常音量（被 duck 之前的基准） */
+const BGM_BASE = 0.34
+/** 当前正在放/刚放过的曲目路径，用来避免连续两遍同一首 */
+let lastSrc = ''
+/** 播放代次：切场景时 +1，旧元素的 ended 回调据此自动作废 */
+let playToken = 0
+
+function resolve(key: string): string | null {
+  return urlOf.get(key) ?? null
+}
+
+function clamp(v: number, lo = 0, hi = 1) {
+  return Math.max(lo, Math.min(hi, v))
+}
+
+/** 用一个 interval 做线性淡变；同一元素重复调用会先清掉旧定时器 */
+const fadeTimers = new WeakMap<HTMLAudioElement, number>()
+
+function fadeTo(el: HTMLAudioElement, target: number, ms: number, stopAtEnd = false) {
+  const old = fadeTimers.get(el)
+  if (old) window.clearInterval(old)
+  if (ms <= 0) {
+    el.volume = clamp(target)
+    if (stopAtEnd) el.pause()
+    return
+  }
+  const from = el.volume
+  const t0 = performance.now()
+  const id = window.setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / ms)
+    el.volume = clamp(from + (target - from) * k)
+    if (k >= 1) {
+      window.clearInterval(id)
+      fadeTimers.delete(el)
+      if (stopAtEnd) {
+        el.pause()
+        try {
+          el.currentTime = 0
+        } catch {
+          /* 某些容器不支持 seek，忽略 */
+        }
+      }
+    }
+  }, 16)
+  fadeTimers.set(el, id)
+}
+
+/**
+ * 音频注册 + 按需加载（v1.2.01）
+ *
+ * 旧做法是 `await` 把 36 个音效 + 67 座服装阁的进入音（共 103 个 / 9.7MB）全下完才继续，
+ * 首屏被音频硬卡住。现在：
+ *   ① 只**同步注册 URL**（零网络），`play()` 时 `new Audio(url)` 由浏览器按需取，天然懒加载；
+ *   ② 立刻预热「首屏必用」的十来个 UI 音（不 await）；
+ *   ③ 其余音效在浏览器空闲时补预热；67 座服装阁的进入音不预热，进池那一刻才拉。
+ */
+const WARM_KEYS = [
+  'common-hover', 'nav-hover', 'thumb-hover', 'btn-res-hover', 'btn-res-select',
+  'btn-ten-select', 'back-select', 'panel-fadein', 'paper-fadein', 'flip-star', 'reward-a',
+  'window-open', 'nav-select',
+]
+
+/** 并发 4 个地预热指定键（失败静默） */
+function warm(keys: string[]) {
+  const queue = keys.filter((k) => urlOf.has(k) && !buffers.has(k))
+  let i = 0
+  const next = () => {
+    if (i >= queue.length) return
+    const key = queue[i++]
+    const url = urlOf.get(key)!
+    const a = new Audio()
+    a.preload = 'auto'
+    a.src = url
+    const done = () => next()
+    a.addEventListener('canplaythrough', done, { once: true })
+    a.addEventListener('error', done, { once: true })
+    a.load()
+    buffers.set(key, a)
+  }
+  for (let n = 0; n < 4; n++) next()
+}
+
+const idle = (cb: () => void) => {
+  const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
+    .requestIdleCallback
+  if (ric) ric(cb, { timeout: 3000 })
+  else window.setTimeout(cb, 2200)
+}
+
+/** 注册全部音效（同步、不阻塞），只预热少量 + 空闲补齐 */
+export function preloadAudio(sfx: Record<string, string>, bannerEnter: Record<string, string> = {}) {
+  for (const [key, path] of Object.entries(sfx)) urlOf.set(key, SFX_BASE + path)
+  for (const [bannerId, path] of Object.entries(bannerEnter)) {
+    urlOf.set(`banner-enter:${bannerId}`, SFX_BASE + path)
+  }
+  loaded.value = true
+  warm(WARM_KEYS)
+  /**
+   * 空闲时补预热其余常驻音效。
+   * `bgm` / `bgm-egg` 排除在外：v2.4.01 起背景音改走 `bgm/*.ogg` 分场景曲库，
+   * 这两个旧文件（2.3MB）已经没人播了，没必要占首屏带宽。
+   */
+  idle(() => warm(Object.keys(sfx).filter((k) => k !== 'bgm' && k !== 'bgm-egg')))
+}
+
+/** 进服装阁前预热该池的进入音（可提前调，避免第一声延迟） */
+export function warmBannerEnter(bannerId: string) {
+  warm([`banner-enter:${bannerId}`])
+}
+
+/**
+ * 播放一次音效。返回 Audio 实例，便于调用方手动淡出（如「跳过动画」）。
+ * 复音：每次播放都用一个新的 Audio，避免相互打断。
+ */
+export function play(name: SfxName | string, opts: PlayOpts = {}): HTMLAudioElement | null {
+  const url = resolve(name)
+  if (!url) return null
+  const { volume = 1, loop = false, fadeIn = 0, rate = 1 } = opts
+  const el = new Audio(url)
+  el.loop = loop
+  el.playbackRate = rate
+  const target = clamp(volume * uiVolume.value * masterVolume.value)
+  el.volume = fadeIn > 0 ? 0 : target
+  void el.play().catch(() => {
+    /* 未交互前会被浏览器拦截，静默失败即可 */
+  })
+  if (fadeIn > 0) fadeTo(el, target, fadeIn)
+  return el
+}
+
+/** 淡出并停止一个正在播的声音 */
+export function stop(el: HTMLAudioElement | null | undefined, fadeMs = 320) {
+  if (!el) return
+  fadeTo(el, 0, fadeMs, true)
+}
+
+/** 停掉所有正在播的预加载音效（不含 BGM）—— 切页时用 */
+export function stopAllSfx(fadeMs = 200) {
+  for (const el of buffers.values()) {
+    if (!el.paused) fadeTo(el, 0, fadeMs, true)
+  }
+}
+
+/**
+ * 星级音：3★ 响 3 次、4★ 响 4 次、5★ 响 5 次，间隔 100ms。
+ * 实机就是同一个小音效连击，音高不变。
+ */
+export function playStarHit(star: number, opts: PlayOpts = {}) {
+  const times = Math.max(1, Math.min(5, star))
+  for (let i = 0; i < times; i++) {
+    window.setTimeout(() => play('flip-star', { volume: 0.8, ...opts }), i * 100)
+  }
+}
+
+/**
+ * 服装阁专属「进入界面」音（每座阁一个，键名带 bannerId 前缀）。
+ *
+ * 音量口径（v1.9.05，用户 2026-11-08）：**共鸣页背景音音量的一半**。
+ *
+ * 以前是调用方传死的绝对值（进页 1.0、切阁 0.7），跟背景音完全脱钩 ——
+ * 用户把背景音滑杆拉低后，进入音照旧那么响，压在同一首 BGM 上非常冲。
+ * 现在 `factor` 只是「相对基准的微调」（切阁仍用 0.7 = 比进页轻三成），
+ * 基准本身跟着 bgmGain('banner') 走，BGM 被 duck 或调低时进入音一起降。
+ *
+ * ⚠ `play()` 内部还会再乘 `uiVolume × masterVolume`。这里先把这两层除回去，
+ * 否则滑杆一动，进入音和 BGM 就不再是 1:2 了。
+ */
+let bannerEnterEl: HTMLAudioElement | null = null
+
+export function playBannerEnter(bannerId: string, factor = 1) {
+  const want = bgmGain('banner') * 0.5 * factor
+  const denom = Math.max(1e-4, uiVolume.value * masterVolume.value)
+  const el = play(`banner-enter:${bannerId}`, { volume: clamp(want / denom), fadeIn: 400 })
+  if (!el) return null
+  if (bannerEnterEl && bannerEnterEl !== el) stop(bannerEnterEl, 200)
+  bannerEnterEl = el
+  return el
+}
+
+// ------------------------------------------------------------------ BGM
+
+/** 当前场景的最终音量：base × 总控 × 本界面 × 主音量 ×(演出压低) */
+function level(at: SceneKey = scene.value): number {
+  return clamp(
+    BGM_BASE * bgmVolume.value * (sceneVol.value[at] ?? 1) * masterVolume.value * (bgmDucked ? 0.28 : 1),
+  )
+}
+
+/** 注册场景曲目表（App.vue 在 manifest 就绪后调用） */
+export function registerSceneBgm(map: Partial<Record<SceneKey, SceneTrack[]>>) {
+  sceneTracks = map
+}
+
+/** 加权抽一首，尽量避开刚放过的那首 */
+function pickTrack(list: SceneTrack[]): SceneTrack | null {
+  if (!list.length) return null
+  if (list.length === 1) return list[0]
+  const fresh = list.filter((t) => t.src !== lastSrc)
+  const pool = fresh.length ? fresh : list
+  const total = pool.reduce((s, t) => s + (t.w > 0 ? t.w : 1), 0)
+  let r = Math.random() * total
+  for (const t of pool) {
+    r -= t.w > 0 ? t.w : 1
+    if (r <= 0) return t
+  }
+  return pool[pool.length - 1]
+}
+
+/** 当前 BGM 元素的最终音量（别的模块要跟着调时用，比如主页视频音轨） */
+export function bgmGain(at: SceneKey = scene.value): number {
+  return level(at)
+}
+
+/** 停掉当前 BGM（淡出后销毁） */
+function stopBgm(fadeMs = 420) {
+  const el = bgmEl
+  bgmEl = null
+  if (!el) return
+  el.onended = null
+  fadeTo(el, 0, fadeMs, true)
+}
+
+/**
+ * 切到某个场景。
+ * 同一场景重复调用是**幂等**的 —— 图鉴主界面 → 服装图鉴子界面不该重头放一遍，
+ * 所以只有「场景真的变了」或者「场景没变但已经没声了」才重新起播。
+ */
+export function setBgmScene(k: SceneKey) {
+  if (k === scene.value) {
+    if (!bgmEl && bgmEnabled.value && (sceneTracks[k]?.length ?? 0) > 0) playScene(k)
+    return
+  }
+  playScene(k)
+}
+
+function playScene(k: SceneKey, fadeMs = 800) {
+  scene.value = k
+  const list = sceneTracks[k] ?? []
+  const token = ++playToken
+  stopBgm(380)
+  if (!bgmEnabled.value || !list.length) return
+
+  const t = pickTrack(list)
+  if (!t) return
+  lastSrc = t.src
+
+  const el = new Audio(SFX_BASE + t.src)
+  el.preload = 'auto'
+  // 单曲场景整轨循环；多曲场景播完就换（用户要求的两条换曲时机之一）
+  el.loop = list.length === 1
+  el.volume = 0
+  el.addEventListener('ended', () => {
+    if (token !== playToken) return // 已经切走了，别把新场景顶掉
+    playScene(k, 900)
+  })
+  bgmEl = el
+  void el.play().catch(() => {
+    /* 还没交互，等下一次交互再起 */
+  })
+  fadeTo(el, level(k), fadeMs)
+}
+
+export function resumeBgm(fadeMs = 600) {
+  if (!bgmEnabled.value) return
+  if (!bgmEl) return playScene(scene.value, fadeMs)
+  if (bgmEl.paused) void bgmEl.play().catch(() => {})
+  fadeTo(bgmEl, level(), fadeMs)
+}
+
+/** 抽卡演出期间把 BGM 压低，结束后恢复 */
+export function duckBgm(on: boolean, ms = 600) {
+  bgmDucked = on
+  if (bgmEl && !bgmEl.paused) fadeTo(bgmEl, level(), ms)
+}
+
+/** 背景音总控（0~1）；正在播时立即生效 */
+export function setBgmVolume(v: number) {
+  bgmVolume.value = clamp(v)
+  if (bgmEl && !bgmEl.paused) fadeTo(bgmEl, level(), 180)
+}
+
+/** 单个界面的背景音（0~1）；只影响那个界面，切过去时生效 */
+export function setSceneVolume(k: SceneKey, v: number) {
+  sceneVol.value = { ...sceneVol.value, [k]: clamp(v) }
+  if (k === scene.value && bgmEl && !bgmEl.paused) fadeTo(bgmEl, level(k), 180)
+}
+
+/** UI 音效分轨音量（0~1）；只影响之后播放的音效 */
+export function setUiVolume(v: number) {
+  uiVolume.value = clamp(v)
+}
+
+/**
+ * 主音量。以前这里只改一次 `bgmEl.volume`，但 bgmTarget 里根本没乘 master ——
+ * 所以拖到 0 之后再进任意界面，重新起播会把音量算回原值，声音又回来了
+ * （用户实测「只有辉煌心光界面生效」就是这个原因）。现在 level() 里带了 master，
+ * 这里只需要把当前元素跟随过去。
+ */
+export function setMasterVolume(v: number) {
+  masterVolume.value = clamp(v)
+  if (bgmEl && !bgmEl.paused) fadeTo(bgmEl, level(), 180)
+}
+
+export function setBgmEnabled(on: boolean) {
+  bgmEnabled.value = on
+  if (on) playScene(scene.value, 600)
+  else stopBgm(400)
+}
+
+export function useAudio() {
+  return {
+    loaded,
+    masterVolume,
+    bgmVolume,
+    uiVolume,
+    bgmEnabled,
+    scene,
+    sceneVol,
+    play,
+    stop,
+    stopAllSfx,
+    playStarHit,
+    resumeBgm,
+    duckBgm,
+    setMasterVolume,
+    setBgmVolume,
+    setSceneVolume,
+    setUiVolume,
+    setBgmEnabled,
+    setBgmScene,
+    bgmGain,
+    playBannerEnter,
+    warmBannerEnter,
+  }
+}
