@@ -1,0 +1,37 @@
+{
+  "name": "nikki-resonance",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "《无限暖暖》共鸣抽卡模拟器 + 心忆奇想素材工坊（个人学习用，非商业）",
+  "author": "Nikki Fan (personal, non-commercial)",
+  "license": "GPL-3.0",
+  "workspaces": [
+    "无限暖暖模拟器",
+    "心忆奇想工坊"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace 无限暖暖模拟器",
+    "build": "npm run build --workspace 无限暖暖模拟器",
+    "preview": "npm run preview --workspace 无限暖暖模拟器",
+    "typecheck": "npm run typecheck --workspace 无限暖暖模拟器",
+    "up": "node 心忆奇想工坊/工具/tools/up.mjs",
+    "changelog": "node 心忆奇想工坊/工具/tools/gen-mail-changelog.mjs",
+    "pack:sim": "npm run pack --workspace 无限暖暖模拟器",
+    "pack:updater": "npm run pack --workspace 心忆奇想工坊"
+  },
+  "dependencies": {
+    "pinia": "^2.2.6",
+    "vue": "^3.5.13",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "electron": "^45.3.0",
+    "electron-builder": "^26.18.0",
+    "playwright-core": "^1.64.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vue-tsc": "^2.1.10"
+  }
+}
