@@ -171,19 +171,10 @@ stories.ts / readings.ts 是管线产物，回滚后会自动重跑一次数据�
 
 ```
 updater/
-├── server.mjs          # HTTP 服务 + API（state/inspect/upload/apply/rollback/dev/restart/thumb）
-├── lib/
-│   ├── util.mjs        # 路径 / 读写 / 图片尺寸解析 / CSV（零依赖）
-│   ├── identify.mjs    # 素材识别：18 类，尺寸 + 文件名
-│   ├── meta.mjs        # 版本表 / 卡池索引 / 套装序列 / 属性 yaml / 故事 / 阅读物
-│   ├── archive.mjs     # 归档 + 快照 + 回滚 + 路径整理
-│   ├── pipeline.mjs    # python 管线编排 + SSE 日志 + dev server 重启
-│   ├── jobs.mjs        # 五类任务定义（界面与写入逻辑的唯一来源）
-│   ├── dlc.mjs         # DLC 包：清单 / 索引 / 安装 / 卸载 / 挂载开关 / zip
-│   ├── dlc-export.mjs  # 从库里切出自包含的包（五个接口各一个导出器）
-│   ├── remote.mjs      # 远端适配器：local / http / git（列包 / 上传 / 下载）
-├── web/                # 原生 JS 前端（无框架）：index.html / style.css / app.js
-└── dlc/                # 扩展包源区（玩家自己的包，不随发行包分发）
+├── server.mjs     # HTTP 服务与 API
+├── lib/           # 任务定义、元数据、素材归档、管线编排、DLC
+├── web/           # 工坊界面（原生 JS，无框架）
+└── dlc/           # 扩展包源区
 ```
 
 加一种新更新（比如「新增货币道具」）只需在 `jobs.mjs` 的 `JOBS` 里加一项：
