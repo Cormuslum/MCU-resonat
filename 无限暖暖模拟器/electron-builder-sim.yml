@@ -1,0 +1,31 @@
+# 模拟器 · 免安装文件夹（dir）打包配置
+# 产物：release/_build/simulator/win-unpacked/无限暖暖模拟器.exe + resources/app/dist
+appId: com.nikki.resonance.simulator
+productName: 无限暖暖模拟器
+copyright: 个人学习用 · 非商业
+
+directories:
+  # electron-builder 的 output / electronDist 都相对**运行目录**（仓库根）解析，
+  # 所以这里写回工作区根的 release/。
+  output: ../release/_build/simulator
+
+# 用本地已解压的 Electron 运行时（避免 electron-builder 联网再下）
+electronDist: ../node_modules/electron/dist
+
+# 只打主进程；dist/素材 由发行版组装脚本放到 exe 同级（见 心忆奇想工坊/工具/tools/pack-release.mjs）
+files:
+  - electron/main-sim.mjs
+  - package.json
+  - "!**/*.map"
+
+asar: true
+
+extraMetadata:
+  main: electron/main-sim.mjs
+
+win:
+  icon: electron/icons/simulator.ico
+  target:
+    - target: dir
+      arch:
+        - x64
