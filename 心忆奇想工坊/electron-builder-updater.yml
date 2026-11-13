@@ -1,0 +1,34 @@
+# 工坊 · 免安装文件夹（dir）打包配置
+# 产物：release/_build/updater/win-unpacked/心忆奇想工坊.exe
+#
+# 只把**主进程**打进 asar；工坊服务代码与数据在发行目录的 `工具/` 下（由 pack-release.mjs 摆好），
+# 主进程用 NIKKI_TOOLROOT 定位它们 —— 换路径不用重新打包。
+# v2.1.00 起不再需要 proj-root.json（路径改成同级/上一级自动探测）。
+appId: com.nikki.resonance.updater
+productName: 心忆奇想工坊
+copyright: 个人学习用 · 非商业
+
+directories:
+  # output / electronDist 都相对**运行目录**（仓库根）解析
+  output: ../release/_build/updater
+
+# 用本地已解压的 Electron 运行时
+electronDist: ../node_modules/electron/dist
+
+files:
+  - electron/main-updater.mjs
+  - electron/preload-updater.cjs
+  - package.json
+  - "!**/*.map"
+
+asar: true
+
+extraMetadata:
+  main: electron/main-updater.mjs
+
+win:
+  icon: electron/icons/updater.ico
+  target:
+    - target: dir
+      arch:
+        - x64
