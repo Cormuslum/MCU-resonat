@@ -61,7 +61,7 @@ TRACKS = {
     "qixiang": "无限暖暖,FoldEcho - 奇想激化.mp3",
     "langhua": "无限暖暖,FoldEcho - 浪花轻轻悄.mp3",
     # 实测两者电平一致（mean -37.0 / max -18.2 dB），换过来不影响听感
-    # 它**不做响度归一化**（见 NO_NORMALIZE），保持这个偏轻的原始电平
+    # 它**不做响度归一化**，保持这个偏轻的原始电平
     "yunhai": "交织的云海(混响高音质).wav",
     "mengjing": "无限暖暖,FoldEcho - 呜呼呼梦境穿梭.mp3",
     "qianwan": "无限暖暖,FoldEcho - 只为千万次相逢.mp3",

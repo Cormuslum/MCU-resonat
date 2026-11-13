@@ -266,7 +266,7 @@ def load_version_table():
             v = norm_ver(raw)
             maj = (r.get("大版本") or v.split(".")[0]).strip()
             if v in out:
-                # 重复键会**静默覆盖**前一行 —— `1.10 丰收季` 被写成 `1.1` 时
+                # 重复键会**静默覆盖**前一行
                 # 整条「流星季」就被顶掉，版本页少一栏且毫无提示（事故）
                 # 只 warn 是不够的：工坊会接着生成一份残缺的 pool-map / manifest
                 # 让工坊的 /api/apply 走自动回滚，并把修复方法写在报错里
@@ -929,7 +929,6 @@ def load_card_sets():
 
 
 # ---------------------------------------------------------------- 7.5 深海回响的摆饰 / 礼盒
-# 权威源：`0主素材/UI/SysResonance/texture/Rewards Introduction.md`（用户维护的一张表
 # 文件名 / 摆饰名 / 文案 / 对应套装），图片在旁边的 `Rewards/` 里
 # 一个套装最多一件摆饰；「文件名」写成「缺失」的有文案没图（保留文案、图留空）
 DECOR_DIR = "0主素材/UI/SysResonance/texture/Rewards"
@@ -1000,7 +999,7 @@ def load_milestones(pool_dir):
                 "reward": re.sub(r"\s+", " ", raw.replace("_", " ")).strip(),
                 "file": rel(os.path.join(d, f)),
             })
-    # 保持原有顺序（按抽数稳定排序），不要改成按奖励名排 —— `230-1/2/3` 的落盘序号
+    # 保持原有顺序（按抽数稳定排序），不要改成按奖励名排
     # 由这里的顺序决定，改了会让既有池的图与名字错位（collect-assets 不覆盖已存在的 webp）
     return sorted(out, key=lambda x: x["pulls"])
 
@@ -1174,7 +1173,7 @@ def load_baseline():
 
 
 # 基线里这些字段是「源文件相对路径」，发行版里源文件已不在，但路径仍是
-# 推算产物名（banners/bg/<gachaKey>.webp）的唯一依据 —— 必须原样保留
+# 推算产物名（banners/bg/<gachaKey>.webp）的唯一依据
 _POOL_ASSET_KEYS = ("thumbnail", "bgClean", "titleArt", "bg", "dynamicBg", "milestones")
 _SET_ASSET_KEYS = ("portrait", "ov", "cards", "icons")
 
@@ -1289,7 +1288,6 @@ def main():
 
     # 发行版只发数据（信息表/套装库/故事/阅读物），不发源图源视频
     # 下面这些 loader 里有一半是去源目录捞文件的（艺术字重命名表、动态背景
-    # UI 分层件、卡片图、三星散件、货币图标…），文件不在时不能让它把整个管线带崩 ——
     # 缺的那部分本来也冻结在基线的 pool-map 里
     def _safe(fn, default, label):
         try:
@@ -1427,7 +1425,6 @@ def main():
                 si = set_info.get(sd, {})
                 tx = set_texts.get(sd, {})
                 # ：套装素材统一由 scan_set_assets 扫（半身像/图标/进化等阶）
-                # 产物用官方部位代号命名，映射见 素材/信息表/部位代号对照表.csv
                 sa = scan_set_assets(os.path.join(pp, sd), warnings)
                 sets.append({
                     # 套装信息表（xlsx）没收录的新套装，用手工补的官方 ID 兜底
@@ -1476,8 +1473,8 @@ def main():
             pool_bg = pool_file("背景图.jpg", "背景图.png", "背景图.webp")
             pool_thumb = pool_file("列表缩略图.png", "列表缩略图.webp", "列表缩略图.jpg")
             pool_title = pool_file("艺术字.png", "艺术字.webp")
-            # 缺背景不再立刻报错：界面会用默认背景顶上（见 DEFAULT_BG_*）
-            # 只有**默认背景也找不到**时才真的没东西可显示 —— 那时才告警
+            # 缺背景不再立刻报错：界面会用默认背景顶上
+            # 只有**默认背景也找不到**时才真的没东西可显示
             if not pool_bg and not default_bg_exists():
                 warnings.append(
                     f"[缺图] 背景图缺、默认背景也缺（{DEFAULT_BG_SRC} / ui/ver/bg.webp）："
@@ -1598,7 +1595,7 @@ def main():
                     exist["assets"][k] = v
 
     # ---------- 基线合并：把「本次没扫到素材目录」的阁补回来
-    # 发行版没有 `素材/服装阁/`，扫描结果天然为空 —— 88 座内置阁全靠这一步
+    # 发行版没有 `素材/服装阁/`，扫描结果天然为空
     # 开发版扫得到全部 88 座，这里补 0 个，行为与合并前一致
     banners, _added = merge_baseline(
         banners, baseline, set_texts, part_info, set_info, versions
@@ -1619,7 +1616,7 @@ def main():
     # 常驻「遥远之海」在 1.0 组里是第 5 个
     #
     # （999 / 1000 / 1206 / 2233 同时存在）
-    # 不能按字符串 —— 字符串会把 "999" 排到 "1206" 后面
+    # 不能按字符串
     def gacha_num(b):
         m = re.search(r"\d+", str(b.get("gachaKey") or ""))
         return int(m.group()) if m else 10 ** 6   # 没编号的排最后

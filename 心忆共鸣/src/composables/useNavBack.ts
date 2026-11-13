@@ -16,7 +16,7 @@ export function takeHop(): string | null {
   return hops.pop() ?? null
 }
 
-/** 直接点退出键 / 正常返回时清空，避免下次 ESC 莫名其妙往回跳 */
+/** 直接点退出键 / 正常返回时清空 */
 export function clearHops(): void {
   hops = []
 }

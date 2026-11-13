@@ -151,7 +151,6 @@ for (const v of CUSTOM) {
       s0 ? `${s0.name}（首发 ${fv}）→ 0.1 ${inCustom ? '有' : '无'} / ${fv} ${inFirst === null ? '未取样' : inFirst ? '有' : '无'}` : '数据里没有跨版本的套装')
   }
 
-  // 搜索不能因为「一套在多阁」而出现重复条目
   {
     await page.evaluate(() => document.querySelector('.cl-search')?.click())
     await page.waitForTimeout(200)

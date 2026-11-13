@@ -78,7 +78,6 @@ def main():
     row_h = round(wish["tabLine2"]["y"] - wish["tabLine1"]["y"], 1)
 
     src = f'''/* AUTO-GENERATED —— python tools/gen-readings-layout.py，勿手改。
- * 来源：素材/博物图鉴/子界面-故事&阅读物 图鉴（两个子界面，但素材相同）/图片工程-{{心愿原野,伊赞之土}}.pxdesk
  * 画布 1400×788 → 实机 1920×1080（x×{SX:.7f} / y×{SY:.7f}）
  * 层叠顺序即对象键顺序（自底向上），与 pxdesk 图层顺序一致。
  */

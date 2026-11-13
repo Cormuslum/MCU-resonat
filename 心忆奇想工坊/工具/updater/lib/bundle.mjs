@@ -480,7 +480,7 @@ function collectSet(setDir) {
   if (/四星|4\s*星/.test(setDir.name)) set.star = '4'
   else if (/五星|5\s*星/.test(setDir.name)) set.star = '5'
 
-  // 目录名本身可能就是套装名。`S0062` 这类编号目录不能当名字 —— 那是 ID，不是套名
+  // 目录名本身可能就是套装名。`S0062` 这类编号目录不能当名字
   if (!set.name && !/^S\d+$/i.test(setDir.name)) set.name = setDir.name
   if (!set.name) return null   // 没有 属性/故事 文件、目录名又是纯编号 → 认不出套装名，跳过
   // 一个素材都没有的空壳（或被 isSetDir 误判进来的普通目录）不算套装
@@ -673,7 +673,7 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
           })
 
           // 套装数据（属性 + 文案合并成一份 YAML）→ 素材/套装库/<套装ID>.yaml
-          // 发行版里它只是**中转**：管线把信息编进 pool-map 之后就删（见 server.mjs）
+          // 发行版里它只是**中转**：管线把信息编进 pool-map 之后就删
           if (set.yaml) {
             const dst = path.join(SUIT_LIB, `${sid}.yaml`)
             archive(snap, [{ src: set.yaml, target: dst }])

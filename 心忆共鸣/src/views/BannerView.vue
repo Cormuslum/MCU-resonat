@@ -375,7 +375,7 @@ function thumbOf(p: PoolEntry): string {
   return p.thumb || p.bg || fallbackBg.value || ''
 }
 
-/** 缩略图加载失败 → 换兜底图（只换一次，避免兜底图也坏了时无限重试） */
+/** 缩略图加载失败 → 换兜底图 */
 function onThumbError(e: Event) {
   const el = e.target as HTMLImageElement
   if (!fallbackBg.value || el.dataset.fellBack) return

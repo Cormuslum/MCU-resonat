@@ -55,7 +55,7 @@ function navLocked(item: { name: string }): boolean {
   return item.name === 'banner' && !store.selectedVersion
 }
 
-/** 抽卡演出与主页不显示侧边栏；页面也可主动申请暂时隐藏（见 useChrome） */
+/** 抽卡演出与主页不显示侧边栏；页面也可主动申请暂时隐藏 */
 const railSuppressed = useRailSuppressed()
 const HIDE_RAIL_ROUTES = ['gacha', 'home']
 const railVisible = computed(

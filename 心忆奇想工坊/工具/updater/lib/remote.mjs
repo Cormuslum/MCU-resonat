@@ -163,7 +163,7 @@ export async function upload(type, id, cfg = readConfig()) {
 
 /* ────────────────────────────── 列出远端可下载的包 ────────────────────────────── */
 
-/** 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`） —— 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json` */
+/** 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`） */
 export async function listRemote(type, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
   if (type === 'local') {

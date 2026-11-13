@@ -36,7 +36,6 @@ OUT = _env_dir("NIKKI_OUT_DIR", os.path.join(SIM, "public", "assets"))
 
 # ── UI 整包根目录的两代名字 ──────────────────────────────────────────────
 # 老脚本里所有路径都写 `朋友分享素材/UI/…`（2026-10 那版 59GB rip 的目录名）
-# 用户 2026-11-02 把整包并进了 `0主素材/`，旧目录不再存在 —— 不处理的话
 # 所有 UI 素材都会静默走 MISSING 分支，manifest 照写但 webp 一个都不产出
 # 统一在**拼路径的入口**换算一次，不动下面几百条字符串常量：
 # 优先「文件真的存在」的那个根，其次 0主素材，最后回退旧名
@@ -78,7 +77,7 @@ def _norm_key(s):
 # `--overrides <json>`：本次写入的「虚拟素材路径 → 真实文件」重定向表
 #
 # 发行版不再保存 `素材/`（3.9G 的源图/源视频），但 pool-map 里每个素材仍记着
-# 一条**虚拟相对路径**（`服装阁/0.1·祈愿星/心愿栖金蕊/背景图.jpg`）——
+# 一条**虚拟相对路径**（`服装阁/0.1·祈愿星/心愿栖金蕊/背景图.jpg`）
 # 它是推算产物名（`banners/bg/1000.webp`）的唯一依据，必须原样保留
 # 磁盘上也不会多出第二份副本
 OVERRIDES = {}
@@ -567,7 +566,7 @@ def transcode_video(src, dst, force=False, crf=28, height=None):
     ensure_dir(os.path.dirname(dst))
     info = probe_video(src)
 
-    # 滤镜链：先剪首尾，再裁黑边。顺序不能反 —— crop 的 x/y 是原始画面坐标
+    # 滤镜链：先剪首尾，再裁黑边。顺序不能反
     # 提前裁过会让坐标整体偏移
     vf = []
     ts = info.get("trimStart") or 0.0
@@ -791,7 +790,7 @@ UI_ASSETS = [
 
     # ---------- 鼠标指针 / 通用按钮
     # 鼠标
-    # 元组第 4 项是 scale，不写就按原尺寸转（见 UI_ASSETS 循环）
+    # 元组第 4 项是 scale，不写就按原尺寸转
     (f"{U}/Common/Cursor/UI_Common_Mouse_img.png",                 "ui/cursor/mouse.webp", 92, (26, 30)),
     (f"{U}/Common/Textures/T_UI_btn_common_skip_n.png",            "ui/btn/skip.webp", 92),
     # 圆形按钮三态
@@ -915,7 +914,6 @@ UI_ASSETS = [
     (f"{U}/SysResonance/texture/V2/T_UI_resonance_btn_long_details_n.png",      "ui/banner/long-details-n.webp", 94),
     # 深海回响礼盒图标
     ("深海回响奖励/Flowing Spectrum_ Selectable.png",                             "ui/banner/gift-flower.webp", 92),
-    # 实机截图里硬塞的，列表改成按阁取 `banners/thumb/<编号>.webp` 之后它们全程用不上
     # 和 banners/thumb 的内容也是同一批
 
     # ---------- 单抽详情（衣服展示）
@@ -1148,7 +1146,7 @@ UI_ASSETS = [
 
     # ─────────── 玄学运势（书桌 + 卷轴； 换高清素材） ───────────
     # 全部来自 `tools/prep-almanac.py` 预处理产物（`素材/玄学运势/素材/工程产出/`）
-    # 素材已裁到 alpha 实体框 —— CSS 里「图片边缘 == 实体边缘」，轴杆贴合/双杆紧贴才能精确对齐
+    # 素材已裁到 alpha 实体框
     ("玄学运势/素材/工程产出/bg.png", "ui/almanac/bg.webp", 86),
     ("玄学运势/素材/工程产出/desk.png", "ui/almanac/desk.webp", 84),
     ("玄学运势/素材/工程产出/back-n.png", "ui/almanac/back-n.webp", 92),
@@ -1673,7 +1671,7 @@ def main():
             thumb_from_bg(os.path.join(OUT, "banners/bg", f"{key}.webp"),
                           os.path.join(OUT, "banners/thumb", f"{key}.webp"), 88, args.force)
         if a.get("titleArt") and gk:
-            # 艺术字要把实体居中（见 center_alpha_webp）：`.title-art` 靠盒子居中保证
+            # 艺术字要把实体居中：`.title-art` 靠盒子居中保证
             # 「离货币栏下划线」和「离提示文字」一样远，素材自带的不对称留白必须先抹平
             center_alpha_webp(A(a["titleArt"]), os.path.join(OUT, "banners/title", f"{gk}.webp"), 92, args.force)
 
@@ -1685,7 +1683,7 @@ def main():
                 transcode_video(srcv, os.path.join(OUT, "video", f"{key}.mp4"), args.force)
 
         # ：`banners/bg`（16MB）、`banners/layers`（5.5MB）、`ui/gifs`（1.1MB）
-        # 三批已停止产出 —— 前端只读 `bgClean` / `bgVideo`，`assets.bg` / `layers` / `gifs`
+        # 三批已停止产出
         # 在 .vue 里一次都没被取过（已随归档移入 `归档素材/`）。要恢复见那里的 README
 
         ms_list = a.get("milestones", [])
@@ -1797,7 +1795,7 @@ def main():
 
     # 专属套名横幅（右侧渐隐）
     #   `_name.png`（004 那批）/ `_name_01.png`（030 那批）/ `name01.png`（042、043、053 那批）
-    # 001 常驻池还有 `_name_03/_04` —— 它有 4 个 5★，各一张
+    # 001 常驻池还有 `_name_03/_04`
     # 编号的含义**不是星级**，而是「该池套装按 5★ 在前、同级按 manifest 顺序」的序号：
     # 001 有 8 套却只有 4 张（4 个 5★ 各一张，4★ 没有专属）；030 两张 = 5★ 一张 + 4★ 一张
     # 同目录里还混着两类**必须排除**的东西（ 用户报 043 铭牌错，就是第一类）：
@@ -1903,7 +1901,7 @@ def main():
 
     for ver, num in VERSION_CARDS:
         # 0.1「祈愿星」/ 0.2「魂灵生」是工坊自建版本，官方没有对应编号的卡图
-        #   用户手动放了正确的 `card/0.2.webp`、`big/0.2.webp` —— 无条件写 default
+        # 用户手动放了正确的 `card/0.2.webp`、`big/0.2.webp`
         # 会把它们冲掉
         card_dst = os.path.join(OUT, f"ui/ver/card/{ver}.webp")
         src_card = _card_src("T_UI_Friends_Card_img", num)

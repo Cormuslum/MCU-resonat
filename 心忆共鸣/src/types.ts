@@ -483,7 +483,6 @@ export interface UiAssets {
     cardDefault?: string | null
     /** 兜底：版本大图损坏 / 新版本还没配卡时用 */
     bigDefault?: string | null
-    /** 版本元数据。来源 `素材/信息表/版本表.csv`，由更新程序维护 */
     versions?: VersionMeta[]
   }
   /** 十连「恭喜获得」弹窗 */

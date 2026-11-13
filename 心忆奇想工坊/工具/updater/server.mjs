@@ -90,7 +90,7 @@ function touchPoolOutputs(snap, poolIds = []) {
   }
 }
 
-/** 删掉本轮写出的 `套装库/*.yaml`（仅发行版）：它们只是把 YAML 交给管线的中转文件， 管线读完就删 —— 留着会让下一轮拿可能过期的 YAML 覆盖 `pool-map.json` */
+/** 删掉本轮写出的 `套装库/*.yaml`（仅发行版）：它们只是把 YAML 交给管线的中转文件， 管线读完就删 */
 function cleanSuitYamls(list, log) {
   let n = 0
   for (const p of list || []) {
@@ -434,7 +434,7 @@ function apiStory(res, url) {
   const src = String(url.searchParams.get('src') || '').trim()
   if (src) {
     const abs = path.resolve(src)
-    // 只允许读工坊自己收进来的 md —— 否则 `?src=C:\Windows\win.ini` 就是个任意文件读取
+    // 只允许读工坊自己收进来的 md
     if (!abs.startsWith(TOOL_ROOT) || !/\.md$/i.test(abs) || !exists(abs)) {
       return json(res, 403, { ok: false, error: '不允许读取这个路径' })
     }
@@ -581,7 +581,7 @@ async function apiApply(req, res) {
       return
     }
 
-    // 发行版：套装库 YAML 是中转文件，信息已经进 pool-map，跑完就删（见 cleanSuitYamls）
+    // 发行版：套装库 YAML 是中转文件，信息已经进 pool-map，跑完就删
     if (DIST_MODE) cleanSuitYamls(result.suitYamls, log)
 
     // 发行版（`NIKKI_DIST_MODE=1`）里没有 vite，也没有 5178

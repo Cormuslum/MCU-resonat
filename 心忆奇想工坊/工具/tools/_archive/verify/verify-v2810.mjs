@@ -274,7 +274,6 @@ console.log('\n【F. 模拟器（0.1 版本）】')
     video: !!document.querySelector('video.bg-video'),
   }))
   // ：背景目录 `bg-clean/` 改名为 `bg/`，源图直接是 2560×1440 的 jpg
-  // 所以宽度断言用 >=1920（不再要求正好 1920）
   ok('无动态背景的阁退回静态底图且已加载',
     scene.bg.endsWith('/bg/001.webp') && scene.bgW >= 1920 && !scene.video,
     `${scene.bg} (${scene.bgW}px) video=${scene.video}`)

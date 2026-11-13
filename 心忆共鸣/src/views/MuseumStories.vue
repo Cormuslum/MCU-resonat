@@ -24,7 +24,7 @@ void ensureStories()
 
 const R = computed(() => store.manifest?.ui?.museum?.readings)
 const asset = (p: string | null | undefined) => store.asset(p)
-/** RdBox → inline style（唯一坐标来源，避免手写漂移） */
+/** RdBox → inline style */
 function box(b: RdBox | undefined): Record<string, string> {
   if (!b) return {}
   const s: Record<string, string> = {

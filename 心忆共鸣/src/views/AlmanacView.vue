@@ -26,7 +26,7 @@ function asset(p: string | null | undefined) {
 
 const PAPER_X = 105
 const PAPER_Y = 46
-/** 展开态轴杆顶边 = 纸面顶边（轴杆高已与纸面等高，AXLE_H = PAPER_H = 956，见 `almanac-geo.ts`） */
+/** 展开态轴杆顶边 = 纸面顶边 */
 const ROD_Y_OPEN = PAPER_Y
 /** 收起态轴杆垂直居中 */
 const ROD_Y_COLLAPSED = Math.round((1080 - AXLE_H) / 2)

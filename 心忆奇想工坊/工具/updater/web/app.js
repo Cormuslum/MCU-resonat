@@ -143,7 +143,7 @@ async function loadState() {
   S.dlc = d.dlc
 
   // 顶栏悬停提示：这次到底在改**哪一份**数据
-  // 发行版和开发版都叫「心忆奇想工坊」，端口也都默认 5199 ——
+  // 发行版和开发版都叫「心忆奇想工坊」，端口也都默认 5199
   // 光看界面分不出连的是哪个
   {
     const lb = d.labels || {}
@@ -1311,7 +1311,7 @@ function droppedPaths(dt) {
   return out
 }
 
-/** 按绝对路径处理一次拖放（见 `droppedPaths` 的注释） */
+/** 按绝对路径处理一次拖放 */
 async function dropByPaths(paths, target) {
   /* 整套导入：填进方框 → 直接扫（不复制、不中转） */
   if (S.job === 'bundle' && !target) {
@@ -1434,7 +1434,7 @@ function precheck() {
   const warns = []
   const repeat = localStorage.getItem(LAST_SIG_KEY) === payloadSig()
   // 只检验改动项：与上一次写入完全一致的素材不再重复报一遍同样的提示
-  // 必填项（problems）始终检查 —— 那是「能不能写」的问题，不是「检验素材」
+  // 必填项（problems）始终检查
   const warn = (...args) => { if (!repeat) warns.push(...args) }
   if (repeat) {
     warns.push(C('precheck.sameAsLast',

@@ -42,7 +42,6 @@ from asset_paths import ASSET, resolve, resolve_file  # noqa: E402
 #   - 目录名 `辉煌心光` → `素材/界面/辉煌心光`
 #   - 源文件（1-演出.png 等）只留在 `原始素材/辉煌心光/`，`素材/` 里只留「工程产出」
 #   - `朋友分享素材/` 已并入 `素材/界面/UI整包/`
-# 所以**每个源文件都用 srcf() 单独找**，不能只解析目录
 SRC = resolve("辉煌心光")
 TEX = resolve("UI/Common/Textures")
 DST = os.path.join(ASSET, "界面", "辉煌心光", "工程产出")

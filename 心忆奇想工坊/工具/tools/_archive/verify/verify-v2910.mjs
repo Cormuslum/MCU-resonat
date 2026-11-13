@@ -45,7 +45,7 @@ for (let i = 0; i < ROUNDS; i++) {
   const page = await ctx.newPage()
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
   // 等到「有尺寸 且 真的开始播」为止
-  // 还没进 playing 的那一刻就返回，读到的 paused 是 true —— 那是取样太早，不是没播
+  // 还没进 playing 的那一刻就返回，读到的 paused 是 true
   await page.waitForFunction(
     () => {
       const v = document.querySelector('.hm-bg-video')
@@ -134,7 +134,6 @@ console.log('\n════ D 视频缺失兜底 ════')
   page.on('pageerror', (e) => errs.push(e.message))
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
   // 起开屏阶段不挂载视频
-  // 所以要等开屏结束、视频真正起来之后再看，不能再固定等几秒
   await page.waitForFunction(
     () => (document.querySelector('.hm-bg-video')?.videoWidth || 0) > 0,
     { timeout: 30000 },

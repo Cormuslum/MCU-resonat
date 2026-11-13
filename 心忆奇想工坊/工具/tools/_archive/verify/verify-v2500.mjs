@@ -210,7 +210,6 @@ await step('B4 版本页贴边死区能叫出侧栏', async () => {
 
 await step('B5 回主页后侧栏保持隐藏', async () => {
   // 起主页**不再有侧边栏**（信封入口在左上角，左缘感应区会让位）
-  // 所以这里反过来验：从二级页 ESC 回主页后，`.rail` 必须不在
   await go('/almanac', 2000)
   await page.keyboard.press('Escape')
   await page.waitForTimeout(900)
@@ -354,7 +353,7 @@ await step('E 主页动态有音轨 / 静态静音', async () => {
   await go('/', 2600)
   // 浏览器要先有一次真实交互才允许出声，点一下站着不动的地方
   await page.mouse.click(960, 1040)
-  /* 开场动画（本次会话第一次进主页时）跑完才进 reveal，音轨是这时才起播的 —— 所以不能死等固定毫秒，直接等 audio 真正开始播（最多 12s，够 boot 5s + reveal 1.9s） */
+  /* 开场动画（本次会话第一次进主页时）跑完才进 reveal，音轨是这时才起播的 */
   await page
     .waitForFunction(() => {
       const a = document.querySelector('.hm-bg-audio')

@@ -540,7 +540,7 @@ export const HIT_MASKS: Record<SceneStyle, Record<HitKey, string[]>> = {
   },
 }
 
-/** 局部归一化坐标 (0~1) 是否命中实体：一行 64 位 = 16 个十六进制字符，最左字符是最高位（bit 63）， 所以第 col 列取「从右往左第 (col >> 2) 个字符的第 (col & 3) 位」 */
+/** 局部归一化坐标 (0~1) 是否命中实体：一行 64 位 = 16 个十六进制字符，最左字符是最高位（bit 63） */
 export function hitTest(style: SceneStyle, key: HitKey, nx: number, ny: number): boolean {
   if (nx < 0 || nx >= 1 || ny < 0 || ny >= 1) return false
   const row = HIT_MASKS[style][key][Math.floor(ny * HIT_GRID)]

@@ -47,7 +47,7 @@ console.log('\n════ A 同名内容消歧 ════')
 const storiesTs = read('src/data/stories.ts')
 const readingsTs = read('src/data/readings.ts')
 // ：`src/data/reading-titles.ts` / `story-titles.ts` 已删（标题并入运行时 JSON）
-// 改读现行真源 —— 否则 `read()` 直接 ENOENT，整份验收跑不起来
+// 改读现行真源
 const readingTitles = read('public/assets/data/readings.json')
 const storyTitles = read('public/assets/data/stories.json')
 

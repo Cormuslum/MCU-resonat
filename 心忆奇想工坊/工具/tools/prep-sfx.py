@@ -31,7 +31,7 @@ MANIFEST = os.path.join(OUT, "manifest.json")
 FFMPEG = os.environ.get("FFMPEG", "ffmpeg")
 
 # 注：`ui_general_window_a_open;ui_general_window_b_open` 在索引里是**同一行**的两个别名
-# 指向同一个 `052_窗口打开.mp3`，所以「A + B」并不是两段叠加，只有一段 0.43s 的窗口音
+# 指向同一个 `052_窗口打开.mp3`
 PICK = [
     ("ui_general_window_a_open",            "window-open",   "窗口打开"),
     ("ui_general_unlock_big",               "unlock-big",    "解锁·大"),

@@ -4,7 +4,7 @@ import path from 'node:path'
 import { execFileSync } from 'node:child_process'
 
 // 三个根（开发版与发行版同构）：
-//   ROOT      = 仓库根（开发版）/ 发行版根（发行版）—— 两者都含「心忆共鸣」与「心忆奇想工坊」
+// ROOT      = 仓库根（开发版）/ 发行版根（发行版）
 //   SIM_ROOT  = 成品根：心忆共鸣/（public/assets 与 src/ 在这）
 //   TOOL_ROOT = 工具根：心忆奇想工坊/工具/（updater 与 tools 在这）
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..')

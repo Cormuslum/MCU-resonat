@@ -27,9 +27,9 @@ const PIC_DIR = path.join(ASSET, UI, 'UI', 'SysResonance', 'texture', 'Pic')
 /** 「这次会写入」清单里的路径前缀：开发版 D = `素材/`、O = `public/assets/`； 发行版 D = `心忆奇想工坊/工具/data/`、O = `心忆共鸣/public/assets/` */
 const D = `${dataLabel()}/`
 const O = `${outLabel()}/`
-// 归档目录（移出套装 / 删掉的素材）落在**工具根**，不是数据根 —— 单独一个 `{T}`
+// 归档目录（移出套装 / 删掉的素材）落在**工具根**，不是数据根
 const T = toolLabel()
-/** 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）：差别只有一件事 —— 直接改成品 `public/assets/data/*.json`， 工坊数据目录里不落中转文件 */
+/** 发行版模式（启动器设 `NIKKI_DIST_MODE=1`）：差别只有一件事 */
 const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 
 /* ────────────────────────────── 工具 ────────────────────────────── */
@@ -244,7 +244,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
   if (pick(files, 'milestone').length) notes.push(`深海回响奖励 ${pick(files, 'milestone').length} 张`)
 }
 
-/** 服装阁编号规范化：001~999 官方 + 1000~9999 自定义两段并存、允许不连续（见 `meta.normalizeGacha`） */
+/** 服装阁编号规范化：001~999 官方 + 1000~9999 自定义两段并存、允许不连续 */
 function normalizeGachaKey(raw) {
   return normalizeGacha(raw)
 }
@@ -421,7 +421,7 @@ const JOBS = {
       { key: 'name', label: '套装名', required: true, type: 'sets', placeholder: '与套装名完全一致才能挂上' },
       { key: 'star', label: '星级', type: 'select', options: [['5', '5★'], ['4', '4★']], default: '5', width: 'short' },
       // 搜索框：拖 md 进来或手动挑套装都行，放在「星级」右边
-      // 不是写入字段 —— 选中后只负责把 `name` / `star` 填好
+      // 不是写入字段
       { key: 'setSearch', label: '搜索套装', type: 'setsearch',
         placeholder: '套装名或星级（如 5、雪境）' },
       { key: 'body', label: '故事正文', type: 'textarea', tall: true, placeholder: '直接粘贴正文；也可以拖一个 .md 进来' },
@@ -629,7 +629,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
   /** 这次写了故事 / 阅读物？只有写了才需要重算对应的 JSON */
   let storyWritten = false
   let readingWritten = false
-  /** 这次写出的 `套装库/*.yaml`（发行版跑完管线就删，见 server.mjs） */
+  /** 这次写出的 `套装库/*.yaml` */
   const suitYamls = []
 
   /* ── 版本 ── */

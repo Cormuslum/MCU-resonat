@@ -217,7 +217,7 @@ export function upsertSet({ id, star, name, pool, versionLabel }) {
 
 /** `素材/信息表/自建内容.json`。新建时自动登记；历史内容手动加一行：`{"pools":["某某阁"],"sets":["某某套装"]}` */
 const CUSTOM_FILE = path.join(INFO, '自建内容.json')
-// `readings`：阅读物没有归属阁可反推「是不是自建」，只能靠写入时登记（见 writeReading）
+// `readings`：阅读物没有归属阁可反推「是不是自建」
 const CUSTOM_KINDS = ['pools', 'sets', 'readings']
 
 export function readCustom() {
@@ -564,7 +564,7 @@ function nextReadingId(regionPrefix) {
     }
   }
   walk(root)
-  // ② 成品 JSON 里已有的编号。发行版不随包发 `阅读物/` 源目录 ——
+  // ② 成品 JSON 里已有的编号。发行版不随包发 `阅读物/` 源目录
   // 内置阅读物只存在于 `public/assets/data/readings.json`，两处都看才唯一
   const jf = path.join(PUBLIC, 'assets', 'data', 'readings.json')
   if (exists(jf)) {

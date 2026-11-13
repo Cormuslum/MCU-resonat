@@ -823,7 +823,6 @@ onUnmounted(() => {
       <!-- L05 黑底发光弧（必须 screen）：glow-2 卡顶左大弧 / glow-1 卡底亮弧 -->
       <img v-if="ui" class="su-glowarc" :src="asset(ui.suit.glow2)" alt="" />
       <img v-if="ui" class="su-glowbot" :src="asset(ui.suit.glow1)" alt="" />
-      <!-- L06 卡底暗土丘：**已删**—— `ui.suit.board`(board-4) 是套名底板改成 4 态 （boards[0..3]）之前的老单层，和 `.su-band` 叠在一起就是两个土丘； 而且 board-4 是「5★已集齐」态，挂在 4★ 套装上语义也不对 -->
 
       <!-- L08 套装卡 454×612 @(736,196)：装饰 → 金底 frame-2 → 顶光 → 立绘 → 外框 frame-1 按 pxdesk「套装获得页」补了两层装饰（坐标/不透明度照抄）， 并把立绘挪到 frame-2 与 frame-1 之间 -->
       <div class="su-card">

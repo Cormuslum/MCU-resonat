@@ -162,7 +162,6 @@ console.log('\n【C. 拖拽位移比（4K vs 1080p）】')
         clientX: x0 - 200, clientY: y0, bubbles: true, pointerId: 1,
       }))
 
-      // 布局坐标系，所以它已经是设计 px 了，不能再除以 scale
       const movedDesign = Math.abs(el.scrollLeft - before)
       const scale = Math.min(innerWidth / 1920, innerHeight / 1080)
       return {

@@ -22,7 +22,7 @@ function scriptOf(text) {
   return m ? m[1] : ''
 }
 
-/** Vue 模板里的表达式 —— 模板才是 `ui.*` 引用的大头，只扫 `<script>` 会把一堆在用的素材误判成死分支 */
+/** Vue 模板里的表达式 */
 function templateExprs(text) {
   const tpl = text.match(/<template[^>]*>([\s\S]*)<\/template>/i)
   if (!tpl) return []
@@ -119,7 +119,7 @@ function aliasesIn(code, file) {
       const init = node.initializer
       let src = null
       if (ts.isCallExpression(init) && init.arguments.length) {
-        // computed(() => store.manifest?.ui.xxx) —— 函数体可能带 `?? null` 包裹
+        // computed(() => store.manifest?.ui.xxx)
         const arg = init.arguments[0]
         if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
           src = unwrapInit(arg.body)

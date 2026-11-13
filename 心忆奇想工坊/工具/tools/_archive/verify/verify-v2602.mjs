@@ -99,7 +99,7 @@ const others = gate.nav.filter((x) => !x.cls.includes('nv-banner'))
 check('A3 其余入口不受影响（4 个都还能点）',
   others.length === 4 && others.every((x) => !x.dis), `${others.length} 个正常`)
 // 起主页**不再有侧边栏**（信封移到左上角、左缘感应区一并撤掉）
-// 置灰这道闸只剩「居中星芒 + 右缘竖排」两套入口（见 A1/A2）
+// 置灰这道闸只剩「居中星芒 + 右缘竖排」两套入口
 check('A4 主页已无侧栏（v1.6.06 删除），闸门只由星芒 + 右缘承担',
   gate.rail.length === 0,
   gate.rail.length ? gate.rail.map((x) => `${x.txt}:${x.dis ? '禁' : '可'}`).join(' ') : '无 .rail-btn')

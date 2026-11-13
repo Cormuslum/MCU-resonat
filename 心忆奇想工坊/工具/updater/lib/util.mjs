@@ -55,7 +55,7 @@ export function toolLabel() {
   return r ? `${r}/` : ''
 }
 
-/** 素材根内的相对路径 —— 写进 pool-map / overrides 的键必须用这个（相对素材根，如 `服装阁/…`） */
+/** 素材根内的相对路径 */
 export function assetRel(p) {
   return path.relative(ASSET, p).split(path.sep).join('/')
 }
