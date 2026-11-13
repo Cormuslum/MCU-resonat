@@ -36,14 +36,12 @@ from asset_paths import resolve  # noqa: E402
 # 素材重构后目录名变了：
 #   `辉煌心光/` → `素材/界面/辉煌心光/`、`主页/` → `素材/界面/主页/`
 # 且源文件（彩蛋文本*.txt）留在 `原始素材/` 下，`素材/` 里只有工程产出
-# 用 resolve() 逐个文件找，命中新结构就用新结构，否则回落原始素材
 OUT = os.path.join(SIM, "src", "data", "easterEgg.ts")
 
 FILES = [
     (1, os.path.join("辉煌心光", "彩蛋文本1.txt"), "left"),
     (2, os.path.join("辉煌心光", "彩蛋文本2.txt"), "center"),
     (3, os.path.join("主页", "彩蛋文本3.txt"), "left"),
-    # 2026-11-03 用户补的 9 段（《奇迹之旅》/《番外》选段）：按「彩蛋文本1 的补充」处理 ——
     # 左对齐、进随机池（file 记 1，与正文同一条编号口径）
     (1, os.path.join("主页", "彩蛋文本1-补充.txt"), "left"),
 ]
@@ -93,7 +91,6 @@ def main():
             )
 
     total = len(entries)
-    # 打开弹窗时随机可选的池：彩蛋文本3（剧情吐槽）只在手动翻页/跳转时出现
     pool = [i for i, e in enumerate(entries) if e["file"] != 3]
     print(f"合计 {total} 条（随机池 {len(pool)} 条，file 3 共 {total - len(pool)} 条不可随机）")
 

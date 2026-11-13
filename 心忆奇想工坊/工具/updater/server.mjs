@@ -53,7 +53,7 @@ const DIST_MODE = !!process.env.NIKKI_DIST_MODE
 /** 本次写入的重定向表落地位置（管线跑完就删，不留痕） */
 const OVERRIDES_FILE = path.join(HERE, '.passthrough.json')
 
-/** 直转模式下，本次写入会覆盖哪些 **成品** 文件。发行版源根本不在，成品被新图覆盖后就再也回不去了 —— 写入前先 touch 进快照 */
+/** 直转模式下，本次写入会覆盖哪些 **成品** 文件 */
 function touchPoolOutputs(snap, poolIds = []) {
   const pm = readJson(path.join(ASSET, 'pool-map.json'), null)
   const byId = new Map((pm?.banners || []).map((b) => [b.id, b]))
@@ -193,7 +193,7 @@ async function apiCleanTemp(req, res) {
   json(res, 200, { ok: true, removed, skipped, freed, files })
 }
 
-/** 删掉「拖文件夹」时落下的中转目录树。写入成功后这份拷贝就没用了 —— 不删的话大视频会平白多存一份 */
+/** 删掉「拖文件夹」时落下的中转目录树 */
 function cleanStagedTree(root, log) {
   if (!root || !isInInbox(root)) return
   try {
@@ -483,7 +483,6 @@ async function apiApply(req, res) {
   send({ type: 'start', job, at: new Date().toISOString() })
 
   // 增量：整次写入的内容与上一次完全一致 → 没有改动项，不检验、不写盘、不跑管线
-  // 「强制重转已有素材」是用户手动要求全量跑的通道，此时不短路
   const fp = applyFingerprint({ job, fields, files, options })
   const last = readLastApply()
   if (!options.force && last?.fp === fp) {
@@ -497,7 +496,7 @@ async function apiApply(req, res) {
   resetWriteStats()
   const snap = new Snapshot(job)
   for (const f of PIPELINE_OUTPUTS) snap.touch(f)
-  // 直转模式：媒体文件不落盘，只登记「虚拟路径 → 外部源」。每轮写入重新开始
+  // 直转模式：媒体文件不落盘，只登记「虚拟路径 → 外部源」
   resetPassthrough(DIST_MODE)
   let result
   try {
@@ -505,7 +504,7 @@ async function apiApply(req, res) {
     if (job === 'bundle') {
       // 整套导入：先扫一遍（保证拿到的是**当前**目录内容），再一次性写完
       const rootPath = normalizePath(String(fields.root || ''))
-      // 拖进来的那棵中转树在写入成功后就删了 —— 再点一次要能听懂发生了什么
+      // 拖进来的那棵中转树在写入成功后就删了
       if (!exists(rootPath) && isInInbox(rootPath)) {
         throw new Error('这些文件是上次「拖文件夹」留下的中转拷贝，写入成功后已自动清理。'
           + '请重新把文件夹拖进来，或直接粘贴它的原始路径。')
@@ -540,7 +539,7 @@ async function apiApply(req, res) {
         fs.writeFileSync(OVERRIDES_FILE, JSON.stringify(ovMap, null, 1), 'utf8')
         process.env.NIKKI_OVERRIDES = OVERRIDES_FILE
         log({ kind: 'out', text: `直转：${n} 个素材从原位置直接转码，不复制进数据目录` })
-        // 成品被新图覆盖后没有源可以重建 —— 先备份旧产物，撤回才真的回得去
+        // 成品被新图覆盖后没有源可以重建
         touchPoolOutputs(snap, result.poolIds || [])
       }
     }
@@ -585,7 +584,6 @@ async function apiApply(req, res) {
     // 发行版：套装库 YAML 是中转文件，信息已经进 pool-map，跑完就删（见 cleanSuitYamls）
     if (DIST_MODE) cleanSuitYamls(result.suitYamls, log)
 
-    // ③ 收尾：只在开发版重启 dev server
     // 发行版（`NIKKI_DIST_MODE=1`）里没有 vite，也没有 5178
     // 发行版模拟器是 Electron 静态壳，`public/` 里的文件换掉刷新即生效
     if (DIST_MODE) {
@@ -618,7 +616,6 @@ async function apiRollback(req, res) {
   if (!body.id) return json(res, 400, { ok: false, error: '缺少快照 id' })
   try {
     const r = restoreSnapshot(body.id)
-    // 撤回之后上一次写入的指纹就失效了，否则用户改回同一批素材再写入会被误判成「没改动」
     clearLastApply()
     // pool-map / manifest / stories / readings 现在也在快照里，即使下面这次管线失败
     // 产物也已经回到写入前的状态
@@ -684,7 +681,7 @@ async function apiDlcUninstall(req, res) {
     uninstall(b.id)
     json(res, 200, { ok: true, state: dlcState() })
   } catch (e) {
-    // 索引已经摘掉了（包不再挂载），只是目录没删干净 —— 如实说，别报成「卸载失败」
+    // 索引已经摘掉了（包不再挂载），只是目录没删干净
     json(res, 200, {
       ok: true,
       notes: [String(e.message || e)],
@@ -708,7 +705,7 @@ async function apiDlcMount(req, res) {
 async function apiDlcDelete(req, res) {
   const b = await bodyOf(req)
   const notes = []
-  // 先卸运行区，再删源包。两个都尽力，失败的那步记进 notes 一起回
+  // 先卸运行区，再删源包
   try {
     uninstall(b.id)
   } catch (e) {

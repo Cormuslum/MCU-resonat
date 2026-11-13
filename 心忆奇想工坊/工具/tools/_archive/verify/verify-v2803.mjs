@@ -16,7 +16,7 @@ const dlcExport = await imp('updater/lib/dlc-export.mjs')
 const remote = await imp('updater/lib/remote.mjs')
 
 /** 手动递归删（fs.rmSync 在本机会走回收站语义，遇到占用就整批失败） */
-/** 清目录 —— 复用 dlc.rmTree（内部有原生子进程 / 轮询兜底） */
+/** 清目录 */
 function wipe(dir) {
   if (!fs.existsSync(dir)) return
   try { dlc.rmTree(dir) } catch { /* 兜底：下面再手删一次 */ }
@@ -70,7 +70,6 @@ const SOURCE_POOL = cands.sets[0]?.poolId
 ok('候选列表有内容', cands.banners.length > 0 && cands.sets.length > 0,
   `${cands.banners.length} 池 / ${cands.sets.length} 套 / ${cands.stories.length} 故事 / ${cands.readings.length} 阅读物 / ${cands.versions.length} 版本`)
 
-// 清空源包区与运行区（验收专用，避免上一轮的包撞 id）
 for (const e of fs.readdirSync(dlc.DLC_SRC, { withFileTypes: true })) {
   if (e.isDirectory()) dlc.rmTree(path.join(dlc.DLC_SRC, e.name))
 }
@@ -82,7 +81,7 @@ dlc.writeLiveIndex({ packages: [] })
 const pkgs = []
 try {
   pkgs.push(dlcExport.exportBanner(TEST_POOL, { name: '验收-卡池包' }))
-  // 挂到另一座自建阁（它本来没有这套）—— 挂载才看得见效果
+  // 挂到另一座自建阁（它本来没有这套）
   pkgs.push(dlcExport.exportSet(TEST_SET, { name: '验收-套装包', poolId: TARGET_POOL }))
   pkgs.push(dlcExport.exportStory(TEST_SET, { name: '验收-故事包' }))
   pkgs.push(dlcExport.exportVersion(TEST_VERSION, { name: '验收-版本包' }))
@@ -166,8 +165,7 @@ ok('卸载后索引里也没了', !dlc.readLiveIndex().packages.find((p) => p.id
 /* ────────────────────────────── D. 前端真的挂载 ────────────────────────────── */
 section('D. 模拟器运行时挂载')
 
-// 套装包：把选中套装挂到另一座自建阁。它本来属于 SOURCE_POOL
-// 挂到 TARGET_POOL 之后**两只池各有一套** —— 这正是 pool.set 的语义
+// 套装包：把选中套装挂到另一座自建阁
 const setPkgLive = setPkg.id
 dlc.install(setPkgLive)
 const UPDATER = 'http://localhost:5199'
@@ -305,7 +303,6 @@ ok('git 远端未关联仓库时给出明确提示',
 section('F. 删除可靠性')
 
 // 背景：某些运行环境（WorkBuddy 的 safe-delete shim 通过 NODE_OPTIONS 注入）
-// 会把 fs.rm / fs.rmSync / fs.unlink 改成**回收站**语义 ——
 // ① 删除变成异步的：刚调完 exists() 目录还在 → 代码误判「删不掉」
 // ② 每个文件 ~260ms，一个 66 文件的包要 17~24 秒
 // ③ 偶尔整批失败（"Some operations were aborted"），目录原封不动

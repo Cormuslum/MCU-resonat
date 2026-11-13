@@ -45,7 +45,6 @@ OUT_PATH = os.path.join(pub, 'data', 'readings.json')
 #
 # 发行版不再随包发 `素材/阅读物/`（2.6M 的内置正文）——
 # 阅读物的主数据源变成 `readings.json` 本身，`素材/阅读物/` 只当**增量补丁**：
-# 用户拖进来的新书 / 改写的书覆盖基线里对应的那一条，其余 593 条原样保留
 #
 # 开关用环境变量而不是「目录在不在」判断：
 #   - 开发版不设 → 纯源模式（`素材/阅读物/` 是唯一真源，删一本就是删一本）
@@ -57,7 +56,7 @@ if not BASELINE_MODE and not os.path.isdir(READING_ROOT):
     raise SystemExit(f'✗ 找不到阅读物源目录：{READING_ROOT}')
 
 REGION_MAP = {'心愿原野': 'wish', '伊赞之土': 'yizan'}
-# 分区目录本身不是「系列」——新文件直接放在分区根下
+# 分区目录本身不是「系列」
 REGION_DIRS = set(REGION_MAP)
 
 
@@ -181,9 +180,6 @@ def main() -> None:
         for e in uniq:
             old = merged.get(e['id'])
             if old is not None and (old.get('title') or '').strip() != (e.get('title') or '').strip():
-                #    通常是「用户想新建，工坊却把编号分配到了已占用的号」
-                # （实测：《安隙炉操作指引》就是这样被顶掉的）
-                # 静默覆盖会**毁掉别人的书** —— 这里保留基线那条并报出来
                 collided.append((e['id'], old.get('title'), e.get('title')))
                 continue
             merged[e['id']] = e          # 源覆盖基线

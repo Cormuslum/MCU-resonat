@@ -30,10 +30,10 @@ import math
 import re
 from collections import Counter, defaultdict
 
-# 「同一个内容」的相似度门槛。高了会把错别字误判成不同篇，低了会把节选误判成同一篇
+# 「同一个内容」的相似度门槛
 SAME_THRESHOLD = 0.995
 
-# 已加过的后缀。分组前先剥掉，保证重复跑脚本不会变成「·01·01」
+# 已加过的后缀
 _SUFFIX = re.compile(r"·\d{2,}$")
 
 # 归一化时折叠的标点：全角 ↔ 半角、不同引号、破折号等
@@ -148,7 +148,6 @@ def disambiguate_rows(rows: list[dict], *, label: str = "条目") -> tuple[list[
             continue
         texts = [str(rows[k].get("text", "")) for k in idxs]
 
-        # 贪心聚类：每条归入第一个「内容相同」的变体，否则自立门户
         variants: list[dict] = []
         for pos, k in enumerate(idxs):
             placed = False
@@ -197,7 +196,6 @@ def print_report(report: list[dict], label: str = "条目") -> None:
         print(f"     · {g['base']}（{g['total']} 条，{len(g['variants'])} 个变体）→ {mark}")
         for v in g["variants"]:
             print(f"        变体 {v['no']:02d} → {v['title']}  [{', '.join(map(str, v['items']))}]")
-        # 组内两两比对明细（只列前 3 条，避免刷屏）
         shown = 0
         for v in g["variants"]:
             for _item, why in v["checks"]:

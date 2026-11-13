@@ -26,7 +26,6 @@ await page.waitForTimeout(1400)
 
 await page.screenshot({ path: `${OUT}/echo.png` })
 
-// 关键元素的实际盒子，跟标注表对照
 const probe = await page.evaluate(() => {
   const pick = (sel) => {
     const el = document.querySelector(sel)

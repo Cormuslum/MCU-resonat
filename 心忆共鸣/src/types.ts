@@ -74,7 +74,7 @@ export interface SetIcon {
   src: string
 }
 
-/** 3★ 通用散件（来自 三星散件清单.yaml） */
+/** 3★ 通用散件 */
 export interface Star3Info {
   name: string
   src: string
@@ -143,7 +143,6 @@ export interface SetInfo {
   desc?: string
   /** 套装标签：主属性 + 风格词（如 性感 / 神谕 / 绮想） */
   styles?: string[]
-  /** 文案来源行：2.10金羽的裁决-限定共鸣-执律的流金 */
   textSource?: string
   /** 每个部位 × 每个进化形态的部件文案，键是部位名 */
   formTexts?: Record<string, { name: string; text: string }[]>
@@ -241,7 +240,6 @@ export interface UiAssets {
   } | null
   home: {
     bg: string | null
-    /** 用户自己设计的主页底图（开机动画播完后随 LOGO 淡入） */
     bgMain: string | null
     /** 站名艺术字（心忆共鸣） */
     logo: string | null
@@ -362,7 +360,7 @@ export interface UiAssets {
     /** 套装详情 → 服装图鉴的跳转图 */
     jump?: string
   }
-  /** 深海回响奖励轨道。素材来自 `ui/deepsea/` */
+  /** 深海回响奖励轨道 */
   deepsea: {
     /** 全屏背景 2731×1535（深蓝夜空 + 底部云海） */
     bg: string
@@ -439,7 +437,6 @@ export interface UiAssets {
     /** 属性标签长条 165×47：1 甜美粉 / 2 典雅金 / 3 清新绿 / 4 性感紫 / 5 帅气蓝 */
     tags: string[]
   }
-  /** 十连结果页：背景是用户烘焙好的整图，其余为卡面素材 */
   result: {
     bg: string
     /** 3★/4★/5★ 卡框（含名牌底板） */
@@ -486,7 +483,7 @@ export interface UiAssets {
     cardDefault?: string | null
     /** 兜底：版本大图损坏 / 新版本还没配卡时用 */
     bigDefault?: string | null
-    /** 版本元数据。来源 `素材/信息表/版本表.csv`，由更新程序维护。版本页的版本列表、大版本分组、介绍文案全读这里 */
+    /** 版本元数据。来源 `素材/信息表/版本表.csv`，由更新程序维护 */
     versions?: VersionMeta[]
   }
   /** 十连「恭喜获得」弹窗 */
@@ -512,9 +509,8 @@ export interface UiAssets {
   almanac: {
     /** 页面主背景 1920×1080（做旧米色纹理，整图铺底） */
     bg: string
-    /** 木质方桌 2048² → 实机 (-810,648) 1879×1089 */
     desk: string
-    /** 返回键（常态 / 悬停高亮态），实机 184×169 @(0,0) */
+    /** 返回键（常态 / 悬停高亮态） */
     backN: string
     backH: string
     /** 收纳桶 720×717 @(-197,439)，两种风格各 50% */
@@ -710,7 +706,7 @@ export interface Manifest {
   bannerEnter: Record<string, string>
   fonts: Record<string, string>
   ui: UiAssets
-  /** 按界面分配的背景音。主页不在此表（无独立曲目）。一个场景给多首时按 `w` 加权随机，播完自动换下一首 */
+  /** 按界面分配的背景音。一个场景给多首时按 `w` 加权随机，播完自动换下一首 */
   bgm?: Partial<Record<Exclude<BgmScene, 'home'>, BgmTrack[]>>
   /** 开机动画（5s，带音轨） */
   loginVideo: string | null
@@ -722,7 +718,7 @@ export interface Manifest {
   banners: BannerInfo[]
 }
 
-/** 展开后的「部件」——抽卡的最小单位 */
+/** 展开后的「部件」 */
 export interface Part {
   /** 唯一 ID：`setId:部件名` */
   id: string

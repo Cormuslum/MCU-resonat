@@ -102,12 +102,11 @@ const VER_LIST = computed(() => {
   })
 })
 
-/** 版本号精确前缀匹配（避免 1.1 命中 1.10） */
 function inVersion(v: string, target: string) {
   return v.startsWith(target) && !/^\d/.test(v.slice(target.length))
 }
 
-/** 每个版本的套装总数 / 已集齐套数 —— 缩略图黑白→彩色按这个比例从左往右恢复。判定走 store.setDone（全库 5★/4★ 部件的完成度） */
+/** 每个版本的套装总数 / 已集齐套数 */
 function versionProgress(v: string): number {
   const list = SUITS.value.filter((r) => inVersion(r.version, v))
   if (!list.length) return 0
@@ -116,7 +115,7 @@ function versionProgress(v: string): number {
   return done / list.length
 }
 
-/** 彩色层的软边蒙版：已集齐比例 p% 的左侧为彩色、右侧为黑白，交接处 8% 柔和过渡。p=0 → 全部黑白；p=100 → 全部彩色（避免「一套都没集齐却露彩色」） */
+/** 彩色层的软边蒙版：已集齐比例 p% 的左侧为彩色、右侧为黑白，交接处 8% 柔和过渡 */
 function softMask(v: string): string {
   const p = versionProgress(v) * 100
   if (p <= 0) return 'linear-gradient(to right, transparent 0%, transparent 100%)'
@@ -212,7 +211,7 @@ const curLocked = computed(() => (cur.value ? suitLocked(cur.value) : true))
 const partSel = ref(-1) // -1 = 未选部件 → 显示「套装整体」
 const selPart = computed<MzPart | null>(() => (partSel.value >= 0 ? curParts.value[partSel.value] ?? null : null))
 
-/** 部件对应的试穿图（stages[0] 里 `类型-部件名`）：先按部件名后缀精确匹配， 再按部件 slot（= 卡片名前缀）兜底。slot 在全部套装里无重复，可作 1:1 键 */
+/** 部件对应的试穿图（stages[0] 里 `类型-部件名`）：先按部件名后缀精确匹配， 再按部件 slot（= 卡片名前缀）兜底 */
 function partCard(p: MzPart): string | undefined {
   const stage = cur.value?.set.assets.stages?.[0]
   if (!stage) return undefined

@@ -128,7 +128,7 @@ def main():
     print(f"  → tab.png  {tab.size}")
 
     cf = pxdesk_image(srcf("二级确认弹窗.pxdesk"))
-    # 会把后面的行文字透出来。这里把内部 alpha 抬到接近不透明（边缘仍渐变）
+    # 会把后面的行文字透出来
     r, g, b, a = cf.split()
     a = a.point(lambda v: 255 if v * 1.42 > 255 else int(v * 1.42))
     cf = Image.merge("RGBA", (r, g, b, a))

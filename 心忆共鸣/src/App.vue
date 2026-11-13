@@ -27,11 +27,10 @@ const router = useRouter()
 /** 侧边栏展开态（常态隐藏） */
 const railOpen = ref(false)
 
-/** 设计舞台缩放。所有界面统一按 1920×1080 设计坐标写死，外层只做一次等比缩放 */
+/** 设计舞台缩放 */
 const scale = ref(1)
 
 function fitStage() {
-  // 算法在 core/stage.ts（与组件里的指针换算共用同一份，避免两处不一致）
   scale.value = stageScale()
 }
 
@@ -51,7 +50,7 @@ function navIcon(sys: string): string {
   return store.asset(map?.[sys] ?? null)
 }
 
-/** 未选版本时「心忆共鸣」不可点。共鸣页只列当前版本的服装阁，没有当前版本就没有内容 —— 与主页入口同一套判定 */
+/** 未选版本时「心忆共鸣」不可点 */
 function navLocked(item: { name: string }): boolean {
   return item.name === 'banner' && !store.selectedVersion
 }
@@ -85,7 +84,7 @@ function designX(clientX: number): number {
   return toDesignX(clientX)
 }
 
-/** 页面自己的可交互元素 —— 指针停在这些东西上时不要抢着弹侧栏 */
+/** 页面自己的可交互元素 */
 const INTERACTIVE = 'button, a, [role="button"], input, select, textarea, [data-no-rail]'
 
 function onPointerMove(e: PointerEvent) {
@@ -139,7 +138,7 @@ let loadingSeq = 0
 
 /* ════════════════════════════════ 背景音：按界面分场景 */
 
-/** 路径 → 场景。三级路由归到父级（/codex/* → codex、/gacha → banner） */
+/** 路径 → 场景 */
 const SCENE_OF: Record<string, SceneKey> = {
   '/': 'home',
   '/versions': 'versions',
@@ -199,11 +198,10 @@ onMounted(async () => {
   // 背景音滑杆拉到 0 也视为静音（旧版 bgm 开关已并入音量面板）
   setBgmEnabled(store.save.settings.bgm !== false && (store.save.settings.bgmVol ?? 0.7) > 0)
 
-  // 场景曲目表 + 当前场景。浏览器要等首次交互才让出声，so 先 set 一次记下场景
+  // 场景曲目表 + 当前场景
   if (store.manifest?.bgm) registerSceneBgm(store.manifest.bgm)
   setBgmScene(sceneOf(route.path))
 
-  // 首次交互后再起 BGM，避免被浏览器自动播放策略拦截
   const kick = () => {
     setBgmScene(sceneOf(route.path))
     window.removeEventListener('pointerdown', kick)

@@ -1,4 +1,4 @@
-/** 死代码审计：找出 `updater/` 里「导出但没人 import」「定义但没人调」「import 了但没用」的符号。纯正则做符号级追踪（无 AST 库）：收集每个文件的 export 名、导入名、本地标识符，再交叉比对 */
+/** 死代码审计：找出 `updater/` 里「导出但没人 import」「定义但没人调」「import 了但没用」的符号 */
 import fs from 'node:fs'
 import path from 'node:path'
 

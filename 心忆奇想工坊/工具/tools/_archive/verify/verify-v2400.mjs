@@ -1,4 +1,3 @@
-/** verify-v2400.mjs —— 六项改动验收 */
 import { chromium } from 'playwright-core'
 
 const BASE = 'http://localhost:5178'
@@ -95,7 +94,6 @@ const starW = await p.evaluate(() => {
   return el ? getComputedStyle(el).width : null
 })
 ok('星级 32.4px（54 的 3/5）', Math.abs(parseFloat(starW) - 32.4) < 0.05, `实际 ${starW}`)
-// 期间用户手动把星间距从 −3 改成 −12（CSS 注释同步写着「原来 −24 的一半」）
 ok('星间距 −12px（−24 的 1/2）', (await style('.sb-stars img', 'marginRight')) === '-12px')
 const plate = await rect('.sb-plate')
 ok('名称牌 300×86（按可见区放大）', Math.round(plate.w) === 300 && Math.round(plate.h) === 86,

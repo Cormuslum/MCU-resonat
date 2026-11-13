@@ -152,8 +152,6 @@ EXACT = {
     "ui_general_ani_big_selected_a": "大动画·选中",
 }
 
-# 后缀代号反查不到卡池时，原样显示代号（不做猜测，避免误导）
-
 
 def cn_suffix(s):
     """把 snake_case 后缀翻成中文，翻不出就原样返回"""
@@ -391,7 +389,6 @@ def main():
         if not args.dry_run:
             os.makedirs(cat_dir, exist_ok=True)
         print(f"\n[{cat}] {len(items)} 个")
-        # 同分类里重名的加 (2)(3)，否则试听时无法区分
         seen = {}
         for it in items:
             seen[it["label"]] = seen.get(it["label"], 0) + 1

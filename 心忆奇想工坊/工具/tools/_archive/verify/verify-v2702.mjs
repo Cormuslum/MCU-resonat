@@ -1,4 +1,4 @@
-/** 验收 —— 只覆盖本轮实际改动的项目及其关联项 */
+/** 验收 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -84,7 +84,7 @@ ok('/api/state 带 majors 列表', (state.options.majors || []).length >= 2)
   ok('版本下拉按版本号排序', sorted && vs.length > 0, vs.join(' '))
   ok('版本下拉末位是最新版本（作为默认值）', vs.at(-1) === '2.11', vs.at(-1) || '（空）')
 
-  // 磁盘上的 版本表.csv 也必须按版本号排好 —— 工坊写入时会重排
+  // 磁盘上的 版本表.csv 也必须按版本号排好
   // 但外部手改 / 追加行很容易又把 0.1 之类塞到末尾
   const csvV = fs.readFileSync(path.join(ROOT, '素材/信息表/版本表.csv'), 'utf8')
     .replace(/^\uFEFF/, '').trim().split(/\r?\n/).slice(1)
@@ -202,7 +202,6 @@ const seqInfo = await page.evaluate(() => {
 })
 ok('十连揭示序列已生成', seqInfo.len > 0, `${seqInfo.len} 步 · ${seqInfo.kinds.join(' ')}`)
 
-// 等单抽界面入场锁（DETAIL_INTRO_MS 1520）解除后再按，否则点击会被拦掉
 await page.waitForTimeout(1700)
 // 按「跳过全部」之前，当前正显示的这一件（若不可跳过）也要计入「应播放」
 const visited = []
@@ -234,7 +233,6 @@ for (let step = 0; step < 60; step++) {
     })
     if (txt && (txt.hasSkipBtn || txt.hasSkipTxt)) suitTextBad += 1
   }
-  // 单抽界面有 1520ms 入场锁（DETAIL_INTRO_MS），等它解锁再点，否则点击被拦
   await page.waitForTimeout(1600)
   await page.evaluate(() => {
     const target = document.querySelector('.suit') || document.querySelector('.detail')

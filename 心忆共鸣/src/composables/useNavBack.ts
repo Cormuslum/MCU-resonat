@@ -5,7 +5,6 @@ const MAX_DEPTH = 2
 
 let hops: string[] = []
 
-/** 跳转前调用：记下来源 URL（超过 2 层就丢掉最早的一条） */
 export function pushHop(fromUrl: string): void {
   if (!fromUrl) return
   hops.push(fromUrl)

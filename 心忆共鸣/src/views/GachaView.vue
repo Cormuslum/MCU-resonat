@@ -49,7 +49,6 @@ const revealSkipping = ref(false)
 const videoEl = ref<HTMLVideoElement | null>(null)
 let animAudio: HTMLAudioElement | null = null
 let perfAudio: HTMLAudioElement | null = null
-/** 已跳过，避免视频 ended 再触发一次 */
 let skipped = false
 /** 翻牌音是否已播 */
 let flipped = false
@@ -154,13 +153,13 @@ function nameStyle(): Record<string, string> {
   return { left: l + 'px', top: t + 'px', width: w + 'px', height: h + 'px' }
 }
 
-/** 卡框下标：3★→0 / 4★→1 / 5★→2。rarity 可能是字符串 */
+/** 卡框下标：3★→0 / 4★→1 / 5★→2 */
 function frameIdx(rarity: number | string): number {
   const n = Number(rarity)
   return n >= 5 ? 2 : n >= 4 ? 1 : 0
 }
 
-/** 十连网格定位 —— 全部取自 `十连界面-图片工程.pxdesk`。卡框 276×444 1:1 */
+/** 十连网格定位 */
 const GRID_X0 = 291.9
 const GRID_Y0 = 119.4
 const GRID_DX = 257.3
@@ -280,7 +279,7 @@ function attachOverlay(isGold: boolean) {
 
 function onVideoEnd() {
   if (skipped) return
-  // 视频 10s，动画音效 13.5s/16.2s，演出音 10.1s —— 统一在这里收尾
+  // 视频 10s，动画音效 13.5s/16.2s，演出音 10.1s
   stop(animAudio, 420)
   stop(perfAudio, 420)
   toResult()
@@ -377,7 +376,7 @@ function lockDetail() {
   }, DETAIL_INTRO_MS)
 }
 
-/** 演出·2「跳过单抽动画」：详情入场动效期间双击 → 立刻结束上锁。双击前的两次 click 都落在 dtLocked 里被 next() 拦掉，不会误翻页 */
+/** 演出·2「跳过单抽动画」：详情入场动效期间双击 → 立刻结束上锁 */
 function finishIntro() {
   if (!store.save.settings.skipSingleAnim || !dtLocked.value) return
   window.clearTimeout(dtLockTimer)
@@ -535,7 +534,7 @@ function badgeStyle(): Record<string, string> {
   return { '--p': String(pct) }
 }
 
-/** ESC：动画中=跳过，单抽界面=跳过全部，十连网格=回共鸣页，套装页=继续。和屏幕上写的键位提示保持一致，别让提示说谎 */
+/** ESC：动画中=跳过，单抽界面=跳过全部，十连网格=回共鸣页，套装页=继续 */
 function onKey(e: KeyboardEvent) {
   const k = e.key.toLowerCase()
   // F：动画屏 = 跳过动画；详情页 = 看下一件（与屏幕上的「F 跳过」「[F] 点击空白区域继续」一致）
@@ -646,7 +645,6 @@ onUnmounted(() => {
 
     <!-- ==================== 十连结果（02 号界面） ==================== -->
     <div v-else-if="phase === 'result'" class="result" @click="back">
-      <!-- 背景：用户已把标题/键位/地面光环烘焙进整图，这里只负责卡片区 -->
       <img v-if="ui" class="rs-bg" :src="asset(ui.result.bg)" alt="" />
 
       <div class="rs-grid">
@@ -758,8 +756,6 @@ onUnmounted(() => {
       <!-- L22 文案 1051,663 宽 690，24/31 -->
       <p class="dt-desc">{{ curPart.desc || '通用散件 · 没有专属文案' }}</p>
 
-      <!-- L23-L25 额外获得条 0,866 473×123 + 水滴 33,879 90×90 + 两行文字
-           新部件不显示（新件本身就是要展示的收获，再叠一条「额外获得」是错的） -->
       <template v-if="!curResult?.isNew">
         <img v-if="ui" class="dt-tips" :src="asset(ui.detail.tips[0])" alt="" />
         <img class="dt-drop" :src="asset(store.manifest?.currency['静谧水滴']?.icon)" alt="" />
@@ -839,7 +835,6 @@ onUnmounted(() => {
         <!-- 立绘：contain 进卡内，不再 object-fit:fill（会被拉变形且溢出容器）；层级在 frame-1 之下 -->
         <img class="sc-portrait" :src="asset(suitInfo.assets.portrait)" :alt="suitInfo.name" draggable="false" />
         <img v-if="ui" class="sc-frame" :src="asset(ui.suit.frames[0])" alt="" />
-        <!-- 第二套：只在「第一套已集齐、又抽到重复部件」时出现，纯文字 -->
         <span v-if="suitView?.second" class="sc-second">第二套</span>
       </div>
 
@@ -960,7 +955,6 @@ onUnmounted(() => {
   letter-spacing: 0.02em;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
 }
-/* 「共鸣中…」转圈 + 文字、以及旧胶囊跳过钮都已删除 */
 
 /* ==================== 十连结果 ====================
    背景是用户烘焙好的整图（SysResonance-10.png，1920×1080），这里只管卡片区。
@@ -1036,8 +1030,6 @@ onUnmounted(() => {
   overflow: hidden;
   pointer-events: none;
 }
-/* 4★/5★ 卡框是**拱形**开口，立绘盒子却是矩形 → 上方两角会拱出拱顶。
-   按拱形把顶部两角收圆（椭圆近似：横向 50%、纵向 22~26%）。 */
 .rcard.r5 .rc-photo { border-radius: 50% 50% 0 0 / 26% 26% 0 0; }
 .rcard.r4 .rc-photo { border-radius: 50% 50% 0 0 / 22% 22% 0 0; }
 .rc-photo img {
@@ -1173,7 +1165,6 @@ onUnmounted(() => {
   object-fit: fill;
   mix-blend-mode: screen;
   opacity: 0.62;
-  /* 实机的暖光只在「底部偏左」一团 */
   -webkit-mask-image: radial-gradient(ellipse 1400px 760px at 36% 106%,
     #000 0%, #000 34%, rgba(0, 0, 0, 0.55) 60%, transparent 82%);
   mask-image: radial-gradient(ellipse 1400px 760px at 36% 106%,
@@ -1883,8 +1874,6 @@ onUnmounted(() => {
 .su-badge > * { position: absolute; }
 .su-badge img { max-width: none; }
 
-/* 1) 空槽 schedule_02（190×196，内容 129×130）→ 内容拉到 Ø126（实机暗环外径 665..790）
-   ⚠️ 素材的暗圈带右下投影，bbox 中心比圈心偏右 → 用 left 微调 3px 对齐圆心 */
 .sud-slot {
   left: -29.8px;
   top: -33px;          /* 比盘面圆心低 2px（实机底图1/底图2 圆心差 2px → 槽上细下粗） */
@@ -1913,7 +1902,6 @@ onUnmounted(() => {
 .su-badge.is-full .sud-flash {
   animation: sudFlashFull 0.6s ease-out both;
 }
-/* 0 → 50% 后直接切走（99% 处硬切，实机是「亮一下」而不是慢慢淡出） */
 @keyframes sudFlashStep {
   0% { opacity: 0; }
   99% { opacity: 0.5; }

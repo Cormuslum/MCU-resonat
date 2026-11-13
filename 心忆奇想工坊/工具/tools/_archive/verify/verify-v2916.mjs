@@ -47,7 +47,7 @@ page.on('pageerror', (e) => errs.push(e.message))
 await page.goto(`${SIM}/#/banner`, { waitUntil: 'domcontentloaded', timeout: 90000 })
 await page.waitForSelector('.pool-item', { timeout: 60000 })
 
-/* C：真跑引擎 —— 这是唯一能验证「5★ 不清零 p4」的地方 */
+/* C：真跑引擎 */
 const sim = await page.evaluate(async () => {
   const { drawOne, newPity } = await import('/src/core/engine.ts')
   const { Rng } = await import('/src/core/rng.ts')

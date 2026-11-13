@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** 深海回响 —— 奖励预览详情页（左上返回金钮 / 顶部紫缎带 / 左侧摆饰礼盒 / 右侧物品信息 / 底部里程碑轨道）。坐标写死 1920×1080 绝对像素，根元素落在 `.banner` 内随 `.design` 一起缩放 */
+/** 深海回响。坐标写死 1920×1080 绝对像素，根元素落在 `.banner` 内随 `.design` 一起缩放 */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { toDesignX } from '@/core/stage'
@@ -148,7 +148,6 @@ const badgeX = computed(() => {
       return LONG_X0 + (nodeX(0) - LONG_X0) * k
     }
     // 0 抽会外推到 TRACK_X0，徽章外环半径 55 会被左边裁掉一半 → 兜到 100
-    // 四星池徽章 Ø170（半径 85），实机 0 抽中心 x=194.5 → 兜到 194
     if (shortMode.value) {
       return Math.max(194, 194 + (nodeX(0) - 194) * k)
     }
@@ -239,7 +238,6 @@ const ribbon = computed(() => {
   return { num: String(t.pulls - total.value), text: '次后可领取' }
 })
 
-/** 摆饰详情：名称和正文来自数据表；类型说明按「礼盒 / 摆饰」二分（md 里没这一列） */
 const showcase = computed(() => {
   const d = decor.value
   if (!d) return null
@@ -254,7 +252,7 @@ const showcase = computed(() => {
  * 五种环境动效，全部纯 CSS（只动 transform / opacity）。背景层不随长轨道 scrollX 平移。
  */
 
-/** 彩虹光带四色：黄 → 蓝 → 红 → 绿 循环（c1=主色亮芯 / c2=边缘深一档）。单周期内一色作为带中央的主色调，其余三色在带上下边缘，层间 crossfade 即「柔和混杂」 */
+/** 彩虹光带四色：黄 → 蓝 → 红 → 绿 循环（c1=主色亮芯 / c2=边缘深一档） */
 const RB_COLORS = [
   { name: 'y', main: '#f4e3a0', deep: '#d9bd6b' },
   { name: 'b', main: '#9fcdff', deep: '#6ea6e0' },
@@ -306,7 +304,7 @@ function onKey(e: KeyboardEvent) {
 onMounted(() => {
   play('echo-open', { volume: 0.7 })
   window.addEventListener('keydown', onKey)
-/* 达成即视为已领取 —— 这样轨道上的对勾状态与实机一致， 共鸣页那个「可领取」小红点也会跟着消失 */
+/* 达成即视为已领取 */
   for (const t of tiers.value) {
     if (t.reached && !t.claimed) store.claimMilestone(t.pulls)
   }
@@ -622,7 +620,6 @@ onBeforeUnmount(() => {
   overflow: visible;
   animation: rbSway 7.5s ease-in-out infinite alternate;
 }
-/* 用户要求整条光带**左右翻转 */
 @keyframes rbSway {
   from { transform: scaleX(-1) translateX(-55px); opacity: 0.55; }
   50% { opacity: 0.78; }
@@ -910,7 +907,6 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 标题 ══════════ */
-/* 实机墨迹 */
 .ds-title {
   position: absolute;
   left: 119px;
@@ -966,7 +962,6 @@ onBeforeUnmount(() => {
 }
 
 /* ══════════ 左侧摆饰大图 ══════════ */
-/* 1264×728 @ (93,51)：素材内容 bbox (98,55)-(1160,689)，中心落在实机主体中心 (725,415) */
 .ds-scene {
   position: absolute;
   left: 93px;
@@ -976,7 +971,6 @@ onBeforeUnmount(() => {
   z-index: 2;
   object-fit: contain;
   pointer-events: none;
-  /* 实机场景与背景融合得比素材更暗 */
   filter: brightness(0.78) saturate(1.2) contrast(1.04);
   /* 素材四边是硬边 */
   -webkit-mask-image:
@@ -1142,7 +1136,6 @@ onBeforeUnmount(() => {
   mix-blend-mode: screen;
   opacity: 0.95;
   filter: brightness(2.6) saturate(1.85) hue-rotate(-6deg);
-  /* 实机光柱「边缘无锐利边界、与背景雾化融合」——素材是硬边矩形 */
   -webkit-mask-image:
     linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%),
     linear-gradient(to bottom, transparent 0%, #000 12%, #000 84%, transparent 100%);
@@ -1298,7 +1291,6 @@ onBeforeUnmount(() => {
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
 }
-/* 160 / 230 重点档：底板整体略大且偏金（实机 76×36） */
 .ds-node.major .ds-cap {
   padding: 7px 18px 8px;
   font-size: max(12px, calc(21px * var(--ck)));
@@ -1337,7 +1329,6 @@ onBeforeUnmount(() => {
   object-fit: contain;
   filter: drop-shadow(0 2px 5px rgba(60, 30, 60, 0.35));
 }
-/* 实机卡片始终是原色 */
 /* 已领取对勾 */
 .ds-tick {
   position: absolute;

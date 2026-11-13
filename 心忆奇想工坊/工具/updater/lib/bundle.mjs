@@ -164,7 +164,7 @@ export function scanBundle(root) {
     return { ok: true, plan: { root, majors, readings, warnings, orphans } }
   }
 
-  /* ② 自己就是版本目录 —— 大版本号从版本号推（1.0 → 1） */
+  /* ② 自己就是版本目录 */
   if (self.level === 'version') {
     const ver = self.ver
     ver.v = self.v.v
@@ -241,7 +241,7 @@ export function scanBundle(root) {
         return 0
       })
     if (!verDirs.length) {
-      // 顶层直接是版本目录—— 也认
+      // 顶层直接是版本目录
       const maybe = parseVersionDir(majorDir.name)
       if (maybe) {
         const m = collectVersion(majorDir, { majorName: '', majorIcon: null })
@@ -391,7 +391,6 @@ function collectPool(poolDir) {
   // 动态背景 / 进入音
   const video = entries.find((e) => !e.dir && VIDEO_RE.test(e.name)) || null
   const audio = entries.find((e) => !e.dir && AUDIO_RE.test(e.name)) || null
-  // 「标题横幅」已废弃（模拟器从不显示），不再识别、不再归档
 
   /** 背景：先认文件名（`背景图.*` / `bg.*`），认不到再按尺寸兜底（16:9 且宽 ≥1900），必须排除已认出的缩略图 / 艺术字 */
   let bg = pickBy(/^(背景图?|bg)$/i)
@@ -477,7 +476,7 @@ function collectSet(setDir) {
     if (/^整体[-_]/.test(e.name) && PIC.test(e.name)) set.evos.push(e.path)
   }
 
-  // 星级：`属性-4星-XXX.yaml` 最准；没有就看目录名（示例结构是「四星套装名」「五星套装名」）
+  // 星级
   if (/四星|4\s*星/.test(setDir.name)) set.star = '4'
   else if (/五星|5\s*星/.test(setDir.name)) set.star = '5'
 
@@ -493,7 +492,7 @@ function collectSet(setDir) {
 
 const pad3 = (n) => String(n).padStart(3, '0')
 
-/** 把一个阁的旧编号「搬」到新编号（修非数字 / 超范围这类脏数据）。只搬 Pic 目录（艺术字 + 铭牌在那）；其余素材按名称定位，不受编号影响 */
+/** 把一个阁的旧编号「搬」到新编号（修非数字 / 超范围这类脏数据） */
 function rekeyPool(snap, oldKey, newKey, log) {
   if (!oldKey || oldKey === newKey) return
   const picRoot = path.join(ASSET, uiRoot(), 'UI', 'SysResonance', 'texture', 'Pic')
@@ -508,7 +507,6 @@ function rekeyPool(snap, oldKey, newKey, log) {
     }
   }
   // 背景图已收进阁目录（`<阁>/背景图.jpg`），不再按编号命名
-  // 视频是按阁名命名的 —— 两者都不用跟着编号搬
 }
 
 /** 阅读物：有元数据头就用现成的，没有就按正文生成 */
@@ -768,7 +766,6 @@ function resolveSetId(set) {
   return `S${String(max + 1).padStart(4, '0')}`
 }
 
-/** 版本卡编号：现有最大值 +1（扫 Card 目录，避免撞号） */
 function autoCardNo() {
   const vers = readVersionTable()
   let max = 0

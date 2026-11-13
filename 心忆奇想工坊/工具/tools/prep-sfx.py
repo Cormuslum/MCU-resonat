@@ -30,7 +30,6 @@ OUT = os.path.join(SIM, "public", "assets")
 MANIFEST = os.path.join(OUT, "manifest.json")
 FFMPEG = os.environ.get("FFMPEG", "ffmpeg")
 
-# (Wwise 事件名, manifest key, 中文说明)
 # 注：`ui_general_window_a_open;ui_general_window_b_open` 在索引里是**同一行**的两个别名
 # 指向同一个 `052_窗口打开.mp3`，所以「A + B」并不是两段叠加，只有一段 0.43s 的窗口音
 PICK = [

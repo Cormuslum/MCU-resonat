@@ -47,7 +47,7 @@ function seededSave() {
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 
-/** 开一个带指定存档的页面。直接写存档的话， 「导入后 reload 验证」这一步会被它又覆盖回初始值 —— 测试会误报成「导入没生效」 */
+/** 开一个带指定存档的页面 */
 async function newPage(save) {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, acceptDownloads: true })
   await ctx.addInitScript(([k, v, flag]) => {

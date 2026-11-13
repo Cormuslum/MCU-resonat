@@ -36,7 +36,6 @@ COLLECT = os.path.join(TOOL_ROOT, "tools", "collect-assets.py")
 # manifest 里算“素材引用”的顶层前缀
 REF_RE = re.compile(r"^(banners|sets|stars3|milestones|video|sfx|fonts|currency|ui)/")
 
-# 关键素材的用途备注（只挑“看名字猜不出用途”的写，其余靠分区说明覆盖）
 KEY_NOTES: dict[str, str] = {
     # 主页
     "ui/home/bg.webp": "主页底图（自绘 + 官方 LOGO 烘焙）",

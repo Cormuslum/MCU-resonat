@@ -46,7 +46,6 @@ def main() -> int:
 
     with open(MANIFEST, encoding="utf-8") as f:
         man = json.load(f)
-    # merge 而不是整段覆盖，避免抹掉别处维护的键
     egg = man.setdefault("ui", {}).setdefault("egg", {})
     egg["skipN"] = made["skip-n.webp"]
     egg["skipH"] = made["skip-h.webp"]

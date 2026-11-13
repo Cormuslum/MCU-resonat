@@ -86,7 +86,6 @@ for (const rel of files) {
   move(src, dst)
 }
 
-// 安装说明
 fs.mkdirSync(PACK_ROOT, { recursive: true })
 const readme = path.join(PACK_ROOT, '安装说明.txt')
 fs.writeFileSync(readme, [

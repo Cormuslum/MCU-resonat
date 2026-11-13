@@ -398,10 +398,8 @@ export const useGameStore = defineStore('game', () => {
     return added
   }
 
-  /** 集齐全部阅读物（两个区域一起）；动态 import 阅读物包，避免首页白下整包 */
   async function collectAllReadings(): Promise<number> {
     const before = codex.value.countWhere((id) => id.startsWith('reading:'))
-    // 正文是运行时 JSON：先等它到，否则列表是空的，一键收集会收 0 条
     const mod = await import('@/core/museum-readings')
     await mod.ensureReadings()
     obtainAllReadings(mod.readings.map((r) => r.id))
@@ -444,7 +442,7 @@ export const useGameStore = defineStore('game', () => {
     return codex.value.setProgress(allParts.value, setId)
   }
 
-  /** 是否「集齐第二套」——每个部件都至少抽到 2 次。对应 进化条件.md 里 5★「满进」/ 4★「进化」的解锁条件 */
+  /** 是否「集齐第二套」 */
   function setDupFull(setId: string): boolean {
     void codexRev.value
     const parts = allParts.value.filter((p) => p.setId === setId)

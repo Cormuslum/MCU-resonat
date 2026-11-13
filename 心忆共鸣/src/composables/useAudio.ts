@@ -83,7 +83,6 @@ let sceneTracks: Partial<Record<SceneKey, SceneTrack[]>> = {}
 let bgmEl: HTMLAudioElement | null = null
 /** BGM 正常音量（被 duck 之前的基准） */
 const BGM_BASE = 0.34
-/** 当前正在放/刚放过的曲目路径，用来避免连续两遍同一首 */
 let lastSrc = ''
 /** 播放代次：切场景时 +1，旧元素的 ended 回调据此自动作废 */
 let playToken = 0
@@ -174,12 +173,11 @@ export function preloadAudio(sfx: Record<string, string>, bannerEnter: Record<st
   idle(() => warm(Object.keys(sfx).filter((k) => k !== 'bgm' && k !== 'bgm-egg')))
 }
 
-/** 进服装阁前预热该池的进入音（可提前调，避免第一声延迟） */
 export function warmBannerEnter(bannerId: string) {
   warm([`banner-enter:${bannerId}`])
 }
 
-/** 播放一次音效。返回 Audio 实例，便于调用方手动淡出（如「跳过动画」）。复音：每次播放都用一个新的 Audio，避免相互打断 */
+/** 播放一次音效。返回 Audio 实例，便于调用方手动淡出（如「跳过动画」） */
 export function play(name: SfxName | string, opts: PlayOpts = {}): HTMLAudioElement | null {
   const url = resolve(name)
   if (!url) return null
@@ -202,7 +200,7 @@ export function stop(el: HTMLAudioElement | null | undefined, fadeMs = 320) {
   fadeTo(el, 0, fadeMs, true)
 }
 
-/** 停掉所有正在播的预加载音效（不含 BGM）—— 切页时用 */
+/** 停掉所有正在播的预加载音效（不含 BGM） */
 export function stopAllSfx(fadeMs = 200) {
   for (const el of buffers.values()) {
     if (!el.paused) fadeTo(el, 0, fadeMs, true)
@@ -217,7 +215,7 @@ export function playStarHit(star: number, opts: PlayOpts = {}) {
   }
 }
 
-/** 服装阁专属「进入界面」音（每座阁一个，键名带 bannerId 前缀）；`factor` 是相对基准的微调 */
+/** 服装阁专属「进入界面」音（每座阁一个，键名带 bannerId 前缀） */
 let bannerEnterEl: HTMLAudioElement | null = null
 
 export function playBannerEnter(bannerId: string, factor = 1) {
@@ -273,7 +271,7 @@ function stopBgm(fadeMs = 420) {
   fadeTo(el, 0, fadeMs, true)
 }
 
-/** 切到某个场景。同一场景重复调用是**幂等**的（只有场景变了或已经没声了才重新起播） */
+/** 切到某个场景 */
 export function setBgmScene(k: SceneKey) {
   if (k === scene.value) {
     if (!bgmEl && bgmEnabled.value && (sceneTracks[k]?.length ?? 0) > 0) playScene(k)

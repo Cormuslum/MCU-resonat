@@ -1,4 +1,3 @@
-/** verify-almanac-v2201.mjs —— 玄学运势 */
 import { chromium } from 'playwright-core'
 
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
@@ -146,7 +145,6 @@ const newArt = await p.evaluate(async () => {
 ok('R1 纸面 1668×956 / 轴杆 39×956（按实体裁切、与纸等高）', newArt.paper[0] === 1668 && newArt.paper[1] === 956 && newArt.axle[1] === 956,
   JSON.stringify(newArt.paper) + ' ' + JSON.stringify(newArt.axle))
 
-/* ── R4 运势环已移除 / R3 无「玄学运势」四字 ── */
 const idleDom = await p.evaluate(() => ({
   ring: !!document.querySelector('.ring'),
   homeTitle: document.querySelector('.st-art')?.getAttribute('src') ?? '',

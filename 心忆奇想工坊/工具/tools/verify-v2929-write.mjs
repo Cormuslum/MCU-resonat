@@ -23,7 +23,6 @@ const bgWebp = path.join(SIM, 'public', 'assets', 'banners', 'bg', `${KEY}.webp`
 const before = hash(bgWebp)
 console.log(`· 现状  banners/bg/${KEY}.webp = ${before}`)
 
-// 用另一座阁的背景冒充「用户从 E 盘选的新图」
 const srcCands = [
   path.join(ROOT, '素材', '服装阁', '0.1·祈愿星', '心轮曳星河', '背景图.jpg'),
   path.join(ROOT, '素材', '服装阁'),
@@ -45,8 +44,7 @@ const payload = {
   options: { restartDev: false, force: true },
 }
 
-// 内置 88 座阁是只读的（工坊只允许改「自建内容」）。测试时先把目标阁临时标记为自建
-// 跑完立刻还原 —— 否则这个测试没法验证「改已有阁」的真实链路
+// 内置 88 座阁是只读的（工坊只允许改「自建内容」）
 const CUSTOM = path.join(DATA, '信息表', '自建内容.json')
 const origCustom = fs.readFileSync(CUSTOM, 'utf8')
 try {

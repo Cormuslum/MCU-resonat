@@ -11,7 +11,7 @@ export const storyNames = reactive<string[]>([])
 /** 可搜索的阅读物名（内置 + DLC，加载后填充） */
 export const readingNames = reactive<string[]>([])
 
-/** 把故事标题补进搜索索引（已有的跳过）。内置与 DLC 共用这一条 */
+/** 把故事标题补进搜索索引（已有的跳过） */
 export function addStoryNames(list: string[]): number {
   let n = 0
   for (const t of list) {

@@ -16,16 +16,15 @@ const SIM = path.join(OUT, '心忆共鸣')
 const UPD = path.join(OUT, '心忆奇想工坊')
 const BUILD = path.join(ROOT, 'release', '_build')
 
-// dist 里只留代码：媒体一律由 public/assets 提供，避免 1.7G 重复
 const MEDIA = ['*.webp', '*.ogg', '*.mp4', '*.webm', '*.png', '*.jpg', '*.jpeg', '*.gif', '*.avif', '*.mp3', '*.wav', '*.m4a']
 
-/** 编辑数据只带 `信息表`（约 0.3M）：`故事/` `套装库/` `阅读物/` 不随包发（成品已在模拟器里）， 发行版只当增量补丁 —— 用户拖进来的新文件覆盖对应那一条，其余原样保留（写入端会自动 mkdir） */
+/** 编辑数据只带 `信息表`（约 0.3M）：`故事/` `套装库/` `阅读物/` 不随包发（成品已在模拟器里）， 发行版只当增量补丁 */
 const DATA_KEEP = ['信息表']
 
-/** 信息表 / 阅读物里的开发期遗留，不进发行包：`前后名称对照表.md`、`desktop.ini`、`系列分类说明.md` （保留） */
+/** 信息表 / 阅读物里的开发期遗留，不进发行包 */
 const DATA_XF = ['前后名称对照表.md', 'desktop.ini', '系列分类说明.md']
 
-/** 工坊代码里这些不进发行包：快照 / 缓存 / 扩展包源 / 临时重定向表（运行时状态）、`dlc/`（玩家自己的包）、`node_modules`； README 是开发服务器版说明（端口 5178/5199），留着会误导 */
+/** 工坊代码里这些不进发行包：快照 / 缓存 / 扩展包源 / 临时重定向表（运行时状态）、`dlc/`（玩家自己的包）、`node_modules` */
 const UPD_XD = ['.snapshots', '.inbox', '.dist', 'dlc', 'node_modules']
 const UPD_XF = [
   '.last-apply.json', '.write-cache.json', '.passthrough.json',
@@ -40,7 +39,7 @@ const PIPELINE_ENTRIES = [
   'gen-readings.py',     // 阅读物图鉴数据 → public/assets/data/readings.json
 ]
 
-/** 算出管线脚本的**依赖闭包**（本地 import / 被调用的同目录脚本）。比手写白名单可靠：以后给管线加了新依赖会自动跟上，不会漏；反之无关脚本不会混进来 */
+/** 算出管线脚本的**依赖闭包**（本地 import / 被调用的同目录脚本） */
 function pipelineClosure() {
   const dir = TOOLS_DIR
   const files = fs.readdirSync(dir).filter((f) => /\.(py|mjs)$/.test(f))
@@ -81,7 +80,7 @@ function robocopy(args) {
   }
 }
 
-/** 删掉一棵目录树：不用 `fs.rmSync(recursive)`（2.6G / 上万个文件在 Windows 上很慢、易撞「文件被占用」）， 改用 robocopy 镜像到空目录再删 —— 快且能重试 */
+/** 删掉一棵目录树：不用 `fs.rmSync(recursive)`（2.6G / 上万个文件在 Windows 上很慢、易撞「文件被占用」）， 改用 robocopy 镜像到空目录再删 */
 function rmTree(p) {
   if (!fs.existsSync(p)) return
   const st = fs.lstatSync(p)

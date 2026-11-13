@@ -1,10 +1,10 @@
-/** DLC（延迟包）核心库：源包区 `updater/dlc/<id>/`（工坊编辑 / 打包 / 上传）、运行区 `public/dlc/<id>/`（模拟器直接 fetch）。「接口」是包与模拟器之间唯一的契约：模拟器只认接口名，包不直接改模拟器 */
+/** DLC（延迟包）核心库：源包区 `updater/dlc/<id>/`（工坊编辑 / 打包 / 上传）、运行区 `public/dlc/<id>/`（模拟器直接 fetch） */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { TOOL_ROOT, PUBLIC, exists, readJson, writeJson, pythonBin, pyFailText } from './util.mjs'
 
-/** 源包区（工坊编辑用）—— 跟着工具根走：发行版里 expansion 包存在工坊目录，不是模拟器 */
+/** 源包区（工坊编辑用） */
 const DLC_SRC = path.join(TOOL_ROOT, 'updater', 'dlc')
 /** 运行区（模拟器 fetch 用；public 下会被 vite 原样服务） */
 const DLC_LIVE = path.join(PUBLIC, 'dlc')
@@ -106,7 +106,6 @@ export function install(id, { from = null, log = () => {} } = {}) {
   mf.id = id
 
   const dst = liveDir(id)
-  // 先清干净再拷，避免旧版本残留文件（包更新后多出来的文件要消失）
   if (exists(dst)) rmTree(dst)
   copyTree(src, dst)
 
@@ -130,7 +129,7 @@ export function install(id, { from = null, log = () => {} } = {}) {
   return entry
 }
 
-/** 卸载：运行区删掉 + 索引移除。源包区保留（还能再装回去） */
+/** 卸载：运行区删掉 + 索引移除 */
 export function uninstall(id, { log = () => {} } = {}) {
   const dst = liveDir(id)
   // 运行区目录删不掉时也要把索引条目摘掉
@@ -214,7 +213,7 @@ function copyTree(src, dst) {
   }
 }
 
-/** 同步等一小会儿（ms）—— Node 没有同步 sleep，用 Atomics.wait */
+/** 同步等一小会儿（ms） */
 function sleep(ms) {
   try {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms)

@@ -49,9 +49,7 @@ const errors = []
 page.on('pageerror', (e) => errors.push(e.message))
 
 // 预热一次再开始测量
-// dev server 冷启动时，第一个页面加载会触发 vite 的依赖预打包并**整页 reload** ——
 // `addInitScript` 随之重跑、`window.__enter` 归零，后面所有计数断言都会错位
-// （实测：刚重启 dev server 后第一次跑必红，第二次就绿）
 // 先空跑一轮把 reload 消化掉，再重新导航开始正式测量
 await page.goto(`${BASE}/#/banner`, { waitUntil: 'domcontentloaded' })
 await page.waitForFunction(() => !document.querySelector('.loading'), { timeout: 30000 }).catch(() => {})

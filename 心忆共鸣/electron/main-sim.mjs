@@ -14,7 +14,7 @@ try { app.setPath('userData', path.join(ROOT_DIR, 'userdata')) } catch { /* 设�
 const DIST = path.join(ROOT_DIR, 'dist')
 const ASSETS = path.join(ROOT_DIR, 'public', 'assets')
 
-// 固定端口 —— 存档（localStorage）靠它稳定
+// 固定端口
 const PORT = Number(process.env.NIKKI_SIM_PORT || 51800)
 
 const MIME = {

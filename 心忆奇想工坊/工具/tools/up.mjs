@@ -7,7 +7,7 @@ import fs from 'node:fs'
 
 /** 工具根：`updater/` 与 `tools/` 的公共父目录（心忆奇想工坊/工具/） */
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-/** 工作区根：仓库根（开发版）/ 发行根 —— 「心忆奇想工坊」与「心忆共鸣」的公共父 */
+/** 工作区根：仓库根（开发版）/ 发行根 */
 const WORKSPACE = path.resolve(ROOT, '..', '..')
 /** 模拟器根：vite 的工程目录（vite.config.ts / index.html 在这） */
 const SIM_ROOT = path.join(WORKSPACE, '心忆共鸣')
@@ -34,7 +34,7 @@ const SERVICES = [
   {
     name: '模拟器',
     port: 5178,
-    // 用 process.execPath（就是当前 node）而不是 PATH 里的 'node' —— 后者在
+    // 用 process.execPath（就是当前 node）而不是 PATH 里的 'node'
     // 某些精简环境里找不到，会报 spawn node ENOENT
     cmd: process.execPath,
     args: [VITE_BIN, '--port', '5178', '--strictPort', '--host', '127.0.0.1'],
@@ -47,7 +47,6 @@ const SERVICES = [
 
 /** 守护重启的间隔：等上一轮的端口彻底释放 */
 const RETRY_MS = 900
-/** 一分钟内最多重启这么多次，超过说明 vite 自己起不来（端口被占 / 依赖坏了），别无限转圈 */
 const MAX_RETRIES = 5
 
 const busy = []
@@ -67,7 +66,7 @@ if (busy.length) {
 const running = new Map()
 let shuttingDown = false
 
-/** 写下 / 抹掉「守护在位」标记（`.dev-guard.json`，工坊的 restartDevServer 读它）： 有标记 → 等这边重启；没标记 → 自己拉。按 pid 判定而非只看文件存在，避免旧文件让工坊永远等 */
+/** 写下 / 抹掉「守护在位」标记（`.dev-guard.json`，工坊的 restartDevServer 读它）： 有标记 → 等这边重启；没标记 → 自己拉 */
 function writeGuard() {
   try {
     fs.writeFileSync(GUARD_FILE, JSON.stringify({
@@ -98,7 +97,6 @@ process.on('SIGTERM', () => shutdown(0))
 process.on('exit', clearGuard)
 writeGuard()
 
-/** 守护重启的计数窗口：一分钟内连续失败太多次就放弃，避免无限转圈 */
 let retryCount = 0
 let retryWindowStart = Date.now()
 
@@ -112,7 +110,6 @@ function launch(svc) {
     running.delete(svc.port)
 
     if (!svc.guard) {
-      // 工坊是手动启动的主服务，它退出就意味着本次工作结束
       console.error(`\n[${svc.name}] 意外退出（code=${code} signal=${signal}），正在关掉另一个…`)
       shutdown(1)
       return

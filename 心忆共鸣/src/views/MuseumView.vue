@@ -39,7 +39,7 @@ function clipOf(pts: Pt[]): string {
   return `polygon(${pts.map(([x, y]) => `${x}px ${y}px`).join(', ')})`
 }
 
-/** 悬停 / 选中（按下未抬起也算）—— 只有一块会亮 */
+/** 悬停 / 选中（按下未抬起也算） */
 const litKey = ref<MuseumHitKey | null>(null)
 function light(k: MuseumHitKey) {
   litKey.value = k

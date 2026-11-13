@@ -60,8 +60,6 @@ TRACKS = {
     # 博物图鉴（5 首加权随机）
     "qixiang": "无限暖暖,FoldEcho - 奇想激化.mp3",
     "langhua": "无限暖暖,FoldEcho - 浪花轻轻悄.mp3",
-    # 交织的云海：用户 2026-11-08 明确要求「保持原始音量，不调低」
-    # 源文件名原来写的是那个长名 mp3，素材重构后目录里只剩这个 wav
     # 实测两者电平一致（mean -37.0 / max -18.2 dB），换过来不影响听感
     # 它**不做响度归一化**（见 NO_NORMALIZE），保持这个偏轻的原始电平
     "yunhai": "交织的云海(混响高音质).wav",
@@ -70,7 +68,6 @@ TRACKS = {
     # 玄学运势
     "cunzhong": "无限暖暖,FoldEcho - 村中无事.mp3",
     "yuanqi": "无限暖暖,FoldEcho,狐狸球球@FoldEcho - 缘起丹青.mp3",
-    # 辉煌心光：用户另给的一版 WAV（112s，首尾电平一致、没有静音尾巴）
     # 旧 mp3（128.4s）末尾有 2.46s 纯静音，loop 起来每 2 分钟就空一大拍，听感很突兀
     "wanzhang": "无限暖暖@FoldEcho - 万丈曙色.wav",
 }
@@ -81,18 +78,14 @@ TRACKS = {
 # 循环点变成连续的，听不出接缝
 LOOP_XFADE = {"wanzhang": 1.2}
 
-# 目标平均电平（dBFS）。-20 是「能当背景、又不至于听不清」的常见区间
+# 目标平均电平（dBFS）
 # 实际播放时还会再乘 master × bgmVol × sceneVol 三层音量
 TARGET_DB = -20.0
 
 # 不做响度归一化的曲目：原样输出
-# 目前为空 —— yunhai 曾在里面
 # 当天下午改口径：要跟其它曲目一样响。它的源本来只有 -37 dB
-# 不归一化的话随机切到它会像被人调小了音量，所以回到统一目标
 NO_NORMALIZE: set[str] = set()
-# 增益夹紧范围：避免把本来就很轻的曲子推爆，或把过响的压到没气
 # 上限从 12 放宽到 18：yunhai 的源只有 -37 dB，要拉到 -20 得 +17 dB
-# 夹在 12 上会让它永远比别的曲子低 5 dB —— 用户要的是「跟其它一样响」
 # 它的峰值是 -18.2 dB，+17 之后落在 -1.2 dB，不会削顶
 GAIN_LO, GAIN_HI = -14.0, 18.0
 
@@ -168,7 +161,7 @@ def main() -> int:
         size = os.path.getsize(dst) / 1024
         rows.append((key, mv, gain, size))
         tag = f"  loop×{xfade:.1f}s" if xfade else ""
-        # NO_NORMALIZE 的曲子增益是 0，实际电平就是原始电平 —— 别再打印一个假的目标值
+        # NO_NORMALIZE 的曲子增益是 0，实际电平就是原始电平
         tgt = "   保持原样" if key in NO_NORMALIZE else f"{TARGET_DB:>7.1f} dB"
         print(f"  {key:<10} {mv:>7.2f} dB → {tgt}  (增益 {gain:+.2f} dB)  {size:>7.0f} KB{tag}")
     total = sum(r[3] for r in rows) / 1024

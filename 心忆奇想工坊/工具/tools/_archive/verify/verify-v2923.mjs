@@ -29,7 +29,6 @@ async function deletePack(id) {
     })
   } catch { /* 清理失败不掩盖验收结论，最后再列出来 */ }
 }
-/** 异常退出时也要清理，否则工坊「本机的包」里会留一堆验收垃圾 */
 process.on('exit', () => {
   for (const id of new Set(made)) {
     try {
@@ -327,7 +326,7 @@ let SAVE = BASE_SAVE
   try {
     await p.waitForSelector('.gl-hot', { timeout: 45000 })
   } catch {
-    // 冷启动偶发首帧不渲染 —— 整页重载一次再等（实测单独跑 3s 就出来）
+    // 冷启动偶发首帧不渲染
     await p.goto('about:blank')
     await p.goto(`${SIM}/#/settings`, { waitUntil: 'domcontentloaded', timeout: 90000 })
     await p.waitForSelector('.gl-hot', { timeout: 60000 })

@@ -1,7 +1,5 @@
 <script setup lang="ts">
-/**
- * 主页（一级界面）—— 「心忆共鸣」
- */
+/** 主页（一级界面） */
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -319,7 +317,6 @@ function toReveal() {
   }, 1900)
 }
 
-/** 首次尝试自动播放；被拦截就等用户点 */
 function tryPlay() {
   const v = bootVideo.value
   if (!v || !loginVideo.value) {
@@ -332,13 +329,11 @@ function tryPlay() {
     p.then(() => {
       needTap.value = false
     }).catch(() => {
-      // 自动播放被拦，等用户点一下
       needTap.value = true
     })
   }
 }
 
-/** 用户点击「开始」 */
 function tapStart() {
   const v = bootVideo.value
   if (!v) return

@@ -36,7 +36,7 @@ export const DLC_INTERFACE_IDS = Object.keys(DLC_INTERFACES) as DlcInterfaceId[]
 /** 包清单里的一条「我提供了这个接口」 */
 export interface DlcProvide {
   interface: string
-  /** 是否挂载 —— 包自己说了算 */
+  /** 是否挂载 */
   mount?: boolean
   /** 数据文件（相对包根） */
   data?: string

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** 彩蛋弹窗：沿用共鸣概率弹窗美术并放大 1.25 倍。左右圆钮切换条目、底部页码跳转；打开时随机一条（不含「彩蛋文本3」），点空白 / ESC 关闭 */
+/** 彩蛋弹窗：沿用共鸣概率弹窗美术并放大 1.25 倍 */
 import { computed, onBeforeUnmount, onMounted, ref, watch, nextTick } from 'vue'
 import { useGameStore } from '@/stores/game'
 import { play } from '@/composables/useAudio'
@@ -19,7 +19,7 @@ const K = 1.25
 const W = Math.round(836 * K) // 1045
 const H = Math.round(512 * K) // 640
 
-/** 首次打开**随机**一条。之后左右切换仍在 0..N-1 里顺序走。随机池剔除 `彩蛋文本3`（剧情吐槽，30 条），从 `EGG_RANDOM_POOL` 里抽 */
+/** 首次打开**随机**一条。随机池剔除 `彩蛋文本3`（剧情吐槽，30 条），从 `EGG_RANDOM_POOL` 里抽 */
 const idx = ref(EGG_RANDOM_POOL[Math.floor(Math.random() * EGG_RANDOM_POOL.length)] ?? 0)
 const scroller = ref<HTMLElement | null>(null)
 const cur = computed(() => EGG_ENTRIES[idx.value])
@@ -45,7 +45,6 @@ const jumpText = ref('')
 function onJumpInput(e: Event) {
   const el = e.target as HTMLInputElement
   jumpText.value = el.value.replace(/\D/g, '').slice(0, 3)
-  // 受控输入：过滤掉非数字后要把值写回去，否则输入框里会残留字符
   el.value = jumpText.value
 }
 
@@ -363,7 +362,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey, true))
   object-fit: contain;
   transition: opacity 0.14s ease;
 }
-/* 左键翻转时不要把图标也镜像——这里靠外层 transform 整体翻转 */
+/* 左键翻转时不要把图标也镜像 */
 .eg-nav .nav-h {
   opacity: 0;
 }

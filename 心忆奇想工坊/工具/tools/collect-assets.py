@@ -80,7 +80,6 @@ def _norm_key(s):
 # 发行版不再保存 `素材/`（3.9G 的源图/源视频），但 pool-map 里每个素材仍记着
 # 一条**虚拟相对路径**（`服装阁/0.1·祈愿星/心愿栖金蕊/背景图.jpg`）——
 # 它是推算产物名（`banners/bg/1000.webp`）的唯一依据，必须原样保留
-# 工坊把用户选的文件（可能在 E:、F:）映射到这条虚拟路径上，转码逻辑一行不用改
 # 磁盘上也不会多出第二份副本
 OVERRIDES = {}
 
@@ -127,7 +126,6 @@ MISSING = []
 MANIFEST_ONLY = False
 
 # --bust：只强制重转**指定输出子目录**（阈值 50 的批量删除策略挡着，懒得删文件时用）
-#   例：--bust banners/title,banners/name  —— 换了处理算法、只想重跑这几批
 BUST: tuple[str, ...] = ()
 
 
@@ -469,7 +467,7 @@ def probe_video(src):
     info = {"trimStart": 0.0, "trimEnd": None, "crop": None}
     w, h, dur = _media_size(src)
 
-    # ① 首尾黑屏。只认「从 0 开始」和「到结尾为止」的那两段
+    # ① 首尾黑屏
     #    片子中间的黑场（转场）不能剪，剪了就是改内容
     if dur > 0:
         p = subprocess.run([FFMPEG, "-hide_banner", "-i", src,
@@ -483,7 +481,7 @@ def probe_video(src):
             if be >= dur - 0.2:
                 info["trimEnd"] = round(bs, 3)
 
-    # ② 有效画面框。在黑场之后采样 8 秒，取众数
+    # ② 有效画面框
     if w and h:
         start = info["trimStart"] + 3.0
         if dur and start > dur - 4:
@@ -496,7 +494,7 @@ def probe_video(src):
         if crops:
             from collections import Counter
             cw, ch, cx, cy = map(int, Counter(crops).most_common(1)[0][0])
-            # 只有真的裁掉了 ≥2% 的边才认 —— 暗场景会被 cropdetect 误判成「全是黑」
+            # 只有真的裁掉了 ≥2% 的边才认
             if cw >= 16 and ch >= 16 and (cw < w * 0.98 or ch < h * 0.98):
                 info["crop"] = [cw - cw % 2, ch - ch % 2, cx - cx % 2, cy - cy % 2]
 
@@ -598,7 +596,7 @@ def transcode_video(src, dst, force=False, crf=28, height=None):
     enc = video_encoder()
     ok = build(enc)
     if not ok and enc == "h264_nvenc":
-        # 驱动/显卡不支持某些分辨率时硬件编码会直接失败，回落软编再来一次 ——
+        # 驱动/显卡不支持某些分辨率时硬件编码会直接失败，回落软编再来一次
         # 一条视频不该把整条管线卡死
         ok = build("libx264")
     if not ok or not (os.path.exists(dst) and os.path.getsize(dst) > 0):
@@ -658,9 +656,7 @@ SFX_EVENTS = [
     ("ui_general_button_small_a_hover",          "settings-hover"),
     ("UI_Common_Button_Big_A_Hover",             "settings-btn-hover"),
     ("UI_Common_Button_Big_A_Select",            "settings-btn-select"),
-    # 弹窗 / 面板出现：以前 21 处全走 panel-fadein（共鸣奖励面板淡入音）
     # 换成按场景各用各的。`sendgift-popup` 与 `echo-open` 同源（088_赠送活动·弹窗）
-    # 但用途已经分道扬镳（一个是共鸣页开门、一个是抽卡页转场），所以各自留一份文件
     # 以后想单独调音量/换素材互不影响
     ("ui_general_window_a_open",                 "window-open"),
     ("ui_general_unlock_big",                    "unlock-big"),
@@ -866,7 +862,7 @@ UI_ASSETS = [
     (f"{U}/SysBag/Textures/T_UI_common_img_item_tips_bg_purple.png",              "ui/popup/plate-sexy.webp", 92),
     (f"{U}/SysBag/Textures/T_UI_common_img_item_tips_bg_blue.png",                "ui/popup/plate-cool.webp", 92),
     (f"{U}/SysBag/Textures/T_UI_common_img_item_tips_bg_normal.png",              "ui/popup/plate-sweet.webp", 92),
-    # 套装详情弹层的「外框 / 装饰」——全部按 pxdesk 里用户实际用的素材反查出来的
+    # 套装详情弹层的「外框 / 装饰」
     (f"{U}/SysSnailCityPages/Texture/UI_events_rule_top_bg02.png",                 "ui/popup/bg.webp", 90),
     (f"{U}/SysSnailCityPages/Texture/T_UI_events_rule_black_bg_02.png",           "ui/popup/glow.webp", 90),
     (f"{U}/SysSnailCityPages/Texture/UI_events_rule_btn_n.png",                   "ui/popup/name-n.webp", 92),
@@ -894,7 +890,7 @@ UI_ASSETS = [
     (f"{U}/SysEvolution/Textures/T_UI_evolution_icon_stage_02_s.png",             "ui/popup/stage-2-on.webp", 94),
     (f"{U}/SysEvolution/Textures/T_UI_evolution_icon_stage_03_s.png",             "ui/popup/stage-3-on.webp", 94),
     (f"{U}/SysEvolution/Textures/T_UI_evolution_icon_stage_04_s.png",             "ui/popup/stage-4-on.webp", 94),
-    # 属性标签胶囊（按《标签颜色映射表》分色；label08 原素材缺失，用 label09 改色补的紫色）
+    # 属性标签胶囊
     (f"{U}/Common/Textures/T_UI_common_img_label01.png",                          "ui/popup/label-01.webp", 94),
     (f"{U}/Common/Textures/T_UI_common_img_label02.png",                          "ui/popup/label-02.webp", 94),
     (f"{U}/Common/Textures/T_UI_common_img_label03.png",                          "ui/popup/label-03.webp", 94),
@@ -924,8 +920,6 @@ UI_ASSETS = [
 
     # ---------- 单抽详情（衣服展示）
     # 单抽展示整屏底板
-    # 解包那两张单独看是暖棕，叠起来仍然偏棕；实机是「上紫下暖」
-    # 所以用这张已对齐实机的底板当底，bg / bg-right 只留作备用
     ("还原底板/单抽展示_背景底板.png",                    "ui/detail/bg-plate.webp", 90),
     (f"{U}/SysReward/Textures/T_showpic_clothes_bg.png",                  "ui/detail/bg.webp", 86),
     (f"{U}/SysReward/Textures/T_showpic_clothes_bg_right.png",            "ui/detail/bg-right.webp", 86),
@@ -1058,7 +1052,7 @@ UI_ASSETS = [
     ("博物图鉴/搜索栏/T_UI_NTASK_bg_task_06.png",           "ui/museum/search-bar.webp", 90),
     ("博物图鉴/搜索栏/T_UI_common_btn_search_02_n.png",     "ui/museum/search-icon.webp", 94),
     ("朋友分享素材/UI/Common/Textures/T_UI_common_next_btn.png", "ui/museum/next-btn.webp", 94),
-    # 交互项拆分图—— 热区轮廓从它的 alpha 描出来，悬停金光也用它当蒙版
+    # 交互项拆分图
     ("博物图鉴/主界面/拆分/心愿原野-服装图鉴.png",            "ui/museum/split/wish-clothes.webp", 86),
     ("博物图鉴/主界面/拆分/心愿原野-故事图鉴.png",            "ui/museum/split/wish-story.webp", 86),
     ("博物图鉴/主界面/拆分/心愿原野-阅读物图鉴.png",          "ui/museum/split/wish-reading.webp", 86),
@@ -1299,7 +1293,6 @@ def bg_webp(src, dst, quality=88, force=False):
     """背景统一入口。
 
 
-
     `.png` 有两种来源，靠**宽高比**分辨（文件名不可靠，两边都叫 list-*）：
 
       · 1000×500（比例 2.0）→ 四星池列表图，走实机定标的裁切放大
@@ -1333,13 +1326,9 @@ def bg_webp(src, dst, quality=88, force=False):
     return to_webp(src, dst, quality, force)
 
 
-
-
-
 def center_alpha_webp(src, dst, quality=92, force=False):
 
     """艺术字：把 alpha 实体平移到画布正中心，再转 webp。
-
 
 
     为什么（v1.4.03）：卡池名艺术字一张一个尺寸，四周透明边距也不一样
@@ -1444,7 +1433,6 @@ def milestone_names(milestones):
 
 
 # 五星池 20~100 抽送的都是同一件「流光自选礼盒」，79 个池里 33 个五星池的这 5 档
-# 素材逐字节相同（md5 一致，实测 165 个文件同一个哈希）。没必要一池一份 ——
 # 统一落成 `milestones/shared/low.webp`，各池 manifest 都指它；120 抽起才是各池专属
 LOW_TIER = (20, 40, 60, 80, 100)
 LOW_TIER_WEBP = "milestones/shared/low.webp"
@@ -1497,7 +1485,6 @@ def build_banner_enter_index():
     out.update({
         # 同一首的两个长度，取短的（进池那一下只露头 2~3 秒）
         "我所行之途": "041_卡池进入·1.11 我所行之途（短）.mp3",
-        # 用户当时用拼音首字母命名：绘(H)于(Y)蝶(D)影(Y)的(D)幻(M)梦(H)
         "绘于蝶影的幻梦": "082_卡池进入·HYDYDMH.mp3",
     })
     return out
@@ -1636,7 +1623,6 @@ def main():
             print(f"未找到卡池: {args.pool}")
             return 1
     elif args.icons or args.milestones_only:
-        # 轻量模式：manifest 仍要覆盖全部卡池（否则 banners 被清空、前端无池可用）
         # 只是下方「卡池素材」拷贝按 ICON_ONLY 跳过
         targets = banners
     else:
@@ -1673,7 +1659,6 @@ def main():
         print(f"  [{b['id']}] {b['name']}")
 
         # ：阁目录里的 `背景图.*` 是**唯一**来源
-        # 的老素材回落链（BG_COMPOSE），88 座阁都有自带整屏图后它从未命中过，已删除
         if a.get("bgClean"):
             bg_webp(A(a["bgClean"]), os.path.join(OUT, "banners/bg", f"{key}.webp"), 86, args.force)
         elif os.path.exists(os.path.join(OUT, "ui/ver/bg.webp")):
@@ -1693,7 +1678,6 @@ def main():
             center_alpha_webp(A(a["titleArt"]), os.path.join(OUT, "banners/title", f"{gk}.webp"), 92, args.force)
 
         # 服装阁动态背景：`素材/视频/服装阁动态/<阁名>.webm|mp4`
-        # 转码成去音轨的 mp4（见 transcode_video 的说明），命名按**编号**，和其它素材一致
         dyn = a.get("dynamicBg")
         if dyn:
             srcv = A(dyn)
@@ -1711,7 +1695,7 @@ def main():
             to_webp(A(m["file"]),
                     os.path.join(OUT, milestone_target(b, m, mname)), 88, args.force)
 
-        # 深海回响左边的摆饰 / 礼盒大图（数据源：Rewards Introduction.md 的「对应套装」列）
+        # 深海回响左边的摆饰 / 礼盒大图
         d = b.get("decor")
         if d and d.get("file") and gk:
             to_webp(A(d["file"]), os.path.join(OUT, "decor", f"{gk}.webp"), 88, args.force)
@@ -1971,7 +1955,6 @@ def main():
                 MISSING.append(src)
 
     # 共鸣按钮
-    # 直接摆会凭空多出 30px 视觉间距，所以按 alpha 裁到实体再输出
     for rel, out_rel in RES_BUTTONS:
         trim_alpha_to_webp(A(rel), os.path.join(OUT, out_rel), 92, args.force)
 
@@ -2007,8 +1990,7 @@ def main():
                     hit = v
                     break
         if not hit:
-            # 发行版没有音频源（`素材/卡池音频` 已砍）。manifest-only 时以**产物**为准
-            # 否则全部音效都会被判成「事件未找到」，界面静音
+            # 发行版没有音频源（`素材/卡池音频` 已砍）
             sfx_dst = os.path.join(OUT, "sfx", f"{out_name}.ogg")
             if MANIFEST_ONLY and os.path.exists(sfx_dst):
                 sfx_manifest[out_name] = f"sfx/{out_name}.ogg"
@@ -2052,7 +2034,7 @@ def main():
             if MANIFEST_ONLY and os.path.exists(dst):
                 banner_enter[b["id"]] = f"sfx/banner-enter/{slug}.ogg"
             continue
-        # to_ogg 默认「存在就跳过」，但手工换了进入音时源文件比产物新 —— 得让它重转
+        # to_ogg 默认「存在就跳过」，但手工换了进入音时源文件比产物新
         stale = (os.path.exists(dst) and os.path.getmtime(src_enter) > os.path.getmtime(dst))
         if to_ogg(src_enter, dst, args.force or stale, "112k"):
             banner_enter[b["id"]] = f"sfx/banner-enter/{slug}.ogg"
@@ -2089,7 +2071,6 @@ def main():
     # manifest 里若按「文件存在」判 bgVideo，文件不在 → 条目被抹掉 →
     # 玩家把视频包拖回来后还得重跑管线才能看到动态背景
     #
-    # 所以这里反过来：**旧 manifest 说有就保留**，哪怕文件此刻不在
     # 前端本来就处理得了 404（`BannerView.onBgVideoError` → 退回静态背景）
     # 视频包装回去后立刻生效
     prev_manifest = {}
@@ -2128,7 +2109,6 @@ def main():
                 # 缺背景时直接指向默认背景 `ui/ver/bg.webp`（前端 `ui.banner.fallbackBg` 同款）
                 "bgClean": (f"banners/bg/{key}.webp" if a.get("bgClean")
                             else ("ui/ver/bg.webp" if os.path.exists(os.path.join(OUT, "ui/ver/bg.webp")) else None)),
-                # 没给缩略图时上面会从背景裁一张，所以按「文件存在」判定
                 "thumb": f"banners/thumb/{key}.webp"
                 if os.path.exists(os.path.join(OUT, "banners/thumb", f"{key}.webp")) else None,
                 "title": f"banners/title/{gk}.webp" if a.get("titleArt") and gk else None,
@@ -2165,7 +2145,7 @@ def main():
                 "origin": s.get("origin", ""),
                 "firstVersion": s.get("firstVersion", ""),
                 "parts": s.get("parts", []),
-                # 完整套装文案（来自 素材/套装文案/<版本>/<稀有度>-<来源>-《套装名》.txt）
+                # 完整套装文案
                 "desc": s.get("desc", ""),
                 "styles": s.get("styles", []),
                 "textSource": s.get("textSource", ""),
@@ -2187,7 +2167,6 @@ def main():
                     # 卡片图按**进化阶段**分组：
                     #   · 初始阶段 → 全部部位卡（图鉴详情、试穿配对都读 stages[0]）
                     #   · 其余阶段 → 只有一张「整体-<阶段>」，指向对应的 OV-lvN
-                    # 素材每部位只有一张卡，所以后几段复用同一批部件图不现实
                     # 但「获得套装」弹窗底部的形态卡只需要每阶段一张整体图（formThumbs）
                     # 这样既不丢功能，manifest 也只多几条
                     "stages": _build_stages(s, sid),
@@ -2195,7 +2174,7 @@ def main():
             })
         out_banners.append(entry)
 
-    # 3★ 散件清单：图片 + 文案/五维/标签（来自 三星散件清单.yaml）
+    # 3★ 散件清单：图片 + 文案/五维/标签
     stars3 = []
     if os.path.isdir(os.path.join(OUT, "stars3")):
         for f in sorted(os.listdir(os.path.join(OUT, "stars3"))):
@@ -2220,12 +2199,10 @@ def main():
                 e3["icon"] = icon_rel
             stars3.append(e3)
 
-    # UI 资源表：只登记磁盘上真实存在的，避免前端 404
     def exists(rel):
         return os.path.exists(os.path.join(OUT, rel))
 
     # 首页轮播动态背景：`素材/视频/主页/*.webm` 里挑两条，进首页时随机二选一
-    # · 视频一律 720p / crf32 —— 首页是全屏背景，1080p 的收益看不见，体积却是三倍
     # · 音轨单独抽成 ogg，配合「video 永远 muted + 独立 audio」的老机制：
     # 带声音的视频会被自动播放策略拦，静音视频一定能起，声音再单独补
     # (文件名, 音轨音量系数)
@@ -2259,11 +2236,10 @@ def main():
         if not os.path.isfile(srcv):
             print(f"  [首页视频] 缺少 {fname}，跳过这一条")
             continue
-        # 保持原分辨率。首页是全屏背景，降分辨率只会糊
+        # 保持原分辨率
         # 体积靠编码质量（cq30）和裁掉的黑边来控制
         if not transcode_video(srcv, os.path.join(OUT, vrel), args.force, crf=30):
             continue
-        # poster：体积大、解码慢，先垫一张首帧，避免首页黑屏等视频
         poster_ok = video_poster(srcv, os.path.join(OUT, prel), force=args.force)
         # 抽音轨：视频本身是 `-an` 的，声音单独一条轨，两条必须同源**且同区间**
         # 视频剪掉了首尾黑屏，音轨必须跟着剪同样一刀，否则循环周期不等长
@@ -2292,7 +2268,6 @@ def main():
             # 新的轮播逻辑读 bgVideos
             "bgVideo": home_videos[0]["video"] if home_videos else None,
             # 从视频里拆出来的音轨：视频本身永远 muted 播
-            # 声音单独走 <audio> —— 否则「切回主页」时带声音的视频会被自动播放策略拦住，静音到下一次点击
             "bgAudio": home_videos[0]["audio"] if home_videos else None,
             "bgVideos": home_videos,
             "nav": {
@@ -2404,7 +2379,7 @@ def main():
             "back": "ui/mail/back.webp",
             "paper": "ui/mail/paper.webp",
         },
-        # 深海回响奖励轨道界面（V2）
+        # 深海回响奖励轨道界面
         "deepsea": {k: f"ui/deepsea/{k}.webp" for k in DEEPSEA_ASSETS},
         "detail": {
             "bg": "ui/detail/bg.webp",
@@ -2469,7 +2444,7 @@ def main():
             # 不要再留空白（图片 onerror 也回落到这里）
             "cardDefault": "ui/ver/card-default.webp" if exists("ui/ver/card-default.webp") else None,
             "bigDefault": "ui/ver/big-default.webp" if exists("ui/ver/big-default.webp") else None,
-            # 版本元数据（版本名 / 介绍文案 / 大版本归属）—— 版本页与图鉴赛季栏都读它
+            # 版本元数据（版本名 / 介绍文案 / 大版本归属）
             # 数据源是 素材/信息表/版本表.csv。新增版本只需往那张表加一行
             "versions": [
                 {

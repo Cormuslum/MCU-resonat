@@ -1,4 +1,4 @@
-/** 验收 —— 静态背景替换 / 动态背景替换 / 素材路径归位 / */
+/** 验收 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -30,7 +30,6 @@ for (const n of SEVEN) {
   const b = byName.get(n)
   ok(`${n}：产物存在`, !!b && fs.existsSync(path.join(PUB, b.assets.bgClean)), b?.assets?.bgClean || '（无）')
 }
-// 这四座以前被 BG_HIRES / BG_COMPOSE 盖住，换图完全不生效
 const shadowed = ['如我斑斓', '千万次相逢的理由', '不灭的幽旅', '雪落颂愿时']
 ok('曾被旧覆盖表盖住的四座已改为「阁目录优先」',
   shadowed.every((n) => String(pmByName.get(n)?.assets?.bgClean || '').startsWith('服装阁/')),

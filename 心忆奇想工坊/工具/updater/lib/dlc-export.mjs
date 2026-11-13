@@ -1,4 +1,4 @@
-/** DLC 导出器：把库里的自建内容切成一个**自包含**的包（包内带素材副本，路径改写为 `/dlc/<id>/assets/...`）。一次导出可多选、同类装同一包；打包阁与套装自动附带其故事，打包版本自动附带该版本内的自建阁。素材取 `public/assets/` 里已转码的 webp */
+/** DLC 导出器：把库里的自建内容切成一个**自包含**的包（包内带素材副本，路径改写为 `/dlc/<id>/assets/...`）。素材取 `public/assets/` 里已转码的 webp */
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -17,7 +17,7 @@ const IFACE_FILE = {
   'codex.reading': 'codex.reading.json',
   'version.banner': 'version.banner.json',
 }
-/** 写 provides 时的固定顺序 —— 前端按这个顺序挂载（先阁、再套装、再图鉴、最后版本） */
+/** 写 provides 时的固定顺序 */
 const IFACE_ORDER = Object.keys(IFACE_FILE)
 
 const KIND_LABEL = { banner: '服装阁', set: '套装', story: '故事', reading: '阅读物', version: '版本' }
@@ -25,7 +25,7 @@ const KIND_LABEL = { banner: '服装阁', set: '套装', story: '故事', readin
 /** 自建编号段的起点：编号 ≥ 500 即「不是内置内容」（001~099 官方、100~499 留给官方、500+ 自建 / DLC） */
 const DLC_GACHA_FROM = 500
 
-/** 去掉书名号、收空格 —— 阅读物在文件里带《》，在候选里不带 */
+/** 去掉书名号、收空格 */
 const bareName = (s) => String(s || '').replace(/^《|》$/g, '').trim()
 
 /** `gachaKey` → 数值（认 `1206` / `banner-1206` / `106` 这几种写法） */
@@ -100,7 +100,7 @@ function dlcScope(m) {
   return { custom, isDlcPool, dlcBanners, dlcSets, dlcVersions, dlcReadings }
 }
 
-/** 导出时拦下内置内容 —— 直接打 API 也不该能绕过去 */
+/** 导出时拦下内置内容 */
 function rejectBuiltin(what, extra = '') {
   throw new Error(
     `${what}是模拟器自带内容，不能打进拓展包（包里只装自建内容，服装阁编号 ≥ ${DLC_GACHA_FROM}）。${extra}`,
@@ -126,11 +126,10 @@ function storyRoot() {
   return path.join(ASSET, '故事')
 }
 
-/** 读一篇套装故事（`素材/故事/故事-{星级}-{套装名}.md`）；找不到 md 时返回 **null**（「附带」路径的正常情况） */
+/** 读一篇套装故事；找不到 md 时返回 **null**（「附带」路径的正常情况） */
 function storyEntry(setName, m) {
   const src = storyRoot()
   if (!exists(src)) return null
-  // 精确匹配文件名，避免「星之海」误命中「星之海·改」
   const hit = fs.readdirSync(src).find((f) => new RegExp(`^故事-\\d星-${escapeRe(setName)}\\.md$`).test(f))
   if (!hit) return null
 
@@ -280,7 +279,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
 
   const m = readManifestJson()
   const scope = dlcScope(m)
-  // 先全量校验，再动磁盘 —— 混合选择里只要有一项不合法，就不该留下半个包
+  // 先全量校验，再动磁盘
   validateSelection(kind, list, m, scope)
 
   // 包 id 必须先算：rewire 出的素材路径里带着它
@@ -410,7 +409,7 @@ export function exportMany({ kind, keys = [], name, author, description, poolId,
 
 /* ────────────────────────────── 候选列表（给界面多选列表用） ────────────────────────────── */
 
-/** 库里能导出的东西 —— 界面拿它填候选列表。**只列自建内容** */
+/** 库里能导出的东西 */
 export function exportCandidates() {
   const m = readJson(MANIFEST, null)
   if (!m) return { banners: [], sets: [], stories: [], readings: [], versions: [] }

@@ -41,7 +41,6 @@ function maxCardNo() {
     const n = Number(String(v.cardNo || '').replace(/\D/g, ''))
     if (n) max = Math.max(max, n)
   }
-  // 也扫一遍 Card 目录，避免撞上还没进版本表的编号
   if (exists(CARD_DIR)) {
     for (const f of fs.readdirSync(CARD_DIR)) {
       const m = f.match(/img_(\d{3})(?:_[ML]1?)?\.png$/i)
@@ -69,7 +68,7 @@ function hasMedia(files) {
   return (files || []).some((f) => isMedia(f.src || f.name))
 }
 
-/** 拖进来的 md 常带 `# 标题` 与 `---` 分隔线，正文只留内容本身。「故事」任务与「套装/服装阁里顺手挂的故事」共用同一套剥离规则 */
+/** 拖进来的 md 常带 `# 标题` 与 `---` 分隔线，正文只留内容本身 */
 function stripMd(s) {
   return String(s || '')
     .replace(/\r\n/g, '\n')
@@ -88,7 +87,7 @@ function poolMapSet(name) {
   return null
 }
 
-/** 按部件图标生成 `writeSuitLibYaml` 的 parts，并把已有的五维 / 文案沿过来。`icons` 是 `{src, name}`（来自 `pick(files,'icons')`） */
+/** 按部件图标生成 `writeSuitLibYaml` 的 parts，并把已有的五维 / 文案沿过来 */
 function partsFromIcons(icons, gachaKey, setName) {
   const prev = poolMapSet(setName)
   const byName = new Map((prev?.parts || []).map((p) => [p.name, p]))
@@ -228,7 +227,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     notes.push(`动态背景 → ${rel(dst)}`)
   }
 
-  // 服装阁进入音：按**阁名**存。管线里这一份优先于「卡池进入·<版本> <阁名>.mp3」的自动匹配
+  // 服装阁进入音：按**阁名**存
   const enterSfx = one(files, 'enterSfx')
   if (enterSfx) {
     const ext = (path.extname(enterSfx.name || enterSfx.src) || '.mp3').toLowerCase()
@@ -625,7 +624,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
   let versionTouched = null
   /** 这次新建了一个版本行？新版本的卡图/大图产物不存在，必须跑一趟转码补默认图 */
   let versionCreated = false
-  /** 这次有没有给媒体文件 —— 没有就跳过转码那一趟（纯元数据编辑） */
+  /** 这次有没有给媒体文件 */
   let mediaTouched = hasMedia(files)
   /** 这次写了故事 / 阅读物？只有写了才需要重算对应的 JSON */
   let storyWritten = false
@@ -752,7 +751,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       mediaTouched = true
     }
 
-    // ③ 动态背景 / 进入音按**阁名**存，改名就得跟着搬，否则新名字取不到旧素材
     if (name !== target) {
       for (const ext of ['.webm', '.mp4']) {
         moveFile(snap, path.join(ASSET, '视频', '服装阁动态', `${safeName(target)}${ext}`),
@@ -812,8 +810,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
           if (exists(to)) throw new Error(`本阁已有同名套装：${addName}`)
           const moved = moveTree(snap, from, to)
           if (!moved) fs.mkdirSync(to, { recursive: true })
-          // 换阁要走 moveSetToPool：upsertSet 会把「来源变了」判成复刻
-          // 来源那一格原地不动，图鉴里这套仍然挂在旧阁下
           const hit = moveSetToPool(addName, name, `${version}${versionName}`)
           notes.push(`追加套装「${addName}」← 「${owner.name}」（${moved} 个文件${hit ? '' : '，序列里没找到初始行'}）`)
         } else {
@@ -913,7 +909,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
         notes.push(`${setName}：未给套装 YAML → 按图标生成（沿用已有五维/文案）`)
       }
 
-      // 套装故事（拖了 .md 就写，不用再跑一次「故事」任务）
+      // 套装故事
       const storyFile = one(files, 'story', i)
       if (storyFile) {
         const body = stripMd(readText(storyFile.src))
@@ -936,7 +932,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       markCustom('sets', setName)
     }
 
-    // 新建的阁与套装登记进「自建内容」白名单 —— 以后才能在工坊里改
+    // 新建的阁与套装登记进「自建内容」白名单
     touchCustom(snap)
     markCustom('pools', name)
     snap.trackDir(poolDir)
@@ -955,7 +951,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
 
     const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
     let owner = (pm.banners || []).find((b) => (b.sets || []).some((s) => s.name === target))
-    /** pool-map 认识这套？认识就说明它**已经进过图鉴**，源目录不在也合法（发行版直转） */
     const ownerFromMap = !!owner
     if (!owner) {
       const disk = findOnDisk('set', target)
@@ -983,7 +978,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       poolDirOf(destPool.version, destPool.versionName || destPool.version, destPool.name,
         { standard: (destPool.type || 'limited') === 'standard' }), setName)
 
-    /** 源目录可能**本来就不存在**：发行版直转模式下工坊数据目录里只有空壳。只要 pool-map 认识这套，就照样能改元数据 / 换图 */
+    /** 源目录可能**本来就不存在**：发行版直转模式下工坊数据目录里只有空壳 */
     const hasSourceDir = exists(fromDir)
     if (!hasSourceDir && !ownerFromMap) throw new Error(`找不到套装目录：${rel(fromDir)}`)
 
@@ -1030,8 +1025,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       mediaTouched = true
     }
 
-    // ③ 序列：星级 / 来源 / 首发都按新值写；换阁要走 moveSetToPool
-    //    否则 upsertSet 会把它当成「复刻」，来源那一格不动
     upsertSet({ id: setId, star: `${star}★`, name: setName, pool: poolName, versionLabel })
     if (owner.name !== poolName) {
       moveSetToPool(setName, poolName, versionLabel)
@@ -1167,7 +1160,6 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     const txt = one(files, 'readingTxt')
     let body = String(fields.body || '')
     if (!body && txt) {
-      // 拖进来的 txt 可能已经带了元数据头，剥掉后再写，避免重复
       body = readText(txt.src).replace(/^《.*?》\s*/, '').replace(/【(图鉴分区|编号|类型)】.*$/gm, '').trim()
     }
     if (!body.trim()) throw new Error('正文为空：填进文本框，或拖一个 .txt 进来')

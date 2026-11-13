@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/** 共鸣页 —— 右上货币栏 / 服装阁艺术字 / 深海回响入口 / 共鸣按钮，左上退出 / 缩略图 / 套装卡片 */
+/** 共鸣页 */
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
@@ -449,12 +449,11 @@ function selectPool(i: number) {
     store.selectBanner(p.id)
     // 每座阁有自己的「进入界面」音：进页时播过一次（音量 1.0）
     // 在缩略图栏**切到另一座**时再播一次（音量 0.7）
-    // 点当前这座不重复播 —— 那是「没切换」，只有选中框在动
     playBannerEnter(p.id, 0.7)
     // 新阁重新评估背景：上一座阁坏掉的视频/背景图不代表这一座也坏
     bgVideoBroken.value = false
     bgStillBroken.value = false
-    // 常驻池没有动态 PV —— 切过去后背景直接落静态，避免停在「video」档黑屏
+    // 常驻池没有动态 PV
     bgMode.value = store.banner?.assets.bgVideo ? 'video' : 'still'
   }
 }
@@ -464,7 +463,6 @@ function hoverPool(i: number) {
   hoverIdx.value = i
   play('thumb-hover', { volume: 0.45 })
   const p = POOLS.value[i]
-  // 预热是为了切过去时第一声不延迟；未收录的阁没有音可热
   if (p && isReal(p)) warmBannerEnter(p.id)
 }
 
@@ -501,7 +499,7 @@ function openEcho() {
   showEcho.value = true
 }
 
-/** ESC 退出。有弹层时先关弹层，避免一次 ESC 连页面一起退掉 */
+/** ESC 退出 */
 function onKey(e: KeyboardEvent) {
   if (e.key !== 'Escape') return
   /* 层级从高到低逐层退：套装详情弹窗最先关 */
@@ -599,7 +597,7 @@ function stageIcon(name: string, on = false): string {
   return list[stageIconIdx(name)] ?? list[0] ?? ''
 }
 
-/** 形态是否已解锁：5★ 集齐→初始 / 焕新、180 抽→一进、230 抽→二进、集齐第二套→满进； 4★ 集齐→焕新、集齐第二套→进化。每层都要在上一层已解锁的前提下 */
+/** 形态是否已解锁：5★ 集齐→初始 / 焕新、180 抽→一进、230 抽→二进、集齐第二套→满进； 4★ 集齐→焕新、集齐第二套→进化 */
 function stageUnlocked(name: string, st: SetInfo | null = showDetail.value): boolean {
   if (!st) return false
   const pr = setProgress(st)
@@ -621,10 +619,7 @@ function stageUnlocked(name: string, st: SetInfo | null = showDetail.value): boo
   }
 }
 
-/**
- * 属性标签 → 胶囊素材（《全领域/标签颜色映射表.md》）
- * 五维（典雅/清新/甜美/性感/帅气）不在表里，用同色系：典雅=01、清新=02、甜美=04、性感=08、帅气=05
- */
+/** 属性标签 → 胶囊素材 */
 const LABEL_OF: Record<string, string> = {
   典雅: '01', 清新: '02', 甜美: '04', 性感: '08', 帅气: '05',
   保暖: '05', 清凉: '04', 居家: '02', 礼服: '01', 简约: '03',
@@ -789,7 +784,6 @@ onUnmounted(() => {
     <h1 v-else class="title-text">{{ banner.name }}</h1>
 
     <!-- ============ 抽取说明 1479,298（右移 5 / 上移 4） ============ -->
-    <!-- 保底说明跟随 rules：纯 4★ 池是「每 5 次」，主池是「每十次」，别写死 -->
     <p class="rule-text">{{ rules?.pity['4'].note ?? '每十次共鸣必出四星或以上服装' }}</p>
 
     <!-- ============ 深海回响活动签 1732,606 170×164 ============ -->
@@ -1046,7 +1040,6 @@ onUnmounted(() => {
               :title="`${f.setName || f.name}${stageUnlocked(f.name) ? '' : '（未解锁）'}`"
               @click="formIdx = i + 1; play('paper-flip', { volume: 0.45 })">
               <img v-if="ui?.popup" class="sh-form-card" :src="asset(ui.popup.formCard)" alt="" draggable="false" />
-              <!-- 形态缩略图也按卡片画框裁切，避免宽画幅的袖摆顶到卡片外 -->
               <span class="sh-form-clip">
                 <img class="sh-form-pic" :src="asset(f.src)" :alt="f.name" loading="lazy" draggable="false" />
               </span>
@@ -1412,7 +1405,6 @@ onUnmounted(() => {
   z-index: 12;
 }
 
-/* 抽取说明 */
 .rule-text {
   position: absolute;
   left: 1504px;
@@ -1680,7 +1672,6 @@ onUnmounted(() => {
 }
 .sb-name {
   position: absolute;
-  /* 用户要求文字整体右移 */
   left: 64px;
   top: 0;
   height: 86px;
@@ -1707,7 +1698,6 @@ onUnmounted(() => {
   height: 32.4px;
   max-width: none;
   object-fit: contain;
-  /* 间距取原来 − */
   margin-right: -12px;
   filter: drop-shadow(0 0 6px rgba(255, 214, 150, 0.8));
 }
@@ -1847,7 +1837,6 @@ onUnmounted(() => {
   font-size: 18px;
   color: #5b4423;
 }
-/* 5★ / 4★ 用底部一条淡光区分，不整行变色（否则 50 行全是彩条） */
 .ph-item.s5 { background: linear-gradient(90deg, rgba(255, 226, 150, 0.4), rgba(255, 226, 150, 0) 78%); }
 .ph-item.s4 { background: linear-gradient(90deg, rgba(198, 178, 255, 0.34), rgba(198, 178, 255, 0) 72%); }
 
@@ -2141,7 +2130,6 @@ onUnmounted(() => {
   object-position: 50% 0;
   filter: drop-shadow(0 10px 24px rgba(60, 20, 40, 0.45));
 }
-/* 4★ 立绘比 5★ 宽，按实机往右挪 5px 才不溢出容器（110 - 124 = -14） */
 .sh-hero.s4 { left: -14px; }
 /* 进化等级图标 */
 .sh-stage { object-fit: contain; pointer-events: none; }
@@ -2237,7 +2225,6 @@ onUnmounted(() => {
   margin: 0;
   padding-right: 6px;
   overflow-y: auto;
-  /* 实机是仿宋；Windows 用「仿宋」 */
   font-family: 'FangSong', '仿宋', 'STFangsong', 'FZFangSong-Z02', 'Noto Serif SC', serif;
   font-size: 30px;
   line-height: 1.25;

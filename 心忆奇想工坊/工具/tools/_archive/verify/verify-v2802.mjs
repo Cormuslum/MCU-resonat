@@ -1,4 +1,4 @@
-/** 验收 —— 只覆盖本轮改动及其关联项 */
+/** 验收 */
 import { chromium } from 'playwright-core'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -36,7 +36,6 @@ function webpSize(buf) {
   return { w: 0, h: 0 }
 }
 
-/** 从 CHANGELOG.md 里取最近 n 个版本号。别硬编码版本号 —— 每发一版都要改断言，太容易漏 */
 function recentVersions(n = 3) {
   const md = fs.readFileSync(path.join(A, '..', '..', 'CHANGELOG.md'), 'utf8')
   const out = []
@@ -147,7 +146,6 @@ await page.waitForTimeout(2600)
   ok('形态卡裁切框与卡片画框对齐',
     !!r.formCard && ['x', 'y', 'w', 'h'].every((k) => Math.abs(r.formCard[k] - r.formClip[k]) <= 1),
     `${JSON.stringify(r.formClip)} vs ${JSON.stringify(r.formCard)}`)
-  // ：底部装饰带原来 z-index:1，被立绘(2)/形态卡(4) 盖住，只露出中间拱形
   ok('底部装饰带压在立绘与形态卡之上',
     r.z.band >= r.z.hero && r.z.band >= r.z.forms && r.z.bandW > 1000,
     `band z=${r.z.band} (${r.z.bandW}×${r.z.bandH}) / hero z=${r.z.hero} / forms z=${r.z.forms}`)
@@ -235,14 +233,12 @@ const bodyStyle = await page.evaluate(() => {
   const b = document.querySelector('.lt-body')
   return b ? { oy: getComputedStyle(b).overflowY, fs: getComputedStyle(b).fontSize } : null
 })
-// ：不再自动降字号 —— 放不下就滚动
 ok('正文容器是可滚动区（overflow-y:auto）', bodyStyle?.oy === 'auto', JSON.stringify(bodyStyle))
 ok('末页内容放得下或可滚动（不再裁字）', overflow <= 1 || (await page.evaluate(() => {
   const b = document.querySelector('.lt-body')
   return !!b && b.scrollHeight > b.clientHeight
 })), `超出 ${overflow}px`)
 
-// ：日志再长也不缩字 —— 用「人为加长正文」验证滚动链路
 {
   await page.evaluate(() => {
     const b = document.querySelector('.lt-body')
@@ -289,8 +285,6 @@ ok('末页内容放得下或可滚动（不再裁字）', overflow <= 1 || (awai
   })
 }
 
-// ：更新日志的长度随版本变化 —— 某一版变长就会把正文顶出容器
-// 起改为滚动，所以每页只验「可读」：放得下、或能滚动到底
 {
   // 先回到第 1 页
   for (let i = 0; i < 3; i++) {

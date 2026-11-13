@@ -2,7 +2,6 @@
 """
 部位代号 —— 中文部位名 ↔ 官方两字母代号。
 
-## 权威来源
 
 `素材/信息表/部位代号对照表.csv`（用户维护，唯一真源）。
 **不要在代码里再抄一份映射表** —— 新增部位时只改 CSV，不用碰代码。
@@ -55,7 +54,7 @@ SIM = os.path.join(ROOT, "心忆共鸣")
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 CSV_PATH = os.path.join(ROOT, "素材", "信息表", "部位代号对照表.csv")
 
-# 整体阶段的文件名 → 代号。文件名来自 `进化等阶/整体-XXX.png`
+# 整体阶段的文件名 → 代号
 # 4★ 的「进化」与 5★ 的「一进」同槽（都是 lv2），见模块 docstring
 OV_CODE_OF_FILE = {
     "整体-初始.png": "OV-lv0",
@@ -85,7 +84,6 @@ def _load():
         return _cache
     table = {}
     if os.path.isfile(CSV_PATH):
-        # utf-8-sig：用户用 Excel 存的 CSV 带 BOM
         with open(CSV_PATH, encoding="utf-8-sig", newline="") as f:
             for row in csv.DictReader(f):
                 part = (row.get("部位") or "").strip()

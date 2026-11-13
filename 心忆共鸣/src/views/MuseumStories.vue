@@ -72,7 +72,7 @@ function findStory(name: string): StoryEntry | undefined {
   )
 }
 
-/** 已集齐的套装集合 —— 故事解锁条件 = 该套全部部件都抽到过（owned === total） */
+/** 已集齐的套装集合 */
 const gotSets = computed(() => {
   const m = new Set<string>()
   // 必须用全库完成度：store.allParts 只含「当前服装阁」

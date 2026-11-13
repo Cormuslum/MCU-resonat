@@ -23,7 +23,7 @@ SIM = os.path.join(ROOT, "心忆共鸣")
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 LIB = os.path.join(ROOT, "素材", "套装库")
 
-# `merge-set-yaml.py` 文件名带连字符，不能直接 import —— 用 importlib 按路径加载
+# `merge-set-yaml.py` 文件名带连字符，不能直接 import
 import importlib.util  # noqa: E402
 spec = importlib.util.spec_from_file_location(
     "msy", os.path.join(TOOL_ROOT, "tools", "merge-set-yaml.py")
@@ -84,7 +84,6 @@ for fname in files:
     dst_parts = data.get("部件", [])
     n_parts += len(dst_parts)
 
-    # ── 已删字段不该残留 ──
     for dead in DEAD_TOP:
         if dead in data:
             bad(f"{name}: 仍残留已废弃字段「{dead}」")

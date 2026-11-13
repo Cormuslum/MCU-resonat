@@ -46,7 +46,6 @@ const offOpacity = await p.evaluate(() => {
 })
 ok(parseFloat(offOpacity) === 0, `未选中态高亮框不显示（opacity=${offOpacity}）`)
 
-/* 2) 右上角 menu 已移除 */
 const menuGone = await p.evaluate(() => ({
   menu: !!document.querySelector('.rd-menu'),
   back: !!document.querySelector('.rd-back'),

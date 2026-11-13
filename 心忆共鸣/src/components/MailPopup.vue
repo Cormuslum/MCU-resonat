@@ -20,7 +20,7 @@ const phase = ref<Phase>('closed')
 
 const page = ref(0)
 
-/** 版本日志：运行时从 `public/assets/data/mail-changelog.json` 读。读不到就只剩欢迎页（信封照常能拆开，不会白屏） */
+/** 版本日志：运行时从 `public/assets/data/mail-changelog.json` 读 */
 const mailLogs = ref<MailLog[]>([])
 
 const pages = computed(() => [
@@ -38,7 +38,7 @@ const pages = computed(() => [
 const total = computed(() => pages.value.length)
 const cur = computed(() => pages.value[Math.min(page.value, total.value - 1)])
 
-/** 正文滚动。**不缩放文字**，溢出的内容用滚轮或按住拖动看，`.lt-body` 自己滚。拖动位移必须换算设计坐标：用 `toDesignDelta()`（见 `core/stage.ts`） */
+/** 正文滚动。**不缩放文字**，溢出的内容用滚轮或按住拖动看，`.lt-body` 自己滚 */
 const bodyRef = ref<HTMLElement | null>(null)
 /** 正文是否溢出（只用来决定光标形态，不参与拖拽判定） */
 const scrollable = ref(false)
@@ -392,7 +392,6 @@ onUnmounted(() => {
 .lt-body.log {
   font-size: 14.5px;
 }
-/* 只在真的溢出时才给「可拖」光标 */
 .lt-body.scrollable {
   cursor: grab;
 }

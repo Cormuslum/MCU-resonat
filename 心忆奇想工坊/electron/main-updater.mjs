@@ -8,7 +8,7 @@ import net from 'node:net'
 import { fileURLToPath } from 'node:url'
 
 const BASE_PORT = Number(process.env.NIKKI_UPDATER_PORT || 5199)
-/** 端口冲突时向后找几个：先问对方一句「你是谁」（`/api/state` 的 toolRoot）， 只有同一个工具目录才复用，否则换端口起自己的实例 —— 绝不连错数据根 */
+/** 端口冲突时向后找几个：先问对方一句「你是谁」（`/api/state` 的 toolRoot）， 只有同一个工具目录才复用，否则换端口起自己的实例 */
 const PORT_SPAN = 8
 
 const isDir = (p) => { try { return fs.statSync(p).isDirectory() } catch { return false } }
@@ -114,7 +114,6 @@ function createWindow(port) {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      // 只为了把「拖进来的文件的绝对路径」交给页面（见 preload-updater.cjs）
       // 有了它，整套导入拖文件夹不必再把整棵树复制进 .inbox 中转
       preload: fileURLToPath(new URL('./preload-updater.cjs', import.meta.url)),
     },
@@ -141,7 +140,7 @@ function spawnServer(L, port) {
   // 很可能是 Microsoft Store 的假存根（一跑就 exit 9009）
   if (L.py && isFile(L.py)) env.NIKKI_PY = L.py
   if (L.ffmpeg && isFile(L.ffmpeg)) env.NIKKI_FFMPEG = L.ffmpeg
-  // 成品写到**模拟器**的 public（不是工坊自己）—— 少了这个，管线会把 webp
+  // 成品写到**模拟器**的 public（不是工坊自己）
   // 转进工坊目录，模拟器那边的图反而永远不变
   if (L.targetRoot) env.NIKKI_OUT_DIR = path.join(L.targetRoot, 'public', 'assets')
   // 发行版不落 `素材/`：用户选的图直接从原位置转进 public
@@ -172,7 +171,6 @@ app.whenReady().then(async () => {
     return
   }
 
-  // 先认领端口：已有**同一套布局**的实例就复用，否则（开发版工坊 / 别的程序）换一个
   const pick = await pickPort(L)
   if (!pick) {
     dialog.showErrorBox(

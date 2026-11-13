@@ -16,7 +16,7 @@ const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 }, 
 const page = await ctx.newPage()
 
 const pageErrors = []
-/** `ERR_ABORTED` 同 ：BGM / 卡池 PV / 主页背景视频切页时被回收，Chrome 会报 aborted —— 与代码无关 */
+/** `ERR_ABORTED` 同 ：BGM / 卡池 PV / 主页背景视频切页时被回收，Chrome 会报 aborted */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t)
   && (/\/assets\/(sfx|bgm|video)\//.test(t) || /bg-video(-\d+)?\.(webm|mp4)/.test(t) || /bg-audio(-\d+)?\.ogg/.test(t))
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
@@ -65,7 +65,6 @@ const navFits = await page.$$eval('.rb-txt', (els) =>
 )
 check('A3 四个字的标签不溢出侧栏（158px 内一行）', navFits)
 
-// 主页不显示侧边栏用户要求
 await page.goto(`${BASE}/#/`, { waitUntil: 'domcontentloaded' })
 await page.waitForTimeout(900)
 const homeRail = await page.evaluate(() => document.querySelectorAll('.rail').length)
@@ -90,7 +89,6 @@ const manifest = await page.evaluate(async () => {
   return { firstOf, verOf, versions: [...new Set(m.banners.map((b) => b.version))] }
 })
 
-/* 版本清单**从 manifest 现算**：素材库会不断增长用户自建了 0.1 大版本， 写死 24 个版本会在新数据进来后误报 */
 const VERS = manifest.versions.slice().sort((a, b) => {
   const na = a.split('.').map(Number)
   const nb = b.split('.').map(Number)

@@ -91,7 +91,7 @@ for (const sz of SIZES) {
     const blackL = (innerWidth - 1920 * stageScale) / 2
     const toDesignX = (clientX) => (clientX - blackL) / stageScale
 
-    // 取两个相距 200 屏幕像素的点，算它们的设计坐标差 —— 这才是「位移」
+    // 取两个相距 200 屏幕像素的点，算它们的设计坐标差
     const x0 = dr.left + dr.width / 2
     const x1 = x0 - 200
     const d0 = toDesignX(x0)
@@ -116,13 +116,13 @@ for (const sz of SIZES) {
 /* ══════════════ C. 拖拽在 4K 下不再跑得快 ══════════════ */
 console.log('\n【C. 拖拽位移比（4K vs 1080p）】')
 {
-  /** 用共鸣页的「套名横幅」（.set-banners）做真实拖拽： BannerView.onPlatesMove 直接改 scrollLeft，拖完读 scrollLeft 变化。期望：指针在屏幕上移 N 物理像素 → 内容移 N/scale 设计像素。修复前：4K 下内容移 N 设计像素（跑得快 2 倍） */
+  /** 用共鸣页的「套名横幅」（.set-banners）做真实拖拽： BannerView.onPlatesMove 直接改 scrollLeft，拖完读 scrollLeft 变化 */
   // 遥远之海（banner-001）有 8 套 → 套名横幅一定横排溢出
   const POOL = 'banner-001'
 
   const measure = async (w, h) => {
     const page = await browser.newPage({ viewport: { width: w, height: h } })
-    // 共鸣页要先选定版本才进池详情 —— 塞一份带 selectedVersion 的存档
+    // 共鸣页要先选定版本才进池详情
     const SAVE = {
       version: 1, selectedVersion: '1.0', pity: {}, codex: {}, milestoneClaimed: {}, history: [],
       settings: { skipAnim: true, skipSingleAnim: true, skipReward: true, skipGacha: true, skipOpening: true },
@@ -228,7 +228,6 @@ for (const [w, h, tag] of [[1920, 1080, '1080p'], [2560, 1440, '1440p'], [3840, 
 
   // 左边缘唤出侧边导航
   // 起**主页不显示侧边栏**（信封入口搬到了左上角，左缘感应区会让位）
-  // 所以这里改成两条：主页左缘**不该**冒出来；换到二级页面左缘**仍然**能唤出
   await page.mouse.move(6, Math.round(h / 2))
   await page.waitForTimeout(500)
   const railOnHome = await page.evaluate(() => document.querySelectorAll('.rail').length)

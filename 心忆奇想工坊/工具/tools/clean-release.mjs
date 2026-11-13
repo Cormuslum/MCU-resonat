@@ -151,7 +151,6 @@ for (const p of legacy) {
 // ：`故事/` `套装库/` `阅读物/` 不再随包 ——
 // 成品（stories.json / readings.json / pool-map 里的套装文案）已经在模拟器里
 // 这三个目录在发行版只当「增量补丁」
-// 用户在工坊里拖文件时目录会自动重建，所以这里删干净
 for (const d of ['故事', '套装库', '阅读物']) {
   const p = path.join(DATA, d)
   if (fs.existsSync(p)) {
@@ -168,7 +167,7 @@ if (fs.existsSync(readme)) {
   freed += sizeOf(readme)
   if (rm(readme)) { removedFiles++; console.log('    - 工具/updater/README.md（开发服务器版说明，与发行版不符）') }
 }
-// 快照 / 写入指纹：每次写入都会重新生成，出厂时不该带（实测能占 20M）
+// 快照 / 写入指纹：每次写入都会重新生成，出厂时不该带
 const state = ['.snapshots', '.inbox', '.dist']
 for (const d of state) {
   const p = path.join(UPD, '工具', 'updater', d)

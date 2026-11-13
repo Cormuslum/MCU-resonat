@@ -34,7 +34,7 @@ export interface SaveData {
     bgm: boolean
     /** 背景音音量 0~1（音量·2） */
     bgmVol: number
-    /** 各界面背景音 0~1；最终电平 = 基准 × bgmVol × bgmScene[场景] × volume（主音量），缺省按 1 */
+    /** 各界面背景音 0~1 */
     bgmScene: Partial<Record<BgmScene, number>>
     /** UI 音效音量 0~1（音量·3） */
     uiVol: number
@@ -99,7 +99,7 @@ const PER_BANNER = 200
 /** 全存档流水硬上限（localStorage 兜底） */
 const HISTORY_CAP = 4000
 
-/** 逐池裁剪抽卡流水。每个池的记录只会被**本池**的新记录淘汰；截完再按时间重排回去 */
+/** 逐池裁剪抽卡流水 */
 function trimHistory(list: SaveData['history']): SaveData['history'] {
   if (list.length <= PER_BANNER) return list
   const byBanner = new Map<string, SaveData['history']>()
@@ -164,7 +164,6 @@ export function parseSaveFileText(text: string): { ok: true; data: SaveData } | 
     return { ok: false, error: '文件内容不是存档对象' }
   }
   const obj = raw as Record<string, unknown>
-  // 带外壳的：app 对不上就直说，别让用户以为是文件坏了
   if (typeof obj.app === 'string' && obj.app !== SAVE_APP) {
     return { ok: false, error: `这是「${obj.app}」的存档，不是本模拟器的` }
   }
@@ -172,7 +171,6 @@ export function parseSaveFileText(text: string): { ok: true; data: SaveData } | 
   if (!data || typeof data !== 'object') {
     return { ok: false, error: '文件里没有存档数据' }
   }
-  // 至少要有一个存档字段，否则多半是随手拖进来的其它 JSON
   const looksLikeSave = ['pity', 'codex', 'history', 'settings', 'selectedVersion']
     .some((k) => k in data)
   if (!looksLikeSave) {

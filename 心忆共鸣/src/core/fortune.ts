@@ -73,7 +73,7 @@ export function saveBirth(b: Birth | null): void {
   }
 }
 
-/** 标记「生辰弹窗问过了」。填写、跳过、清除三条路都要调，之后不再自动弹 */
+/** 标记「生辰弹窗问过了」 */
 export function markBirthAsked(): void {
   try {
     localStorage.setItem(ASKED_KEY, '1')
@@ -124,7 +124,6 @@ export interface FortuneResult {
   total: number
   /** 档位 */
   tier: VerdictTier
-  /** 综合公式说明 */
   formula: string
 }
 

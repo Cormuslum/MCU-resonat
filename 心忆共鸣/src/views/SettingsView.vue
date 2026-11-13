@@ -227,7 +227,7 @@ function pickImportFile() {
   fileEl.value?.click()
 }
 
-/** 导入：先校验，再确认，最后才覆盖。校验失败时只 toast 说原因，绝不弹确认框 */
+/** 导入：先校验，再确认，最后才覆盖 */
 async function onImportFile(e: Event) {
   const input = e.target as HTMLInputElement
   const f = input.files?.[0]

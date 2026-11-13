@@ -1,4 +1,4 @@
-/* AUTO-GENERATED —— python tools/gen-readings-layout.py，勿手改。层叠顺序即对象键顺序（自底向上） */
+/* AUTO-GENERATED —— python tools/gen-readings-layout.py，勿手改层叠顺序即对象键顺序（自底向上） */
 export interface RdBox {
   x: number
   y: number

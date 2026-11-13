@@ -44,7 +44,7 @@ for (let i = 0; i < ROUNDS; i++) {
   }, SAVE)
   const page = await ctx.newPage()
   await page.goto(`${SIM}/#/`, { waitUntil: 'domcontentloaded' })
-  // 等到「有尺寸 且 真的开始播」为止。只等 videoWidth>0 会在 readyState 刚够拿尺寸
+  // 等到「有尺寸 且 真的开始播」为止
   // 还没进 playing 的那一刻就返回，读到的 paused 是 true —— 那是取样太早，不是没播
   await page.waitForFunction(
     () => {

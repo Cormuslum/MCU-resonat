@@ -34,7 +34,7 @@ ok('A5 帮助标题 / 步骤 / 注释 / 确定键',
 const browser = await chromium.launch({ executablePath: CHROME, headless: true })
 const errsU = []
 const errsS = []
-/** 工坊没有 favicon.ico，Chrome 自动请求会留一条 404 —— 与本次改动无关，滤掉 */
+/** 工坊没有 favicon.ico，Chrome 自动请求会留一条 404 */
 const noise = (t) => /favicon\.ico/.test(t)
 
 /* ═════════════════ B / C 工坊 ═════════════════ */

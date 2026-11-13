@@ -106,7 +106,7 @@ function unwrapInit(node) {
   return cur
 }
 
-/** 收集「别名 → manifest 子路径」的绑定：直接取 manifest / 从别的别名派生 / 从局部变量派生； 后两种依赖先解析出来的别名，所以迭代到不动点为止 */
+/** 收集「别名 → manifest 子路径」的绑定：直接取 manifest / 从别的别名派生 / 从局部变量派生 */
 function aliasesIn(code, file) {
   const sf = ts.createSourceFile(file, code, ts.ScriptTarget.Latest, true)
   const aliases = {}
@@ -119,7 +119,7 @@ function aliasesIn(code, file) {
       const init = node.initializer
       let src = null
       if (ts.isCallExpression(init) && init.arguments.length) {
-        // computed(() => store.manifest?.ui.xxx)  —— 函数体可能带 `?? null` 包裹
+        // computed(() => store.manifest?.ui.xxx) —— 函数体可能带 `?? null` 包裹
         const arg = init.arguments[0]
         if (ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) {
           src = unwrapInit(arg.body)

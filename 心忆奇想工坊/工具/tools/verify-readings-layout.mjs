@@ -1,4 +1,4 @@
-/** 阅读物图鉴 pxdesk 坐标一致性校验：`图片工程-{心愿原野,伊赞之土}.pxdesk` → `tools/gen-readings-layout.py` → `src/data/readings-layout.ts` */
+/** 阅读物图鉴 pxdesk 坐标一致性校验 */
 import { chromium } from 'playwright-core'
 
 console.log('[已并入 verify-readings.mjs] 本脚本为重构前的旧巡检，不再执行。')

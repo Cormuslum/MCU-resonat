@@ -5,7 +5,6 @@ const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 const BASE = 'http://localhost:5178'
 const SHOT = '.shots'
 
-/** 在页面里取所有关键元素的实机坐标（已除掉舞台缩放） */
 const SNAP = () => {
   const stage = document.querySelector('.design').getBoundingClientRect()
   const k = stage.width / 1920

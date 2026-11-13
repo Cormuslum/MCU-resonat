@@ -11,7 +11,6 @@ const ROOT = process.cwd()
 const DIST = path.join(ROOT, 'dist')
 const m = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/assets/manifest.json'), 'utf8'))
 
-/* 自带 SPA 静态服务：dist 内真实文件优先，其余回退到 index.html（否则 /codex/clothes 深链 404） */
 const MIME = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
   '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.svg': 'image/svg+xml',

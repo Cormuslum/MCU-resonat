@@ -904,7 +904,7 @@ img { user-select: none; }
   background: rgba(241, 232, 212, 0.5);
   border: 1px solid var(--line-2); border-radius: 4px;
 }
-/* 「去「服装阁」补全」的顶部对账单 把「带进来了什么 / 还缺什么」摆在最上面 —— 不用在一堆空槽位里自己数 */
+/* 「去「服装阁」补全」的顶部对账单 把「带进来了什么 / 还缺什么」摆在最上面 */
 .fix-note {
   margin: 0 0 14px;
   padding: 10px 12px;

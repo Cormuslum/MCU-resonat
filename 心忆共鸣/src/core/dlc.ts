@@ -48,7 +48,7 @@ async function fetchJson<T>(url: string): Promise<T | null> {
   }
 }
 
-/** 读取运行区索引与各包清单 / 数据。单个包加载失败（缺文件、清单坏了）不影响其它包 */
+/** 读取运行区索引与各包清单 / 数据 */
 export async function loadDlc(): Promise<DlcRuntime[]> {
   const out: DlcRuntime[] = []
   dlcPackages.value = out

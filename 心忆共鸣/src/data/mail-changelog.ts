@@ -8,7 +8,7 @@ export interface MailLog {
   lines: string[]
 }
 
-/** 数据文件（相对 `public/assets/data/`）—— 手改、工坊改都直接生效 */
+/** 数据文件（相对 `public/assets/data/`） */
 export const MAIL_CHANGELOG_FILE = 'mail-changelog.json'
 
 export function loadMailLogs(): Promise<MailLog[]> {

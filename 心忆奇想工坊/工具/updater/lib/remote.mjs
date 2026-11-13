@@ -1,4 +1,4 @@
-/** 远端适配器：DLC 包的上传 / 下载 / 列包，三种远端同一套接口 —— local（本地目录，网盘同步盘也行）、 http（通用端点）、git（push / pull 分发） */
+/** 远端适配器：DLC 包的上传 / 下载 / 列包，三种远端同一套接口 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -93,7 +93,7 @@ export function gitInfo() {
 
 /* ────────────────────────────── 打包 ────────────────────────────── */
 
-/** 把源包打成 zip。包目录里只留「该发的」：dlc.json + data/ + assets/ */
+/** 把源包打成 zip */
 export function pack(id) {
   const dir = srcDir(id)
   if (!exists(dir)) throw new Error('源包不存在：' + id)
@@ -163,7 +163,7 @@ export async function upload(type, id, cfg = readConfig()) {
 
 /* ────────────────────────────── 列出远端可下载的包 ────────────────────────────── */
 
-/** 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`）—— 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json` */
+/** 列远端上有哪些包：统一读远端根目录下的 `index.json`（`{ "packages": [{ id, name, version, file, size, updatedAt }] }`） —— 本地扫目录、HTTP GET `<base>/index.json`、git 读 `origin/<branch>:<dir>/index.json` */
 export async function listRemote(type, cfg = readConfig()) {
   const r = cfg.remotes?.[type] || {}
   if (type === 'local') {
@@ -269,7 +269,7 @@ export async function download(type, id, cfg = readConfig()) {
     if (fetch.code !== 0) throw new Error('git fetch 失败：' + fetch.err)
     const show = git(['show', `origin/${branch}:${sub}/${id}.dlc.zip`])
     if (show.code !== 0) throw new Error(`远端分支 ${branch} 里没有 ${id}.dlc.zip`)
-    // git show 是二进制，stdout 会按 utf8 损字节 —— 改用 checkout 到临时目录
+    // git show 是二进制，stdout 会按 utf8 损字节
     const co = spawnSync('git', ['checkout', `origin/${branch}`, '--', `${sub}/${id}.dlc.zip`], {
       cwd: ROOT, encoding: 'buffer',
     })

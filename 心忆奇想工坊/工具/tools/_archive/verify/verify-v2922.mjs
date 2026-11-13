@@ -44,7 +44,7 @@ ok('A3 0.x 两版共 8 座阁 / 14 套', miracle.length === 8 && miracleSets.len
 const wrong = miracleSets.filter((n) => majorOf.get(n) !== 0)
 ok('A4 这 14 套的故事全部归 0 号', wrong.length === 0, wrong.join('、') || '全部正确')
 
-// 借调套装：首发版本不是 0.x，却被 0.x 的阁收着 —— 正是以前散出去的那 10 篇
+// 借调套装：首发版本不是 0.x，却被 0.x 的阁收着
 const borrowed = miracle
   .flatMap((b) => b.sets)
   .filter((s) => !String(s.firstVersion || '').startsWith('0.'))
@@ -70,7 +70,7 @@ const BASE_SAVE = {
   settings: { skipAnim: true, skipOpening: true },
 }
 
-/** 造一份「全部解锁」的存档。直接点设置页的两个「执行」，让应用自己算 */
+/** 造一份「全部解锁」的存档 */
 async function forgeSave() {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } })
   await ctx.addInitScript(([k, v]) => localStorage.setItem(k, v), [SAVE_KEY, JSON.stringify(BASE_SAVE)])

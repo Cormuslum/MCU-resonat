@@ -54,7 +54,6 @@ await page.addInitScript(() => {
 
 const pageErrors = []
 // 音频 / 视频是 `new Audio()` / <video> 现造的，切页时浏览器会取消未完成的取流
-// 报成 ERR_ABORTED —— 跟代码无关；真正的 404 / 5xx 仍然照记
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm|video|ui\/home)\//.test(t)
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
 page.on('console', (m) => { if (m.type() === 'error') pushErr(m.text()) })
@@ -166,7 +165,6 @@ await step('A4 二次进入不再弹', async () => {
   await go('/almanac', 1800)
   const dis = (await page.$('.dis')) !== null
   const bd = (await page.$('.bd-mask')) !== null
-  // 免责声明结束后会有常驻的 .dis-corner，所以只判 .dis 与弹窗
   check('A4 二次进入既不弹免责也不弹生辰', !dis && !bd, `免责=${dis} 生辰=${bd}`)
   await page.screenshot({ path: `${OUT}/v25-almanac-second.png` })
 })

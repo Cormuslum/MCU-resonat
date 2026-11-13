@@ -1,4 +1,4 @@
-/** 基础工具：路径、文件读写、图片尺寸、CSV。零依赖，不需要安装任何 npm 包 */
+/** 基础工具：路径、文件读写、图片尺寸、CSV */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 /** 工具根：`updater/` 与 `tools/` 所在的目录。开发版 = `<仓库根>/心忆奇想工坊/工具`，发行版 = `<发行根>/心忆奇想工坊/工具`（两者同构） */
 export const TOOL_ROOT = path.resolve(HERE, '..', '..')
-/** 工作区根：`心忆奇想工坊/` 与 `心忆共鸣/` 的公共父目录。开发版 = 仓库根，发行版 = 发行根。开发期产物（归档素材 / .dev-guard.json）落在它下面 */
+/** 工作区根：`心忆奇想工坊/` 与 `心忆共鸣/` 的公共父目录 */
 export const WORKSPACE = path.resolve(TOOL_ROOT, '..', '..')
 /** 成品根：`public/assets` 与 `src/` 所在的目录（= 心忆共鸣/）。开发版与发行版同构；发行版启动器也可用 `NIKKI_ROOT` 显式覆盖 */
 export const ROOT = process.env.NIKKI_ROOT
@@ -49,7 +49,7 @@ export function outLabel() {
   return path.relative(DISPLAY_ROOT, path.join(PUBLIC, 'assets')).split(path.sep).join('/')
 }
 
-/** 工具根的展示前缀。归档目录（`jobs.mjs` 的 `归档素材/`）落在工具根而非数据根， 文案里用 `{T}` 占位符。开发版返回空串，发行版返回 `心忆奇想工坊/工具/` */
+/** 工具根的展示前缀。归档目录（`jobs.mjs` 的 `归档素材/`）落在工具根而非数据根， 文案里用 `{T}` 占位符 */
 export function toolLabel() {
   const r = path.relative(DISPLAY_ROOT, TOOL_ROOT).split(path.sep).join('/')
   return r ? `${r}/` : ''
@@ -111,7 +111,7 @@ export function stamp() {
 
 /* ────────────────────────────── 图片尺寸 ────────────────────────────── */
 
-/** 读图片宽高（PNG / JPEG / WebP / GIF / BMP），读不出来返回 null。只解析文件头，不解码像素 */
+/** 读图片宽高（PNG / JPEG / WebP / GIF / BMP），读不出来返回 null */
 export function imageSize(file) {
   let fd
   try {

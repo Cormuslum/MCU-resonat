@@ -60,7 +60,7 @@ def norm_key(k):
     return m.group(1) if m else k
 
 
-# `build-pool-map.py` 文件名带连字符，不能直接 import —— 用 importlib 按路径加载
+# `build-pool-map.py` 文件名带连字符，不能直接 import
 spec = importlib.util.spec_from_file_location(
     "bpm", os.path.join(TOOL_ROOT, "tools", "build-pool-map.py")
 )
@@ -138,7 +138,7 @@ merged = load_merged()
 old_parts_all = bpm.load_part_info()
 old_texts_all = bpm.load_set_texts()
 
-# 老 loader 的 3★ key 带文件名前缀（`3星-商城-《X》`），统一规整成纯套装名
+# 老 loader 的 3★ key 带文件名前缀，统一规整成纯套装名
 old_parts_all = {norm_key(k): v for k, v in old_parts_all.items()}
 old_texts_all = {norm_key(k): v for k, v in old_texts_all.items()}
 

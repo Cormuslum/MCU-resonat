@@ -171,7 +171,7 @@ function renderRail() {
     <button class="rail-item${j.id === S.job ? ' on' : ''}" data-job="${j.id}">
       <span class="ic">${j.icon || '·'}</span><span>${esc(j.title)}</span>
     </button>`).join('')
-  // 「扩展包」不是一种更新任务，是分发面板 —— 单独挂一个入口
+  // 「扩展包」不是一种更新任务，是分发面板
   const dlc = `    <button class="rail-item rail-dlc${S.job === 'dlc' ? ' on' : ''}" data-job="dlc">
       <span class="ic">⬓</span><span>${C('rail.dlc', '扩展包')}</span>
     </button>`
@@ -232,7 +232,7 @@ function optionsOf(f) {
 }
 
 function fieldHtml(f) {
-  // 条件字段：`when: {mode:'edit'}` —— 只在该模式出现（新建时这些字段不该干扰视线）
+  // 条件字段：`when: {mode:'edit'}`
   if (f.when) {
     for (const [k, v] of Object.entries(f.when)) {
       if (String(S.fields[k] ?? '') !== String(v)) return ''
@@ -250,7 +250,7 @@ function fieldHtml(f) {
   let input
 
   if (f.type === 'setlist') {
-    // 阁内套装清单：勾上 = 移出。数据来自「要修改的阁」当前的套装
+    // 阁内套装清单：勾上 = 移出
     // 值是逗号分隔的套装名（后端按这个删）
     const pool = (S.options.customPools || []).find((p) => p.name === String(S.fields.target || ''))
     const cur = new Set(String(S.fields[f.key] || '').split(',').map((s) => s.trim()).filter(Boolean))
@@ -750,7 +750,7 @@ async function scanBundleRoot(root) {
       S.bundlePlan = null
       log('err', d.error || '扫描失败')
       setStatus(C('status.scanFail', '扫描失败'), 'busy')
-      // 只有散文件 → 明确弹窗。整套导入只吃目录
+      // 只有散文件 → 明确弹窗
       if (d.code === 'loose-files' || /不是文件夹|没有子目录/.test(String(d.error || ''))) {
         showTip(C('bundle.looseTitle', '整套导入不支持散文件'),
           d.code === 'loose-files' ? d.error : C('bundle.looseBody', '整套导入不支持散文件，请到其他地方操作'))
@@ -774,7 +774,7 @@ async function scanBundleRoot(root) {
   }
 }
 
-/** 把「待补归属」这一项能认出来的东西**整批**带进「服装阁」表单。并把**真正还缺的**列清楚（缺版本号、缺艺术字…） */
+/** 把「待补归属」这一项能认出来的东西**整批**带进「服装阁」表单 */
 function jumpToOrphan(o) {
   const g = o.guess || {}
   const pool = (g.pools || [])[0]
@@ -801,7 +801,6 @@ function jumpToOrphan(o) {
   }
 
   S.fields.name = pool.name
-  // 版本只在**版本表里确实有**时才填；猜出来的版本号不进表单（写进去会被当成新版本）
   const vHit = (S.options.versions || []).find((v) => String(v.v) === String(g.version))
   if (vHit) S.fields.version = vHit.v
 
@@ -1106,7 +1105,7 @@ function placeFiles(list) {
 /** 上传（浏览器只给 File，没有绝对路径） */
 /* ────────────────────────────── 故事预览 ────────────────────────────── */
 
-/** 把一篇故事的正文取回来填进「故事正文」框：`previewStory('雪境长歌')` 按套装名从成品 stories.json 取， `previewStory('', '/…/故事-5星-雪.md')` 直接读拖进来的 md；只改文本框、不整页重渲染 */
+/** 把一篇故事的正文取回来填进「故事正文」框：`previewStory('雪境长歌')` 按套装名从成品 stories.json 取， `previewStory` 直接读拖进来的 md；只改文本框、不整页重渲染 */
 async function previewStory(name, src) {
   const q = src ? `src=${encodeURIComponent(src)}` : `name=${encodeURIComponent(name || '')}`
   if (!src && !name) return
@@ -1128,7 +1127,7 @@ async function previewStory(name, src) {
   } catch { /* 预览失败不该挡住写入 */ }
 }
 
-/** 从 markdown 文件名里认套装：`故事-5星-雪境长歌.md`（最准）→ 含套装全名 → 含套装编号（`S0429` / `0429`） */
+/** 从 markdown 文件名里认套装 */
 function matchStorySet(fileName) {
   const base = String(fileName || '').replace(/\.md$/i, '').trim()
   const list = S.options.suitList || []
@@ -1162,7 +1161,7 @@ async function autoStoryFromFiles(list) {
     if (hit.star) S.fields.star = hit.star
     log('ok', `按文件名认出套装：${hit.name}${hit.star ? `（${hit.star}★）` : ''}`)
   } else {
-    // 认不出就清空 —— 留着上一次的套装名，用户一路点「写入」就会把这篇写到别人身上
+    // 认不出就清空
     S.fields.name = ''
     log('warn', `没能从「${md.name}」认出套装，请在「套装名」里手动选一套`)
   }
@@ -1170,7 +1169,6 @@ async function autoStoryFromFiles(list) {
   renderPanel()
 }
 
-/** 工坊认的扩展名（拖文件夹时也用这一条筛，避免把 .DS_Store 之类传上去） */
 const ACCEPT_RE = /\.(png|jpe?g|webp|gif|bmp|webm|mp4|mov|mkv|ogg|mp3|wav|flac|m4a|md|txt|yaml|yml)$/i
 
 /** 上传一批文件 */
@@ -1212,7 +1210,6 @@ async function readPaths() {
 
   if (!d.files.length) { log('warn', '目录里没有可用的图片或文本'); return }
 
-  // 如果用户是点某个槽位再读的，优先直达那个槽位
   const forcedSlot = input.dataset.slot
   const forcedSet = input.dataset.set
   if (forcedSlot) {
@@ -1307,7 +1304,7 @@ function droppedPaths(dt) {
   for (const f of [...(dt.files || [])]) {
     let p = ''
     try { p = api.getPathForFile(f) || '' } catch { p = '' }
-    // Chromium 拖放给的路径可能带重复分隔符、也可能正反斜杠混着（`D://a//b`、`D:/a\b`）——
+    // Chromium 拖放给的路径可能带重复分隔符、也可能正反斜杠混着（`D://a//b`、`D:/a\b`）
     // 统一成 `/`（Windows 两种都认，服务端再 path.normalize 一次）
     if (p) out.push(p.replace(/[\\/]+/g, '/'))
   }
@@ -1338,7 +1335,7 @@ async function dropByPaths(paths, target) {
   await readPaths()
 }
 
-/** 把「这一次」新加进 S.files 的那批挪进指定槽位（单值槽只留第一张）。拖文件、拖文件夹都走这条 —— 以前拖文件夹那条路会无视「拖到哪个槽」 */
+/** 把「这一次」新加进 S.files 的那批挪进指定槽位（单值槽只留第一张） */
 function assignToSlot(before, target) {
   if (!target) return
   const def = allSlotDefs().find(
@@ -1454,7 +1451,7 @@ function precheck() {
       problems.push(CT('precheck.missing', '「{label}」没填', { label: f.label }))
     }
   }
-  // 「修改已有」时不再要求「至少一套套装」—— 那套东西本来就在库里
+  // 「修改已有」时不再要求「至少一套套装」
   // 这次可能只是换张背景
   const editMode = String(S.fields.mode || 'new') === 'edit'
   if (S.job === 'pool' && !editMode) {
@@ -1534,7 +1531,7 @@ async function apply() {
   const payload = {
     job: S.job,
     fields: (() => {
-      // `setSearch` 是搜索框，不是写入内容 —— 带上去会污染「这次改动」的内容签名
+      // `setSearch` 是搜索框，不是写入内容
       const { setSearch, ...rest } = S.fields
       return rest
     })(),
@@ -1542,7 +1539,6 @@ async function apply() {
       slot: f.slot, setIndex: f.setIndex ?? null, src: f.src, name: f.name, kind: f.kind,
     })),
     options: {
-      // ：不再传 restartDev —— 发行版没有 vite/5178，开发版的收尾由服务端自己判断
       force: $('#opt-force').checked,
     },
   }
@@ -1578,7 +1574,6 @@ async function apply() {
 
     if (done?.ok && done.skipped) {
       // 服务端判定「与上一次写入完全一致」：没有改动项，未检验、未写盘、未跑管线
-      // 保留现场，用户改一两个字段就能直接再点一次
       setStatus(C('status.noChange', '与上一次写入完全一致，已跳过'), 'live')
       await refreshMeta()
     } else if (done?.ok) {
@@ -1586,7 +1581,6 @@ async function apply() {
       setStatus(C('status.writeDone', '更新完成'), 'live')
       sfx('set-complete', 0.45)
       localStorage.setItem(LAST_SIG_KEY, sig)
-      // 成功后清掉本任务的现场，避免重复写入
       delete S.cache[S.job]
       S.files = []
       S.pending = []
@@ -1604,7 +1598,6 @@ async function apply() {
   } catch (e) {
     const msg = String(e?.message || e)
     // 连接被重置时浏览器只给一句 "network error" / "Failed to fetch"
-    // 多半是工坊进程在写入中途被关掉/重启了 —— 此时管线往往早已跑完
     // 素材和 manifest 都写好了，只是结果没能送回来
     if (/network error|failed to fetch|terminated|aborted|networkerror/i.test(msg)) {
       log('err', '与工坊的连接中断了（工坊进程可能刚被重启）。')
@@ -1876,12 +1869,11 @@ function renderDlcPanel() {
 
   /* ① 做一个包 */
   const cands = dlcCandidates(D.kind)
-  // 切类目后旧的选择不属于新类目 —— 只保留仍然有效的（正常情况下切类目会清空）
+  // 切类目后旧的选择不属于新类目
   const picked = D.keys.filter((k) => cands.some(([v]) => v === k))
   D.keys = picked
   const kindEntry = DLC_KINDS.find((k) => k[0] === D.kind)
   const kindDesc = dlcKindDesc(D.kind, kindEntry?.[2] || '')
-  // 关联规则说明：让用户导出前就知道包里还会多出什么
   const attachHint = D.kind === 'version'
     ? C('dlc.attachVersion', '会一并带上版本内的服装阁和它们的故事；版本里没有阁也能正常打包')
     : (D.kind === 'banner' || D.kind === 'set')
@@ -2099,7 +2091,6 @@ function bindDlcPanel() {
     D.keys = []
     renderDlcPanel()
   })
-  // 勾选只更新计数，不整块重渲染（否则会打断连续多选）
   $$('[data-pick]', root).forEach((el) => {
     el.onchange = () => {
       D.keys = $$('[data-pick]:checked', root).map((x) => x.dataset.pick)

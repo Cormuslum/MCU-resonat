@@ -42,7 +42,7 @@ page.on('requestfailed', (r) => push(`reqfail ${r.url()} ${r.failure()?.errorTex
 page.on('response', (r) => { if (r.status() >= 400) push(`http${r.status()} ${r.url()}`) })
 
 await page.addInitScript(() => {
-  // 「本次会话已经看过开屏」——从别的界面切回主页的真实前提
+  // 「本次会话已经看过开屏」
   sessionStorage.setItem('nikki-boot-played', '1')
   if (sessionStorage.getItem('__v2505')) return
   sessionStorage.setItem('__v2505', '1')
@@ -101,7 +101,6 @@ await page.waitForTimeout(2800)
 await step('A 主页音轨是独立元素', async () => {
   const s = await audioState()
   // 起首页是「两条动态背景轮播」（星海 / 伊始），音轨文件名带序号
-  // 具体抽到哪条由 sessionStorage 决定，所以这里只断言形态，不断言固定文件名
   check('A1 页面里有 .hm-bg-audio 且指向 bg-audio-N.ogg',
     s.hasAudio && /^ui\/home\/bg-audio-\d\.ogg$/.test(s.src || ''), `${s.src}`)
   check('A2 视频始终 muted（自动播放不会被拦）', s.videoMuted === true && s.videoPaused === false, `muted=${s.videoMuted}`)
@@ -121,7 +120,7 @@ await step('B 从二级页返回主页后立刻有声', async () => {
   check('B1 已离开主页', left === '#/versions', left)
   check('B2 离开后音轨元素销毁（主页音不再残留）', (await audioState()).hasAudio === false)
 
-  // ② 点版本页的退出键回主页 —— 这一次点击就是唯一的手势
+  // ② 点版本页的退出键回主页
   await page.locator('.vr-back').click()
   await page.waitForTimeout(450)
   const at450 = await audioState()

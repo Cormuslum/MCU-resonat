@@ -75,7 +75,6 @@ async function enterPool() {
 
 console.log('\n【一、未选版本 → 共鸣不可入】')
 await page.goto(`${BASE}/#/`, { waitUntil: 'domcontentloaded' })
-// 开屏动画 5s：等它走完星芒才会显形（否则读到 opacity 0，看不出置灰效果）
 await page.waitForTimeout(5600)
 
 const gate = await page.evaluate(() => ({
@@ -105,7 +104,7 @@ check('A4 主页已无侧栏（v1.6.06 删除），闸门只由星芒 + 右缘�
   gate.rail.length === 0,
   gate.rail.length ? gate.rail.map((x) => `${x.txt}:${x.dis ? '禁' : '可'}`).join(' ') : '无 .rail-btn')
 
-/* 视觉：置灰是真的变了样（灰度 + 压暗），不是只加了个 class。静态背景看星芒、动态背景看右缘竖排 —— 两套都要拦，这里各取一次计算样式 */
+/* 视觉：置灰是真的变了样（灰度 + 压暗），不是只加了个 class */
 const look = await page.evaluate(() => {
   const pick = (sel) => {
     const el = document.querySelector(sel)

@@ -12,7 +12,6 @@ p.on('console', (m) => { if (m.type() === 'error') errs.push('console: ' + m.tex
 await p.goto(BASE + '/', { waitUntil: 'networkidle' })
 await p.evaluate(() => localStorage.removeItem('nikki-resonance-save-v1'))
 
-// 心愿原野 · 全解锁 · 选中第一本 → 对齐实机截图状态（书籍 212/212）
 await p.goto(BASE + '/#/codex/readings', { waitUntil: 'networkidle' })
 await p.waitForSelector('.readings', { timeout: 20000 })
 await p.waitForTimeout(500)

@@ -187,7 +187,7 @@ export async function devServerAlive(port = 5178) {
   }
 }
 
-/** 重启 dev server（vite 的 `watch.ignored` 排除了 `public/assets/**`，新转的 webp 不会触发刷新）。顺序：停 → 等端口释放 → 先等守护 → 等不到才自己拉 */
+/** 重启 dev server（vite 的 `watch.ignored` 排除了 `public/assets/**`，新转的 webp 不会触发刷新） */
 async function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms))
 }

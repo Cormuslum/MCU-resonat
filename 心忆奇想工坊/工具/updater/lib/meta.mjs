@@ -1,4 +1,4 @@
-/** 元数据读写：版本表 / 服装阁索引 / 套装序列 / 属性 yaml / 故事 / 阅读物。只碰「人可以手改的纯文本」——CSV / JSON / YAML / Markdown */
+/** 元数据读写：版本表 / 服装阁索引 / 套装序列 / 属性 yaml / 故事 / 阅读物 */
 import fs from 'node:fs'
 import path from 'node:path'
 import {
@@ -112,7 +112,7 @@ export function listMajors() {
 
 /* ────────────────────────────── 服装阁索引 ────────────────────────────── */
 
-/** `素材/信息表/卡池索引.json` —— 服装阁名 → 版本 / 序号 / 官方编号 / 素材键 */
+/** `素材/信息表/卡池索引.json` */
 const POOL_INDEX = path.join(INFO, '卡池索引.json')
 
 export function readPoolIndex() {
@@ -215,7 +215,7 @@ export function upsertSet({ id, star, name, pool, versionLabel }) {
 
 /* ────────────────────────────── 自建内容 ────────────────────────────── */
 
-/** `素材/信息表/自建内容.json` —— 哪些服装阁 / 套装 / 阅读物是工坊自己造的（白名单，不看编号位数）。新建时自动登记；历史内容手动加一行：`{"pools":["某某阁"],"sets":["某某套装"]}` */
+/** `素材/信息表/自建内容.json`。新建时自动登记；历史内容手动加一行：`{"pools":["某某阁"],"sets":["某某套装"]}` */
 const CUSTOM_FILE = path.join(INFO, '自建内容.json')
 // `readings`：阅读物没有归属阁可反推「是不是自建」，只能靠写入时登记（见 writeReading）
 const CUSTOM_KINDS = ['pools', 'sets', 'readings']
@@ -265,7 +265,6 @@ export function isCustom(kind, name) {
   return readCustom()[kind]?.includes(String(name || '').trim()) ?? false
 }
 
-/** 改名时同步白名单，否则改完就「改不回去了」 */
 export function renameCustom(kind, from, to) {
   const cur = readCustom()
   const i = cur[kind].indexOf(String(from || '').trim())
@@ -286,7 +285,6 @@ export function renamePoolIndex(from, to) {
   return next
 }
 
-/** 套装序列：「来源/阁名」批量换成新阁名（阁改名时用） */
 export function renameSetSeqPool(from, to) {
   const rows = readSetSeq()
   let hit = 0
@@ -376,7 +374,7 @@ export function poolDirOf(version, versionName, poolName, { create = false, stan
   return dir
 }
 
-/** 兼容层：老代码按 `resolveVerDirs(...).{sourceDir,picDir,textDir}` 取目录。这三处**都是同一个「版本目录」** */
+/** 兼容层：老代码按 `resolveVerDirs(...).{sourceDir,picDir,textDir}` 取目录 */
 function resolveVerDirs(version, versionName, { createSource = false } = {}) {
   const dir = versionPoolDir(version, versionName, { create: createSource })
   return { poolDir: dir, sourceDir: dir, picDir: dir, textDir: dir }
@@ -392,7 +390,7 @@ function ovStageOf(filename) {
   if (m) return m[1]
   const lv = /(?:觉醒|进化)\s*LV\s*(\d+)/i.exec(base)
   if (lv) return EVOLVE_STAGES[Math.min(Number(lv[1]), 4) - 1] || '满进'
-  // 没有阶段信息的，一律当初始 —— 它同时充当图鉴立绘
+  // 没有阶段信息的，一律当初始
   return '初始'
 }
 
@@ -432,7 +430,7 @@ export function writeSetImages({ snap, setDir, busts = [], icons = [], ovs = [],
 
 /* ────────────────────────────── 新套装库 ────────────────────────────── */
 
-/** 新套装库根目录：`素材/套装库/<套装ID>.yaml`（平铺，纯编号文件名） */
+/** 新套装库根目录 */
 export const SUIT_LIB = path.join(ASSET, '套装库')
 
 /** 单行标量转义（与 tools/setyaml.py 的 _esc 保持一致） */
@@ -445,7 +443,7 @@ function yamlScalar(v) {
   return s
 }
 
-/** 写新格式的套装 YAML 到套装库（平铺 `素材/套装库/<套装ID>.yaml`，管线 build-pool-map 优先读它） */
+/** 写新格式的套装 YAML 到套装库 */
 export function writeSuitLibYaml({
   setName, star, setId = '', origin = '', firstVersion = '',
   desc = '', styles = [], parts = [],
@@ -476,7 +474,7 @@ export function writeSuitLibYaml({
       lines.push('')
     }
   }
-  // 文件名是**纯编号**（S0001.yaml）；无 ID 时用套装名兜底
+  // 文件名是**纯编号**；无 ID 时用套装名兜底
   const fname = setId ? `${setId}.yaml` : `__${setName}.yaml`
   const file = path.join(SUIT_LIB, fname)
   writeText(file, lines.join('\n').replace(/\n+$/, '\n'))
@@ -577,10 +575,10 @@ function nextReadingId(regionPrefix) {
   return `read_L_book_${regionPrefix}${String(max + 1).padStart(3, '0')}`
 }
 
-/** 写阅读物 txt。格式与现有文件一致：第 1 行《书名》，随后元数据，空行，正文 */
+/** 写阅读物 txt */
 export function writeReading({ region, title, type = '书籍', body, id }) {
   const regionDir = REGION_DIR[region] || region
-  // 不再分「系列」子目录 —— 模拟器的阅读物图鉴只按分区展示
+  // 不再分「系列」子目录
   const dir = path.join(ASSET, '阅读物', regionDir)
   fs.mkdirSync(dir, { recursive: true })
   const prefix = region === 'yizan' ? '010203' : '010101'

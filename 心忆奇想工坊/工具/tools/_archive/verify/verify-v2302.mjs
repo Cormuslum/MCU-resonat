@@ -1,4 +1,3 @@
-/** verify-v2302.mjs —— 十九项改动验收 */
 import { chromium } from 'playwright-core'
 
 const BASE = 'http://localhost:5178'
@@ -113,7 +112,6 @@ const logos = await p.evaluate(() =>
     }
   }),
 )
-// 起：动态背景**只留**竖版「心忆共鸣」，横版「无限暖暖」只在静态背景出现
 ok(
   'R1 动态背景下只有竖版「心忆共鸣」',
   logos.length === 1 && logos[0].cls === 'hm-logo',
@@ -214,7 +212,6 @@ console.log('\n【三、版本页】')
 await boot(SAVE, '/versions')
 const vTop0 = await box('.vr-major')
 // ：版本页会记住「当前版本」并展开它所在的大版本（存档里是 2.10 → 展的是伊赞之土）
-// 这条测的是 1.0 那颗按钮的 sticky，所以先把它那一组展开回来
 await p.evaluate(() => document.querySelectorAll('.vr-major')[0]?.click())
 await p.waitForTimeout(500)
 await p.evaluate(() => {

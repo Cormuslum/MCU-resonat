@@ -1,4 +1,3 @@
-/** 归档：把用户给的素材搬到项目约定的位置，并记下「改了什么」以便一键回滚 */
 import fs from 'node:fs'
 import path from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -16,7 +15,7 @@ export function inboxDir(jobId) {
   return d
 }
 
-/** 这个路径是不是落在临时收件区里。写入成功后要把这份**中转拷贝**删掉 */
+/** 这个路径是不是落在临时收件区里 */
 export function isInInbox(p) {
   const abs = path.resolve(String(p || ''))
   return abs === INBOX_ROOT || abs.startsWith(INBOX_ROOT + path.sep)
@@ -38,7 +37,7 @@ export function gc() {
 
 /* ────────────────────────────── 快照 ────────────────────────────── */
 
-/** Windows 上「刚写完就删/覆盖」很容易撞 EPERM / EBUSY： 杀毒、索引器、或 ffmpeg 子进程还捏着句柄。撤回撞上这种瞬时锁时重试几次即可 */
+/** Windows 上「刚写完就删/覆盖」很容易撞 EPERM / EBUSY： 杀毒、索引器、或 ffmpeg 子进程还捏着句柄 */
 function retry(fn, tries = 4, waitMs = 45) {
   for (let i = 0; ; i++) {
     try {
@@ -71,7 +70,7 @@ function hardUnlink(file) {
   }
 }
 
-/** 一次 apply 的全部写操作记录。用「按需记录」而不是「预先把整个项目打包」 */
+/** 一次 apply 的全部写操作记录 */
 export class Snapshot {
   constructor(label = '') {
     this.id = `${stamp()}${label ? '-' + label : ''}`
@@ -221,10 +220,10 @@ function ensureCopy(src, dst) {
 }
 
 const MEDIA_RE = /\.(png|jpe?g|webp|gif|bmp|tiff?|mp4|webm|mov|mkv|ogg|mp3|wav|flac|m4a)$/i
-/** 是不是媒体文件（图片 / 视频 / 音频）。只有这些才值得转码，别的都是文本数据 */
+/** 是不是媒体文件（图片 / 视频 / 音频） */
 export const isMedia = (p) => MEDIA_RE.test(String(p || ''))
 
-/** 直转模式（发行版专用）：`archive()` 不复制媒体文件，只登记「虚拟素材路径 → 真实源文件」， `collect-assets.py --overrides` 拿这张表直接转进成品目录；`.yaml/.md/.txt/.csv` 是编辑数据，照旧落盘 */
+/** 直转模式（发行版专用） */
 const PASSTHROUGH = { enabled: false, map: {} }
 
 export function resetPassthrough(enabled) {
@@ -272,7 +271,6 @@ export function archive(snap, items) {
   return done
 }
 
-/** 把用户给的路径整理成绝对路径（支持带引号、反斜杠、~ 开头） */
 export function normalizePath(p) {
   let s = String(p || '').trim().replace(/^["']|["']$/g, '')
   if (!s) return ''

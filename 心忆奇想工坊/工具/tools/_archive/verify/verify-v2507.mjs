@@ -40,7 +40,7 @@ async function useVersion(v) {
 }
 
 const pageErrors = []
-/** `ERR_ABORTED` 不算错：BGM / 音效是离屏 `new Audio()`，卡池 PV 是 `<video>`， 切池 / 切页时元素被回收，Chrome 会把正在下载的那段报成 aborted —— 与代码无关。真正的坏请求（404 / 5xx）仍然照记 */
+/** `ERR_ABORTED` 不算错：BGM / 音效是离屏 `new Audio()`，卡池 PV 是 `<video>`， 切池 / 切页时元素被回收，Chrome 会把正在下载的那段报成 aborted */
 const isAbortedAudio = (t) => /net::ERR_ABORTED/.test(t) && /\/assets\/(sfx|bgm|video)\//.test(t)
 const pushErr = (t) => { if (!isAbortedAudio(t)) pageErrors.push(t) }
 page.on('console', (m) => { if (m.type() === 'error') pushErr(m.text()) })
@@ -163,7 +163,6 @@ await step('B1 080 新池', async () => {
   check('B1 080 雪落颂愿时可选 + 艺术字',
     r.big.startsWith('雪落颂愿时') && /title\/080\.webp$/.test(r.title ?? '') && !r.titleText,
     `选中=${r.big} / title=${r.title}`)
-  // ：080 的卡池背景已由用户补图，不再是渐变兜底
   const bg = await page.evaluate(() => ({
     src: document.querySelector('.bg-still')?.getAttribute('src') ?? '',
     none: !!document.querySelector('.bg-none'),
@@ -173,7 +172,6 @@ await step('B1 080 新池', async () => {
   check('B1 080 两套齐全（5★+4★）',
     r.names.join() === '绽若颂愿心,奶酪与剑', r.names.join(' / '))
   const wish = await page.$eval('.wc-txt ~ *, .wish-card', (el) => el.textContent?.replace(/\s+/g, '') ?? '')
-  // ：080 已补齐深忆奖励素材（20~100 + 120~180 + 230 共 12 档）——
   // 提示从「奖励待收录」变成「深海回响 N 次后可领取」，且不能谎报「全部已领取」
   check('B1 080 有深忆奖励素材 → 提示「深海回响 N 次后可领取」',
     /深海回响\d+次后可领取/.test(wish) && !/全部已领取/.test(wish), wish.slice(0, 40))

@@ -1,4 +1,4 @@
-/** 生辰八字（人事层）：只做个人分、个人幸运色与加权，不宣称专业命理；缺时辰 → 三柱简版、个人分收窄 35~65。排盘口径：年柱以立春为界、月柱以十二「节」为界（年干五虎遁）、日柱以 1949-10-01 = 甲子日推算、时柱五鼠遁 */
+/** 生辰八字（人事层）：只做个人分、个人幸运色与加权，不宣称专业命理；缺时辰 → 三柱简版、个人分收窄 35~65 */
 
 /* ------------------------------------------------------------------ 基础常量 */
 
@@ -156,7 +156,7 @@ function pillarOf(ganIdx: number, zhiIdx: number): Pillar {
   }
 }
 
-/** 日柱序号（0 = 甲子）。基准：1949-10-01 = 甲子日 */
+/** 日柱序号（0 = 甲子） */
 export function dayIndex60(d: Date): number {
   const base = Date.UTC(1949, 9, 1)
   const cur = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())
@@ -187,7 +187,6 @@ export interface Bazi {
   strength: '偏旺' | '偏弱'
   /** 是否缺时辰（三柱简版） */
   partial: boolean
-  /** 排盘说明 */
   note: string
 }
 
@@ -314,7 +313,6 @@ export function mainElementScore(day: DayPillar, favor: Element[], avoid: Elemen
 export interface BaziScore {
   /** B 个人分 0~100 */
   score: number
-  /** 拆解（给「差异来源可视化」用） */
   parts: { label: string; value: number }[]
   /** 个人提示 */
   tip: string
@@ -322,7 +320,6 @@ export interface BaziScore {
   relation: string
 }
 
-/** 当日日柱（从 almanac 传入，避免重复推算） */
 export interface DayPillar {
   ganIndex: number
   zhiIndex: number

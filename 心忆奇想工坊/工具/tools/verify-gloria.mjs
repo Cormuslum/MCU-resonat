@@ -212,7 +212,7 @@ ok(
   JSON.stringify(stats),
 )
 
-/** 点某一行的按钮 —— 按标题文本找，不按行下标（存档面板加行会让下标整体偏移） */
+/** 点某一行的按钮 */
 async function clickRowBtn(title, sel = '.gm-btn') {
   const h = await p.evaluateHandle(([t, s]) => {
     const row = [...document.querySelectorAll('.gm-row')].find((r) =>
@@ -466,7 +466,6 @@ const scrollable = await p.evaluate(() => {
 })
 ok('R13 长条目可上下滚动（第 1 条）', scrollable === true)
 
-// 以「点击前那一刻」的序号为准（前面为了验滚动已把条目翻到第 1 条）
 const before = await p.evaluate(() => document.querySelector('.eg-count')?.textContent?.replace(/\s+/g, ''))
 await p.click('.eg-nav.next')
 await p.waitForTimeout(320)

@@ -53,7 +53,6 @@ export function pure4Rules(base: RulesConfig): RulesConfig {
       ...base.pity,
       '4': {
         hard: p.hard4,
-        // 实机第 4 抽会抬到 20.15%，不是恒定 10.2%
         ...(p.softStart4 ? { softStart: p.softStart4, softSlope: p.softSlope4 ?? 0 } : {}),
         note: `每 ${p.hard4} 次共鸣必出四星服装` +
           (p.softStart4 ? `，第 ${p.softStart4} 抽起概率提升` : ''),

@@ -23,7 +23,7 @@ SIM = os.path.join(ROOT, "心忆共鸣")
 # 工具根：心忆奇想工坊/工具（开发版与发行版同构）
 TOOL_ROOT = os.path.join(ROOT, "心忆奇想工坊", "工具")
 
-# 根目录固定要收的文件（* .md 另外全量收）
+# 根目录固定要收的文件
 TOP_FILES = [
     "package.json",
     "package-lock.json",

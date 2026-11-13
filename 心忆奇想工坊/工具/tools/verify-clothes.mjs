@@ -28,7 +28,7 @@ page.on('response', (r) => { if (r.status() >= 400) pushErr(`http${r.status()} $
 /* ══════════════════════════ 断言框架 ══════════════════════════ */
 
 const results = []
-/** 记一条断言。detail 会打印在结论后面，方便对不上时直接看实测值 */
+/** 记一条断言 */
 function check(name, ok, detail = '') {
   results.push({ name, ok: !!ok, detail })
   console.log(`${ok ? '  ✓' : '  ✗'} ${name}${detail ? `  ${detail}` : ''}`)
@@ -108,7 +108,6 @@ await step('R3 半身像', async () => {
     `${before.includes('half') ? 'half' : '整体'} → ${after.includes('half') ? 'half' : '整体'} → ${back.includes('half') ? 'half' : '整体'}`)
 })
 
-/* ── R4 区域选项卡已删除 ── */
 await step('R4 区域选项卡', async () => {
   const n = await page.$$eval('.cl-regiontab', (e) => e.length)
   check('R4 区域选项卡已删除', n === 0, `命中 ${n} 个 .cl-regiontab`)
@@ -230,7 +229,6 @@ await step('R10 搜索结果结构', async () => {
 })
 
 await step('R10 跳转键生效', async () => {
-  // 上一段可能已经把弹窗关掉（或没开），这里统一重开，避免依赖执行顺序
   if ((await page.$('.sp-mask')) === null) await openSearch()
   await page.fill('.sp-sinput', defName)
   await page.waitForTimeout(360)

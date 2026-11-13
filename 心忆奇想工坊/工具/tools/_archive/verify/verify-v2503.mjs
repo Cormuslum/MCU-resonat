@@ -173,7 +173,6 @@ await step('H 抽取记录', async () => {
   const t1 = await page.evaluate(() => document.querySelector('.pp-head h4')?.textContent?.trim())
   check('H 右键切到抽取记录', t1 === '抽取记录', t1)
   const rows = await page.$$eval('.ph-item', (els) => els.map((e) => e.querySelector('.ph-name')?.textContent?.trim()))
-  // ：改为分页 —— 单页 10 条，50 条共 5 页
   check('H 单页 10 条', rows.length === 10, `实测 ${rows.length} 行`)
   const pagerNum = await page.evaluate(() => document.querySelector('.hp-num')?.textContent?.replace(/\s+/g, ' ').trim())
   check('H 50 条分 5 页', /^1\s*\/\s*5$/.test(pagerNum ?? ''), pagerNum)
@@ -260,7 +259,6 @@ await step('G 部件栏切换音效', async () => {
 /* ═════════════ F 栖骨生花在界面上能看到文案 ═════════════ */
 
 await step('F 栖骨生花文案上屏', async () => {
-  /* 服装图鉴对「一件都没拿到」的套装会显示锁定提示而不是文案， 所以先去辉煌页用「集齐全部套装」把部件补上，再回来看 */
   await page.goto(`${BASE}/#/settings`)
   await page.waitForTimeout(2600)
   await page.locator('.gl-hot').nth(2).click()

@@ -32,7 +32,7 @@ const page = await ctx.newPage()
 await page.addInitScript(() => {
   const Orig = window.Audio
   window.__audios = []
-  /** 每次 play() 的那一刻的音量快照 —— 预热用的元素从不 play，不会混进来 */
+  /** 每次 play() 的那一刻的音量快照 */
   window.__played = []
   window.Audio = function (src) {
     const a = new Orig(src)
@@ -109,7 +109,6 @@ await step('A 主页音轨上限', async () => {
     return el ? { vol: Math.round(el.volume * 1000) / 1000, playing: !el.paused, videoMuted: vid ? vid.muted : null } : null
   })
   // 全开时
-  // ：视频常驻 muted，声音由 <audio> 出 —— 断「音轨在播 + 音量对」，不再看 video.muted
   check('A 主页背景音全开 = 0.476（原 0.68 的 70%）且不超过 0.7',
     !!v && v.playing === true && v.videoMuted === true && near(v.vol, 0.476, 0.02) && v.vol <= 0.7,
     `实测 ${v?.vol} playing=${v?.playing} videoMuted=${v?.videoMuted}`)
@@ -126,7 +125,6 @@ await step('B echo-open 音量上限已回退', async () => {
   const vol = await sfxVolume('echo-open')
   await page.keyboard.press('Escape')
   await page.waitForTimeout(300)
-  // 上一版给 echo-open 加过 0.6 的硬上限（实测 0.48），用户要调的是别的音效，已回退
   // 现在回到纯乘法
   check('B echo-open 恢复无上限（0.85 × 0.8 = 0.68）',
     vol !== null && near(vol, 0.68, 0.03),
@@ -155,7 +153,7 @@ await step('C 奔跑动画 16 帧且不透明', async () => {
 })
 
 await step('C 脸不透明（不透明像素总量）', async () => {
-  /* 上一版（抠白 gif）的问题就是「脸和手被打成半透明」， 直接表现是不透明像素总量崩掉 —— 原素材单帧 alpha>200 约 14300 个， 打穿之后只剩一万出头。这里按总量卡阈值，比猜坐标采样稳 */
+  /* 上一版（抠白 gif）的问题就是「脸和手被打成半透明」， 直接表现是不透明像素总量崩掉 */
   const opaque = await page.evaluate(async () => {
     const img = new Image()
     img.src = '/assets/ui/loading/nikki-run.webp'

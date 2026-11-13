@@ -13,7 +13,7 @@ function exists(p) {
   try { fs.accessSync(p); return true } catch { return false }
 }
 
-/** 文件内容签名：全文 SHA-256 + 字节数。不含路径、不含时间戳 */
+/** 文件内容签名：全文 SHA-256 + 字节数 */
 function contentSig(abs) {
   if (!exists(abs)) return 'missing'
   let fd
@@ -93,7 +93,6 @@ export function loadWriteCache() {
 }
 
 export function saveWriteCache(cache) {
-  // 只保留最近用过的条目，避免长年累月把缓存撑成一本目录册
   const keys = Object.keys(cache)
   const trimmed = keys.length > 2000
     ? Object.fromEntries(keys.slice(-2000).map((k) => [k, cache[k]]))

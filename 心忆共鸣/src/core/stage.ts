@@ -10,7 +10,7 @@ export function stageScale(): number {
   return Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H)
 }
 
-/** 屏幕像素 → 设计像素（单个坐标）。需要减去 design 舞台居中后的黑边偏移 —— 非 16:9 屏幕下舞台是居中的，偏移不为 0 */
+/** 屏幕像素 → 设计像素（单个坐标） */
 export function toDesignX(clientX: number): number {
   return (clientX - (window.innerWidth - DESIGN_W * stageScale()) / 2) / stageScale()
 }
@@ -20,7 +20,7 @@ export function toDesignY(clientY: number): number {
   return (clientY - (window.innerHeight - DESIGN_H * stageScale()) / 2) / stageScale()
 }
 
-/** 指针的**位移** → 设计位移。拖拽场景用这个：位移是相对量，只需除以 scale */
+/** 指针的**位移** → 设计位移 */
 export function toDesignDelta(delta: number): number {
   return delta / stageScale()
 }

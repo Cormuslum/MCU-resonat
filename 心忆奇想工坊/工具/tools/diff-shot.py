@@ -6,7 +6,6 @@ from PIL import Image
 def load(p, size=(1920, 1080)):
     im = Image.open(p).convert('RGB')
     if im.size != size:
-        # 实机截图 1918x1078，按左上对齐贴到 1920x1080 画布
         cv = Image.new('RGB', size, (0, 0, 0))
         cv.paste(im, (0, 0))
         im = cv

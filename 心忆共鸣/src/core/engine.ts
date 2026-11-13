@@ -1,4 +1,4 @@
-/** 抽卡引擎。重置规则：5★ → p5=0 但 p4 照常 +1；4★ → p4=0；3★ → 都累加 */
+/** 抽卡引擎 */
 import type { Part, PityState, PullResult, RulesConfig } from '@/types'
 import type { PoolParts } from './inventory'
 import { Codex } from './inventory'
@@ -59,7 +59,7 @@ export function drawOne(ctx: DrawContext, index = 1): PullResult {
     part = pickPart(pool, 3, codex, rng)
   }
   if (!part) {
-    // 连 3★ 都没有 —— 数据有问题，抛错比静默更安全
+    // 连 3★ 都没有
     throw new Error(`服装阁奖池为空：${JSON.stringify({ p3: pool['3'].length, p4: pool['4'].length, p5: pool['5'].length })}`)
   }
 

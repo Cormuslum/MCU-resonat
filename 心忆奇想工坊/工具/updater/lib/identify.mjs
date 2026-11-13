@@ -55,7 +55,7 @@ function classify(f) {
   // 动态背景：视频文件（webm / mp4）
   if (/\.(webm|mp4)$/i.test(ext)) return hit('bannerVideo', 'high', '视频文件 = 服装阁动态背景')
 
-  // 进入音：音频文件。给 mid 而不是 high —— 也可能是别处的音效，允许手动改回去
+  // 进入音：音频文件
   if (/\.(mp3|ogg|wav|m4a|flac)$/i.test(ext)) return hit('bannerEnter', 'mid', '音频文件 = 服装阁进入音')
 
   if (/\.ya?ml$/i.test(ext)) return hit('suitYaml', 'high', 'YAML = 套装数据（属性 + 文案）')

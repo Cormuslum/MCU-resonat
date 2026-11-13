@@ -1,4 +1,4 @@
-/** 周易层（天机）—— 日课卦：每日自动卦象，不做手动摇卦；不直接断吉凶，只给行动建议 */
+/** 周易层（天机） */
 
 import { HEXAGRAMS, HEX_BY_TRIGRAM, type Hexagram, type Trigram } from './fortuneTexts'
 import { hashStr, makeRng } from './seed'
@@ -33,11 +33,9 @@ export interface Divination {
   movingAt: number[]
   /** 主爻（按多动爻口径选出的那一爻位置；0 = 无） */
   mainLine: number
-  /** 解读口径说明 */
   rule: string
   /** D 日课卦加成 -5~+5 */
   d: number
-  /** D 的拆解说明 */
   dNote: string
 }
 

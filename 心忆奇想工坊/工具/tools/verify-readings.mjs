@@ -2,7 +2,7 @@
 import fs from 'node:fs'
 import { chromium } from 'playwright-core'
 
-// 期望条数**从数据文件现算**，不写死 —— 阅读物随时会随素材增减而变
+// 期望条数**从数据文件现算**，不写死
 const _data = fs.readFileSync('src/data/readings.ts', 'utf8')
 // 只数**数据行**（`id: '…', region: 'wish'`），别把 interface 里的类型声明算进去
 const WISH = (_data.match(/id: '[^']+', region: 'wish'/g) || []).length

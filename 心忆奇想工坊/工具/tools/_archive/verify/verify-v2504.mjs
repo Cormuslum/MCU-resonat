@@ -129,7 +129,6 @@ await step('A 常驻池单抽 → 只有本池 1 条', async () => {
   standardRows = await rows()
   check('A2 常驻池记录 1 条（不含限定池那 10 条）', standardRows.length === 1, `实际 ${standardRows.length}`)
   check('A3 两池记录内容不同', standardRows[0] !== limitedRows[0], `${standardRows[0]} ≠ ${limitedRows[0]}`)
-  // 备注里点名当前池，避免「不知道看的是哪个池」
   const note = await page.$eval('.pp-note.dim', (e) => e.textContent.replace(/\s+/g, ' ').trim())
   check('A4 底部说明写出当前池名', /最近 50 条/.test(note), note.slice(0, 46))
   await closeDetail()

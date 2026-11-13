@@ -42,7 +42,6 @@ OUT = os.path.join(PUB, "data", "stories.json")
 # ：**基线模式**（发行版）
 #
 # 发行版不再随包发 `素材/故事/`（那是 1.2M 的内置正文）——
-# 用户拖进来的新故事 / 改写的故事会覆盖基线里对应的那一条，其余原样保留
 #
 # 开关用环境变量而不是「目录在不在」判断：
 #   - 开发版不设 → 纯源模式（`素材/故事/` 是唯一真源，删一篇就是删一篇）
@@ -160,7 +159,6 @@ def main():
         rows = list(merged.values())
         for r in rows:
             # 基线条目来自 JSON，排序用的 `_num` 已被剥掉 → 按 setId 补算
-            # 否则它们会全落到 9999、排序整个乱掉
             if "_num" not in r:
                 sid = str(r.get("setId") or "")
                 r["_num"] = int(sid[1:]) if sid[1:].isdigit() else 9999

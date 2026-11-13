@@ -189,8 +189,6 @@ await step('徽记', async () => {
   })
   await page.waitForTimeout(900)
 
-  // 用户 2026-11-03 明确「删除版本页的徽记及其相关内容（这个设定废除）」——
-  // 所以这里不再验徽记长什么样，只验「确实一个都不剩」
   const r = await page.evaluate(() => ({
     logo: document.querySelectorAll('.vs-logo').length,
     layers: document.querySelectorAll('.vl-lock, .vl-on').length,

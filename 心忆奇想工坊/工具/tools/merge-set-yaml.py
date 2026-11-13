@@ -157,7 +157,7 @@ def build_one(name, texts, partyaml, seq):
     套装的 `妆容` / `复刻版本` / `文案来源` 全部丢弃 —— 它们仍能从
     `图片素材/` 与 `套装文案/` 的源文件重新派生。
 
-    ## 两条对齐规则（实测踩出来的，别改）
+    # 两条对齐规则
 
     1. **txt 的部位名 ≠ yaml 的类型名**：txt 独有「妆容-原色 / 妆容-进化」
        （妆容的两套配色，yaml 里对应的是「饰品·面饰 / 饰品·肤绘」）。
@@ -203,7 +203,6 @@ def build_one(name, texts, partyaml, seq):
                 part["文案"] = desc
             parts.append(part)
     else:
-        # ── 3★：txt 是唯一来源，按部位反推部件 ──
         parts = []
         for slot, entries in forms_by_slot.items():
             named = [f for f in entries if f.get("名称")]
@@ -281,7 +280,6 @@ def verify(data, texts, partyaml):
             problems.append(f"{name}: 3★ 部件数 {len(data['部件'])} ≠ txt 部位数 {want_slots}")
 
     # 3. 整体文案不该和部件文案串位
-    # 所以只在**多个**部件文案同时等于整体文案时才判为串位
     if data.get("整体文案"):
         same = [p for p in data["部件"] if (p.get("文案") or "").strip() == data["整体文案"].strip()]
         if len(same) >= 2:
@@ -403,7 +401,6 @@ def main():
     os.makedirs(out, exist_ok=True)
 
     # 目标目录不是默认的「素材/套装库」时**不清空**（如归档目录：清空会删掉
-    # 用户自己补的文件）
     # 否则旧结构（的 `<ID_套装名>/套装.yaml` 子目录）与过期文件会残留
     is_default_out = os.path.abspath(out) == os.path.abspath(os.path.join(ASSET, "套装库"))
     if is_default_out:

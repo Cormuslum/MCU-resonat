@@ -28,7 +28,6 @@ function cmpVer(a, b) {
   const y = String(b).split('.').map(Number)
   return (x[0] - y[0]) || ((x[1] ?? 0) - (y[1] ?? 0))
 }
-/** 精确前缀匹配（避免 1.1 命中 1.10） */
 function inVersion(label, v) {
   return label.startsWith(v) && !/^\d/.test(label.slice(v.length))
 }
@@ -56,7 +55,7 @@ function suitsOfVersion(v) {
 
 head('【一、数据：套装的首发版本必须自洽】')
 
-/** 1. 「首发阁」与「首发版本」必须自洽。真正的不自洽只有一种：**这套的来源阁就是它现在这座阁，但首发版本却不是这座阁的版本**。2026-11-05 那次「0.1 两套挂到 1.0」正是这个形态（来源=心愿栖金蕊，首发=1.0探索季） */
+/** 1. 「首发阁」与「首发版本」必须自洽 */
 {
   const bannerByName = new Map(manifest.banners.map((b) => [b.name, b]))
   const bad = []
@@ -77,8 +76,7 @@ head('【一、数据：套装的首发版本必须自洽】')
     bad.length ? bad.slice(0, 3).join('；') : `校验 ${checked} 套（来源=本阁的那些）`)
 }
 
-// 2. 每个「有阁」的版本在图鉴里都不能空 —— 否则那一版就是空白页
-// 起分组口径改成「阁所在版本」，所以**任何有阁的版本都必然有内容**
+// 2. 每个「有阁」的版本在图鉴里都不能空
 // 「纯复刻版本为空」这个借口不再成立
 {
   const vers = [...new Set(manifest.banners.map((b) => b.version))].sort(cmpVer)
@@ -150,7 +148,6 @@ const majors = await page.$$eval('.cl-vmajor', (els) =>
 
 // 期望：每个大版本 id 的名称 = manifest 里该组第一个带 majorName 的版本
 // 大版本 id 取**版本号首位**（0.1 → 0），不看 `major` 列：
-// 该列是冗余数据，曾经被填错（0.2 写成大版本 2），按它取会把「伊赞之土」的标签弄丢
 const wantMajors = new Map()
 for (const m of VERSIONS) {
   const id = String(m.v || '').split('.')[0]
