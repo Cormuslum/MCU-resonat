@@ -1,15 +1,15 @@
-/** 把 `CHANGELOG.md` 最近三次更新抽成主页信封弹窗用的运行时 JSON（只取版本号 / 日期 / 标题 / 最多 5 条要点）。用法：`node tools/gen-mail-changelog.mjs`，已挂到 `prebuild` */
+/** 把 `.workbuddy/Envelopeupdate.md` 最近三次更新抽成主页信封弹窗用的运行时 JSON（只取版本号 / 日期 / 标题 / 要点）。用法：`node tools/gen-mail-changelog.mjs`，已挂到 `prebuild` */
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
-const SRC = path.join(ROOT, 'CHANGELOG.md')
+const SRC = path.join(ROOT, '.workbuddy', 'Envelopeupdate.md')
 const OUT = path.join(ROOT, '心忆共鸣', 'public/assets/data/mail-changelog.json')
 
-// CHANGELOG 不随源码分发：克隆 / CI 里没有它时沿用已提交的 JSON，不中断构建
+// 信封正文由作者手写维护，不随源码分发：克隆 / 发行版里没有它时沿用已提交的 JSON，不中断构建
 if (!fs.existsSync(SRC)) {
-  console.warn('[mail] 未找到 CHANGELOG.md，沿用现有 mail-changelog.json')
+  console.warn('[mail] 未找到 .workbuddy/Envelopeupdate.md，沿用现有 mail-changelog.json')
   process.exit(0)
 }
 
@@ -69,7 +69,8 @@ const top = logs.slice(0, 3).map((l) => ({
   version: l.version,
   date: l.date,
   title: l.title,
-  lines: l.lines.filter((x) => x).slice(0, 5).map((x) => clip(x)),
+  // 作者手写的条目全部保留（信封正文可滚动），只做长句断句
+  lines: l.lines.filter((x) => x).map((x) => clip(x)),
 }))
 
 /** 长句按标点断，别把引号 / 括号截半个（`（bu…` 那种读起来像乱码） */
