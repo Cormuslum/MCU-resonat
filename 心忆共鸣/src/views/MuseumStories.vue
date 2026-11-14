@@ -224,8 +224,14 @@ function hint(msg: string) {
   toastTimer = window.setTimeout(() => (toast.value = ''), 1600)
 }
 function goBack() {
+  // 优先退回跳转来源（从服装图鉴来的带着原视图），否则退回上一层
+  const back = takeHop()
   clearHops() // 清掉 ESC 返回栈
   play('back-select', { volume: 0.8 })
+  if (back) {
+    router.replace(back)
+    return
+  }
   router.push(parentOf(route.path))
 }
 
@@ -277,6 +283,15 @@ onMounted(() => {
   rollEgg() // 彩蛋刷新时机①：进入子界面
   window.addEventListener('keydown', onKey)
 })
+/** 正文是运行时 JSON：到货后补一次定位（首次进入时 mounted 阶段还是空数组，深链必然落空） */
+watch(
+  () => stories.length,
+  () => {
+    if (selId.value) return
+    applyDeepLink()
+    autoPick()
+  },
+)
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKey)
   window.clearTimeout(toastTimer)

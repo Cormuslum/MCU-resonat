@@ -36,3 +36,31 @@ export function resumeKeyword(query: Record<string, unknown>): string | null {
   const kw = query.kw
   return typeof kw === 'string' ? kw : ''
 }
+
+/** 图鉴视图：版本 / 套装名 / 部件下标（-1 = 套装整体） */
+export interface ViewState {
+  version: string
+  suit: string
+  part: number
+}
+
+/** 给「来源 URL」挂上需要恢复的图鉴视图。用 `ver/suit/part` 表示「回来时还原版本、套装、部件」 */
+export function withViewResume(url: string, view: ViewState): string {
+  const [path, rawQuery] = url.split('?')
+  const q = new URLSearchParams(rawQuery ?? '')
+  q.set('ver', view.version)
+  q.set('suit', view.suit)
+  q.set('part', String(view.part))
+  return `${path}?${q.toString()}`
+}
+
+/** 从 URL query 里读「要恢复的图鉴视图」；没有则返回 null */
+export function viewResumeOf(query: Record<string, unknown>): ViewState | null {
+  const ver = query.ver
+  if (typeof ver !== 'string' || !ver) return null
+  return {
+    version: ver,
+    suit: typeof query.suit === 'string' ? query.suit : '',
+    part: Number(query.part),
+  }
+}

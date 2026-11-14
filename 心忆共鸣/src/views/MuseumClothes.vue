@@ -6,7 +6,7 @@ import { useGameStore } from '@/stores/game'
 import { toDesignX } from '@/core/stage'
 import { play } from '@/composables/useAudio'
 import SearchPopup from '@/components/SearchPopup.vue'
-import { clearHops, pushHop, takeHop, resumeKeyword } from '@/composables/useNavBack'
+import { clearHops, pushHop, takeHop, resumeKeyword, withViewResume, viewResumeOf } from '@/composables/useNavBack'
 import type { SearchItem } from '@/components/SearchPopup.vue'
 import { parentOf } from '@/router'
 
@@ -535,8 +535,27 @@ function openStory() {
   play('common-hover', { volume: 0.5 })
   const name = cur.value?.set.name
   if (!name) return
-  pushHop(route.fullPath)
+  // 来源 URL 带上当前视图，故事界面返回时还原到同一套装
+  pushHop(withViewResume(route.fullPath, { version: version.value, suit: name, part: partSel.value }))
   router.push({ path: '/codex/stories', query: { name } })
+}
+
+/** 从「故事图鉴」回来：还原离开前的版本 / 套装 / 部件，并把恢复参数从地址栏抹掉 */
+function resumeView(): boolean {
+  const v = viewResumeOf(route.query)
+  if (!v || !VER_LIST.value.includes(v.version)) return false
+  version.value = v.version
+  const idx = v.suit ? suitsOfVersion.value.findIndex((r) => r.set.name === v.suit) : -1
+  if (idx >= 0) {
+    suitIdx.value = idx
+    partSel.value = Number.isFinite(v.part) && v.part >= 0 ? v.part : -1
+  }
+  const q = { ...route.query }
+  delete q.ver
+  delete q.suit
+  delete q.part
+  router.replace({ path: route.path, query: q })
+  return true
 }
 
 function onKey(e: KeyboardEvent) {
@@ -560,6 +579,9 @@ onMounted(() => {
   // 默认停在第一个「已获得」的套装上
   const i = suitsOfVersion.value.findIndex((r) => !suitLocked(r))
   suitIdx.value = i >= 0 ? i : 0
+
+  // 从故事图鉴返回：还原离开前的版本与套装
+  resumeView()
 
   // 来自主界面搜索的「跳转到套装」：定位到对应套装（必要时切换版本）
   const qn = route.query.name
