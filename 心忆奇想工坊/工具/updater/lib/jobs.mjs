@@ -224,7 +224,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     const ext = (path.extname(video.name || video.src) || '.webm').toLowerCase()
     const dst = path.join(ASSET, '视频', '服装阁动态', `${safeName(name)}${ext === '.mp4' ? '.mp4' : '.webm'}`)
     archive(snap, [{ src: video.src, target: dst }])
-    notes.push(`动态背景 → ${rel(dst)}`)
+    notes.push(`动态背景 → ${rel(dst)}${DIST_MODE ? '（直转，直接进成品）' : ''}`)
   }
 
   // 服装阁进入音：按**阁名**存
@@ -233,7 +233,7 @@ function writePoolAssets({ snap, poolDir, name, files, notes }) {
     const ext = (path.extname(enterSfx.name || enterSfx.src) || '.mp3').toLowerCase()
     const dst = path.join(ASSET, '音频', '服装阁进入音', `${safeName(name)}${ext}`)
     archive(snap, [{ src: enterSfx.src, target: dst }])
-    notes.push(`进入音 → ${rel(dst)}`)
+    notes.push(`进入音 → ${rel(dst)}${DIST_MODE ? '（直转，直接进成品）' : ''}`)
   }
 
   // 深海回响奖励图（20~100 抽全池共用一张，这里只收 120 抽之后的）
