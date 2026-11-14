@@ -876,7 +876,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
       const setName = String(fields[`set${i}Name`] || '').trim()
       if (!setName) continue
       const star = String(fields[`set${i}Star`] || '5')
-      const setId = String(fields[`set${i}Id`] || '').trim() || autoSetId(name, i)
+      const setId = String(fields[`set${i}Id`] || '').trim() || autoSetId(setName, i)
       const setDir = path.join(poolDir, setName)
 
       snap.touch(path.join(ASSET, '信息表', '套装序列.csv'))
@@ -999,7 +999,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     const seq = readSetSeq()
     const oldRow = seq.find((r) => r['套装名'] === target && (r['进化等阶'] || '初始') === '初始')
     const oldId = String(oldRow?.['套装ID'] || '')
-    const setId = String(fields.setId || '').trim() || oldId || autoSetId(poolName, 0)
+    const setId = String(fields.setId || '').trim() || oldId || autoSetId(setName, 0)
 
     snap.touch(path.join(ASSET, '信息表', '套装序列.csv'))
     if (setName !== target) {
@@ -1072,7 +1072,7 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
 
     const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
     const banner = (pm.banners || []).find((b) => b.name === poolName)
-    const setId = String(fields.setId || '').trim() || autoSetId(poolName, (banner?.sets || []).length)
+    const setId = String(fields.setId || '').trim() || autoSetId(setName, (banner?.sets || []).length)
     const gachaKey = String(banner?.gachaKey || '')
     const isStandard = banner?.type === 'standard'
 
@@ -1193,7 +1193,11 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
 }
 
 /** 套装 ID 兜底：S + 版本无关的四位流水（与官方 S0xxx 同形，够前端当唯一键） */
-function autoSetId(poolName, index) {
+/** 套装 ID：套装序列里登记过就沿用（官方素材自带 S 编号），否则按现有最大号顺延 */
+function autoSetId(setName, index) {
+  const hit = readSetSeq().find((r) => r['套装名'] === setName && (r['进化等阶'] || '初始') === '初始')
+  const reg = String(hit?.['套装ID'] || '').trim()
+  if (/^S\d{2,}$/i.test(reg)) return reg.toUpperCase()
   const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
   let max = 0
   for (const b of pm.banners || []) {
