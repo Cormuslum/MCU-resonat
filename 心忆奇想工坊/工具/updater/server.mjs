@@ -555,6 +555,7 @@ async function apiApply(req, res) {
       force: !!options.force,
       // 纯元数据编辑 / 直写成品的任务由 applyJob 判定要不要转码、要不要重算故事
       transcode: result.transcode !== false,
+      mediaTouched: !!result.mediaTouched,
       storyWritten: !!result.storyWritten,
       readingWritten: !!result.readingWritten,
     })

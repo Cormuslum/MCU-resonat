@@ -60,7 +60,7 @@ function run(cmd, args, { cwd = TOOL_ROOT, onLog = () => {}, timeoutMs = 600000 
 export function buildSteps({
   job = '', poolIds = [], force = false, story = false, reading = false,
   version = false, versionOnly = false,
-  transcode = true, storyWritten = false, readingWritten = false,
+  transcode = true, mediaTouched = false, storyWritten = false, readingWritten = false,
 } = {}) {
   const py = pythonBin()
   const steps = []
@@ -107,7 +107,8 @@ export function buildSteps({
       key: 'assets',
       label: `转码 ${poolIds.length} 只新服装阁的素材`,
       cmd: py,
-      args: ['tools/collect-assets.py', ...poolIds.flatMap((id) => ['--pool', id]), ...(force ? ['--force'] : [])],
+      // 换了素材就必须 --force：产物是「存在即跳过」，不强制的话新图永远进不去
+      args: ['tools/collect-assets.py', ...poolIds.flatMap((id) => ['--pool', id]), ...((force || mediaTouched) ? ['--force'] : [])],
       timeoutMs: 900000,
     })
   } else if (transcode && versionOnly) {

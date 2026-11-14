@@ -1184,6 +1184,8 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
     versionOnly: job === 'version',
     versionCreated,
     transcode,
+    /** 这批写了新素材：产物按「存在即跳过」判断，必须强制重转才会更新 */
+    mediaTouched,
     storyWritten,
     readingWritten,
     suitYamls,

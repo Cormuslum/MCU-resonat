@@ -1509,7 +1509,6 @@ def main():
                 "assets": assets,
             }
             banners.append(entry)
-
     # ---------- 手工补充池（source 目录尚未整理到的新版本，见 EXTRA_POOLS）
     for cfg in EXTRA_POOLS:
         used_gacha.add(cfg["gachaKey"])
@@ -1645,6 +1644,10 @@ def main():
         return (v, b["seq"], b["name"])
 
     banners.sort(key=sort_key)
+
+    # setCount 是 sets 的派生字段：出口统一重算，避免各分支（扫描 / 合并 / 基线补回）不同步
+    for _b in banners:
+        _b["setCount"] = len(_b.get("sets") or [])
 
     # 索引
     index = {"byGacha": {}, "byName": {}, "byVersion": {}}
