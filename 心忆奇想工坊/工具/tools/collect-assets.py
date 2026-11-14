@@ -1487,6 +1487,10 @@ def build_banner_enter_index():
     return out
 
 
+ENTER_SFX_REL = "音频/服装阁进入音/"
+ENTER_SFX_EXTS = (".mp3", ".ogg", ".wav", ".m4a", ".flac")
+
+
 def build_manual_enter_index():
     """工坊手工指定的进入音：`素材/音频/服装阁进入音/<阁名>.<ext>` → 阁名 → 完整路径。
 
@@ -1494,16 +1498,27 @@ def build_manual_enter_index():
     这一层**优先于**按 `卡池进入·<版本> <阁名>.mp3` 的自动匹配：
     自动匹配全靠字符串对得上，名字里带空格、符号或者版本号写错时就会静默漏掉，
     手工指定是最后一道保险。
+
+    直转模式（发行版）下音频不落盘，路径只在 `--overrides` 里登记，
+    目录枚举拿不到，所以还要把重定向表里落在这个目录下的条目并进来。
     """
     d = A("音频", "服装阁进入音")
     out = {}
-    if not os.path.isdir(d):
-        return out
-    for f in sorted(os.listdir(d)):
-        stem, ext = os.path.splitext(f)
-        if ext.lower() not in (".mp3", ".ogg", ".wav", ".m4a", ".flac"):
+    if os.path.isdir(d):
+        for f in sorted(os.listdir(d)):
+            stem, ext = os.path.splitext(f)
+            if ext.lower() not in ENTER_SFX_EXTS:
+                continue
+            out.setdefault(stem, os.path.join(d, f))
+    for key, src in OVERRIDES.items():
+        if not key.startswith(ENTER_SFX_REL):
             continue
-        out.setdefault(stem, os.path.join(d, f))
+        name = key[len(ENTER_SFX_REL):]
+        if not name or "/" in name:
+            continue
+        stem, ext = os.path.splitext(name)
+        if ext.lower() in ENTER_SFX_EXTS and os.path.isfile(src):
+            out.setdefault(stem, src)
     return out
 
 
