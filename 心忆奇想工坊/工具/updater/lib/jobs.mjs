@@ -10,7 +10,7 @@ import {
   upsertSet, writeSuitLibYaml, writeStory, writeReading, SLOTS, SUIT_LIB,
   poolDirOf, writeSetImages, normalizeGacha, nextFreeGacha,
   readCustom, markCustom, unmarkCustom, isCustom, renameCustom,
-  renamePoolIndex, renameSetSeqPool, renameSetSeqName, removeSetRows, readSetSeq, moveSetToPool,
+  renamePoolIndex, renameSetSeqPool, renameSetSeqName, removeSetRows, readSetSeq, moveSetToPool, NEW_SET_BASE,
   upsertStoryJson, upsertReadingJson,
 } from './meta.mjs'
 import { archive, walkFiles, isMedia } from './archive.mjs'
@@ -385,7 +385,8 @@ const JOBS = {
       { key: 'pool', label: '所属服装阁', type: 'pools', required: true, dependsOn: 'version' },
       { key: 'name', label: '套装名', required: true, placeholder: '绽若颂愿心' },
       { key: 'star', label: '星级', type: 'select', options: [['5', '5★'], ['4', '4★']], default: '5', width: 'short' },
-      { key: 'setId', label: '套装ID', placeholder: 'S0438 / 留空自动', width: 'short' },
+      { key: 'setId', label: '套装ID', placeholder: 'S0438 / 留空自动', width: 'short',
+        hint: '序列里登记过就沿用原号；全新套装从 S5001 起自动取号' },
     ],
     groups: [
       {
@@ -1192,18 +1193,17 @@ export async function applyJob({ job, fields, files = [], snap, log = () => {} }
   }
 }
 
-/** 套装 ID 兜底：S + 版本无关的四位流水（与官方 S0xxx 同形，够前端当唯一键） */
-/** 套装 ID：套装序列里登记过就沿用（官方素材自带 S 编号），否则按现有最大号顺延 */
-function autoSetId(setName, index) {
+/** 套装 ID：序列里登记过就沿用（官方素材自带 S 编号）；纯新套装从 S5001 起顺延 */
+export function autoSetId(setName, index) {
   const hit = readSetSeq().find((r) => r['套装名'] === setName && (r['进化等阶'] || '初始') === '初始')
   const reg = String(hit?.['套装ID'] || '').trim()
   if (/^S\d{2,}$/i.test(reg)) return reg.toUpperCase()
   const pm = readJson(path.join(ASSET, 'pool-map.json'), { banners: [] }) || { banners: [] }
-  let max = 0
+  let max = NEW_SET_BASE
   for (const b of pm.banners || []) {
     for (const s of b.sets || []) {
       const m = String(s.id || '').match(/^S(\d+)$/)
-      if (m) max = Math.max(max, Number(m[1]))
+      if (m && Number(m[1]) >= NEW_SET_BASE) max = Math.max(max, Number(m[1]))
     }
   }
   return `S${String(max + 1 + index).padStart(4, '0')}`

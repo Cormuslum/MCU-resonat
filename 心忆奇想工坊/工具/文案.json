@@ -139,7 +139,7 @@
       "setStar": "星级",
       "setId": "套装ID",
       "setNamePlaceholder": "绽若颂愿心",
-      "setIdPlaceholder": "留空自动",
+      "setIdPlaceholder": "留空自动 / 新套 S5001+",
       "remove": "移除",
       "deleteSet": "删掉这套",
       "tagRemove": "移出",
@@ -516,7 +516,7 @@
           },
           "setId": {
             "label": "套装ID",
-            "placeholder": "S0438 / 留空自动"
+            "placeholder": "S0438 / 留空自动（新套 S5001+）"
           }
         },
         "groups": {

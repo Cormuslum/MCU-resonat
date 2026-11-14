@@ -6,7 +6,7 @@ import {
   readVersionTable, upsertVersion, upsertMajor, listMajors,
   readPoolIndex, upsertPool, upsertSet, writeStory, writeReading,
   writeSuitLibYaml, SUIT_LIB, poolDirOf, writeSetImages, SLOTS,
-  normalizeGacha, nextFreeGacha, readSetSeq,
+  normalizeGacha, nextFreeGacha, readSetSeq, NEW_SET_BASE,
   upsertStoryJson, upsertReadingJson,
 } from './meta.mjs'
 import { archive } from './archive.mjs'
@@ -752,16 +752,16 @@ export async function applyBundle({ plan, snap, log = () => {} }) {
   }
 }
 
-/** 决定这一套的套装 ID：序列里已有则沿用原 ID、目录名是 S 编号则直接用、都没有则取现有最大 S 编号 + 1 */
+/** 决定这一套的套装 ID：序列里已有则沿用原 ID、目录名是 S 编号则直接用、都没有则从 S5001 起取空号 */
 function resolveSetId(set) {
   const rows = readSetSeq()
   const hit = rows.find((r) => r['套装名'] === set.name && (r['进化等阶'] || '初始') === '初始')
   if (hit && String(hit['套装ID'] || '').trim()) return String(hit['套装ID']).trim()
   if (/^S\d{2,}$/i.test(set.id)) return set.id.toUpperCase()
-  let max = 0
+  let max = NEW_SET_BASE
   for (const r of rows) {
     const m = /^S(\d+)$/i.exec(String(r['套装ID'] || '').trim())
-    if (m) max = Math.max(max, Number(m[1]))
+    if (m && Number(m[1]) >= NEW_SET_BASE) max = Math.max(max, Number(m[1]))
   }
   return `S${String(max + 1).padStart(4, '0')}`
 }

@@ -176,6 +176,9 @@ export function upsertPool(name, cfg) {
 const SET_HEAD = ['序号', '套装ID', '星级', '套装名', '进化等阶', '来源/阁名', '首发', '复刻']
 const SET_FILE = path.join(INFO, '套装序列.csv')
 
+/** 自建套装的取号起点：官方编号在 S0001~S0xxx，从 5000 起另开一段，避免撞号 */
+export const NEW_SET_BASE = 5000
+
 export function readSetSeq() {
   const txt = readText(SET_FILE)
   return txt ? parseCsv(txt) : []
