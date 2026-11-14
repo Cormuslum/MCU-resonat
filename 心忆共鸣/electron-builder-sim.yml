@@ -11,12 +11,16 @@ directories:
 
 # 用本地已解压的 Electron 运行时（避免 electron-builder 联网再下）
 electronDist: ../node_modules/electron/dist
+# 依赖提升到仓库根后子目录无 node_modules，需显式给出运行时版本
+electronVersion: 45.3.0
 
 # 只打主进程；dist/素材 由发行版组装脚本放到 exe 同级（见 心忆奇想工坊/工具/tools/pack-release.mjs）
 files:
   - electron/main-sim.mjs
   - package.json
   - "!**/*.map"
+  # 主进程只用 node 内置模块，无需任何外部依赖
+  - "!node_modules/**"
 
 asar: true
 

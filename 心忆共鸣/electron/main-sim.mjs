@@ -1,5 +1,5 @@
 /** 《无限暖暖》共鸣抽卡模拟器 · Electron 主进程（自包含发行版）。3) 数据根：打包版 = exe 所在目录（发行根），开发版 = 项目根 */
-import { app, BrowserWindow, dialog, shell } from 'electron'
+import { app, BrowserWindow, dialog, screen, shell } from 'electron'
 import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -99,9 +99,20 @@ function serve(req, res) {
 let server = null
 let win = null
 
+/** 主显示器宽高比是否为 16:9（±3%，覆盖 1920×1080 / 2560×1440 / 1366×768；排除 16:10、21:9） */
+function isPrimary16by9() {
+  const { width, height } = screen.getPrimaryDisplay().size
+  return height > 0 && Math.abs(width / height - 16 / 9) < 0.03
+}
+
 function createWindow() {
+  const autoFullScreen = isPrimary16by9()
+  const { width, height } = screen.getPrimaryDisplay().size
+  console.log(`[窗口] 主显示器 ${width}x${height}${autoFullScreen ? '（16:9）→ 自动全屏' : '→ 窗口模式'}`)
+
   win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 1024, minHeight: 640,
+    fullscreen: autoFullScreen,
     backgroundColor: '#0d0f1a', autoHideMenuBar: true,
     title: '无限暖暖 · 共鸣抽卡模拟器',
     webPreferences: {
