@@ -1,0 +1,11 @@
+{
+  "name": "nikki-material-workshop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "心忆奇想素材工坊（零依赖 Node 服务 + Electron 外壳）",
+  "author": "Nikki Fan (personal, non-commercial)",
+  "license": "GPL-3.0",
+  "scripts": {
+    "pack": "electron-builder --config electron-builder-updater.yml --win --dir"
+  }
+}

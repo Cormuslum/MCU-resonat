@@ -1,0 +1,16 @@
+{
+  "name": "nikki-resonance-simulator",
+  "private": true,
+  "version": "0.1.0",
+  "description": "《无限暖暖》共鸣抽卡模拟器（Vue 3 + TypeScript + Vite）",
+  "author": "Nikki Fan (personal, non-commercial)",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "vite",
+    "prebuild": "node ../心忆奇想工坊/工具/tools/gen-mail-changelog.mjs",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "pack": "electron-builder --config electron-builder-sim.yml --win --dir"
+  }
+}
